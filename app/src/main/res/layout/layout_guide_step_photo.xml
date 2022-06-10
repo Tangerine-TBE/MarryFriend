@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_guide_star" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:text="上传真实头像"
+                android:textColor="#404040"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_guide_star" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="才能获取曝光推荐"
+            android:textColor="#101010"
+            android:textSize="15sp" />
+
+        <RelativeLayout
+            android:layout_width="253dp"
+            android:layout_height="260dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/iv_photo_container"
+                android:layout_width="225dp"
+                android:layout_height="225dp"
+                android:layout_centerInParent="true"
+                app:riv_corner_radius="16dp"
+                android:layout_marginTop="14dp"
+                android:src="@mipmap/icon_photo_male" />
+
+            <ImageView
+                android:id="@+id/iv_photo_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_photo_delete"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/tv_photo_reupload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/shape_bg_identity_reupload"
+                android:paddingHorizontal="45dp"
+                android:paddingVertical="14dp"
+                android:text="重新上传"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:visibility="invisible" />
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/tv_photo_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="上传形象照"
+            android:textColor="#FF4444"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

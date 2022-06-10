@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="这样的照片会收到更多的喜欢"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_dialog_close" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="13dp"
+        android:text="五官清晰的本人照"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_good_one"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+        <View
+            android:layout_width="21dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_good_two"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+        <View
+            android:layout_width="21dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_good_three"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:text="请勿上传以下几类照片"
+        android:textColor="#FF4444"
+        android:textSize="15sp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_bad_one"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_bad_two"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_bad_three"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_bad_four"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+        <View
+            android:layout_width="24dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_photo_bad_five"
+            android:layout_width="95dp"
+            android:layout_height="95dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_dialog_photo_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/shape_bg_common_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_dialog_photo_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="18dp"
+        android:text="没有照片？现在拍一张"
+        android:textColor="#9A9A9A"
+        android:textSize="17sp" />
+
+</LinearLayout>

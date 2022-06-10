@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".guide.detailInfo.search.SchoolSearchActivity">
+
+    <RelativeLayout
+        android:id="@+id/rl_search_school_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:paddingVertical="16dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="14dp"
+            android:layout_toStartOf="@+id/iv_search_school_finish"
+            android:background="@drawable/shape_bg_search">
+
+            <ImageView
+                android:id="@+id/iv_search_school_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginVertical="4dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_school_search" />
+
+            <EditText
+                android:id="@+id/et_school_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="7dp"
+                android:layout_toEndOf="@+id/iv_search_school_search"
+                android:background="@null"
+                android:hint="请输入学校名称"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:textColor="#9A9A9A"
+                android:textSize="15sp" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/iv_search_school_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="17dp"
+            android:src="@drawable/ic_school_close" />
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_search_school_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_search_school_create"
+        android:layout_below="@+id/rl_search_school_search" />
+
+    <TextView
+        android:id="@+id/tv_search_school_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/shape_bg_school_create"
+        android:paddingHorizontal="21dp"
+        android:paddingVertical="12dp"
+        android:text="+没有找到？创建一个"
+        android:textColor="#FF4444"
+        android:textSize="15sp" />
+
+</RelativeLayout>

@@ -1,0 +1,25 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background"> <!--最底层：进度条背景颜色-->
+        <shape>
+            <corners android:radius="6dp" />
+            <solid android:color="#F5F5F5" />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/secondaryProgress"> <!--中间层：滑块颜色: 若另设置样式，则被覆盖-->
+        <clip> <!--剪载图片显示-->
+            <shape>
+                <corners android:radius="6dp" />
+                <solid android:color="#5840FF" />
+            </shape>
+        </clip>
+    </item>
+    <item android:id="@android:id/progress"> <!--最上层：进度条颜色: 这里使用渐变色-->
+        <clip>
+            <shape>
+                <corners android:radius="6dp" />
+                <solid android:color="#5840FF" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

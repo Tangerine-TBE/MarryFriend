@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".guide.baseInfo.BaseInfoActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_guide_base_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp">
+
+        <ImageView
+            android:id="@+id/tv_guide_base_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="13dp"
+            android:src="@drawable/ic_back_black"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+    <ViewFlipper
+        android:id="@+id/vf_guide_base_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tv_guide_base_next"
+        android:layout_below="@+id/ll_guide_base_title"
+        android:flipInterval="1000"
+        android:persistentDrawingCache="animation">
+
+        <include
+            layout="@layout/layout_guide_step_name"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_guide_step_sex"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+    </ViewFlipper>
+
+    <TextView
+        android:id="@+id/tv_guide_base_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_guide_base_tip"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/shape_bg_common_next_non"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="下一步"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_guide_base_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="45dp"
+        android:text="注：性别、年龄完成注册后不可修改"
+        android:textColor="#FF4444"
+        android:textSize="13sp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

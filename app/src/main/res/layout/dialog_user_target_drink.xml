@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="你期望TA喝酒吗?"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_user_target_drink_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_close_small" />
+
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_user_target_drink_unlimited"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/shape_bg_dialog_choose_check"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="不限"
+        android:textColor="#FF4444"
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/tv_user_target_drink_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="可以随意喝酒"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/tv_user_target_drink_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="偶尔喝酒"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/tv_user_target_drink_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="禁止喝酒"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/tv_user_target_drink_four"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="社交场合可以喝"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/tv_user_target_drink_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="18dp"
+        android:text="跳过"
+        android:textColor="#9A9A9A"
+        android:textSize="17sp" />
+
+</LinearLayout>

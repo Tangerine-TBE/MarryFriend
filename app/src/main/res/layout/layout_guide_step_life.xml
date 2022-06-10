@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="30dp"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_guide_star" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:text="我的生活"
+                android:textColor="#404040"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_guide_star" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginHorizontal="55dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="上传正面生活照,让大家更了解你,照片越多,更容易收到异性的喜欢"
+            android:textColor="#404040"
+            android:textSize="15sp" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv_guide_life_default"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="24dp"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/ll_guide_life_default"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/icon_life_one" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:src="@mipmap/icon_life_two" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:src="@mipmap/icon_life_three" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nsv_guide_life_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="35dp"
+            android:layout_marginTop="24dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/rl_guide_life_pic_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="145dp"
+                    android:visibility="gone">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/iv_guide_life_pic_one"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="15dp"
+                        android:scaleType="centerCrop"
+                        app:riv_corner_radius="16dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_guide_life_pic_one_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_photo_delete" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_guide_life_pic_one"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginHorizontal="15dp"
+                        android:background="@drawable/shape_bg_describe"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/iv_guide_life_pic_one_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:background="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tv_guide_life_pic_one"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginVertical="16dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="添加描述"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_guide_life_pic_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="145dp"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/iv_guide_life_pic_two"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="15dp"
+                        android:scaleType="centerCrop"
+                        app:riv_corner_radius="16dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_guide_life_pic_two_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_photo_delete" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_guide_life_pic_two"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginHorizontal="15dp"
+                        android:background="@drawable/shape_bg_describe"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/iv_guide_life_pic_two_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:background="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tv_guide_life_pic_two"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginVertical="16dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="添加描述"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_guide_life_pic_three"
+                    android:layout_width="match_parent"
+                    android:layout_height="145dp"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/iv_guide_life_pic_three"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginTop="15dp"
+                        android:scaleType="centerCrop"
+                        app:riv_corner_radius="16dp" />
+
+                    <ImageView
+                        android:id="@+id/iv_guide_life_pic_three_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_photo_delete" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_guide_life_pic_three"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginHorizontal="15dp"
+                        android:background="@drawable/shape_bg_describe"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/iv_guide_life_pic_three_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center"
+                            android:background="@color/white" />
+
+                        <TextView
+                            android:id="@+id/tv_guide_life_pic_three"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginVertical="16dp"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="添加描述"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_guide_life_pic_more"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/shape_bg_life"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="94dp"
+                        android:layout_height="94dp"
+                        android:layout_marginVertical="12dp"
+                        android:layout_marginStart="24dp"
+                        android:src="@drawable/ic_life_add" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="28dp"
+                        android:text="添加更多"
+                        android:textColor="#101010"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+
+    </LinearLayout>
+
+</LinearLayout>

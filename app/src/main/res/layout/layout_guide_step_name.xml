@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="填写你的昵称"
+            android:textColor="#404040"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="好的昵称更容易吸引异性"
+            android:textColor="#404040"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="155dp"
+            android:background="@drawable/shape_bg_common_input">
+
+            <EditText
+                android:id="@+id/et_guide_name_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="20dp"
+                android:layout_marginStart="24dp"
+                android:layout_toStartOf="@+id/tv_guide_name_name_sum"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="输入昵称"
+                android:maxLength="8"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColorHint="#9A9A9A"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_guide_name_name_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginEnd="24dp"
+                android:text="8"
+                android:textColor="#9A9A9A"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

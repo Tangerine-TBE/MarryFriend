@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="你现在做什么工作？"
+        android:textColor="#101010"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="17dp"
+        android:text="资料越完善,越容易得到青睐,匹配的异性越精准"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/wp_jump_job_one"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:wheel_item_space="80dp"
+            app:wheel_item_text_size="17sp" />
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/wp_jump_job_two"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:wheel_item_space="80dp"
+            app:wheel_item_text_size="17sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

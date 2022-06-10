@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".guide.jumpInfo.JumpActivity">
+
+    <RelativeLayout
+        android:id="@+id/ll_guide_jump_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp">
+
+        <TextView
+            android:id="@+id/ll_guide_jump_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginVertical="12dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/shape_bg_common_input"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="跳过"
+            android:textColor="#9A9A9A"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+    <ViewFlipper
+        android:id="@+id/vf_guide_jump_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_guide_jump_next"
+        android:layout_below="@+id/ll_guide_jump_title"
+        android:layout_marginTop="70dp"
+        android:flipInterval="1000"
+        android:persistentDrawingCache="animation">
+
+        <include
+            layout="@layout/layout_main_guide_car"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_home"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_smoke"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_wantchild"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_havechild"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_job"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_house"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+    </ViewFlipper>
+
+    <TextView
+        android:id="@+id/ll_guide_jump_next"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginBottom="80dp"
+        android:background="@drawable/shape_bg_common_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="下一步"
+        android:textColor="@color/white"
+        android:textSize="17sp"
+        android:visibility="gone" />
+
+</RelativeLayout>

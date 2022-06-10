@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="教你如何展示生活照"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_life_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_dialog_close" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="45dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="上传正面生活照,让大家更了解你,照片越多,更容易收到异性的喜欢"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="45dp"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_dialog_life_pic_one"
+            android:layout_width="111dp"
+            android:layout_height="111dp" />
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_life_pic_two"
+            android:layout_width="111dp"
+            android:layout_height="111dp" />
+
+        <View
+            android:layout_width="5dp"
+            android:layout_height="0dp" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_life_pic_three"
+            android:layout_width="111dp"
+            android:layout_height="111dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_dialog_life_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/shape_bg_common_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="去拍一张看看"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_dialog_life_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="27dp"
+        android:background="@drawable/shape_bg_common_input"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="从相册选择"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+</LinearLayout>

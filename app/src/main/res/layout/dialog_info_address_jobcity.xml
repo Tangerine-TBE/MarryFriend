@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:text="当前定位"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_address_jobcity_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_dialog_close" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_address_jobcity_location_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_location"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_address_jobcity_location_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:text="广东"
+            android:textColor="#FF4444"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/iv_address_jobcity_location_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="20dp"
+            android:src="@mipmap/icon_close_small" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_address_jobcity_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_location">
+
+        <ImageView
+            android:id="@+id/iv_address_jobcity_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="17dp"
+            android:src="@drawable/ic_target_local" />
+
+        <TextView
+            android:id="@+id/tv_address_jobcity_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="11dp"
+            android:layout_marginEnd="27dp"
+            android:text="定位"
+            android:textColor="#FF4444"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="26dp"
+        android:text="选择省份/地区"
+        android:textColor="#404040"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/wp_address_jobcity_first_container"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:wheel_item_space="80dp"
+            app:wheel_item_text_size="17sp"/>
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/wp_address_jobcity_second_container"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:wheel_item_space="80dp"
+            app:wheel_item_text_size="17sp"/>
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/wp_address_jobcity_third_container"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:wheel_item_space="80dp"
+            app:wheel_item_text_size="17sp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_address_jobcity_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/shape_bg_common_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+
+</LinearLayout>

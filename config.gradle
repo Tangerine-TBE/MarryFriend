@@ -1,0 +1,17 @@
+/**
+ *  全局统一配置文件
+ */
+ext {
+
+    version = [
+            applicationId    : "com.weilai.marryfriend",
+            applicationName  : "婚恋",
+            versionCode      : 10010,
+            versionName      : "1.0",
+            buildToolsVersion: "30.0.3",
+            compileSdkVersion: 31,
+            minSdkVersion    : 21,
+            targetSdkVersion : 30,
+    ]
+
+}

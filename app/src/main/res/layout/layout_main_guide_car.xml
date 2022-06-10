@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="你目前的购车情况是？"
+        android:textColor="#101010"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="17dp"
+        android:text="资料越完善,越容易得到青睐,匹配的异性越精准"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_jump_car_have"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="已买车"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_jump_car_non"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="未买车"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+</LinearLayout>

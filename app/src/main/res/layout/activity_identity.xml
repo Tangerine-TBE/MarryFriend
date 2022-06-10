@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".guide.detailInfo.artificial.IdentityActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp">
+
+        <ImageView
+            android:id="@+id/iv_identity_finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="13dp"
+            android:src="@drawable/ic_back_black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginVertical="20dp"
+            android:text="人工认证"
+            android:textColor="#101010"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F5F5F5">
+
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tv_identity_next"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/ll_identity_idCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="14dp"
+                        android:background="@drawable/shape_bg_dialog"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="26dp"
+                            android:layout_marginTop="23dp"
+                            android:text="1. 上传身份证人像面照片"
+                            android:textColor="#404040"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="24dp"
+                            android:layout_marginTop="24dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="135dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/shape_bg_identity_pic" />
+
+                            <View
+                                android:layout_width="13dp"
+                                android:layout_height="0dp" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_identity_idCard_upload"
+                                android:layout_width="match_parent"
+                                android:layout_height="135dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/shape_bg_identity_pic"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_identity_camera" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="点击拍照"
+                                    android:textColor="#404040"
+                                    android:textSize="13sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="24dp"
+                            android:layout_marginBottom="47dp"
+                            android:text="请确保身份证信息清晰可见"
+                            android:textColor="#404040"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:layout_below="@+id/ll_identity_idCard" />
+
+                    <TextView
+                        android:id="@+id/tv_identity_idCard_reUpload"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginHorizontal="80dp"
+                        android:background="@drawable/shape_bg_identity_reupload"
+                        android:gravity="center"
+                        android:paddingVertical="14dp"
+                        android:text="重新上传"
+                        android:textColor="#FFFFFF"
+                        android:textSize="17sp" />
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/ll_identity_photo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="14dp"
+                        android:background="@drawable/shape_bg_dialog"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="26dp"
+                            android:layout_marginTop="23dp"
+                            android:text="2. 上传竖起拇指的自拍照"
+                            android:textColor="#404040"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="24dp"
+                            android:layout_marginTop="24dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="135dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/shape_bg_identity_pic" />
+
+                            <View
+                                android:layout_width="13dp"
+                                android:layout_height="0dp" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_identity_photo_upload"
+                                android:layout_width="match_parent"
+                                android:layout_height="135dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/shape_bg_identity_pic"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/ic_identity_camera" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="点击拍照"
+                                    android:textColor="#404040"
+                                    android:textSize="13sp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="30dp"
+                            android:layout_marginTop="24dp"
+                            android:layout_marginBottom="47dp"
+                            android:gravity="center"
+                            android:text="请拍摄一张竖起拇指的自拍照，确保五官清晰可见"
+                            android:textColor="#404040"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="24dp"
+                        android:layout_below="@+id/ll_identity_photo" />
+
+                    <TextView
+                        android:id="@+id/tv_identity_photo_reUpload"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginHorizontal="80dp"
+                        android:background="@drawable/shape_bg_identity_reupload"
+                        android:gravity="center"
+                        android:paddingVertical="14dp"
+                        android:text="重新上传"
+                        android:textColor="#FFFFFF"
+                        android:textSize="17sp" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/tv_identity_next"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tv_identity_phone"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="45dp"
+            android:background="@drawable/shape_bg_identity_next"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="下一步"
+            android:textColor="#9A9A9A"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tv_identity_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="22dp"
+            android:text="海外用户人工认证请拨打：4000066261"
+            android:textColor="#9A9A9A"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>
