@@ -20,13 +20,18 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.CityBean
+import com.twx.marryfriend.bean.UpdateDemandInfoBean
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.mine.user.target.adapter.TargetBaseAdapter
 import com.twx.marryfriend.mine.user.target.adapter.TargetMoreAdapter
+import com.twx.marryfriend.net.callback.IDoUpdateDemandInfoCallback
+import com.twx.marryfriend.net.impl.doUpdateDemandInfoPresentImpl
 import kotlinx.android.synthetic.main.fragment_target.*
+import java.util.*
 
-class TargetFragment : Fragment() {
+class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     private var mAgeMinList: MutableList<Int> = arrayListOf()
     private var mAgeMaxList: MutableList<Int> = arrayListOf()
@@ -53,6 +58,8 @@ class TargetFragment : Fragment() {
 
     private lateinit var baseAdapter: TargetBaseAdapter
     private lateinit var moreAdapter: TargetMoreAdapter
+
+    private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -93,6 +100,9 @@ class TargetFragment : Fragment() {
 
         rv_user_target_more.layoutManager = moreScrollManager
         rv_user_target_more.adapter = moreAdapter
+
+        updateDemandInfoPresent = doUpdateDemandInfoPresentImpl.getsInstance()
+        updateDemandInfoPresent.registerCallback(this)
 
     }
 
@@ -378,6 +388,63 @@ class TargetFragment : Fragment() {
 
     }
 
+    private fun update() {
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+
+    }
+
+    // 需要上传的择偶条件信息
+    private fun getDemandInfo(): String {
+
+        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 0)
+        val ageMin = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)
+        val ageMax = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)
+        val heightMin = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)
+        val heightMax = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
+        val income = SPStaticUtils.getInt(Constant.TA_INCOME, 0)
+        val edu = SPStaticUtils.getInt(Constant.TA_EDU, 0)
+        val marryState = SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 0)
+        val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
+        val childHave = SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 0)
+        val childWant = SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 0)
+        val smoke = SPStaticUtils.getInt(Constant.TA_SMOKE, 0)
+        val drink = SPStaticUtils.getInt(Constant.TA_DRINK, 0)
+        val havePhoto = SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 0)
+        val marryTime = SPStaticUtils.getInt(Constant.TA_MARRY, 0)
+        val car = SPStaticUtils.getInt(Constant.TA_CAR, 0)
+        val house = SPStaticUtils.getInt(Constant.TA_HOUSE, 0)
+        val city = SPStaticUtils.getString(Constant.TA_WORK_CITY_NAME, "")
+        val cityCode = SPStaticUtils.getInt(Constant.TA_WORK_CITY_CODE, 0)
+
+        val demandInfo =
+            " {\"user_sex\": $sex, " +
+                    "\"age_min\":       $ageMin," +
+                    "\"age_max\":       $ageMax," +
+                    "\"min_high\":      $heightMin," +
+                    "\"max_high\":      $heightMax," +
+                    "\"figure_nan\":    $body," +
+                    "\"figure_nv\":     $body," +
+                    "\"salary_range\":  $income," +
+                    "\"education\":     $edu," +
+                    "\"marry_status\":  $marryState," +
+                    "\"child_had\":     $childHave," +
+                    "\"want_child\":    $childWant," +
+                    "\"is_smoking\":    $smoke," +
+                    "\"drink_wine\":    $drink," +
+                    "\"is_headface\":   $havePhoto," +
+                    "\"marry_time\":    $marryTime," +
+                    "\"buy_car\":       $car," +
+                    "\"buy_house\":     $house," +
+                    "\"work_place_str\":\"$city\"," +
+                    "\"work_place_code\": $cityCode}"
+
+        return demandInfo
+
+    }
+
     // 省
     private fun getJobCityFirstList() {
         mCityFirstList.clear()
@@ -582,6 +649,13 @@ class TargetFragment : Fragment() {
             wheelOne.data = mAgeMinList
             wheelTwo.data = mAgeMaxList
 
+
+            mMinAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) - 18
+            mMaxAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) - 18
+
+            wheelOne.setSelectedItemPosition(mMinAgePosition, false)
+            wheelTwo.setSelectedItemPosition(mMaxAgePosition, false)
+
             // 是否为循环状态
             wheelOne.isCyclic = false
             // 当前选中的数据项文本颜色
@@ -629,7 +703,7 @@ class TargetFragment : Fragment() {
             wheelOne.setOnItemSelectedListener { picker, data, position ->
                 mMinAgePosition = position
 
-                if (mMinAgePosition > mMaxAgePosition){
+                if (mMinAgePosition > mMaxAgePosition) {
                     mMaxAgePosition = mMinAgePosition
                     wheelTwo.selectedItemPosition = mMaxAgePosition
                 }
@@ -640,7 +714,7 @@ class TargetFragment : Fragment() {
 
                 mMaxAgePosition = position
 
-                if (mMaxAgePosition < mMinAgePosition){
+                if (mMaxAgePosition < mMinAgePosition) {
                     mMinAgePosition = mMaxAgePosition
                     wheelOne.selectedItemPosition = mMinAgePosition
                 }
@@ -672,7 +746,7 @@ class TargetFragment : Fragment() {
                 showHeightDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -700,6 +774,12 @@ class TargetFragment : Fragment() {
 
             wheelOne.data = mHeightMinList
             wheelTwo.data = mHeightMaxList
+
+            mMinHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN) - 140
+            mMaxHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX) - 140
+
+            wheelOne.setSelectedItemPosition(mMinHeightPosition, false)
+            wheelTwo.setSelectedItemPosition(mMaxHeightPosition, false)
 
             // 是否为循环状态
             wheelOne.isCyclic = false
@@ -747,12 +827,20 @@ class TargetFragment : Fragment() {
 
             wheelOne.setOnItemSelectedListener { picker, data, position ->
                 mMinHeightPosition = position
-
+                if (mMinHeightPosition > mMaxHeightPosition) {
+                    mMaxHeightPosition = mMinHeightPosition
+                    wheelTwo.selectedItemPosition = mMaxHeightPosition
+                }
             }
 
             wheelTwo.setOnItemSelectedListener { picker, data, position ->
 
                 mMaxHeightPosition = position
+
+                if (mMaxHeightPosition < mMinHeightPosition) {
+                    mMinHeightPosition = mMaxHeightPosition
+                    wheelOne.selectedItemPosition = mMinHeightPosition
+                }
 
             }
 
@@ -781,7 +869,7 @@ class TargetFragment : Fragment() {
                 showIncomeDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -806,6 +894,11 @@ class TargetFragment : Fragment() {
             val confirm = findViewById<TextView>(R.id.tv_user_target_income_confirm)
 
             wheel.data = mIncomeList
+
+            mIncome = SPStaticUtils.getInt(Constant.TA_INCOME, 0)
+
+            wheel.setSelectedItemPosition(mIncome, false)
+
 
             // 是否为循环状态
             wheel.isCyclic = false
@@ -856,7 +949,7 @@ class TargetFragment : Fragment() {
                 showEduDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -1018,7 +1111,7 @@ class TargetFragment : Fragment() {
                 showMarryStateDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
 
         }
@@ -1144,13 +1237,12 @@ class TargetFragment : Fragment() {
                 showBodyDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
 
         }
 
     }
-
 
     //
 
@@ -1172,6 +1264,10 @@ class TargetFragment : Fragment() {
             val confirm = findViewById<TextView>(R.id.tv_user_target_body_confirm)
 
             wheel.data = mBodyList
+
+            mBody = SPStaticUtils.getInt(Constant.TA_BODY, 0)
+
+            wheel.setSelectedItemPosition(mBody, false)
 
             // 是否为循环状态
             wheel.isCyclic = false
@@ -1223,7 +1319,7 @@ class TargetFragment : Fragment() {
                 showJobDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -1236,7 +1332,6 @@ class TargetFragment : Fragment() {
 
         private var mCityFirstPosition = 0
         private var mCitySecondPosition = 0
-        private var mCityThirdPosition = 0
 
         override fun getImplLayoutId(): Int = R.layout.dialog_user_target_jobaddress
 
@@ -1249,12 +1344,17 @@ class TargetFragment : Fragment() {
 
             val wheelOne = findViewById<WheelPicker>(R.id.wp_user_data_home_one)
             val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_data_home_two)
-            val wheelThree = findViewById<WheelPicker>(R.id.wp_user_data_home_three)
             val confirm = findViewById<TextView>(R.id.tv_user_data_home_confirm)
 
             wheelOne.data = mCityFirstList
             wheelTwo.data = mCitySecondList
-            wheelThree.data = mCityThirdList
+
+            mCityFirstPosition = SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 0)
+            mCitySecondPosition = SPStaticUtils.getInt(Constant.TA_WORK_CITY_PICK, 0)
+
+            wheelOne.setSelectedItemPosition(mCityFirstPosition, false)
+            getJobCitySecondList(mCityFirstPosition)
+            wheelTwo.setSelectedItemPosition(mCitySecondPosition, false)
 
             // 是否为循环状态
             wheelOne.isCyclic = false
@@ -1298,26 +1398,6 @@ class TargetFragment : Fragment() {
             // 设置滚轮选择器数据项的对齐方式
             wheelTwo.itemAlign = WheelPicker.ALIGN_CENTER
 
-            // 是否为循环状态
-            wheelThree.isCyclic = false
-            // 当前选中的数据项文本颜色
-            wheelThree.selectedItemTextColor = Color.parseColor("#FF4444")
-            // 数据项文本颜色
-            wheelThree.itemTextColor = Color.parseColor("#9A9A9A")
-            // 滚轮选择器数据项之间间距
-            wheelThree.itemSpace = ConvertUtils.dp2px(40F)
-            // 是否有指示器
-            wheelThree.setIndicator(true)
-            // 滚轮选择器指示器颜色，16位颜色值
-            wheelThree.indicatorColor = Color.parseColor("#FFF5F5")
-            // 滚轮选择器是否显示幕布
-            wheelThree.setCurtain(true)
-            // 滚轮选择器是否有空气感
-            wheelThree.setAtmospheric(true)
-            // 滚轮选择器是否开启卷曲效果
-            wheelThree.isCurved = true
-            // 设置滚轮选择器数据项的对齐方式
-            wheelThree.itemAlign = WheelPicker.ALIGN_CENTER
 
 
             wheelOne.setOnItemSelectedListener { picker, data, position ->
@@ -1330,16 +1410,8 @@ class TargetFragment : Fragment() {
                     mCitySecondPosition = mCitySecondList.size - 1
                 }
 
-                getJobCityThirdList(mCityFirstPosition, mCitySecondPosition)
-
-
-                // 当三级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位 ，
-                if (mCityThirdPosition >= mCityThirdList.size) {
-                    mCityThirdPosition = mCityThirdList.size - 1
-                }
 
                 wheelTwo.data = mCitySecondList
-                wheelThree.data = mCityThirdList
 
             }
 
@@ -1347,32 +1419,28 @@ class TargetFragment : Fragment() {
 
                 mCitySecondPosition = position
 
-                getJobCityThirdList(mCityFirstPosition, mCitySecondPosition)
-
-                // 当三级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位
-                if (mCityThirdPosition >= mCityThirdList.size) {
-                    mCityThirdPosition = mCityThirdList.size - 1
-                }
-
-                wheelThree.data = mCityThirdList
-
             }
 
-            wheelThree.setOnItemSelectedListener { picker, data, position ->
-
-                mCityThirdPosition = position
-
-            }
 
 
             confirm.setOnClickListener {
 
                 val workPlace =
-                    "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}-${mCityThirdList[mCityThirdPosition]}"
+                    "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
 
                 ToastUtils.showShort(workPlace)
 
                 SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
+
+                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_PICK, mCityFirstPosition)
+                SPStaticUtils.put(Constant.TA_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.TA_WORK_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.TA_WORK_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true
                 dismiss()
@@ -1396,7 +1464,7 @@ class TargetFragment : Fragment() {
                 showHaveChildDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -1539,7 +1607,7 @@ class TargetFragment : Fragment() {
                 showWantChildDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -1682,7 +1750,7 @@ class TargetFragment : Fragment() {
                 showSmokeDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -1825,7 +1893,7 @@ class TargetFragment : Fragment() {
                 showDrinkDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -1968,7 +2036,7 @@ class TargetFragment : Fragment() {
                 showPhotoDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
     }
@@ -2074,7 +2142,7 @@ class TargetFragment : Fragment() {
                 showMarryDialog()
             } else {
                 updateDateUI()
-                ToastUtils.showShort("刷新界面")
+                update()
             }
         }
 
@@ -2208,8 +2276,24 @@ class TargetFragment : Fragment() {
         override fun onDismiss() {
             super.onDismiss()
             updateDateUI()
-            ToastUtils.showShort("刷新界面")
+            update()
         }
+
+    }
+
+    override fun onLoading() {
+
+    }
+
+    override fun onError() {
+
+    }
+
+    override fun onDoUpdateDemandInfoSuccess(updateDemandInfoBean: UpdateDemandInfoBean?) {
+
+    }
+
+    override fun onDoUpdateDemandInfoError() {
 
     }
 

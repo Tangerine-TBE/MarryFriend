@@ -2,6 +2,7 @@ package com.twx.marryfriend.net.impl;
 
 import com.twx.marryfriend.bean.AccessTokenBean;
 import com.twx.marryfriend.bean.AutoLoginBean;
+import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.net.callback.IDoAutoLoginCallback;
 import com.twx.marryfriend.net.callback.IDoIdentityVerifyCallback;
 import com.twx.marryfriend.net.module.UserData;
@@ -42,12 +43,12 @@ public class doIdentityVerifyPresentImpl implements IDoIdentityVerifyPresent {
     @Override
     public void doIdentityVerify(Map<String, String> info) {
         handlerLoading();
-        mUserData.doIdentityVerify(info, new Callback<AccessTokenBean>() {
+        mUserData.doIdentityVerify(info, new Callback<IdentityVerifyBean>() {
 
-            private AccessTokenBean mBody;
+            private IdentityVerifyBean mBody;
 
             @Override
-            public void onResponse(Call<AccessTokenBean> call, Response<AccessTokenBean> response) {
+            public void onResponse(Call<IdentityVerifyBean> call, Response<IdentityVerifyBean> response) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mBody = response.body();
                     if (mBody != null) {
@@ -59,7 +60,7 @@ public class doIdentityVerifyPresentImpl implements IDoIdentityVerifyPresent {
             }
 
             @Override
-            public void onFailure(Call<AccessTokenBean> call, Throwable t) {
+            public void onFailure(Call<IdentityVerifyBean> call, Throwable t) {
                 for (IDoIdentityVerifyCallback callback : mCallback) {
                     callback.onDoIdentityVerifyError();
                 }

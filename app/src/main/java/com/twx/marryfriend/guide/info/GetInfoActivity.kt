@@ -14,6 +14,7 @@ import com.twx.marryfriend.bean.JobBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.guide.detailInfo.DetailInfoActivity
+import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.IGetCityCallback
 import com.twx.marryfriend.net.callback.IGetIndustryCallback
 import com.twx.marryfriend.net.callback.IGetJobCallback
@@ -104,6 +105,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                         startActivity(intent)
                         this.finish()
                     } else {
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        this.finish()
                         ToastUtils.showShort("资料填写完成，前往首页")
                     }
                 }

@@ -2,7 +2,6 @@ package com.twx.marryfriend.guide.detailInfo
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -20,9 +19,12 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.AnyRes
 import androidx.core.content.FileProvider
 import com.aigestudio.wheelpicker.WheelPicker
+import com.baidu.idl.face.platform.FaceEnvironment
+import com.baidu.idl.face.platform.FaceSDKManager
+import com.baidu.idl.face.platform.LivenessTypeEnum
+import com.baidu.idl.face.platform.listener.IInitCallback
 import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
@@ -32,7 +34,6 @@ import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
 import com.blankj.utilcode.util.*
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -60,11 +61,14 @@ import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
 import com.twx.marryfriend.guide.detailInfo.search.SchoolSearchActivity
 import com.twx.marryfriend.guide.detailInfo.step.*
 import com.twx.marryfriend.guide.jumpInfo.JumpActivity
+import com.twx.marryfriend.login.retrieve.QualityConfig
+import com.twx.marryfriend.login.retrieve.QualityConfigManager
+import com.twx.marryfriend.login.retrieve.activity.FaceLivenessExpActivity
+import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.utils.UnicodeUtils
-import com.twx.marryfriend.view.MySeekBar
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
 import kotlinx.android.synthetic.main.layout_guide_step_address.*
@@ -142,7 +146,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     // 家乡是定位模式还是自主选择模式
     private var isHomeLocal = false
 
-    private lateinit var myListener: MyLocationListener
     private lateinit var mLocationClient: LocationClient
 
     // 是否选择工作居住地
@@ -168,16 +171,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
 
     // 用户工作居住地
-    private var jobCity = 0
     private var jobCityFirst = 0
     private var jobCitySecond = 0
     private var jobCityThird = 0
 
     //  用户家乡
-    private var homeCity = 0
-    private var homeCityFirst = ""
-    private var homeCitySecond = ""
-    private var homeCityThird = ""
+    private var home = ""
+
 
     // 城市json数据
     private var cityJsonDate = ""
@@ -255,11 +255,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     // 是否完成生活照选择
     private var isFinishLife = false
 
+    // 选择的删除键是第几个删除
+    private var lifeDeleteMode = "one"
+
+    // 是通过相机选择生活照，还是通过相册选择
+    private var isCamera = true
+
     // 临时图片文件路径
     private var mTempLifePath = ""
-
-    // 当前处理的图片
-    private var lifeMode = "life"
 
     // 第一张我的生活照
 
@@ -351,8 +354,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     // 实名认证 身份证号
     private var identityCode = ""
 
-    private lateinit var doIdentityVerifyPresent: doIdentityVerifyPresentImpl
 
+    private lateinit var doIdentityVerifyPresent: doIdentityVerifyPresentImpl
 
     private lateinit var updateBaseInfoPresent: doUpdateBaseInfoPresentImpl
 
@@ -361,6 +364,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
 
     private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
+
+    // 百度人脸识别动作
+    private var livenessList: MutableList<LivenessTypeEnum> = ArrayList()
 
     // 各文件是否上传完成
     private var photoCompleteLoad = false
@@ -378,7 +384,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private var mStepDetailEight: StepDetailEight? = null   //  我的爱好
     private var mStepDetailNine: StepDetailNine? = null   //  心目中的Ta
     private var mStepDetailTen: StepDetailTen? = null   //  实名认证
-
 
     private var xx: BasePopupView? = null   //  实名认证
 
@@ -415,7 +420,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         uploadPhotoPresent.registerCallback(this)
 
-        myListener = MyLocationListener()
         mLocationClient = LocationClient(this)
 
         val str1 = "遇到问题？联系客服"
@@ -469,6 +473,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         mEduData.add("大专")
         mEduData.add("本科")
         mEduData.add("硕士")
+        mEduData.add("博士")
+        mEduData.add("博士以上")
 
 
         incomeData.add("保密")
@@ -490,7 +496,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         mPhotoPath = externalCacheDir.toString() + File.separator + "photoPic.png"
 
         mTempLifePath =
-            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+            Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
 
         mLifeFirstPath = externalCacheDir.toString() + File.separator + "lifeFirstPic.png"
         mLifeSecondPath = externalCacheDir.toString() + File.separator + "lifeSecondPic.png"
@@ -541,10 +547,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         getJobCityThirdList(0, 0)
 
 
-        var minAge = SPStaticUtils.getInt(Constant.AGE, 18) - 8
-        var maxAge = SPStaticUtils.getInt(Constant.AGE, 18) + 4
+        var minAge = SPStaticUtils.getInt(Constant.ME_AGE, 18) - 8
+        var maxAge = SPStaticUtils.getInt(Constant.ME_AGE, 18) + 4
 
-        Log.i("guo", SPStaticUtils.getInt(Constant.AGE, 18).toString())
+        Log.i("guo", SPStaticUtils.getInt(Constant.ME_AGE, 18).toString())
 
         if (minAge < 18) {
             minAge = 18
@@ -553,6 +559,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         if (maxAge > 60) {
             maxAge = 60
         }
+
+        // 设置默认目标年龄
+        targetAgeMin = minAge
+        targetAgeMax = maxAge
+
 
 
         msb_guide_target_age.setPos(minAge - 18, maxAge - 18)
@@ -567,6 +578,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             "1b430f2517d0460ebdbecfd910c572f8")
         config.endpoint = "http://androidmarryfriend.gz.bcebos.com"
         client = BosClient(config)
+
+
+        initLicense()
 
 
     }
@@ -681,11 +695,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         tsb_guide_detail_guide.setPercent(0.19f, "19")
 
+                        SPStaticUtils.put(Constant.ME_EDU, eduPosition + 1)
+                        SPStaticUtils.put(Constant.ME_SCHOOL, eduSchool)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+                        ToastUtils.showShort("请完善您的学历信息")
                     }
 
-//                    vf_guide_detail_container.showNext()
                 }
                 1 -> {
 
@@ -699,11 +715,23 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         tsb_guide_detail_guide.setPercent(0.26f, "26")
 
+                        SPStaticUtils.put(Constant.ME_INDUSTRY_CODE, jobIDFirstList[jobFirst])
+                        SPStaticUtils.put(Constant.ME_INDUSTRY_NAME, jobFirstList[jobFirst])
+                        SPStaticUtils.put(Constant.ME_OCCUPATION_CODE, jobIDSecondList[jobSecond])
+                        SPStaticUtils.put(Constant.ME_OCCUPATION_NAME, jobSecondList[jobSecond])
+
+                        SPStaticUtils.put(Constant.ME_INCOME, incomePosition)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+                        if (!chooseJob) {
+                            ToastUtils.showShort("请填写您的职业名称")
+                        } else {
+                            if (!chooseIncome) {
+                                ToastUtils.showShort("请填写您的月收入")
+                            }
+                        }
                     }
 
-//                    vf_guide_detail_container.showNext()
                 }
                 2 -> {
 
@@ -717,11 +745,36 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         tsb_guide_detail_guide.setPercent(0.39f, "39")
 
+                        if (isJobLocal) {
+                            // 定位数据
+                            SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, localCityOneCode)
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, localCityTwoCode)
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, localCityTwo)
+
+                        } else {
+                            // 选择数据
+                            SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE,
+                                cityIDFirstList[jobCityFirst])
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_CODE,
+                                cityIDSecondList[jobCitySecond])
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_NAME,
+                                citySecondList[jobCitySecond])
+                        }
+
+                        SPStaticUtils.put(Constant.ME_HOME, home)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+
+                        if (!chooseJobCity) {
+                            ToastUtils.showShort("请填写您的工作居住地信息")
+                        } else {
+                            if (!chooseHomeCity) {
+                                ToastUtils.showShort("请填写您的家乡信息")
+                            }
+                        }
+
                     }
 
-//                    vf_guide_detail_container.showNext()
                 }
                 3 -> {
                     if (chooseTarget && chooseAge) {
@@ -734,11 +787,19 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         tsb_guide_detail_guide.setPercent(0.46f, "46")
 
+                        SPStaticUtils.put(Constant.ME_LOVE_TARGET_SHOW, targetVisibilityPosition)
+                        SPStaticUtils.put(Constant.ME_LOVE_TARGET, target)
+
+                        SPStaticUtils.put(Constant.TA_AGE_MIN, targetAgeMin)
+                        SPStaticUtils.put(Constant.TA_AGE_MAX, targetAgeMax)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+
+                        if (!chooseTarget) {
+                            ToastUtils.showShort("请填写您的恋爱目标")
+                        }
                     }
 
-//                    vf_guide_detail_container.showNext()
                 }
                 4 -> {
                     if (isFinishPhoto) {
@@ -771,16 +832,18 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
                             }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
+                            Log.i("guo", "mPhotoUrl :$mPhotoUrl")
 
-                            Log.i("guo", mPhotoUrl)
+                            SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+
+                            Log.i("guo", "avatar : ${SPStaticUtils.getString(Constant.ME_AVATAR)}")
 
                         }.start()
 
                     } else {
-                        ToastUtils.showShort("请上传头像")
+                        ToastUtils.showShort("请上传您的真实头像")
                     }
 
-//                    vf_guide_detail_container.showNext()
                 }
                 5 -> {
 
@@ -800,12 +863,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             val putObjectFromFileResponse =
                                 client.putObject("user${
                                     SPStaticUtils.getString(Constant.USER_ID, "default")
-                                }",
-                                    FileUtils.getFileName(mLifeFirstPath), file)
+                                }", FileUtils.getFileName(mLifeFirstPath), file)
 
                             mLifeFirstUrl = client.generatePresignedUrl("user${
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
                             }", FileUtils.getFileName(mLifeFirstPath), -1).toString()
+
+                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, mLifeFirstUrl)
+                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, lifeFirstPicText)
 
                         }.start()
 
@@ -822,6 +887,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                     SPStaticUtils.getString(Constant.USER_ID, "default")
                                 }", FileUtils.getFileName(mLifeSecondPath), -1).toString()
 
+                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
+                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT,
+                                    lifeSecondPicText)
+
                             }.start()
                         }
                         if (haveThirdPic) {
@@ -837,15 +906,16 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                     SPStaticUtils.getString(Constant.USER_ID, "default")
                                 }", FileUtils.getFileName(mLifeThirdPath), -1).toString()
 
+                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, mLifeThirdUrl)
+                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT,
+                                    lifeThirdPicText)
+
                             }.start()
                         }
 
-
                     } else {
-                        ToastUtils.showShort("请上传生活照")
+                        ToastUtils.showShort("请上传您的生活照")
                     }
-
-                    vf_guide_detail_container.showNext()
 
                 }
                 6 -> {
@@ -860,13 +930,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         tsb_guide_detail_guide.setPercent(0.73f, "73")
 
+                        SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+                        ToastUtils.showShort("请添加一份30字左右的自我介绍")
                     }
 
                 }
                 7 -> {
-                    ToastUtils.showShort("我的爱好")
 
                     if (isFinishHobby) {
 
@@ -877,13 +948,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         vf_guide_detail_container.showNext()
                         tsb_guide_detail_guide.setPercent(0.88f, "88")
 
+                        SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+                        ToastUtils.showShort("请添加一些您的日常爱好")
                     }
 
                 }
                 8 -> {
-                    ToastUtils.showShort("我心目中的ta")
 
                     if (isFinishIdeal) {
 
@@ -897,12 +969,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         tsb_guide_detail_guide.setPercent(1.0f, "100")
 
+                        SPStaticUtils.put(Constant.ME_TA, idealText)
+
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+                        ToastUtils.showShort("请描述一下您心中理想的对象")
                     }
+
                 }
                 9 -> {
-                    ToastUtils.showShort("实名认证")
 
                     if (name != "" && identityCode != "") {
 
@@ -910,17 +984,21 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             val map: MutableMap<String, String> = TreeMap()
 
                             map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN)
+                                "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
                             map[Contents.CONTENT_TYPE] = "application/json"
                             map[Contents.ID_CARD_NUMBER] = identityCode
                             map[Contents.NAME] = name
                             doIdentityVerifyPresent.doIdentityVerify(map)
+
+                            // 返回mbody为空，以后人脸识别可以了直接
+
                         } else {
                             ToastUtils.showShort("请输入正确的身份证号")
                         }
                     } else {
-                        ToastUtils.showShort("请填写详细信息")
+                        ToastUtils.showShort("请填写您的真实姓名与身份证号，以用于实名认证")
                     }
+
 
                 }
             }
@@ -1115,6 +1193,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         // 设置裁剪图片结果监听
 
+
         // -------------------  我的生活界面  -----------------
 
         ll_guide_life_default.setOnClickListener {
@@ -1143,84 +1222,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         iv_guide_life_pic_one_delete.setOnClickListener {
             // 需要判断一下数据，分为是否有其他图，若无则直接删除，若有则向上顺移第三张图
 
-            if (haveSecondPic) {
+            lifeDeleteMode = "one"
 
-                if (haveThirdPic) {
-                    // 有三张图
-
-                    rl_guide_life_pic_three.visibility = View.GONE
-                    rl_guide_life_pic_more.visibility = View.VISIBLE
-
-                    FileUtils.delete(mLifeFirstPath)
-                    lifeSecondBitmap?.let { it1 -> saveBitmap(it1, mLifeFirstPath) }
-
-                    lifeFirstPicText = lifeSecondPicText
-                    lifeFirstBitmap = lifeSecondBitmap
-                    Glide.with(this).load(lifeFirstBitmap).into(iv_guide_life_pic_one)
-                    tv_guide_life_pic_one.text = lifeFirstPicText
-
-
-                    FileUtils.delete(mLifeSecondPath)
-                    lifeThirdBitmap?.let { it1 -> saveBitmap(it1, mLifeSecondPath) }
-
-                    lifeSecondPicText = lifeThirdPicText
-                    lifeSecondBitmap = lifeThirdBitmap
-                    Glide.with(this).load(lifeSecondBitmap).into(iv_guide_life_pic_two)
-                    tv_guide_life_pic_two.text = lifeSecondPicText
-
-                    haveThirdPic = false
-                    lifeThirdPicText = ""
-                    lifeThirdBitmap = null
-                    iv_guide_life_pic_three_icon.visibility = View.VISIBLE
-                    tv_guide_life_pic_three.text = "添加描述"
-
-                    FileUtils.delete(mLifeThirdPath)
-
-                } else {
-                    // 有两张图
-
-                    rl_guide_life_pic_two.visibility = View.GONE
-
-                    FileUtils.delete(mLifeFirstPath)
-                    lifeSecondBitmap?.let { it1 -> saveBitmap(it1, mLifeFirstPath) }
-
-                    lifeFirstPicText = lifeSecondPicText
-                    lifeFirstBitmap = lifeSecondBitmap
-                    Glide.with(this).load(lifeFirstBitmap).into(iv_guide_life_pic_one)
-                    tv_guide_life_pic_one.text = lifeFirstPicText
-
-                    haveSecondPic = false
-                    lifeSecondPicText = ""
-                    lifeSecondBitmap = null
-                    iv_guide_life_pic_two_icon.visibility = View.VISIBLE
-                    tv_guide_life_pic_two.text = "添加描述"
-
-                    FileUtils.delete(mLifeSecondPath)
-
-                }
-            } else {
-                // 只有一张图
-
-                rl_guide_life_pic_one.visibility = View.GONE
-                rl_guide_life_pic_more.visibility = View.GONE
-                nsv_guide_life_pic.visibility = View.GONE
-
-                nsv_guide_life_default.visibility = View.VISIBLE
-
-                haveFirstPic = false
-                lifeFirstPicText = ""
-                lifeFirstBitmap = null
-                iv_guide_life_pic_one_icon.visibility = View.VISIBLE
-                tv_guide_life_pic_one.text = "添加描述"
-
-                FileUtils.delete(mLifeFirstPath)
-
-                isFinishLife = false
-                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-
-
-            }
-
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this))
+                .show()
         }
 
         ll_guide_life_pic_one.setOnClickListener {
@@ -1228,6 +1238,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
             intent.putExtra("path", mLifeFirstPath)
+            intent.putExtra("introduce", lifeFirstPicText)
             startActivityForResult(intent, 111)
 
         }
@@ -1235,41 +1246,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         iv_guide_life_pic_two_delete.setOnClickListener {
             // 需要判断一下数据，分为是否有第三张图，若无则直接删除，若有则向上顺移第三张图
 
-            if (haveThirdPic) {
-                // 有第三张图
+            lifeDeleteMode = "two"
 
-                rl_guide_life_pic_three.visibility = View.GONE
-                rl_guide_life_pic_more.visibility = View.VISIBLE
-
-                FileUtils.delete(mLifeSecondPath)
-                lifeThirdBitmap?.let { it1 -> saveBitmap(it1, mLifeSecondPath) }
-
-                lifeSecondPicText = lifeThirdPicText
-                lifeSecondBitmap = lifeThirdBitmap
-                Glide.with(this).load(lifeSecondBitmap).into(iv_guide_life_pic_two)
-                tv_guide_life_pic_two.text = lifeSecondPicText
-
-                haveThirdPic = false
-                lifeThirdPicText = ""
-                lifeThirdBitmap = null
-                iv_guide_life_pic_three_icon.visibility = View.VISIBLE
-                tv_guide_life_pic_three.text = "添加描述"
-
-                FileUtils.delete(mLifeThirdPath)
-
-            } else {
-                // 没有第三张图
-
-                rl_guide_life_pic_two.visibility = View.GONE
-
-                haveSecondPic = false
-                lifeSecondPicText = ""
-                lifeSecondBitmap = null
-                iv_guide_life_pic_two_icon.visibility = View.VISIBLE
-                tv_guide_life_pic_two.text = "添加描述"
-
-                FileUtils.delete(mLifeSecondPath)
-            }
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this))
+                .show()
 
         }
 
@@ -1278,23 +1263,22 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
             intent.putExtra("path", mLifeSecondPath)
+            intent.putExtra("introduce", lifeSecondPicText)
             startActivityForResult(intent, 222)
 
         }
 
         iv_guide_life_pic_three_delete.setOnClickListener {
 
-            rl_guide_life_pic_three.visibility = View.GONE
-            rl_guide_life_pic_more.visibility = View.VISIBLE
+            lifeDeleteMode = "three"
 
-            mLifeThirdPath = ""
-            haveThirdPic = false
-            lifeThirdPicText = ""
-            lifeThirdBitmap = null
-            iv_guide_life_pic_three_icon.visibility = View.VISIBLE
-            tv_guide_life_pic_three.text = "添加描述"
-
-            FileUtils.delete(mLifeThirdPath)
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this))
+                .show()
 
         }
 
@@ -1303,6 +1287,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
             intent.putExtra("path", mLifeThirdPath)
+            intent.putExtra("introduce", lifeThirdPicText)
             startActivityForResult(intent, 333)
 
         }
@@ -1395,7 +1380,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         })
 
-
         // -------------------  我心目中的TA界面  -----------------
 
         et_guide_ideal_content.addTextChangedListener(object : TextWatcher {
@@ -1440,7 +1424,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             }
 
         })
-
 
         // ------------------- 实名认证界面  -----------------
 
@@ -1532,6 +1515,108 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     }
 
 
+    // 百度人脸采集sdk设置
+    private fun initLicense() {
+        val success = setFaceConfig()
+        if (!success) {
+            ToastUtils.showShort("初始化失败 = json配置文件解析出错")
+            return
+        }
+        // 为了android和ios 区分授权，appId=appname_face_android ,其中appname为申请sdk时的应用名
+        // 应用上下文
+        // 申请License取得的APPID
+        // assets目录下License文件名
+        FaceSDKManager.getInstance().initialize(this, "hunlian-android-face-android",
+            "idl-license.face-android", object : IInitCallback {
+                override fun initSuccess() {
+                    runOnUiThread {
+                        Log.e("guo", "初始化成功")
+                        ToastUtils.showShort("初始化成功")
+//                        mIsInitSuccess = true
+                    }
+                }
+
+                override fun initFailure(errCode: Int, errMsg: String) {
+                    runOnUiThread {
+                        Log.i("guo", "初始化失败 = $errCode $errMsg")
+                        ToastUtils.showShort("初始化失败 = $errCode, $errMsg")
+//                        mIsInitSuccess = false
+                    }
+                }
+            })
+    }
+
+    /**
+     * 参数配置方法
+     */
+    private fun setFaceConfig(): Boolean {
+        val config = FaceSDKManager.getInstance().faceConfig
+        // SDK初始化已经设置完默认参数（推荐参数），也可以根据实际需求进行数值调整
+        // 质量等级（0：正常、1：宽松、2：严格、3：自定义）
+        // 获取保存的质量等级
+
+        val qualityLevel = 0
+
+        // 根据质量等级获取相应的质量值（注：第二个参数要与质量等级的set方法参数一致）
+        val manager: QualityConfigManager = QualityConfigManager.getInstance()
+        manager.readQualityFile(this.applicationContext, qualityLevel)
+        val qualityConfig: QualityConfig = manager.config ?: return false
+        // 设置模糊度阈值
+        config.blurnessValue = qualityConfig.blur
+        // 设置最小光照阈值（范围0-255）
+        config.brightnessValue = qualityConfig.minIllum
+        // 设置最大光照阈值（范围0-255）
+        config.brightnessMaxValue = qualityConfig.maxIllum
+        // 设置左眼遮挡阈值
+        config.occlusionLeftEyeValue = qualityConfig.leftEyeOcclusion
+        // 设置右眼遮挡阈值
+        config.occlusionRightEyeValue = qualityConfig.rightEyeOcclusion
+        // 设置鼻子遮挡阈值
+        config.occlusionNoseValue = qualityConfig.noseOcclusion
+        // 设置嘴巴遮挡阈值
+        config.occlusionMouthValue = qualityConfig.mouseOcclusion
+        // 设置左脸颊遮挡阈值
+        config.occlusionLeftContourValue = qualityConfig.leftContourOcclusion
+        // 设置右脸颊遮挡阈值
+        config.occlusionRightContourValue = qualityConfig.rightContourOcclusion
+        // 设置下巴遮挡阈值
+        config.occlusionChinValue = qualityConfig.chinOcclusion
+        // 设置人脸姿态角阈值
+        config.headPitchValue = qualityConfig.pitch
+        config.headYawValue = qualityConfig.yaw
+        config.headRollValue = qualityConfig.roll
+        // 设置可检测的最小人脸阈值
+        config.minFaceSize = FaceEnvironment.VALUE_MIN_FACE_SIZE
+        // 设置可检测到人脸的阈值
+        config.notFaceValue = FaceEnvironment.VALUE_NOT_FACE_THRESHOLD
+        // 设置闭眼阈值
+        config.eyeClosedValue = FaceEnvironment.VALUE_CLOSE_EYES
+        // 设置图片缓存数量
+        config.cacheImageNum = FaceEnvironment.VALUE_CACHE_IMAGE_NUM
+        // 设置活体动作，通过设置list，LivenessTypeEunm.Eye, LivenessTypeEunm.Mouth,
+        // LivenessTypeEunm.HeadUp, LivenessTypeEunm.HeadDown, LivenessTypeEunm.HeadLeft,
+        // LivenessTypeEunm.HeadRight
+        config.livenessTypeList = livenessList
+        // 设置动作活体是否随机
+        config.isLivenessRandom = true
+        // 设置开启提示音
+        config.isSound = false
+        // 原图缩放系数
+        config.scale = FaceEnvironment.VALUE_SCALE
+        // 抠图宽高的设定，为了保证好的抠图效果，建议高宽比是4：3
+        config.cropHeight = FaceEnvironment.VALUE_CROP_HEIGHT
+        config.cropWidth = FaceEnvironment.VALUE_CROP_WIDTH
+        // 抠图人脸框与背景比例
+        config.enlargeRatio = FaceEnvironment.VALUE_CROP_ENLARGERATIO
+        // 检测超时设置
+        config.timeDetectModule = FaceEnvironment.TIME_DETECT_MODULE
+        // 检测框远近比率
+        config.faceFarRatio = FaceEnvironment.VALUE_FAR_RATIO
+        config.faceClosedRatio = FaceEnvironment.VALUE_CLOSED_RATIO
+        FaceSDKManager.getInstance().faceConfig = config
+        return true
+    }
+
     //---------------------- 职业收入情况 ----------------------
 
     private fun getIndustry() {
@@ -1599,16 +1684,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     }
 
-    // 定位初始化
-    private fun initLocation() {
-        // 定位初始化
-        mLocationClient.registerLocationListener(myListener)
-        val option = LocationClientOption()
-        option.setIsNeedAddress(true);
-        option.setNeedNewVersionRgc(true);
-        mLocationClient.locOption = option;
-        mLocationClient.start()
-    }
 
     // -------------------  择偶条件界面  -----------------
 
@@ -1700,54 +1775,40 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     startPhotoCropActivity(Uri.fromFile(temp))
                 }
                 3 -> {
-                    val temp = File(mTempLifePath)
 
-                    if (!haveFirstPic) {
+                    if (data != null) {
 
-                        val intent =
-                            Intent(this@DetailInfoActivity, LifeIntroduceActivity::class.java)
-                        intent.putExtra("path", mTempLifePath)
-                        startActivityForResult(intent, 111)
+                        val bundle = data.extras
+                        val bitmap: Bitmap = bundle?.get("data") as Bitmap
 
-                        lifeMode = "one"
-                    } else if (!haveSecondPic) {
+                        lifeBitmap = bitmap
 
-                        val intent =
-                            Intent(this@DetailInfoActivity, LifeIntroduceActivity::class.java)
-                        intent.putExtra("path", mTempLifePath)
-                        startActivityForResult(intent, 222)
+                        ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
 
-                        lifeMode = "two"
-                    } else if (!haveThirdPic) {
+                        lifeChoosePath = mTempLifePath
 
-                        val intent =
-                            Intent(this@DetailInfoActivity, LifeIntroduceActivity::class.java)
-                        intent.putExtra("path", mTempLifePath)
-                        startActivityForResult(intent, 333)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
-                        lifeMode = "three"
+                        doFaceDetectPresent.doFaceDetect(map)
+
+                        // 显示加载动画
+                        ll_guide_detail_loading.visibility = View.VISIBLE
+
                     }
 
                 }
                 UCrop.REQUEST_CROP -> {
 
-                    // 此处做一个判断，当是头像、我的生活时，分别走不同的回调
+                    // 只走头像的回调
+                    if (data != null) {
+                        ll_guide_detail_loading.visibility = View.VISIBLE
 
-                    if (isPhoto) {
-                        if (data != null) {
-                            ll_guide_detail_loading.visibility = View.VISIBLE
-
-                            handlePhotoCropResult(data)
-                        };
-                    } else {
-
-                        if (data != null) {
-
-                            ll_guide_detail_loading.visibility = View.VISIBLE
-
-                            handleLifeCropResult(data, lifeMode)
-                        }
-                    }
+                        handlePhotoCropResult(data)
+                    };
 
                 }
                 UCrop.RESULT_ERROR -> {
@@ -1759,25 +1820,82 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 111 -> {
                     // 生活第一张图的介绍
                     if (data != null) {
+
+                        nsv_guide_life_default.visibility = View.GONE
+                        nsv_guide_life_pic.visibility = View.VISIBLE
+
+                        rl_guide_life_pic_one.visibility = View.VISIBLE
+                        rl_guide_life_pic_more.visibility = View.VISIBLE
+
+                        isFinishLife = true
+
+                        Glide.with(this).load(lifeBitmap).into(iv_guide_life_pic_one)
+
+                        haveFirstPic = true
+
+                        lifeFirstBitmap = lifeBitmap
+
+                        FileUtils.delete(mLifeFirstPath)
+
+                        lifeFirstBitmap?.let { saveBitmap(it, mLifeFirstPath) }
+
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+
                         lifeFirstPicText = data.getStringExtra("introduce").toString()
                         tv_guide_life_pic_one.text = lifeFirstPicText
                         iv_guide_life_pic_one_icon.visibility = View.GONE
+
                     }
 
                 }
                 222 -> {
                     if (data != null) {
+
+                        rl_guide_life_pic_two.visibility = View.VISIBLE
+
+                        isFinishLife = true
+
+                        Glide.with(this).load(lifeBitmap).into(iv_guide_life_pic_two)
+
+                        haveSecondPic = true
+
+                        lifeSecondBitmap = lifeBitmap
+
+                        FileUtils.delete(mLifeSecondPath)
+
+                        lifeSecondBitmap?.let { saveBitmap(it, mLifeSecondPath) }
+
                         lifeSecondPicText = data.getStringExtra("introduce").toString()
                         tv_guide_life_pic_two.text = lifeSecondPicText
                         iv_guide_life_pic_two_icon.visibility = View.GONE
+
                     }
+
                 }
                 333 -> {
                     if (data != null) {
+
+                        rl_guide_life_pic_three.visibility = View.VISIBLE
+                        rl_guide_life_pic_more.visibility = View.GONE
+
+                        isFinishLife = true
+
+                        Glide.with(this).load(lifeBitmap).into(iv_guide_life_pic_three)
+
+                        haveThirdPic = true
+
+                        lifeThirdBitmap = lifeBitmap
+
+                        FileUtils.delete(mLifeThirdPath)
+
+                        lifeThirdBitmap?.let { saveBitmap(it, mLifeThirdPath) }
+
                         lifeThirdPicText = data.getStringExtra("introduce").toString()
                         tv_guide_life_pic_three.text = lifeThirdPicText
                         iv_guide_life_pic_three_icon.visibility = View.GONE
+
                     }
+
                 }
 
             }
@@ -1804,32 +1922,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         // 如果不开启，用户不能拖动选框，只能缩放图片
 //        options.setFreeStyleCropEnabled(true);
         mDestination?.let {
-            UCrop.of<Any>(source, it) // 长宽比
-                .withAspectRatio(1f, 1f) // 图片大小
-                .withMaxResultSize(512, 512) // 配置参数
-                .withOptions(options)
-                .start(this)
-        }
-
-    }
-
-    // 裁剪图片方法实现 ( 我的生活界面 )
-    private fun startLifeCropActivity(source: Uri, mLifeDestination: Uri) {
-        val options = UCrop.Options()
-        // 修改标题栏颜色
-        options.setToolbarColor(Color.parseColor("#FFFFFF"))
-        // 修改状态栏颜色
-        options.setStatusBarColor(Color.parseColor("#0F0F0F"))
-        // 隐藏底部工具
-        options.setHideBottomControls(true)
-        // 图片格式
-        options.setCompressionFormat(Bitmap.CompressFormat.JPEG)
-        // 设置图片压缩质量
-        options.setCompressionQuality(100)
-        // 是否让用户调整范围(默认false)，如果开启，可能会造成剪切的图片的长宽比不是设定的
-        // 如果不开启，用户不能拖动选框，只能缩放图片
-//        options.setFreeStyleCropEnabled(true);
-        mLifeDestination.let {
             UCrop.of<Any>(source, it) // 长宽比
                 .withAspectRatio(1f, 1f) // 图片大小
                 .withMaxResultSize(512, 512) // 配置参数
@@ -1870,39 +1962,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         }
     }
 
-    // 处理剪切成功的返回值 ( 我的生活界面 )
-    private fun handleLifeCropResult(result: Intent, number: String) {
-
-        deleteTempPhotoFile()
-
-        val resultUri = UCrop.getOutput(result)
-        if (null != resultUri) {
-            var bitmap: Bitmap? = null
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, resultUri)
-            } catch (e: FileNotFoundException) {
-                e.printStackTrace()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-
-            lifeBitmap = bitmap
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ACCESS_TOKEN] =
-                "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
-            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-            map[Contents.IMAGE] = bitmapToBase64(bitmap)
-
-            doFaceDetectPresent.doFaceDetect(map)
-
-
-        } else {
-            ToastUtils.showShort("无法剪切选择图片")
-        }
-    }
-
     // 处理剪切失败的返回值
     private fun handlePhotoCropError(result: Intent) {
         deleteTempPhotoFile()
@@ -1927,14 +1986,37 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         return targetPath
     }
 
-
     private fun judgeLoading() {
         if (photoCompleteLoad && demandCompleteLoad && moreInfoCompleteLoad && baseInfoCompleteLoad) {
             ToastUtils.showShort("资料全部上传完成，跳转至首页")
 
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
 
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            this.finish()
+
         }
+    }
+
+    // 取出第一个汉字，然后添加星号
+
+    private fun hideName(name: String): String {
+        var newName = name.substring(0, 1)
+        for (i in 0.until(name.length - 1)) {
+            newName = "$newName*"
+        }
+        return newName
+    }
+
+    // 取出前6个数字，然后添加星号
+
+    private fun hideId(name: String): String {
+        var newId = name.substring(0, 6)
+        for (i in 0.until(name.length - 6)) {
+            newId = "$newId*"
+        }
+        return newId
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -1943,7 +2025,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         }
         return super.onKeyDown(keyCode, event)
     }
-
 
     override fun onLoading() {
 
@@ -2000,128 +2081,205 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     }
 
-    override fun onDoIdentityVerifySuccess(accessTokenBean: AccessTokenBean?) {
+    override fun onDoIdentityVerifySuccess(identityVerifyBean: IdentityVerifyBean) {
 
-        ToastUtils.showShort("身份证验证通过，准备开始传递数据")
+        if (identityVerifyBean.error_msg == "SUCCESS") {
 
-        var workProvinceNum = "" // 工作省份编码
-        var workCityNum = ""        // 工作城市编码
+            XXPermissions.with(this)
+                .permission(Permission.CAMERA)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                        val intent =
+                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        startActivity(intent)
+                    }
 
-        if (isJobLocal) {
-            workProvinceNum = localCityOneCode
-            workCityNum = localCityTwoCode
+                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                        super.onDenied(permissions, never)
+                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
+                    }
+                })
 
         } else {
-            workProvinceNum = cityIDFirstList[jobCityFirst]
-            workCityNum = cityIDSecondList[jobCitySecond]
-        }
 
-        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 1)
-
-
-        val baseInfo =
-            " {\"education\":${eduPosition + 1}, " +
-                    "\"school_name\":      \"$eduSchool\"," +
-                    " \"industry_str\":    \"${jobFirstList[jobFirst]}\"," +
-                    " \"occupation_num\":    ${jobIDSecondList[jobSecond]}, " +
-                    "\"occupation_str\":   \"${jobSecondList[jobSecond]}\", " +
-                    "\"work_province_num\":\"$workProvinceNum\"" +
-                    " \"work_city_num\":   \"$workCityNum\", " +
-                    " \"work_city_str\":     ${citySecondList[jobCitySecond]}, " +
-                    " \"hometown\":        \"$incomePosition\"," +
-                    "\"salary_range\":       $incomePosition," +
-                    "\"introduce_self\":   \"$introduceText\"," +
-                    "\"daily_hobbies\":    \"$hobbyText\"," +
-                    "\"ta_in_my_mind\":    \"$idealText\"}"
-
-        val moreInfo =
-            " {\"user_sex\": $sex, " +
-                    "\"love_target\":       $target," +
-                    " \"target_show\":    $targetVisibilityPosition}"
-
-
-        val demandInfo =
-            " {\"user_sex\": $sex, " +
-                    "\"age_min\":     ${targetAgeMin}," +
-                    " \"age_max\":    ${targetAgeMax}}"
-
-
-        val id = SPStaticUtils.getString(Constant.USER_ID)
-
-        val baseInfoMap: MutableMap<String, String> = TreeMap()
-        baseInfoMap[Contents.USER_ID] = id
-        baseInfoMap[Contents.BASE_UPDATE] = baseInfo
-        updateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
-        val moreInfoMap: MutableMap<String, String> = TreeMap()
-        moreInfoMap[Contents.USER_ID] = id
-        moreInfoMap[Contents.MORE_UPDATE] = moreInfo
-        updateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
-
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = id
-        demandInfoMap[Contents.DEMAND_UPDATE] = demandInfo
-        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
-
-        // 上传头像
-        val uploadPhotoMap: MutableMap<String, String> = TreeMap()
-        uploadPhotoMap[Contents.USER_ID] = id
-        uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
-        uploadPhotoMap[Contents.FILE_TYPE] = "png"
-        uploadPhotoMap[Contents.FILE_NAME] = "photoPic.png"
-        uploadPhotoMap[Contents.CONTENT] = "0"
-        uploadPhotoMap[Contents.KIND] = 1.toString()
-        uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
-
-        if (lifeFirstPicText == "") {
-            lifeFirstPicText = 0.toString()
-        }
-
-        // 上传第一张生活照
-        val uploadLifeMap: MutableMap<String, String> = TreeMap()
-        uploadLifeMap[Contents.USER_ID] = id
-        uploadLifeMap[Contents.IMAGE_URL] = mLifeFirstUrl
-        uploadLifeMap[Contents.FILE_TYPE] = "png"
-        uploadLifeMap[Contents.FILE_NAME] = "lifeFirstPic.png"
-        uploadLifeMap[Contents.CONTENT] = lifeFirstPicText
-        uploadLifeMap[Contents.KIND] = 2.toString()
-        uploadPhotoPresent.doUploadPhoto(uploadLifeMap)
-
-        if (haveSecondPic) {
-
-            if (lifeSecondPicText == "") {
-                lifeSecondPicText = 0.toString()
+            if (identityVerifyBean.error_code == 222351) {
+                ToastUtils.showShort("身份证号与姓名不匹配或身份证号不存在")
+            } else {
+                ToastUtils.showShort(identityVerifyBean.error_msg)
             }
 
-            val uploadLifeMap: MutableMap<String, String> = TreeMap()
-            uploadLifeMap[Contents.USER_ID] = id
-            uploadLifeMap[Contents.IMAGE_URL] = mLifeSecondUrl
-            uploadLifeMap[Contents.FILE_TYPE] = "png"
-            uploadLifeMap[Contents.FILE_NAME] = "lifeSecondPic.png"
-            uploadLifeMap[Contents.CONTENT] = lifeSecondPicText
-            uploadLifeMap[Contents.KIND] = 2.toString()
-            uploadPhotoPresent.doUploadPhoto(uploadLifeMap)
+            XXPermissions.with(this)
+                .permission(Permission.CAMERA)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                        val intent =
+                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        startActivity(intent)
+                    }
+
+                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                        super.onDenied(permissions, never)
+                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
+                    }
+                })
+
         }
 
-        if (haveThirdPic) {
-
-            if (lifeThirdPicText == "") {
-                lifeThirdPicText = 0.toString()
-            }
-
-            val uploadLifeMap: MutableMap<String, String> = TreeMap()
-            uploadLifeMap[Contents.USER_ID] = id
-            uploadLifeMap[Contents.IMAGE_URL] = mLifeThirdUrl
-            uploadLifeMap[Contents.FILE_TYPE] = "png"
-            uploadLifeMap[Contents.FILE_NAME] = "lifeThirdPic.png"
-            uploadLifeMap[Contents.CONTENT] = lifeThirdPicText
-            uploadLifeMap[Contents.KIND] = 2.toString()
-            uploadPhotoPresent.doUploadPhoto(uploadLifeMap)
-        }
+//           if (identityVerifyBean.error_msg == "SUCCESS") {
+//
+//            ToastUtils.showShort("身份证验证通过，准备开始传递数据")
+//
+//            SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, true)
+//
+//            SPStaticUtils.put(Constant.ME_TURE_NAME, hideName(name))
+//            SPStaticUtils.put(Constant.ME_TURE_ID, hideId(identityCode))
+//
+//            var workProvinceNum = "" // 工作省份编码
+//            var workCityNum = ""        // 工作城市编码
+//
+//            if (isJobLocal) {
+//                workProvinceNum = localCityOneCode
+//                workCityNum = localCityTwoCode
+//
+//            } else {
+//                workProvinceNum = cityIDFirstList[jobCityFirst]
+//                workCityNum = cityIDSecondList[jobCitySecond]
+//            }
+//
+//            val sex = SPStaticUtils.getInt(Constant.ME_SEX, 1)
+//
+//
+//            val baseInfo =
+//                " {\"education\":${eduPosition + 1}, " +
+//                        "\"school_name\":      \"$eduSchool\"," +
+//                        " \"industry_str\":    \"${jobFirstList[jobFirst]}\"," +
+//                        " \"occupation_num\":    ${jobIDSecondList[jobSecond]}, " +
+//                        "\"occupation_str\":   \"${jobSecondList[jobSecond]}\", " +
+//                        "\"work_province_num\":\"$workProvinceNum\"" +
+//                        " \"work_city_num\":   \"$workCityNum\", " +
+//                        " \"work_city_str\":     ${citySecondList[jobCitySecond]}, " +
+//                        " \"hometown\":        \"$incomePosition\"," +
+//                        "\"salary_range\":       $incomePosition," +
+//                        "\"introduce_self\":   \"$introduceText\"," +
+//                        "\"daily_hobbies\":    \"$hobbyText\"," +
+//                        "\"ta_in_my_mind\":    \"$idealText\"}"
+//
+//            val moreInfo =
+//                " {\"user_sex\": $sex, " +
+//                        "\"love_target\":       $target," +
+//                        " \"target_show\":    $targetVisibilityPosition}"
+//
+//
+//            val demandInfo =
+//                " {\"user_sex\": $sex, " +
+//                        "\"age_min\":     ${targetAgeMin}," +
+//                        " \"age_max\":    ${targetAgeMax}}"
+//
+//
+//            val id = SPStaticUtils.getString(Constant.USER_ID)
+//
+//            val baseInfoMap: MutableMap<String, String> = TreeMap()
+//            baseInfoMap[Contents.USER_ID] = id
+//            baseInfoMap[Contents.BASE_UPDATE] = baseInfo
+//            updateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+//
+//            val moreInfoMap: MutableMap<String, String> = TreeMap()
+//            moreInfoMap[Contents.USER_ID] = id
+//            moreInfoMap[Contents.MORE_UPDATE] = moreInfo
+//            updateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
+//
+//            val demandInfoMap: MutableMap<String, String> = TreeMap()
+//            demandInfoMap[Contents.USER_ID] = id
+//            demandInfoMap[Contents.DEMAND_UPDATE] = demandInfo
+//            updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+//
+//            // 上传头像
+//            val uploadPhotoMap: MutableMap<String, String> = TreeMap()
+//            uploadPhotoMap[Contents.USER_ID] = id
+//            uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
+//            uploadPhotoMap[Contents.FILE_TYPE] = "png"
+//            uploadPhotoMap[Contents.FILE_NAME] = "photoPic.png"
+//            uploadPhotoMap[Contents.CONTENT] = "0"
+//            uploadPhotoMap[Contents.KIND] = 1.toString()
+//            uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
+//
+//            if (lifeFirstPicText == "") {
+//                lifeFirstPicText = 0.toString()
+//            }
+//
+//            // 上传第一张生活照
+//            val uploadLifeMap: MutableMap<String, String> = TreeMap()
+//            uploadLifeMap[Contents.USER_ID] = id
+//            uploadLifeMap[Contents.IMAGE_URL] = mLifeFirstUrl
+//            uploadLifeMap[Contents.FILE_TYPE] = "png"
+//            uploadLifeMap[Contents.FILE_NAME] = "lifeFirstPic.png"
+//            uploadLifeMap[Contents.CONTENT] = lifeFirstPicText
+//            uploadLifeMap[Contents.KIND] = 2.toString()
+//            uploadPhotoPresent.doUploadPhoto(uploadLifeMap)
+//
+//            if (haveSecondPic) {
+//
+//                if (lifeSecondPicText == "") {
+//                    lifeSecondPicText = 0.toString()
+//                }
+//
+//                val uploadLifeMap: MutableMap<String, String> = TreeMap()
+//                uploadLifeMap[Contents.USER_ID] = id
+//                uploadLifeMap[Contents.IMAGE_URL] = mLifeSecondUrl
+//                uploadLifeMap[Contents.FILE_TYPE] = "png"
+//                uploadLifeMap[Contents.FILE_NAME] = "lifeSecondPic.png"
+//                uploadLifeMap[Contents.CONTENT] = lifeSecondPicText
+//                uploadLifeMap[Contents.KIND] = 2.toString()
+//                uploadPhotoPresent.doUploadPhoto(uploadLifeMap)
+//            }
+//
+//            if (haveThirdPic) {
+//
+//                if (lifeThirdPicText == "") {
+//                    lifeThirdPicText = 0.toString()
+//                }
+//
+//                val uploadLifeMap: MutableMap<String, String> = TreeMap()
+//                uploadLifeMap[Contents.USER_ID] = id
+//                uploadLifeMap[Contents.IMAGE_URL] = mLifeThirdUrl
+//                uploadLifeMap[Contents.FILE_TYPE] = "png"
+//                uploadLifeMap[Contents.FILE_NAME] = "lifeThirdPic.png"
+//                uploadLifeMap[Contents.CONTENT] = lifeThirdPicText
+//                uploadLifeMap[Contents.KIND] = 2.toString()
+//                uploadPhotoPresent.doUploadPhoto(uploadLifeMap)
+//            }
+//
+//        } else {
+//
+//            Log.i("guo", "身份证验证未通过，准备开始传递数据")
+//
+//            if (identityVerifyBean.error_code == 222351) {
+//                ToastUtils.showShort("身份证号与姓名不匹配或身份证号不存在")
+//            } else {
+//                ToastUtils.showShort(identityVerifyBean.error_msg)
+//            }
+//        }
 
     }
 
     override fun onDoIdentityVerifyError() {
+
+        ToastUtils.showShort("身份验证接口暂不可用")
+
+        XXPermissions.with(this)
+            .permission(Permission.CAMERA)
+            .request(object : OnPermissionCallback {
+                override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                    val intent =
+                        Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                    startActivity(intent)
+                }
+
+                override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                    super.onDenied(permissions, never)
+                    ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
+                }
+            })
 
     }
 
@@ -2156,119 +2314,44 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         } else {
 
-            when (lifeMode) {
-                "one" -> {
+
+            if (faceDetectBean.conclusion != "合规") {
+                ToastUtils.showShort(faceDetectBean.data[0].msg)
+            } else {
+
+                // 判断是否是拍照 还是 相册选择
+
+                if (!haveFirstPic) {
+
+                    val intent = Intent(this@DetailInfoActivity, LifeIntroduceActivity::class.java)
+
+//                    if (isCamera) {
+//                        intent.putExtra("path", mTempLifePath)
+//                    } else {
+//                        intent.putExtra("path", lifeChoosePath)
+//                    }
 
 
-                    nsv_guide_life_default.visibility = View.GONE
-                    nsv_guide_life_pic.visibility = View.VISIBLE
-
-                    rl_guide_life_pic_one.visibility = View.VISIBLE
-                    rl_guide_life_pic_more.visibility = View.VISIBLE
-
-                    isFinishLife = true
-
-                    Glide.with(this).load(lifeBitmap).into(iv_guide_life_pic_one)
-
-                    haveFirstPic = true
-
-                    lifeFirstBitmap = lifeBitmap
-
-                    FileUtils.delete(mLifeFirstPath)
-
-                    lifeFirstBitmap?.let { saveBitmap(it, mLifeFirstPath) }
-
-
-                    tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-
-                    if (faceDetectBean.conclusion != "合规") {
-                        ToastUtils.showShort(faceDetectBean.data[0].msg)
-                    }
-
-                    val intent = Intent(this, LifeIntroduceActivity::class.java)
-                    intent.putExtra("path", mLifeFirstPath)
+                    intent.putExtra("path", lifeChoosePath)
+                    intent.putExtra("introduce", "")
                     startActivityForResult(intent, 111)
 
-                }
-                "two" -> {
+                } else if (!haveSecondPic) {
 
-                    rl_guide_life_pic_two.visibility = View.VISIBLE
-
-                    isFinishLife = true
-
-                    Glide.with(this).load(lifeBitmap).into(iv_guide_life_pic_two)
-
-                    haveSecondPic = true
-
-                    lifeSecondBitmap = lifeBitmap
-
-                    FileUtils.delete(mLifeSecondPath)
-
-                    lifeSecondBitmap?.let { saveBitmap(it, mLifeSecondPath) }
-
-                    if (faceDetectBean.conclusion != "合规") {
-                        ToastUtils.showShort(faceDetectBean.data[0].msg)
-                    }
-
-                    val intent = Intent(this, LifeIntroduceActivity::class.java)
-                    intent.putExtra("path", mLifeSecondPath)
+                    val intent = Intent(this@DetailInfoActivity, LifeIntroduceActivity::class.java)
+                    intent.putExtra("path", lifeChoosePath)
+                    intent.putExtra("introduce", "")
                     startActivityForResult(intent, 222)
 
-                }
-                "three" -> {
+                } else if (!haveThirdPic) {
 
-                    rl_guide_life_pic_three.visibility = View.VISIBLE
-
-                    rl_guide_life_pic_more.visibility = View.GONE
-
-                    isFinishLife = true
-
-                    Glide.with(this).load(lifeBitmap).into(iv_guide_life_pic_three)
-
-                    haveThirdPic = true
-
-                    lifeThirdBitmap = lifeBitmap
-
-                    FileUtils.delete(mLifeThirdPath)
-
-                    lifeThirdBitmap?.let { saveBitmap(it, mLifeThirdPath) }
-
-                    if (faceDetectBean.conclusion != "合规") {
-                        ToastUtils.showShort(faceDetectBean.data[0].msg)
-                    }
-
-                    val intent = Intent(this, LifeIntroduceActivity::class.java)
-                    intent.putExtra("path", mLifeThirdPath)
+                    val intent = Intent(this@DetailInfoActivity, LifeIntroduceActivity::class.java)
+                    intent.putExtra("path", lifeChoosePath)
+                    intent.putExtra("introduce", "")
                     startActivityForResult(intent, 333)
 
                 }
-            }
 
-            if (!haveFirstPic) {
-
-//                val intent = Intent(this@DetailInfoActivity,
-//                    LifeIntroduceActivity::class.java)
-//                intent.putExtra("path", result[0].realPath)
-//                startActivityForResult(intent, 111)
-
-                lifeMode = "one"
-
-            } else if (!haveSecondPic) {
-
-//                val intent = Intent(this@DetailInfoActivity,
-//                    LifeIntroduceActivity::class.java)
-//                intent.putExtra("path", result[0].realPath)
-//                startActivityForResult(intent, 222)
-
-                lifeMode = "two"
-            } else if (!haveThirdPic) {
-
-//                val intent = Intent(this@DetailInfoActivity,
-//                    LifeIntroduceActivity::class.java)
-//                intent.putExtra("path", result[0].realPath)
-//                startActivityForResult(intent, 333)
-
-                lifeMode = "three"
             }
 
         }
@@ -2347,13 +2430,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             //点击事件
             ToastUtils.showShort("此处显示人脸识别的隐私政策")
         }
-    }
-
-
-    inner class LoadingDialog(context: Context) : FullScreenPopupView(context) {
-
-        override fun getInnerLayoutId(): Int = R.layout.dialog_loading
-
     }
 
 //---------------------- 教育信息 ----------------------
@@ -2757,94 +2833,103 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 dismiss()
             }
 
-            val localtion = findViewById<LinearLayout>(R.id.ll_address_jobcity_location)
-            val detail = findViewById<LinearLayout>(R.id.ll_address_jobcity_location_detail)
-            val city = findViewById<TextView>(R.id.tv_address_jobcity_location_detail)
+            val city = findViewById<TextView>(R.id.tv_address_jobcity_location)
+
+            if (localCityTwo != "") {
+                city.text = localCityTwo
+            }
 
             findViewById<LinearLayout>(R.id.ll_address_jobcity_location).setOnClickListener {
 
-                XXPermissions.with(this@DetailInfoActivity)
-                    .permission(Permission.ACCESS_COARSE_LOCATION)
-                    .permission(Permission.ACCESS_FINE_LOCATION)
-                    .request(object : OnPermissionCallback {
-                        override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                if (localCityTwo != "") {
 
-                            val mLocationClient = LocationClient(context)
+                    chooseJobCity = true
 
-                            mLocationClient.registerLocationListener(object :
-                                BDAbstractLocationListener() {
-                                override fun onReceiveLocation(location: BDLocation) {
-                                    Log.i("guo", "定位开始")
-                                    localCityOne = location.province
-                                    localCityTwo = location.city
-                                    localCityThree = location.district
+                    isJobLocal = true
 
-                                    for (i in 0.until(cityFirstList.size)) {
-                                        if (cityFirstList[i] == location.province) {
-                                            localCityOneCode = cityIDFirstList[i]
-                                        }
-                                        getJobCitySecondList(i)
-                                        for (j in 0.until(citySecondList.size)) {
-                                            if (citySecondList[j] == location.city) {
-                                                localCityTwoCode = cityIDSecondList[j]
+                    tv_guide_address_jobcity.text = localCityTwo
+
+                    tv_guide_address_jobcity.setTextColor(Color.parseColor("#0F0F0F"))
+
+                    if (chooseJobCity && chooseHomeCity) {
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    } else {
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                    }
+
+                    dismiss()
+
+                } else {
+
+                    XXPermissions.with(this@DetailInfoActivity)
+                        .permission(Permission.ACCESS_COARSE_LOCATION)
+                        .permission(Permission.ACCESS_FINE_LOCATION)
+                        .request(object : OnPermissionCallback {
+                            override fun onGranted(
+                                permissions: MutableList<String>?,
+                                all: Boolean,
+                            ) {
+
+                                val mLocationClient = LocationClient(context)
+
+                                mLocationClient.registerLocationListener(object :
+                                    BDAbstractLocationListener() {
+                                    override fun onReceiveLocation(location: BDLocation) {
+                                        Log.i("guo", "定位开始")
+                                        localCityOne = location.province
+                                        localCityTwo = location.city
+                                        localCityThree = location.district
+
+                                        for (i in 0.until(cityFirstList.size)) {
+                                            if (cityFirstList[i] == location.province) {
+                                                localCityOneCode = cityIDFirstList[i]
+                                            }
+                                            getJobCitySecondList(i)
+                                            for (j in 0.until(citySecondList.size)) {
+                                                if (citySecondList[j] == location.city) {
+                                                    localCityTwoCode = cityIDSecondList[j]
+                                                }
                                             }
                                         }
-                                    }
 
-
-                                    if (localtion != null) {
-                                        localtion.visibility = View.GONE
-                                    }
-                                    if (detail != null) {
-                                        detail.visibility = View.VISIBLE
-                                    }
-
-                                    if (city != null) {
                                         city.text = localCityTwo
+
+                                        chooseJobCity = true
+
+                                        isJobLocal = true
+
+                                        tv_guide_address_jobcity.text = localCityTwo
+
+                                        tv_guide_address_jobcity.setTextColor(Color.parseColor("#0F0F0F"))
+
+                                        if (chooseJobCity && chooseHomeCity) {
+                                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                                        } else {
+                                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                                        }
+
+                                        dismiss()
                                     }
+                                })
+                                val option = LocationClientOption()
+                                option.setIsNeedAddress(true);
+                                option.setNeedNewVersionRgc(true);
+                                mLocationClient.locOption = option;
+                                mLocationClient.start()
 
-                                    chooseJobCity = true
+                            }
 
-                                    isJobLocal = true
+                            override fun onDenied(
+                                permissions: MutableList<String>?,
+                                never: Boolean,
+                            ) {
+                                super.onDenied(permissions, never)
+                                ToastUtils.showShort("请授予用户所需权限")
+                            }
 
-                                    tv_guide_address_jobcity.text = localCityTwo
+                        })
 
-                                    tv_guide_address_jobcity.setTextColor(Color.parseColor("#0F0F0F"))
-
-                                    if (chooseJobCity && chooseHomeCity) {
-                                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                                    } else {
-                                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                                    }
-
-                                    dismiss()
-                                }
-                            })
-                            val option = LocationClientOption()
-                            option.setIsNeedAddress(true);
-                            option.setNeedNewVersionRgc(true);
-                            mLocationClient.locOption = option;
-                            mLocationClient.start()
-
-
-                        }
-
-                        override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                            super.onDenied(permissions, never)
-                            ToastUtils.showShort("请授予用户所需权限")
-                        }
-
-                    })
-
-            }
-
-            detail.setOnClickListener {
-                localtion.visibility = View.VISIBLE
-                detail.visibility = View.GONE
-
-                chooseJobCity = false
-
-                isJobLocal = false
+                }
 
             }
 
@@ -2880,6 +2965,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     }
 
     inner class AddressHomeCity(context: Context) : FullScreenPopupView(context) {
+
+        private var jobCityFirst = 0
+        private var jobCitySecond = 0
+        private var jobCityThird = 0
 
         override fun getImplLayoutId(): Int = R.layout.dialog_info_address_jobcity
 
@@ -3003,94 +3092,111 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             }
 
-
             findViewById<ImageView>(R.id.iv_address_jobcity_close).setOnClickListener {
                 dismiss()
             }
 
+            val city = findViewById<TextView>(R.id.tv_address_jobcity_location)
 
-            val localtion = findViewById<LinearLayout>(R.id.ll_address_jobcity_location)
-            val detail = findViewById<LinearLayout>(R.id.ll_address_jobcity_location_detail)
-            val city = findViewById<TextView>(R.id.tv_address_jobcity_location_detail)
+            if (localCityTwo != "") {
+                city.text = localCityTwo
+            }
 
             findViewById<LinearLayout>(R.id.ll_address_jobcity_location).setOnClickListener {
 
-                XXPermissions.with(this@DetailInfoActivity)
-                    .permission(Permission.ACCESS_COARSE_LOCATION)
-                    .permission(Permission.ACCESS_FINE_LOCATION)
-                    .request(object : OnPermissionCallback {
-                        override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
 
-                            val mLocationClient = LocationClient(context)
+                if (localCityTwo != "") {
 
-                            mLocationClient.registerLocationListener(object :
-                                BDAbstractLocationListener() {
-                                override fun onReceiveLocation(location: BDLocation) {
-                                    Log.i("guo", "定位开始")
-                                    localCityOne = location.province
-                                    localCityTwo = location.city
-                                    localCityThree = location.district
+                    chooseHomeCity = true
 
-                                    for (i in 0.until(cityFirstList.size)) {
-                                        if (cityFirstList[i] == location.province) {
-                                            localCityOneCode = cityIDFirstList[i]
-                                        }
-                                        getJobCitySecondList(i)
-                                        for (j in 0.until(citySecondList.size)) {
-                                            if (citySecondList[j] == location.city) {
-                                                localCityTwoCode = cityIDSecondList[j]
+                    isHomeLocal = true
+
+                    tv_guide_address_homecity.text = localCityTwo
+
+                    home = "$localCityOne -$localCityTwo - $localCityThree"
+
+                    tv_guide_address_homecity.setTextColor(Color.parseColor("#0F0F0F"))
+
+                    if (chooseJobCity && chooseHomeCity) {
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    } else {
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                    }
+
+                    dismiss()
+
+                } else {
+
+                    XXPermissions.with(this@DetailInfoActivity)
+                        .permission(Permission.ACCESS_COARSE_LOCATION)
+                        .permission(Permission.ACCESS_FINE_LOCATION)
+                        .request(object : OnPermissionCallback {
+                            override fun onGranted(
+                                permissions: MutableList<String>?,
+                                all: Boolean,
+                            ) {
+
+                                val mLocationClient = LocationClient(context)
+
+                                mLocationClient.registerLocationListener(object :
+                                    BDAbstractLocationListener() {
+                                    override fun onReceiveLocation(location: BDLocation) {
+                                        localCityOne = location.province
+                                        localCityTwo = location.city
+                                        localCityThree = location.district
+
+                                        for (i in 0.until(cityFirstList.size)) {
+                                            if (cityFirstList[i] == location.province) {
+                                                localCityOneCode = cityIDFirstList[i]
+                                            }
+                                            getJobCitySecondList(i)
+                                            for (j in 0.until(citySecondList.size)) {
+                                                if (citySecondList[j] == location.city) {
+                                                    localCityTwoCode = cityIDSecondList[j]
+                                                }
                                             }
                                         }
+
+
+                                        chooseHomeCity = true
+
+                                        isHomeLocal = true
+
+                                        tv_guide_address_homecity.text = localCityTwo
+
+                                        home = "$localCityOne -$localCityTwo - $localCityThree"
+
+                                        tv_guide_address_homecity.setTextColor(Color.parseColor("#0F0F0F"))
+
+                                        if (chooseJobCity && chooseHomeCity) {
+                                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                                        } else {
+                                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                                        }
+
+                                        dismiss()
+
                                     }
+                                })
+                                val option = LocationClientOption()
+                                option.setIsNeedAddress(true);
+                                option.setNeedNewVersionRgc(true);
+                                mLocationClient.locOption = option;
+                                mLocationClient.start()
 
+                            }
 
-                                    localtion.visibility = View.GONE
-                                    detail.visibility = View.VISIBLE
+                            override fun onDenied(
+                                permissions: MutableList<String>?,
+                                never: Boolean,
+                            ) {
+                                super.onDenied(permissions, never)
+                                ToastUtils.showShort("请授予用户所需权限")
+                            }
 
-                                    city.text = localCityTwo
+                        })
 
-                                    chooseHomeCity = true
-
-                                    isHomeLocal = true
-
-                                    tv_guide_address_homecity.text = localCityTwo
-
-                                    tv_guide_address_homecity.setTextColor(Color.parseColor("#0F0F0F"))
-
-                                    if (chooseJobCity && chooseHomeCity) {
-                                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                                    } else {
-                                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                                    }
-
-                                    dismiss()
-
-                                }
-                            })
-                            val option = LocationClientOption()
-                            option.setIsNeedAddress(true);
-                            option.setNeedNewVersionRgc(true);
-                            mLocationClient.locOption = option;
-                            mLocationClient.start()
-
-                        }
-
-                        override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                            super.onDenied(permissions, never)
-                            ToastUtils.showShort("请授予用户所需权限")
-                        }
-
-                    })
-
-            }
-
-            detail.setOnClickListener {
-                localtion.visibility = View.VISIBLE
-                detail.visibility = View.GONE
-
-                chooseHomeCity = false
-
-                isHomeLocal = false
+                }
 
             }
 
@@ -3100,14 +3206,17 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 isHomeLocal = false
 
+                home = if (cityThirdList[jobCityThird] == "") {
 
-                if (cityThirdList[jobCityThird] == "") {
-                    tv_guide_address_homecity.text =
-                        "${cityFirstList[jobCityFirst]}-${citySecondList[jobCitySecond]}"
+                    "${cityFirstList[jobCityFirst]}-${citySecondList[jobCitySecond]}"
+
                 } else {
-                    tv_guide_address_homecity.text =
-                        "${cityFirstList[jobCityFirst]}-${citySecondList[jobCitySecond]}-${cityThirdList[jobCityThird]}"
+
+                    "${cityFirstList[jobCityFirst]}-${citySecondList[jobCitySecond]}-${cityThirdList[jobCityThird]}"
+
                 }
+
+                tv_guide_address_homecity.text = home
 
                 tv_guide_address_homecity.setTextColor(Color.parseColor("#0F0F0F"))
 
@@ -3123,44 +3232,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         }
 
-    }
-
-    inner class MyLocationListener : BDAbstractLocationListener() {
-        override fun onReceiveLocation(location: BDLocation) {
-            //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
-            //以下只列举部分获取地址相关的结果信息
-            //更多结果信息获取说明，请参照类参考中BDLocation类中的说明
-            val addr = location.addrStr //获取详细地址信息
-            val country = location.country //获取国家
-            val province = location.province //获取省份
-            val city = location.city //获取城市
-            val district = location.district //获取区县
-            val street = location.street //获取街道信息
-            val adcode = location.adCode //获取adcode
-            val town = location.town //获取乡镇信息
-
-            Log.i("guo", location.city)
-
-            localCityOne = location.province
-            localCityTwo = location.city
-            localCityThree = location.district
-
-            for (i in 0.until(cityFirstList.size)) {
-
-                if (cityFirstList[i] == location.province) {
-                    localCityOneCode = cityIDFirstList[i]
-                }
-
-                getJobCitySecondList(i)
-
-                for (j in 0.until(citySecondList.size)) {
-                    if (citySecondList[j] == location.city) {
-                        localCityTwoCode = cityIDSecondList[j]
-                    }
-                }
-            }
-
-        }
     }
 
 
@@ -3379,7 +3450,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             findViewById<TextView>(R.id.tv_dialog_life_camera).setOnClickListener {
                 ToastUtils.showShort("直接打开相机")
                 isPhoto = false
-
+                isCamera = true
                 dismiss()
 
                 XXPermissions.with(this@DetailInfoActivity)
@@ -3390,23 +3461,28 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             all: Boolean,
                         ) {
 
-                            val tempPhotoFile: File = File(mTempLifePath)
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            // 如果在Android7.0以上,使用FileProvider获取Uri
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                val authority = context.packageName.toString() + ".fileProvider"
-                                val contentUri: Uri =
-                                    FileProvider.getUriForFile(context,
-                                        authority,
-                                        tempPhotoFile)
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
-                            } else {
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(tempPhotoFile))
-                            }
+//                            val tempLifeFile: File = File(mTempLifePath)
+//                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//                            // 如果在Android7.0以上,使用FileProvider获取Uri
+//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+//                                val authority = context.packageName.toString() + ".fileProvider"
+//                                val contentUri: Uri =
+//                                    FileProvider.getUriForFile(context,
+//                                        authority,
+//                                        tempLifeFile)
+//                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+//                            } else {
+//                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
+//                                    Uri.fromFile(tempLifeFile))
+//                            }
+//
+//                            startActivityForResult(intent, 3)
 
+
+                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
                             startActivityForResult(intent, 3)
+
                         }
 
                         override fun onDenied(
@@ -3424,7 +3500,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             findViewById<TextView>(R.id.tv_dialog_life_album).setOnClickListener {
                 ToastUtils.showShort("打开相册")
                 isPhoto = false
-
+                isCamera = false
                 dismiss()
 
                 val selectorStyle = PictureSelectorStyle()
@@ -3449,14 +3525,19 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             lifeChoosePath = result[0].realPath
 
+                            lifeBitmap = ImageUtils.getBitmap(result[0].realPath)
+
                             val map: MutableMap<String, String> = TreeMap()
                             map[Contents.ACCESS_TOKEN] =
                                 "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))
+                            map[Contents.IMAGE] =
+                                bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))
 
                             doFaceDetectPresent.doFaceDetect(map)
 
+                            // 显示加载动画
+                            ll_guide_detail_loading.visibility = View.VISIBLE
 
                         }
 
@@ -3474,6 +3555,164 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         }
 
     }
+
+    inner class LifeDeleteDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_life_delete
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<TextView>(R.id.tv_dialog_life_delete_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_life_delete_confirm).setOnClickListener {
+                when (lifeDeleteMode) {
+                    "one" -> {
+                        if (haveSecondPic) {
+
+                            if (haveThirdPic) {
+                                // 有三张图
+
+                                rl_guide_life_pic_three.visibility = View.GONE
+                                rl_guide_life_pic_more.visibility = View.VISIBLE
+
+                                FileUtils.delete(mLifeFirstPath)
+                                lifeSecondBitmap?.let { it1 -> saveBitmap(it1, mLifeFirstPath) }
+
+                                lifeFirstPicText = lifeSecondPicText
+                                lifeFirstBitmap = lifeSecondBitmap
+                                Glide.with(this).load(lifeFirstBitmap).into(iv_guide_life_pic_one)
+                                tv_guide_life_pic_one.text = lifeFirstPicText
+
+
+                                FileUtils.delete(mLifeSecondPath)
+                                lifeThirdBitmap?.let { it1 -> saveBitmap(it1, mLifeSecondPath) }
+
+                                lifeSecondPicText = lifeThirdPicText
+                                lifeSecondBitmap = lifeThirdBitmap
+                                Glide.with(this).load(lifeSecondBitmap).into(iv_guide_life_pic_two)
+                                tv_guide_life_pic_two.text = lifeSecondPicText
+
+                                haveThirdPic = false
+                                lifeThirdPicText = ""
+                                lifeThirdBitmap = null
+                                iv_guide_life_pic_three_icon.visibility = View.VISIBLE
+                                tv_guide_life_pic_three.text = "添加描述"
+
+                                FileUtils.delete(mLifeThirdPath)
+
+                            } else {
+                                // 有两张图
+
+                                rl_guide_life_pic_two.visibility = View.GONE
+
+                                FileUtils.delete(mLifeFirstPath)
+                                lifeSecondBitmap?.let { it1 -> saveBitmap(it1, mLifeFirstPath) }
+
+                                lifeFirstPicText = lifeSecondPicText
+                                lifeFirstBitmap = lifeSecondBitmap
+                                Glide.with(this).load(lifeFirstBitmap).into(iv_guide_life_pic_one)
+                                tv_guide_life_pic_one.text = lifeFirstPicText
+
+                                haveSecondPic = false
+                                lifeSecondPicText = ""
+                                lifeSecondBitmap = null
+                                iv_guide_life_pic_two_icon.visibility = View.VISIBLE
+                                tv_guide_life_pic_two.text = "添加描述"
+
+                                FileUtils.delete(mLifeSecondPath)
+
+                            }
+                        } else {
+                            // 只有一张图
+
+                            rl_guide_life_pic_one.visibility = View.GONE
+                            rl_guide_life_pic_more.visibility = View.GONE
+                            nsv_guide_life_pic.visibility = View.GONE
+
+                            nsv_guide_life_default.visibility = View.VISIBLE
+
+                            haveFirstPic = false
+                            lifeFirstPicText = ""
+                            lifeFirstBitmap = null
+                            iv_guide_life_pic_one_icon.visibility = View.VISIBLE
+                            tv_guide_life_pic_one.text = "添加描述"
+
+                            FileUtils.delete(mLifeFirstPath)
+
+                            isFinishLife = false
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+
+                        }
+                    }
+                    "two" -> {
+                        if (haveThirdPic) {
+                            // 有第三张图
+
+                            rl_guide_life_pic_three.visibility = View.GONE
+                            rl_guide_life_pic_more.visibility = View.VISIBLE
+
+                            FileUtils.delete(mLifeSecondPath)
+                            lifeThirdBitmap?.let { it1 -> saveBitmap(it1, mLifeSecondPath) }
+
+                            lifeSecondPicText = lifeThirdPicText
+                            lifeSecondBitmap = lifeThirdBitmap
+                            Glide.with(this).load(lifeSecondBitmap).into(iv_guide_life_pic_two)
+                            tv_guide_life_pic_two.text = lifeSecondPicText
+
+                            haveThirdPic = false
+                            lifeThirdPicText = ""
+                            lifeThirdBitmap = null
+                            iv_guide_life_pic_three_icon.visibility = View.VISIBLE
+                            tv_guide_life_pic_three.text = "添加描述"
+
+                            FileUtils.delete(mLifeThirdPath)
+
+                        } else {
+                            // 没有第三张图
+
+                            rl_guide_life_pic_two.visibility = View.GONE
+
+                            haveSecondPic = false
+                            lifeSecondPicText = ""
+                            lifeSecondBitmap = null
+                            iv_guide_life_pic_two_icon.visibility = View.VISIBLE
+                            tv_guide_life_pic_two.text = "添加描述"
+
+                            FileUtils.delete(mLifeSecondPath)
+                        }
+                    }
+                    "three" -> {
+
+                        rl_guide_life_pic_three.visibility = View.GONE
+                        rl_guide_life_pic_more.visibility = View.VISIBLE
+
+                        mLifeThirdPath = ""
+                        haveThirdPic = false
+                        lifeThirdPicText = ""
+                        lifeThirdBitmap = null
+                        iv_guide_life_pic_three_icon.visibility = View.VISIBLE
+                        tv_guide_life_pic_three.text = "添加描述"
+
+                        FileUtils.delete(mLifeThirdPath)
+
+                    }
+                }
+                dismiss()
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+    }
+
+//       除此全部图文内容?
 
 // -------------------  关于我界面  -----------------
 

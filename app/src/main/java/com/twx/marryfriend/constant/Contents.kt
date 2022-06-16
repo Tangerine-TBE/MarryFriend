@@ -38,8 +38,17 @@ object Contents {
     // 修改认证信息
     const val UPDATE_VERIFY_INFO = "LoginRegister/updateVerifyInfo"
 
+    // 修改招呼语信息
+    const val UPDATE_GREET_INFO = "LoginRegister/updateZhaohuyuInfo"
+
+    //查看列表(头像,三张,相册)
+    const val PHOTO_LIST = "LoginRegister/photoList"
+
     //图片上传(头像,三张,相册)
     const val UPLOAD_PHOTO = "LoginRegister/uploadPhoto"
+
+    // 更新资料完善度
+    const val UPDATE_PROPORTION = "LoginRegister/proportionUpdate"
 
 
     // 获取学校
@@ -109,6 +118,16 @@ object Contents {
     //    const val USER_ID = "user_id"
     const val DEMAND_UPDATE = "demand_update"
 
+    // 修改招呼语
+    //    const val USER_ID = "user_id"
+    const val GREET_UPDATE = "zhaohuyu_update"
+
+
+
+
+    //查看列表(头像,三张,相册)
+    //    const val USER_ID = "user_id"
+    //    const val KIND = "kind"
 
     // 图片上传(头像,三张,相册)
     //    const val USER_ID = "user_id"
@@ -117,6 +136,11 @@ object Contents {
     const val FILE_NAME = "file_name"
     const val CONTENT = "content"
     const val KIND = "kind"
+
+
+    // 更新资料完善度
+    //    const val USER_ID = "user_id"
+    const val PROPORTION = "finish_proportion"
 
     // ------------------------------------ 外部的api ------------------------------------
 

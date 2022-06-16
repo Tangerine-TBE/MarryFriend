@@ -58,15 +58,6 @@
             app:wheel_item_space="80dp"
             app:wheel_item_text_size="15sp" />
 
-        <com.aigestudio.wheelpicker.WheelPicker
-            android:id="@+id/wp_user_target_address_three"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            app:wheel_item_space="80dp"
-            app:wheel_item_text_size="15sp" />
-
     </LinearLayout>
 
     <TextView

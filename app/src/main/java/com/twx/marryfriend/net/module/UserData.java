@@ -9,12 +9,16 @@ import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.bean.CityBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
+import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
+import com.twx.marryfriend.bean.PhotoListBean;
 import com.twx.marryfriend.bean.SchoolBean;
 import com.twx.marryfriend.bean.UpdateDemandInfoBean;
+import com.twx.marryfriend.bean.UpdateGreetInfoBean;
 import com.twx.marryfriend.bean.UpdateMoreInfoBean;
+import com.twx.marryfriend.bean.UpdateProportionInfoBean;
 import com.twx.marryfriend.bean.UpdateVerifyInfoBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
@@ -129,7 +133,6 @@ public class UserData {
         mApi.doUpdateDemandInfo(map1).enqueue(callback);
     }
 
-
     // 修改认证信息
     public void doUpdateVerifyInfo(Map<String, String> map, Callback<UpdateVerifyInfoBean> callback) {
         // 获取随机数
@@ -142,6 +145,32 @@ public class UserData {
         mApi.doUpdateVerifyInfo(map1).enqueue(callback);
     }
 
+    // 修改招呼语需求
+    public void doUpdateGreetInfo(Map<String, String> map, Callback<UpdateGreetInfoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_GREET_INFO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_GREET_INFO, currentTimeMillis, random, checkCode, map);
+        mApi.doUpdateGreetInfo(map1).enqueue(callback);
+    }
+
+
+
+
+    //查看列表(头像,三张,相册)
+    public void getPhotoList(Map<String, String> map, Callback<PhotoListBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PHOTO_LIST + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PHOTO_LIST, currentTimeMillis, random, checkCode, map);
+        mApi.getPhotoList(map1).enqueue(callback);
+    }
 
     //图片上传(头像,三张,相册)
     public void doUploadPhoto(Map<String, String> map, Callback<UploadPhotoBean> callback) {
@@ -153,6 +182,18 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPLOAD_PHOTO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPLOAD_PHOTO, currentTimeMillis, random, checkCode, map);
         mApi.doUploadPhoto(map1).enqueue(callback);
+    }
+
+    // 更新资料完善度
+    public void doUpdateProportion(Map<String, String> map, Callback<UpdateProportionInfoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_PROPORTION + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_PROPORTION, currentTimeMillis, random, checkCode, map);
+        mApi.doUpdateProportion(map1).enqueue(callback);
     }
 
 
@@ -233,7 +274,7 @@ public class UserData {
 
 
     // 百度身份证验证
-    public void doIdentityVerify(Map<String, String> map, Callback<AccessTokenBean> callback) {
+    public void doIdentityVerify(Map<String, String> map, Callback<IdentityVerifyBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳

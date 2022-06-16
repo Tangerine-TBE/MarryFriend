@@ -34,7 +34,6 @@ open class BaseApplication : Application() {
     }
 
 
-
     @SuppressLint("RestrictedApi")
     override fun onCreate() {
         super.onCreate()
@@ -42,7 +41,6 @@ open class BaseApplication : Application() {
         appContext = baseContext
         mMainHandler = Handler()
         packName = packageName
-
 
 
 //        UMConfigure.init(
@@ -53,7 +51,10 @@ open class BaseApplication : Application() {
 //        UMConfigure.setLogEnabled(true)
 
 
+
+
         initChild()
+
 
     }
 

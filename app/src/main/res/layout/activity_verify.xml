@@ -32,168 +32,343 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_verify_state"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:id="@+id/rl_verify_verify_success"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/rl_verify_title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp"
-        android:text="您的认证已通过"
-        android:textColor="#101010"
-        android:textSize="17sp"
-        android:textStyle="bold" />
+        android:visibility="gone">
 
-    <TextView
-        android:id="@+id/tv_verify_guide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_verify_state"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="回首页查看推荐好友"
-        android:textColor="#101010"
-        android:textSize="15sp" />
+        <TextView
+            android:id="@+id/tv_verify_state_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="75dp"
+            android:text="您的认证已通过"
+            android:textColor="#101010"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
-    <LinearLayout
+        <TextView
+            android:id="@+id/tv_verify_guide_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_verify_state_success"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="回首页查看推荐好友"
+            android:textColor="#101010"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:id="@+id/ll_verify_contain_success"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_verify_guide_success"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="40dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_photo"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:src="@drawable/ic_verify_mark" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="认证标识"
+                    android:textColor="#101010"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_verify_mark_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:src="@drawable/ic_verify_check" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_photo"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:src="@drawable/ic_verify_friend" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="放心交友"
+                    android:textColor="#101010"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_verify_friend_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:src="@drawable/ic_verify_check" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_photo"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:src="@drawable/ic_verify_top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="优先推荐"
+                    android:textColor="#101010"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_verify_top_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="24dp"
+                    android:src="@drawable/ic_verify_check" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_verify_info_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_verify_contain_success"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:text="认证信息"
+            android:textColor="#101010"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_verify_info_success"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_bg_mine_input"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingVertical="25dp">
+
+            <TextView
+                android:id="@+id/tv_verify_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="李*"
+                android:textColor="#717171"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_verify_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="429005**************"
+                android:textColor="#717171"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_verify_verify_non"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_verify_guide"
-        android:layout_marginHorizontal="14dp"
-        android:layout_marginTop="40dp">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_verify_title"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_verify_state_non"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="75dp"
+            android:text="您还没有实名认证"
+            android:textColor="#FF4444"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_verify_guide_non"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_verify_state_non"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="认证后将获得"
+            android:textColor="#101010"
+            android:textSize="15sp" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/shape_bg_photo"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_below="@+id/tv_verify_guide_non"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="40dp">
 
-            <ImageView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
-                android:src="@drawable/ic_verify_mark" />
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_photo"
+                android:gravity="center"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                android:text="认证标识"
-                android:textColor="#101010"
-                android:textSize="17sp"
-                android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:src="@drawable/ic_verify_mark" />
 
-            <ImageView
-                android:id="@+id/iv_verify_mark_check"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="认证标识"
+                    android:textColor="#101010"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:src="@drawable/ic_verify_check" />
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_photo"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:src="@drawable/ic_verify_friend" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="放心交友"
+                    android:textColor="#101010"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="4dp"
+                android:layout_height="0dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_bg_photo"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp"
+                    android:src="@drawable/ic_verify_top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="24dp"
+                    android:text="优先推荐"
+                    android:textColor="#101010"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <View
-            android:layout_width="4dp"
-            android:layout_height="0dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/shape_bg_photo"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_above="@+id/tv_verify_verify_non"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="24dp"
+            android:text="需要人脸识别与身份证校验"
+            android:textColor="#9A9A9A"
+            android:textSize="15sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
-                android:src="@drawable/ic_verify_friend" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                android:text="放心交友"
-                android:textColor="#101010"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/iv_verify_friend_check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:src="@drawable/ic_verify_check" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="4dp"
-            android:layout_height="0dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/tv_verify_verify_non"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/shape_bg_photo"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginBottom="100dp"
+            android:background="@drawable/shape_bg_common_next"
             android:gravity="center"
-            android:orientation="vertical">
+            android:paddingVertical="19dp"
+            android:text="立即认证"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="23dp"
-                android:src="@drawable/ic_verify_top" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="24dp"
-                android:text="优先推荐"
-                android:textColor="#101010"
-                android:textSize="17sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/iv_verify_top_check"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:src="@drawable/ic_verify_check" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/tv_verify_verify"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
-        android:text="需要人脸识别与身份证校验"
-        android:textColor="#9A9A9A"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/tv_verify_verify"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginBottom="100dp"
-        android:background="@drawable/shape_bg_common_next"
-        android:gravity="center"
-        android:paddingVertical="19dp"
-        android:text="立即认证"
-        android:textColor="@color/white"
-        android:textSize="17sp" />
-
+    </RelativeLayout>
 
 </RelativeLayout>

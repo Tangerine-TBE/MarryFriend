@@ -1,5 +1,9 @@
 package com.twx.marryfriend.main
 
+import android.content.Intent
+import android.util.Log
+import android.view.View
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
@@ -8,6 +12,8 @@ import com.twx.marryfriend.love.LoveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.recommend.RecommendFragment
+import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_detail_info.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MainBaseViewActivity() {
@@ -61,7 +67,7 @@ class MainActivity : MainBaseViewActivity() {
     }
 
 
-    fun initRecommendFragment() {
+    private fun initRecommendFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (recommend == null) {
             recommend = RecommendFragment()
@@ -72,7 +78,7 @@ class MainActivity : MainBaseViewActivity() {
         transaction.commit()
     }
 
-    fun initLoveFragment() {
+    private fun initLoveFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (love == null) {
             love = LoveFragment()
@@ -83,7 +89,7 @@ class MainActivity : MainBaseViewActivity() {
         transaction.commit()
     }
 
-    fun initDynamicFragment() {
+    private fun initDynamicFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (dynamic == null) {
             dynamic = DynamicFragment()
@@ -94,7 +100,7 @@ class MainActivity : MainBaseViewActivity() {
         transaction.commit()
     }
 
-    fun initMessageFragment() {
+    private fun initMessageFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (message == null) {
             message = MessageFragment()
@@ -105,7 +111,7 @@ class MainActivity : MainBaseViewActivity() {
         transaction.commit()
     }
 
-    fun initMineFragment() {
+    private fun initMineFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (mine == null) {
             mine = MineFragment()
@@ -115,7 +121,6 @@ class MainActivity : MainBaseViewActivity() {
         transaction.show(mine!!)
         transaction.commit()
     }
-
 
     private fun hideFragment(transaction: FragmentTransaction) {
         if (recommend != null) {
@@ -134,5 +139,30 @@ class MainActivity : MainBaseViewActivity() {
             transaction.hide(mine!!)
         }
     }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == FragmentActivity.RESULT_OK) {
+            when (requestCode) {
+                UCrop.REQUEST_CROP -> {
+                    if (data != null) {
+                        mine?.handlePhotoCropResult(data)
+                    };
+                }
+                UCrop.RESULT_ERROR -> {
+                    if (data != null) {
+                        mine?.handlePhotoCropError(data)
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
 
 }

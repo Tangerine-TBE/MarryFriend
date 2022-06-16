@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,7 +11,8 @@
         android:id="@+id/rl_mine_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp">
+        android:layout_marginTop="44dp"
+        android:layout_marginBottom="24dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,18 +26,45 @@
 
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/iv_mine_dialog_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_mine_date"
+        android:layout_marginStart="16dp"
+        android:orientation="vertical"
+        android:src="@mipmap/icon_set_dialog_avatar" />
+
     <LinearLayout
         android:id="@+id/ll_mine_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_mine_title"
-        android:layout_marginTop="24dp">
+        android:layout_below="@+id/rl_mine_title">
 
-        <ImageView
+        <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_mine_male_default" />
+            android:layout_height="wrap_content">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/iv_mine_avatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_mine_male_default"
+                app:riv_oval="true" />
+
+            <TextView
+                android:id="@+id/tv_mine_avatar_check"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/shape_bg_avatar_check"
+                android:gravity="center"
+                android:text="审核中"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
+
+        </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/rl_mine_user"
@@ -51,6 +80,7 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/tv_mine_nick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="罐头香菜"
@@ -59,10 +89,11 @@
                     android:textStyle="bold" />
 
                 <ImageView
+                    android:id="@+id/iv_mine_nick"
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_marginStart="4dp"
-                    android:background="#878787" />
+                    android:src="@drawable/ic_set_rename" />
 
             </LinearLayout>
 
@@ -74,11 +105,26 @@
                 android:textColor="#717171"
                 android:textSize="13sp" />
 
-            <ImageView
-                android:layout_width="63dp"
-                android:layout_height="21dp"
-                android:layout_alignParentBottom="true"
-                android:background="#80101010" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+
+                <ImageView
+                    android:layout_width="63dp"
+                    android:layout_height="21dp"
+                    android:src="@mipmap/icon_identify_non" />
+
+                <TextView
+                    android:id="@+id/tv_zz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="已实名"
+                    android:textColor="#010101"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </RelativeLayout>
 
@@ -539,5 +585,36 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/ll_mine_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_bg_dialog"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="正在加载中..."
+                android:textColor="#0F0F0F"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

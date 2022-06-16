@@ -7,12 +7,16 @@ import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.bean.CityBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
+import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
+import com.twx.marryfriend.bean.PhotoListBean;
 import com.twx.marryfriend.bean.SchoolBean;
 import com.twx.marryfriend.bean.UpdateDemandInfoBean;
+import com.twx.marryfriend.bean.UpdateGreetInfoBean;
 import com.twx.marryfriend.bean.UpdateMoreInfoBean;
+import com.twx.marryfriend.bean.UpdateProportionInfoBean;
 import com.twx.marryfriend.bean.UpdateVerifyInfoBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
@@ -55,9 +59,22 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/updateVerifyInfo")
     Call<UpdateVerifyInfoBean> doUpdateVerifyInfo(@QueryMap Map<String, Object> params);
 
-    //图片上传(头像,三张,相册)
+    // 修改招呼语信息
+    @POST("/marryfriend/LoginRegister/updateZhaohuyuInfo")
+    Call<UpdateGreetInfoBean> doUpdateGreetInfo(@QueryMap Map<String, Object> params);
+
+    // 查看列表(头像,三张,相册)
+    @POST("/marryfriend/LoginRegister/photoList")
+    Call<PhotoListBean> getPhotoList(@QueryMap Map<String, Object> params);
+
+    // 图片上传(头像,三张,相册)
     @POST("/marryfriend/LoginRegister/uploadPhoto")
     Call<UploadPhotoBean> doUploadPhoto(@QueryMap Map<String, Object> params);
+
+    // 更新资料完善度
+    @POST("/marryfriend/LoginRegister/proportionUpdate")
+    Call<UpdateProportionInfoBean> doUpdateProportion(@QueryMap Map<String, Object> params);
+
 
     // 获取省市县
     @POST("/marryfriend/GetParameter/provinceCity")
@@ -86,10 +103,9 @@ public interface Api {
     Call<AccessTokenBean> getAccessToken(@QueryMap Map<String, Object> params);
 
 
-
     // 百度身份证验证
     @POST("/rest/2.0/face/v3/person/idmatch")
-    Call<AccessTokenBean> doIdentityVerify(@QueryMap Map<String, Object> params);
+    Call<IdentityVerifyBean> doIdentityVerify(@QueryMap Map<String, Object> params);
 
     // 百度人脸识别认证
     @POST("/rest/2.0/face/v3/person/verify")

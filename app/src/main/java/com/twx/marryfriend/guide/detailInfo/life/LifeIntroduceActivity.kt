@@ -27,13 +27,15 @@ class LifeIntroduceActivity : MainBaseViewActivity() {
             .diskCacheStrategy(DiskCacheStrategy.NONE);
 
         picPath = intent.getStringExtra("path").toString()
+        introduce = intent.getStringExtra("introduce").toString()
 
         Glide.with(this)
             .load(picPath)
             .apply(requestOptions)
             .into(iv_life_introduce_container)
 
-        Log.i("guo", picPath)
+        et_life_introduce_introduce.setText(introduce)
+
     }
 
     override fun initLoadData() {

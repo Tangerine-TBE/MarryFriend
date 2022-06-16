@@ -27,6 +27,8 @@ import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
 import com.blankj.utilcode.util.*
+import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.util.NalUnitUtil
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -49,18 +51,13 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
-import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
-import com.twx.marryfriend.net.callback.IDoUpdateBaseInfoCallback
-import com.twx.marryfriend.net.callback.IDoUpdateMoreInfoCallback
-import com.twx.marryfriend.net.callback.IDoUploadPhotoCallback
-import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
-import com.twx.marryfriend.net.impl.doUpdateBaseInfoPresentImpl
-import com.twx.marryfriend.net.impl.doUpdateMoreInfoPresentImpl
-import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
+import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.GlideEngine
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
 import kotlinx.android.synthetic.main.fragment_data.*
+import kotlinx.android.synthetic.main.fragment_mine.*
 import kotlinx.android.synthetic.main.fragment_target.*
 import kotlinx.android.synthetic.main.layout_guide_step_edu.*
 import kotlinx.android.synthetic.main.layout_guide_step_life.*
@@ -69,7 +66,10 @@ import java.io.*
 import java.util.*
 
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
-    IDoFaceDetectCallback, IDoUploadPhotoCallback {
+    IDoFaceDetectCallback, IDoUploadPhotoCallback, IDoUpdateProportionCallback {
+
+    // 资料完成度
+    private var proportion = 0
 
     // 头像数据
     // 头像暂存的bitmap
@@ -138,6 +138,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
     private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
+    private lateinit var updateProportionPresent: doUpdateProportionPresentImpl
 
 
     override fun onCreateView(
@@ -169,7 +170,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         uploadPhotoPresent.registerCallback(this)
 
-        mTempPhotoPath = Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+        updateProportionPresent = doUpdateProportionPresentImpl.getsInstance()
+        updateProportionPresent.registerCallback(this)
+
+        mTempPhotoPath =
+            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(requireActivity().cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "photoPic.png"
@@ -203,14 +208,22 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         rv_user_data_more.layoutManager = moreScrollManager
         rv_user_data_more.adapter = moreAdapter
 
-        // 先判断性别
-        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-            iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_male)
-        } else {
-            iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_female)
-        }
+
 
         sb_user_data_progress.setOnTouchListener(View.OnTouchListener { v, event -> true })
+
+
+        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") == "") {
+            // 先判断性别
+            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_male)
+            } else {
+                iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_female)
+            }
+        } else {
+            Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                .into(iv_user_data_avatar)
+        }
 
     }
 
@@ -287,6 +300,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private fun initEvent() {
 
+        showFirstDialog()
+
         iv_user_data_avatar.setOnClickListener {
             ToastUtils.showShort("上传头像")
 
@@ -354,6 +369,91 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         })
 
     }
+
+    // 判断是否为闰年
+    private fun injustLeapYear(s: Int): Boolean {
+        var isLeapYear = false
+        isLeapYear = (s % 4 == 0 && s % 400 != 0) || (s % 400 == 0)
+        return isLeapYear
+    }
+
+    // 进入界面时显示一个弹窗
+    private fun showFirstDialog() {
+
+        if (SPStaticUtils.getString(Constant.ME_NAME, "") == "") {
+            // 昵称
+            showNameDialog()
+        } else {
+            if (SPStaticUtils.getInt(Constant.ME_SEX, 0) == 0) {
+                // 性别
+                showSexDialog()
+            } else {
+                if (SPStaticUtils.getString(Constant.ME_BIRTH, "") == "") {
+                    // 生日
+                    showBirthDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_HEIGHT, 0) == 0) {
+                        // 身高
+                        showHeightDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                            // 月收入
+                            showIncomeDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                                // 有没有孩子
+                                showHaveChildDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                    // 想不想要孩子
+                                    showWantChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                            "") == ""
+                                    ) {
+                                        // 职业
+                                        showJobDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                            // 购房情况
+                                            showHouseDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                                // 购车情况
+                                                showCarDialog()
+                                            } else {
+                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                        "") == ""
+                                                ) {
+                                                    // 籍贯
+                                                    showHomeDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                            0) == 0
+                                                    ) {
+                                                        // 体重
+                                                        showWeightDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                                0) == 0
+                                                        ) {
+                                                            // 体型
+                                                            showBodyDialog()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     // 获取所有数据更新视图
     private fun updateDateUI() {
@@ -624,7 +724,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     maxDay = 31
                 }
                 2 -> {
-                    maxDay = if (TimeUtils.isLeapYear(TimeUtils.getNowDate())) {
+                    maxDay = if (injustLeapYear(mYearList[yearPosition])) {
                         29
                     } else {
                         28
@@ -736,7 +836,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //            .asCustom(SexDialog(requireContext()))
 //            .show()
 
-        if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY,true)){
+        if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, true)) {
             XPopup.Builder(context)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
@@ -744,7 +844,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
                 .asCustom(SexVerifyDialog(requireContext()))
                 .show()
-        }else{
+        } else {
             XPopup.Builder(context)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
@@ -910,7 +1010,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == FragmentActivity.RESULT_OK) {
             when (requestCode) {
                 // 拍照返回至裁切
@@ -918,35 +1017,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     val temp = File(mTempPhotoPath)
                     startPhotoCropActivity(Uri.fromFile(temp))
                 }
-                UCrop.REQUEST_CROP -> {
-
-                    Log.i("guo","REQUEST_CROP")
-
-                    if (data != null) {
-
-                        ll_user_data_loading.visibility = View.VISIBLE
-
-                        handlePhotoCropResult(data)
-                    };
-                };
-
-                UCrop.RESULT_ERROR -> {
-
-                    Log.i("guo","REQUEST_CROP")
-
-                    if (data != null) {
-                        handlePhotoCropError(data)
-                    }
-                }
-
             }
-
         }
     }
 
-    private fun handlePhotoCropResult(result: Intent) {
+    fun handlePhotoCropResult(result: Intent) {
 
-        Log.i("guo","handlePhotoCropResult")
+        ll_user_data_loading.visibility = View.VISIBLE
 
         deleteTempPhotoFile()
         val resultUri = UCrop.getOutput(result)
@@ -965,7 +1042,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             val map: MutableMap<String, String> = TreeMap()
 
-            map[Contents.ACCESS_TOKEN] = "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
+            map[Contents.ACCESS_TOKEN] =
+                "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
             map[Contents.IMAGE] = bitmapToBase64(bitmap)
 
@@ -977,7 +1055,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     // 处理剪切失败的返回值
-    private fun handlePhotoCropError(result: Intent) {
+    fun handlePhotoCropError(result: Intent) {
         deleteTempPhotoFile()
         val cropError = UCrop.getError(result)
         if (cropError != null) {
@@ -1051,6 +1129,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         uploadPhotoMap[Contents.CONTENT] = "0"
         uploadPhotoMap[Contents.KIND] = 1.toString()
         uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
+
+        // 更新资料完善度
+        val proportionMap: MutableMap<String, String> = TreeMap()
+        proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        proportionMap[Contents.PROPORTION] = proportion.toString()
+        updateProportionPresent.doUpdateProportion(proportionMap)
 
     }
 
@@ -1154,6 +1238,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    override fun onDoUpdateProportionSuccess(updateProportionInfoBean: UpdateProportionInfoBean?) {
+
+    }
+
+    override fun onDoUpdateProportionError() {
+
+    }
+
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
 
         ll_user_data_loading.visibility = View.GONE
@@ -1180,16 +1272,20 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 // bucketName 为文件夹名 ，使用用户id来进行命名
                 // key值为保存文件名，试用固定的几种格式来命名
 
-                val putObjectFromFileResponse = client.putObject("user${SPStaticUtils.getString(Constant.USER_ID,
-                            "default")}",
-                        FileUtils.getFileName(mPhotoPath), file)
+                val putObjectFromFileResponse = client.putObject("user${
+                    SPStaticUtils.getString(Constant.USER_ID,
+                        "default")
+                }",
+                    FileUtils.getFileName(mPhotoPath), file)
 
-                Log.i("guo",FileUtils.getFileName(mPhotoPath))
+                Log.i("guo", FileUtils.getFileName(mPhotoPath))
 
                 mPhotoUrl = client.generatePresignedUrl("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
                 }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
+
+                SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
 
                 Log.i("guo", mPhotoUrl)
 
@@ -1515,7 +1611,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHeightDialog()
+                showBirthDialog()
             } else {
                 ToastUtils.showShort("刷新界面")
                 updateDateUI()
@@ -1639,6 +1735,20 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             wheelTwo.data = mMonthList
             wheelThree.data = mDayList
 
+            mYearPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0)
+            mMonthPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0)
+            mDayPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0)
+
+            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0),
+                false)
+            getMonthData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0))
+            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0),
+                false)
+            getDayData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0),
+                SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0))
+            wheelThree.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0),
+                false)
+
             // 是否为循环状态
             wheelOne.isCyclic = false
             // 当前选中的数据项文本颜色
@@ -1753,7 +1863,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 val birth =
                     "${mYearList[mYearPosition]}-${mMonthList[mMonthPosition]}-${mDayList[mDayPosition]}"
 
-                ToastUtils.showShort(birth)
+                SPStaticUtils.put(Constant.ME_BIRTH_YEAR, mYearPosition)
+                SPStaticUtils.put(Constant.ME_BIRTH_MONTH, mMonthPosition)
+                SPStaticUtils.put(Constant.ME_BIRTH_DAY, mDayPosition)
 
                 SPStaticUtils.put(Constant.ME_BIRTH, birth)
 
@@ -1802,8 +1914,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val wheel = findViewById<WheelPicker>(R.id.wp_user_data_height_container)
             val confirm = findViewById<TextView>(R.id.tv_user_data_height_confirm)
 
-
             wheel.data = mHeightList
+
+            wheel.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_HEIGHT) - 140, false)
 
             // 是否为循环状态
             wheel.isCyclic = false
@@ -1826,7 +1939,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             // 设置滚轮选择器数据项的对齐方式
             wheel.itemAlign = WheelPicker.ALIGN_CENTER
 
-
             wheel.setOnItemSelectedListener { picker, data, position ->
                 mHeight = mHeightList[position]
             }
@@ -1848,7 +1960,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 dismiss()
             }
         }
-
 
         override fun onDismiss() {
             super.onDismiss()
@@ -1881,6 +1992,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val confirm = findViewById<TextView>(R.id.tv_user_data_income_confirm)
 
             wheel.data = mIncomeList
+            wheel.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_INCOME, 0), false)
+
 
             // 是否为循环状态
             wheel.isCyclic = false
@@ -2212,6 +2325,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             wheelOne.data = mJobFirstList
             wheelTwo.data = mJobSecondList
 
+            mFirstJobPosition = SPStaticUtils.getInt(Constant.ME_INDUSTRY_PICK, 0)
+            mSecondJobPosition = SPStaticUtils.getInt(Constant.ME_OCCUPATION_PICK, 0)
+
+            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_INDUSTRY_PICK, 0),
+                false)
+            getJobSecondList(SPStaticUtils.getInt(Constant.ME_INDUSTRY_PICK, 0))
+            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_OCCUPATION_PICK,
+                0),
+                false)
+
             // 是否为循环状态
             wheelOne.isCyclic = false
             // 当前选中的数据项文本颜色
@@ -2275,14 +2398,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
 
             confirm.setOnClickListener {
-                ToastUtils.showShort("${mJobFirstList[mFirstJobPosition]} - ${mJobIdFirstList[mFirstJobPosition]} ," +
-                        " ${mJobSecondList[mSecondJobPosition]} - ${mJobIdSecondList[mSecondJobPosition]}")
+                ToastUtils.showShort("${mJobFirstList[mFirstJobPosition]} - ${mJobIdFirstList[mFirstJobPosition]} ," + " ${mJobSecondList[mSecondJobPosition]} - ${mJobIdSecondList[mSecondJobPosition]}")
                 SPStaticUtils.put(Constant.ME_INDUSTRY_NAME, mJobFirstList[mFirstJobPosition])
                 SPStaticUtils.put(Constant.ME_INDUSTRY_CODE, mJobIdFirstList[mFirstJobPosition])
+                SPStaticUtils.put(Constant.ME_INDUSTRY_PICK, mFirstJobPosition)
+
                 SPStaticUtils.put(Constant.ME_OCCUPATION_NAME,
                     mJobSecondList[mSecondJobPosition])
                 SPStaticUtils.put(Constant.ME_OCCUPATION_CODE,
                     mJobIdSecondList[mSecondJobPosition])
+                SPStaticUtils.put(Constant.ME_OCCUPATION_PICK, mSecondJobPosition)
                 isNeedJump = true
                 dismiss()
             }
@@ -2548,7 +2673,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         private var mCityFirstPosition = 0
         private var mCitySecondPosition = 0
-        private var mCityThirdPosition = 0
 
         override fun getImplLayoutId(): Int = R.layout.dialog_user_target_address
 
@@ -2561,12 +2685,18 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             val wheelOne = findViewById<WheelPicker>(R.id.wp_user_target_address_one)
             val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_target_address_two)
-            val wheelThree = findViewById<WheelPicker>(R.id.wp_user_target_address_three)
+
             val confirm = findViewById<TextView>(R.id.tv_user_target_address_confirm)
 
             wheelOne.data = mCityFirstList
             wheelTwo.data = mCitySecondList
-            wheelThree.data = mCityThirdList
+
+            mCityFirstPosition = SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_PICK, 0)
+            mCitySecondPosition = SPStaticUtils.getInt(Constant.ME_HOME_CITY_PICK, 0)
+
+            wheelOne.setSelectedItemPosition(mCityFirstPosition, false)
+            getJobCitySecondList(mCityFirstPosition)
+            wheelTwo.setSelectedItemPosition(mCitySecondPosition, false)
 
             // 是否为循环状态
             wheelOne.isCyclic = false
@@ -2610,29 +2740,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             // 设置滚轮选择器数据项的对齐方式
             wheelTwo.itemAlign = WheelPicker.ALIGN_CENTER
 
-            // 是否为循环状态
-            wheelThree.isCyclic = false
-            // 当前选中的数据项文本颜色
-            wheelThree.selectedItemTextColor = Color.parseColor("#FF4444")
-            // 数据项文本颜色
-            wheelThree.itemTextColor = Color.parseColor("#9A9A9A")
-            // 设置数据项文本尺寸大小
-//            wheelThree.itemTextSize = ConvertUtils.dp2px(10F)
-            // 滚轮选择器数据项之间间距
-            wheelThree.itemSpace = ConvertUtils.dp2px(40F)
-            // 是否有指示器
-            wheelThree.setIndicator(true)
-            // 滚轮选择器指示器颜色，16位颜色值
-            wheelThree.indicatorColor = Color.parseColor("#FFF5F5")
-            // 滚轮选择器是否显示幕布
-            wheelThree.setCurtain(true)
-            // 滚轮选择器是否有空气感
-            wheelThree.setAtmospheric(true)
-            // 滚轮选择器是否开启卷曲效果
-            wheelThree.isCurved = true
-            // 设置滚轮选择器数据项的对齐方式
-            wheelThree.itemAlign = WheelPicker.ALIGN_CENTER
-
 
             wheelOne.setOnItemSelectedListener { picker, data, position ->
                 mCityFirstPosition = position
@@ -2644,62 +2751,38 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     mCitySecondPosition = mCitySecondList.size - 1
                 }
 
-                getJobCityThirdList(mCityFirstPosition, mCitySecondPosition)
-
-
-                // 当三级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位 ，
-                if (mCityThirdPosition >= mCityThirdList.size) {
-                    mCityThirdPosition = mCityThirdList.size - 1
-                }
-
                 wheelTwo.data = mCitySecondList
-                wheelThree.data = mCityThirdList
 
             }
 
             wheelTwo.setOnItemSelectedListener { picker, data, position ->
-
                 mCitySecondPosition = position
-
-                getJobCityThirdList(mCityFirstPosition, mCitySecondPosition)
-
-                // 当三级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位
-                if (mCityThirdPosition >= mCityThirdList.size) {
-                    mCityThirdPosition = mCityThirdList.size - 1
-                }
-
-                wheelThree.data = mCityThirdList
-
-            }
-
-            wheelThree.setOnItemSelectedListener { picker, data, position ->
-
-                mCityThirdPosition = position
 
             }
 
             confirm.setOnClickListener {
 
-
                 val home =
-                    " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}-${mCityThirdList[mCityThirdPosition]}"
+                    " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
 
                 ToastUtils.showShort(home)
 
                 SPStaticUtils.put(Constant.ME_HOME, home)
 
-//                SPStaticUtils.put(Constant.TA_ADDRESS_FIRST, mCityFirstList[mCityFirstPosition])
-//                SPStaticUtils.put(Constant.TA_ADDRESS_FIRST_ID, mCityIdFirstList[mCityThirdPosition])
-//                SPStaticUtils.put(Constant.TA_ADDRESS_SECOND, mCitySecondList[mCitySecondPosition])
-//                SPStaticUtils.put(Constant.TA_ADDRESS_SECOND_ID, mCityIdSecondList[mCitySecondPosition])
-//                SPStaticUtils.put(Constant.TA_ADDRESS_THIRD, mCityThirdList[mCityThirdPosition])
-//                SPStaticUtils.put(Constant.TA_ADDRESS_THIRD_ID, mCityIdThirdList[mCityThirdPosition])
-
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_PICK, mCityFirstPosition)
+                SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
+                    mCitySecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_HOME_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true
                 dismiss()
             }
-
 
             close.setOnClickListener {
                 isNeedJump = false
@@ -2743,6 +2826,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val confirm = findViewById<TextView>(R.id.tv_user_data_weight_confirm)
 
             wheel.data = mWeightList
+
+            wheel.setSelectedItemPosition((SPStaticUtils.getInt(Constant.ME_WEIGHT) - 40),
+                false)
 
             // 是否为循环状态
             wheel.isCyclic = false
@@ -2819,6 +2905,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val confirm = findViewById<TextView>(R.id.tv_user_data_body_confirm)
 
             wheel.data = mBodyList
+            wheel.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BODY, 0), false)
 
             // 是否为循环状态
             wheel.isCyclic = false

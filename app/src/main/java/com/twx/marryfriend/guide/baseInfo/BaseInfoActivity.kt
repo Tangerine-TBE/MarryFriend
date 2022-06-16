@@ -190,10 +190,10 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
                         // 存储基础信息
 //                        SPStaticUtils.put(Constant.BASE_INFO_FINISH, true)
-                        SPStaticUtils.put(Constant.NICK_NAME, name)
+                        SPStaticUtils.put(Constant.ME_NAME, name)
                         SPStaticUtils.put(Constant.ME_SEX, sex)
-                        SPStaticUtils.put(Constant.AGE, age)
-                        SPStaticUtils.put(Constant.HEIGHT, height)
+                        SPStaticUtils.put(Constant.ME_AGE, age)
+                        SPStaticUtils.put(Constant.ME_HEIGHT, height)
 
 
                         val str =
@@ -207,7 +207,20 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
                         updateBaseInfoPresent.doUpdateBaseInfo(map)
 
                     } else {
-                        ToastUtils.showShort("请填写资料")
+
+                        if (!chooseSex) {
+                            ToastUtils.showShort("请填写您的性别信息")
+                        } else {
+                            if (!chooseAge) {
+                                ToastUtils.showShort("请填写您的年龄信息")
+                            } else {
+                                if (!chooseHeight) {
+                                    ToastUtils.showShort("请填写您的身高信息")
+                                }
+                            }
+                        }
+
+
                     }
 
                 }

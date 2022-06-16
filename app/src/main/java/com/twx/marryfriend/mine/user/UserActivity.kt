@@ -1,13 +1,21 @@
 package com.twx.marryfriend.mine.user
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.mine.user.data.DataFragment
 import com.twx.marryfriend.mine.user.target.TargetFragment
+import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_user.*
+import kotlinx.android.synthetic.main.fragment_data.*
+import java.io.File
 
 class UserActivity : MainBaseViewActivity() {
 
@@ -62,6 +70,27 @@ class UserActivity : MainBaseViewActivity() {
             finish()
         }
 
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == FragmentActivity.RESULT_OK) {
+            when (requestCode) {
+
+                UCrop.REQUEST_CROP -> {
+                    if (data != null) {
+                        dateFragment.handlePhotoCropResult(data)
+                    };
+                };
+                UCrop.RESULT_ERROR -> {
+                    if (data != null) {
+                        dateFragment.handlePhotoCropError(data)
+                    }
+                }
+
+            }
+        }
     }
 
 }

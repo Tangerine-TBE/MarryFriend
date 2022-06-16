@@ -2,6 +2,7 @@ package com.twx.marryfriend.net.callback;
 
 import com.twx.marryfriend.bean.AccessTokenBean;
 import com.twx.marryfriend.bean.AutoLoginBean;
+import com.twx.marryfriend.bean.IdentityVerifyBean;
 
 /**
  * @author: Administrator
@@ -9,7 +10,7 @@ import com.twx.marryfriend.bean.AutoLoginBean;
  */
 public interface IDoIdentityVerifyCallback extends IBaseCallback {
 
-    void onDoIdentityVerifySuccess(AccessTokenBean accessTokenBean);
+    void onDoIdentityVerifySuccess(IdentityVerifyBean identityVerifyBean);
 
     void onDoIdentityVerifyError();
 

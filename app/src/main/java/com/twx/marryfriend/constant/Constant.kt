@@ -45,16 +45,6 @@ object Constant {
     // 详细信息填写完毕
     const val DETAIL_INFO_FINISH = "detail_info_finish"
 
-    // 昵称
-    const val NICK_NAME = "nick_name"
-
-    // 年龄
-    const val AGE = "age"
-
-    // 身高
-    const val HEIGHT = "height"
-
-
     //---------------------- 教育信息 ----------------------
 
     // 数据库中学校总数量
@@ -89,6 +79,26 @@ object Constant {
 
     // -------------------  我的资料  -----------------
 
+    // 设置页填写至第几个弹窗
+    const val SET_INFO_DIALOG_SUM = "set_info_dialog_sum"
+
+
+    // 头像
+    const val ME_AVATAR = "ME_avatar"
+
+    // 生活照
+    const val ME_LIFE_PHOTO_ONE = "ME_life_photo_one" // 第一张生活照
+
+    const val ME_LIFE_PHOTO_ONE_TEXT = "ME_life_photo_one_text" // 第一张生活照描述
+
+    const val ME_LIFE_PHOTO_TWO = "ME_life_photo_two"// 第二张生活照
+
+    const val ME_LIFE_PHOTO_TWO_TEXT = "ME_life_photo_two_text"// 第二张生活照描述
+
+    const val ME_LIFE_PHOTO_THREE = "ME_life_photo_three"// 第三张生活照
+
+    const val ME_LIFE_PHOTO_THREE_TEXT = "ME_life_photo_three_text"// 第三张生活照描述
+
     // 是否实名认证
     const val IS_IDENTITY_VERIFY = "is_identity_verify"
 
@@ -102,6 +112,12 @@ object Constant {
 
     const val ME_BIRTH = "ME_birth"  // 生日
 
+    const val ME_BIRTH_YEAR = "ME_birth_year"  // 生日选择的年
+
+    const val ME_BIRTH_MONTH = "ME_birth_month"  // 生日选择的月
+
+    const val ME_BIRTH_DAY = "ME_birth_day"  // 生日选择的日
+
     const val ME_HEIGHT = "ME_height"  // 身高
 
     const val ME_SCHOOL = "ME_school"  // 学校
@@ -109,20 +125,24 @@ object Constant {
     const val ME_EDU = "ME_edu"  // 学历
 
     const val ME_INDUSTRY_CODE = "ME_industry_code"  // 行业编码
-
     const val ME_INDUSTRY_NAME = "ME_industry_name"  // 行业名字
-
+    const val ME_INDUSTRY_PICK = "ME_industry_pick"  // 行业滚轮选择选项
     const val ME_OCCUPATION_CODE = "ME_occupation_code"  // 岗位编码
-
     const val ME_OCCUPATION_NAME = "ME_occupation_name"  // 岗位名字
+    const val ME_OCCUPATION_PICK = "ME_occupation_pick"  // 岗位滚轮选择选项
 
     const val ME_WORK_PROVINCE_CODE = "ME_work_province_code"  // 工作省份编码
-
     const val ME_WORK_CITY_CODE = "ME_work_city_code"  // 工作城市编码
-
     const val ME_WORK_CITY_NAME = "ME_work_city_name"  // 工作城市名字
 
     const val ME_HOME = "ME_home"  // 故乡
+
+    const val ME_HOME_PROVINCE_CODE = "ME_home_province_code"  // 籍贯省份编码
+    const val ME_HOME_PROVINCE_NAME = "ME_home_province_name"  // 籍贯省份名字
+    const val ME_HOME_PROVINCE_PICK = "ME_home_province_pick"  // 籍贯省份滚轮选择选项
+    const val ME_HOME_CITY_CODE = "ME_home_city_code"      // 籍贯城市编码
+    const val ME_HOME_CITY_NAME = "ME_home_city_name"      // 籍贯城市名字
+    const val ME_HOME_CITY_PICK = "ME_home_city_pick"      // 籍贯城市滚轮选择选项
 
     const val ME_INCOME = "ME_income"  // 月收入
 
@@ -133,6 +153,11 @@ object Constant {
     const val ME_HOBBY = "ME_hobby"  // 日常兴趣爱好
 
     const val ME_TA = "ME_ta"  // 我心目中的Ta
+
+
+    const val ME_TURE_NAME = "ME_true_name"  // 带有*号的真实名字
+
+    const val ME_TURE_ID = "ME_true_id"  // 带有*号的真实名字
 
 
     //         -----------  更多信息  ----------
@@ -193,6 +218,13 @@ object Constant {
 
     const val TA_WORK_PLACE = "TA_work_place"  // 期望工作地点
 
+    const val TA_WORK_PROVINCE_NAME = "TA_work_province_name"  // 期望工作省份
+    const val TA_WORK_PROVINCE_CODE = "TA_work_province_code"  // 期望工作省份编码
+    const val TA_WORK_PROVINCE_PICK = "TA_work_province_pick"  // 期望工作省份滚轮选择选项
+    const val TA_WORK_CITY_NAME = "TA_work_city_name"  // 期望工作城市
+    const val TA_WORK_CITY_CODE = "TA_work_city_code"  // 期望工作城市编码
+    const val TA_WORK_CITY_PICK = "TA_work_city_pick"  // 期望工作城市滚轮选择选项
+
     const val TA_HAVE_CHILD = "TA_have_child"  // 有没有孩子
 
     const val TA_WANT_CHILD = "TA_want_child"  // 是否想要孩子
@@ -204,5 +236,21 @@ object Constant {
     const val TA_HAVE_PHOTO = "TA_have_photo"  // 有无照片
 
     const val TA_MARRY = "TA_marry"  // 何时结婚
+
+    const val TA_HOUSE = "TA_house"  // 购房情况
+
+    const val TA_CAR = "TA_car"  // 购车情况
+
+
+    // -------------------  招呼语信息  -----------------
+
+    const val ME_GREET = "ME_greet"  // 招呼语（文字）
+
+    const val ME_VOICE = "ME_voice"  // 招呼语（语音）
+
+    const val ME_VOICE_LONG = "ME_voice_long"  // 招呼语语言的长度
+
+    const val ME_VOICE_NAME = "ME_voice_name"  // 招呼语语言的文件命名
+
 
 }

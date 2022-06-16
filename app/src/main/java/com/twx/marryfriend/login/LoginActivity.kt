@@ -82,7 +82,6 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 
         SPStaticUtils.put(Constant.VERSION, channelName)
 
-
         getBitmap("https://baidu-ai.bj.bcebos.com/face/faces.jpg")
 
     }
