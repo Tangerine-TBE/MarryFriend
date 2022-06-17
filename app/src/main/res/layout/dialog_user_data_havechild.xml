@@ -81,7 +81,7 @@
         android:background="@drawable/shape_bg_dialog_choose_uncheck"
         android:gravity="center"
         android:paddingVertical="20dp"
-        android:text="有还在但不在身边"
+        android:text="有孩子但不在身边"
         android:textColor="#101010"
         android:textSize="17sp" />
 

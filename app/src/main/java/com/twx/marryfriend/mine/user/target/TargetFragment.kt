@@ -3,6 +3,7 @@ package com.twx.marryfriend.mine.user.target
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -224,6 +225,479 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     }
 
+
+    // 点击选项之后显示下一个弹窗
+    private fun showNextDialog(position: Int) {
+        when (position) {
+            0 -> {
+                if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0) == 0) {
+                    // 身高
+                    showHeightDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_INCOME, 7) == 7) {
+                        // 月收入
+                        showIncomeDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_EDU, 7) == 7) {
+                            // 学历
+                            showEduDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                                // 婚况
+                                showMarryStateDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                                    // 体型
+                                    showBodyDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK,
+                                            34) == 34
+                                    ) {
+                                        // 工作地区
+                                        showJobDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                            // 有没有孩子
+                                            showHaveChildDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD,
+                                                    5) == 5
+                                            ) {
+                                                // 是否想要孩子
+                                                showWantChildDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.TA_SMOKE,
+                                                        5) == 5
+                                                ) {
+                                                    // 是否吸烟
+                                                    showSmokeDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.TA_DRINK,
+                                                            5) == 5
+                                                    ) {
+                                                        // 是否喝酒
+                                                        showDrinkDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
+                                                                3) == 3
+                                                        ) {
+                                                            // 有无照片
+                                                            showPhotoDialog()
+                                                        } else {
+                                                            if (SPStaticUtils.getInt(Constant.TA_MARRY,
+                                                                    5) == 5
+                                                            ) {
+                                                                // 何时结婚
+                                                                showMarryDialog()
+                                                            } else {
+                                                                updateDateUI()
+                                                                update()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            1 -> {
+                if (SPStaticUtils.getInt(Constant.TA_INCOME, 7) == 7) {
+                    // 月收入
+                    showIncomeDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_EDU, 7) == 7) {
+                        // 学历
+                        showEduDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                            // 婚况
+                            showMarryStateDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                                // 体型
+                                showBodyDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK,
+                                        34) == 34
+                                ) {
+                                    // 工作地区
+                                    showJobDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                        // 有没有孩子
+                                        showHaveChildDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                            // 是否想要孩子
+                                            showWantChildDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                                // 是否吸烟
+                                                showSmokeDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.TA_DRINK,
+                                                        5) == 5
+                                                ) {
+                                                    // 是否喝酒
+                                                    showDrinkDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
+                                                            3) == 3
+                                                    ) {
+                                                        // 有无照片
+                                                        showPhotoDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.TA_MARRY,
+                                                                5) == 5
+                                                        ) {
+                                                            // 何时结婚
+                                                            showMarryDialog()
+                                                        } else {
+                                                            updateDateUI()
+                                                            update()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            2 -> {
+                if (SPStaticUtils.getInt(Constant.TA_EDU, 7) == 7) {
+                    // 学历
+                    showEduDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                        // 婚况
+                        showMarryStateDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                            // 体型
+                            showBodyDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                                // 工作地区
+                                showJobDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                    // 有没有孩子
+                                    showHaveChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                        // 是否想要孩子
+                                        showWantChildDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                            // 是否吸烟
+                                            showSmokeDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                                // 是否喝酒
+                                                showDrinkDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
+                                                        3) == 3
+                                                ) {
+                                                    // 有无照片
+                                                    showPhotoDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.TA_MARRY,
+                                                            5) == 5
+                                                    ) {
+                                                        // 何时结婚
+                                                        showMarryDialog()
+                                                    } else {
+                                                        updateDateUI()
+                                                        update()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            3 -> {
+                if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                    // 婚况
+                    showMarryStateDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                        // 体型
+                        showBodyDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                            // 工作地区
+                            showJobDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                // 有没有孩子
+                                showHaveChildDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                    // 是否想要孩子
+                                    showWantChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                        // 是否吸烟
+                                        showSmokeDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                            // 是否喝酒
+                                            showDrinkDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
+                                                    3) == 3
+                                            ) {
+                                                // 有无照片
+                                                showPhotoDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.TA_MARRY,
+                                                        5) == 5
+                                                ) {
+                                                    // 何时结婚
+                                                    showMarryDialog()
+                                                } else {
+                                                    updateDateUI()
+                                                    update()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            4 -> {
+                if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                    // 体型
+                    showBodyDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                        // 工作地区
+                        showJobDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                            // 有没有孩子
+                            showHaveChildDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                // 是否想要孩子
+                                showWantChildDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                    // 是否吸烟
+                                    showSmokeDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                        // 是否喝酒
+                                        showDrinkDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                            // 有无照片
+                                            showPhotoDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                                // 何时结婚
+                                                showMarryDialog()
+                                            } else {
+                                                updateDateUI()
+                                                update()
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            5 -> {
+                if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                    // 工作地区
+                    showJobDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                        // 有没有孩子
+                        showHaveChildDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                            // 是否想要孩子
+                            showWantChildDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                // 是否吸烟
+                                showSmokeDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                    // 是否喝酒
+                                    showDrinkDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                        // 有无照片
+                                        showPhotoDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                            // 何时结婚
+                                            showMarryDialog()
+                                        } else {
+                                            updateDateUI()
+                                            update()
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            6 -> {
+                if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                    // 有没有孩子
+                    showHaveChildDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                        // 是否想要孩子
+                        showWantChildDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                            // 是否吸烟
+                            showSmokeDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                // 是否喝酒
+                                showDrinkDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                    // 有无照片
+                                    showPhotoDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                        // 何时结婚
+                                        showMarryDialog()
+                                    } else {
+                                        updateDateUI()
+                                        update()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            7 -> {
+                if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                    // 是否想要孩子
+                    showWantChildDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                        // 是否吸烟
+                        showSmokeDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                            // 是否喝酒
+                            showDrinkDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                // 有无照片
+                                showPhotoDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                    // 何时结婚
+                                    showMarryDialog()
+                                } else {
+                                    updateDateUI()
+                                    update()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            8 -> {
+                if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                    // 是否吸烟
+                    showSmokeDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                        // 是否喝酒
+                        showDrinkDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                            // 有无照片
+                            showPhotoDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                // 何时结婚
+                                showMarryDialog()
+                            } else {
+                                updateDateUI()
+                                update()
+                            }
+                        }
+                    }
+                }
+            }
+            9 -> {
+                if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                    // 是否喝酒
+                    showDrinkDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                        // 有无照片
+                        showPhotoDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                            // 何时结婚
+                            showMarryDialog()
+                        } else {
+                            updateDateUI()
+                            update()
+                        }
+                    }
+                }
+            }
+            10 -> {
+                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                    // 有无照片
+                    showPhotoDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                        // 何时结婚
+                        showMarryDialog()
+                    } else {
+                        updateDateUI()
+                        update()
+                    }
+                }
+            }
+            11 -> {
+                if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                    // 何时结婚
+                    showMarryDialog()
+                } else {
+                    updateDateUI()
+                    update()
+                }
+            }
+        }
+    }
+
     // 获取所有数据更新视图
     private fun updateDateUI() {
 
@@ -389,10 +863,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     }
 
     private fun update() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
-        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+//        val demandInfoMap: MutableMap<String, String> = TreeMap()
+//        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+//        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+//        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
     }
 
@@ -417,7 +891,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         val car = SPStaticUtils.getInt(Constant.TA_CAR, 0)
         val house = SPStaticUtils.getInt(Constant.TA_HOUSE, 0)
         val city = SPStaticUtils.getString(Constant.TA_WORK_CITY_NAME, "")
-        val cityCode = SPStaticUtils.getInt(Constant.TA_WORK_CITY_CODE, 0)
+        val cityCode = SPStaticUtils.getString(Constant.TA_WORK_CITY_CODE, "")
 
         val demandInfo =
             " {\"user_sex\": $sex, " +
@@ -503,6 +977,17 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     }
 
     // 月收入弹窗
+    private fun showIncomeDialog() {
+        XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(IncomeDialog(requireContext()))
+            .show()
+    }
+
+    // 学历弹窗
     private fun showEduDialog() {
         XPopup.Builder(context)
             .dismissOnTouchOutside(false)
@@ -521,17 +1006,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             .isDestroyOnDismiss(true)
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(MarryStateDialog(requireContext()))
-            .show()
-    }
-
-    // 学历弹窗
-    private fun showIncomeDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(IncomeDialog(requireContext()))
             .show()
     }
 
@@ -743,7 +1217,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHeightDialog()
+                showNextDialog(0)
             } else {
                 updateDateUI()
                 update()
@@ -775,8 +1249,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             wheelOne.data = mHeightMinList
             wheelTwo.data = mHeightMaxList
 
-            mMinHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN) - 140
-            mMaxHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX) - 140
+            mMinHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) - 140
+            mMaxHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) - 140
 
             wheelOne.setSelectedItemPosition(mMinHeightPosition, false)
             wheelTwo.setSelectedItemPosition(mMaxHeightPosition, false)
@@ -845,7 +1319,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             }
 
             confirm.setOnClickListener {
-                ToastUtils.showShort("${mHeightMinList[mMinHeightPosition]} - ${mHeightMaxList[mMaxHeightPosition]} ")
+
+                Log.i("guo", "mMinHeightPosition : $mMinHeightPosition")
+                Log.i("guo", "mMinHeightPosition : $mMinHeightPosition")
+
                 SPStaticUtils.put(Constant.TA_HEIGHT_MIN, mHeightMinList[mMinHeightPosition])
                 SPStaticUtils.put(Constant.TA_HEIGHT_MAX, mHeightMaxList[mMaxHeightPosition])
                 isNeedJump = true
@@ -866,7 +1343,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showIncomeDialog()
+                showNextDialog(1)
             } else {
                 updateDateUI()
                 update()
@@ -946,7 +1423,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showEduDialog()
+                showNextDialog(2)
             } else {
                 updateDateUI()
                 update()
@@ -1108,7 +1585,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showMarryStateDialog()
+                showNextDialog(3)
             } else {
                 updateDateUI()
                 update()
@@ -1193,8 +1670,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 6)) {
-                6 -> {
+            when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4)) {
+                4 -> {
                 }
                 0 -> {
                     tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
@@ -1234,7 +1711,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showBodyDialog()
+                showNextDialog(4)
             } else {
                 updateDateUI()
                 update()
@@ -1316,7 +1793,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showJobDialog()
+                showNextDialog(5)
             } else {
                 updateDateUI()
                 update()
@@ -1461,7 +1938,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHaveChildDialog()
+                showNextDialog(6)
             } else {
                 updateDateUI()
                 update()
@@ -1604,7 +2081,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showWantChildDialog()
+                showNextDialog(7)
             } else {
                 updateDateUI()
                 update()
@@ -1747,7 +2224,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showSmokeDialog()
+                showNextDialog(8)
             } else {
                 updateDateUI()
                 update()
@@ -1890,7 +2367,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showDrinkDialog()
+                showNextDialog(9)
             } else {
                 updateDateUI()
                 update()
@@ -2033,7 +2510,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showPhotoDialog()
+                showNextDialog(10)
             } else {
                 updateDateUI()
                 update()
@@ -2106,7 +2583,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         private fun initChoose() {
             when (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 5)) {
-                5 -> {
+                3 -> {
                 }
                 0 -> {
                     tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
@@ -2139,7 +2616,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showMarryDialog()
+                showNextDialog(11)
             } else {
                 updateDateUI()
                 update()
@@ -2228,7 +2705,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.TA_DRINK, 5)) {
+            when (SPStaticUtils.getInt(Constant.TA_MARRY, 5)) {
                 5 -> {
                 }
                 0 -> {

@@ -6,18 +6,17 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.media.MediaPlayer
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
+import android.os.*
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -27,6 +26,7 @@ import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
 import com.blankj.utilcode.util.*
+import com.blankj.utilcode.util.FileUtils
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.util.NalUnitUtil
 import com.hjq.permissions.OnPermissionCallback
@@ -49,13 +49,16 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.GlideEngine
+import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.fragment_data.*
 import kotlinx.android.synthetic.main.fragment_mine.*
 import kotlinx.android.synthetic.main.fragment_target.*
@@ -66,7 +69,8 @@ import java.io.*
 import java.util.*
 
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
-    IDoFaceDetectCallback, IDoUploadPhotoCallback, IDoUpdateProportionCallback {
+    IDoFaceDetectCallback, IDoUploadPhotoCallback, IDoUpdateProportionCallback,
+    IDoUpdateGreetInfoCallback {
 
     // 资料完成度
     private var proportion = 0
@@ -86,6 +90,25 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 图像上传百度云的url
     private var mPhotoUrl = ""
+
+
+    // 是否正在播放
+    private var isPlaying = false
+
+    private var isCurrentDown = false
+    private var mCountDownTimer: CountDownTimer? = null
+
+    // 录音按钮当前模式
+    private var recordMode = "start"
+
+    // 录音文件路径
+    private var recordPath = ""
+
+    // 录音工具
+    private lateinit var audioRecorder: AudioRecorder
+
+    private lateinit var mediaPlayer: MediaPlayer
+
 
     // 时间选择器数据
     // 年
@@ -122,7 +145,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private var mCityIdThirdList: MutableList<String> = arrayListOf()
 
 
-    private var mWeightList: MutableList<Int> = arrayListOf()
+    private var mWeightList: MutableList<String> = arrayListOf()
     private var mBodyList: MutableList<String> = arrayListOf()
 
     private var baseInfoList: MutableList<String> = arrayListOf()
@@ -139,6 +162,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
     private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
     private lateinit var updateProportionPresent: doUpdateProportionPresentImpl
+    private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
 
     override fun onCreateView(
@@ -173,13 +197,19 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         updateProportionPresent = doUpdateProportionPresentImpl.getsInstance()
         updateProportionPresent.registerCallback(this)
 
+        doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
+        doUpdateGreetPresent.registerCallback(this)
+
         mTempPhotoPath =
             Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(requireActivity().cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "photoPic.png"
 
+        recordPath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/record.wav"
 
+        audioRecorder = AudioRecorder.getInstance()
+        mediaPlayer = MediaPlayer()
 
         initTimeData()
 
@@ -225,6 +255,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 .into(iv_user_data_avatar)
         }
 
+        if (SPStaticUtils.getString(Constant.ME_INTRODUCE, "") != "") {
+            iv_user_data_introduce.visibility = View.GONE
+            tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
+        }
+
     }
 
     private fun initData() {
@@ -263,7 +298,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         getJobCityThirdList(0, 0)
 
         for (i in 0..60) {
-            mWeightList.add(40 + i)
+            mWeightList.add("${40 + i}kg")
         }
 
         // 先判断性别
@@ -284,6 +319,32 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mBodyList.add("富线条美")
         }
 
+        if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "") != "") {
+            rl_user_data_voice_non.visibility = View.GONE
+            rl_user_data_voice.visibility = View.VISIBLE
+
+            val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+            var formatTime = if (time.div(1000) / 60 >= 10) {
+                if (time.div(1000) % 60 >= 10) {
+                    "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                } else {
+                    "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                }
+            } else {
+                if (time.div(1000) % 60 >= 10) {
+                    "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                } else {
+                    "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                }
+            }
+
+            tv_user_data_voice.text = formatTime
+
+        } else {
+            rl_user_data_voice_non.visibility = View.VISIBLE
+            rl_user_data_voice.visibility = View.GONE
+        }
+
     }
 
     private fun initPresent() {
@@ -297,6 +358,66 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         client = BosClient(config)
 
     }
+
+
+    // 验证码倒计时
+    private fun startCurrentDownTimer(mBeginTime: Long) {
+        isCurrentDown = true
+        mCountDownTimer = object : CountDownTimer(mBeginTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                var text = ""
+                if (millisUntilFinished.div(1000) / 60 >= 10) {
+
+                    if (millisUntilFinished.div(1000) % 60 >= 10) {
+                        text =
+                            "${millisUntilFinished.div(1000) / 60} : ${millisUntilFinished.div(1000) % 60}"
+                    } else {
+                        text =
+                            "${millisUntilFinished.div(1000) / 60} : 0${millisUntilFinished.div(1000) % 60}"
+                    }
+
+                } else {
+                    if (millisUntilFinished.div(1000) % 60 >= 10) {
+                        text =
+                            "0${millisUntilFinished.div(1000) / 60} : ${millisUntilFinished.div(1000) % 60}"
+                    } else {
+                        text = "0${millisUntilFinished.div(1000) / 60} : 0${
+                            millisUntilFinished.div(1000) % 60
+                        }"
+                    }
+                }
+                tv_user_data_voice.text = text
+            }
+
+            override fun onFinish() {
+                isCurrentDown = false
+
+                // 暂停播放
+                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+
+                val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+                var formatTime = if (time.div(1000) / 60 >= 10) {
+                    if (time.div(1000) % 60 >= 10) {
+                        "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                } else {
+                    if (time.div(1000) % 60 >= 10) {
+                        "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                }
+
+                tv_user_data_voice.text = formatTime
+
+                isPlaying = !isPlaying
+
+            }
+        }.start()
+    }
+
 
     private fun initEvent() {
 
@@ -313,6 +434,90 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 .asCustom(PhotoGuideDialog(requireContext()))
                 .show()
 
+        }
+
+        rl_user_data_voice_non.setOnClickListener {
+
+            XXPermissions.with(context)
+                .permission(Permission.RECORD_AUDIO)
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(
+                        permissions: MutableList<String>?,
+                        all: Boolean,
+                    ) {
+                        XPopup.Builder(context)
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false)
+                            .isDestroyOnDismiss(true)
+                            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                            .asCustom(VoiceDialog(requireContext()))
+                            .show()
+                    }
+
+                    override fun onDenied(
+                        permissions: MutableList<String>?,
+                        never: Boolean,
+                    ) {
+                        ToastUtils.showShort("请授予应用所需权限。")
+                    }
+                })
+
+        }
+
+        rl_user_data_voice.setOnClickListener {
+
+            if (!isPlaying) {
+                // 开始播放
+                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_pause)
+
+                startCurrentDownTimer((SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0")
+                    .toLong()))
+
+                mediaPlayer.reset()
+                mediaPlayer.setDataSource(recordPath);
+                mediaPlayer.prepare();
+                mediaPlayer.start();
+
+                isPlaying = !isPlaying
+            } else {
+                // 暂停播放
+                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+                mediaPlayer.stop();
+
+                mCountDownTimer?.cancel()
+
+                val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+                var formatTime = if (time.div(1000) / 60 >= 10) {
+                    if (time.div(1000) % 60 >= 10) {
+                        "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                } else {
+                    if (time.div(1000) % 60 >= 10) {
+                        "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                }
+
+                tv_user_data_voice.text = formatTime
+
+                isPlaying = !isPlaying
+            }
+
+        }
+
+        ll_user_data_introduce.setOnClickListener {
+
+            XPopup.Builder(context)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IntroduceDialog(requireContext()))
+                .show()
         }
 
         baseAdapter.setOnItemClickListener(object : DataBaseAdapter.OnItemClickListener {
@@ -454,6 +659,523 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
     }
 
+    // 点击选项之后显示下一个弹窗
+    private fun showNextDialog(position: Int) {
+        when (position) {
+            0 -> {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 0) == 0) {
+                    // 性别
+                    showSexDialog()
+                } else {
+                    if (SPStaticUtils.getString(Constant.ME_BIRTH, "") == "") {
+                        // 生日
+                        showBirthDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_HEIGHT, 0) == 0) {
+                            // 身高
+                            showHeightDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                                // 月收入
+                                showIncomeDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                                    // 有没有孩子
+                                    showHaveChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                        // 想不想要孩子
+                                        showWantChildDialog()
+                                    } else {
+                                        if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                                "") == ""
+                                        ) {
+                                            // 职业
+                                            showJobDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                                // 购房情况
+                                                showHouseDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                                    // 购车情况
+                                                    showCarDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                            "") == ""
+                                                    ) {
+                                                        // 籍贯
+                                                        showHomeDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                                0) == 0
+                                                        ) {
+                                                            // 体重
+                                                            showWeightDialog()
+                                                        } else {
+                                                            if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                                    0) == 0
+                                                            ) {
+                                                                // 体型
+                                                                showBodyDialog()
+                                                            } else {
+                                                                updateDateUI()
+                                                                ToastUtils.showShort("刷新界面")
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            1 -> {
+                if (SPStaticUtils.getString(Constant.ME_BIRTH, "") == "") {
+                    // 生日
+                    showBirthDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_HEIGHT, 0) == 0) {
+                        // 身高
+                        showHeightDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                            // 月收入
+                            showIncomeDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                                // 有没有孩子
+                                showHaveChildDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                    // 想不想要孩子
+                                    showWantChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                            "") == ""
+                                    ) {
+                                        // 职业
+                                        showJobDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                            // 购房情况
+                                            showHouseDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                                // 购车情况
+                                                showCarDialog()
+                                            } else {
+                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                        "") == ""
+                                                ) {
+                                                    // 籍贯
+                                                    showHomeDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                            0) == 0
+                                                    ) {
+                                                        // 体重
+                                                        showWeightDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                                0) == 0
+                                                        ) {
+                                                            // 体型
+                                                            showBodyDialog()
+                                                        } else {
+                                                            updateDateUI()
+                                                            ToastUtils.showShort("刷新界面")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            2 -> {
+                if (SPStaticUtils.getInt(Constant.ME_HEIGHT, 0) == 0) {
+                    // 身高
+                    showHeightDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                        // 月收入
+                        showIncomeDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                            // 有没有孩子
+                            showHaveChildDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                // 想不想要孩子
+                                showWantChildDialog()
+                            } else {
+                                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                        "") == ""
+                                ) {
+                                    // 职业
+                                    showJobDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                        // 购房情况
+                                        showHouseDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                            // 购车情况
+                                            showCarDialog()
+                                        } else {
+                                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                    "") == ""
+                                            ) {
+                                                // 籍贯
+                                                showHomeDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                        0) == 0
+                                                ) {
+                                                    // 体重
+                                                    showWeightDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                            0) == 0
+                                                    ) {
+                                                        // 体型
+                                                        showBodyDialog()
+                                                    } else {
+                                                        updateDateUI()
+                                                        ToastUtils.showShort("刷新界面")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            3 -> {
+                if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                    // 月收入
+                    showIncomeDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                        // 有没有孩子
+                        showHaveChildDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                            // 想不想要孩子
+                            showWantChildDialog()
+                        } else {
+                            if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                    "") == ""
+                            ) {
+                                // 职业
+                                showJobDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                    // 购房情况
+                                    showHouseDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                        // 购车情况
+                                        showCarDialog()
+                                    } else {
+                                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                "") == ""
+                                        ) {
+                                            // 籍贯
+                                            showHomeDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                    0) == 0
+                                            ) {
+                                                // 体重
+                                                showWeightDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                        0) == 0
+                                                ) {
+                                                    // 体型
+                                                    showBodyDialog()
+                                                } else {
+                                                    updateDateUI()
+                                                    ToastUtils.showShort("刷新界面")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            4 -> {
+                if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                    // 有没有孩子
+                    showHaveChildDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                        // 想不想要孩子
+                        showWantChildDialog()
+                    } else {
+                        if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                "") == ""
+                        ) {
+                            // 职业
+                            showJobDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                // 购房情况
+                                showHouseDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                    // 购车情况
+                                    showCarDialog()
+                                } else {
+                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                            "") == ""
+                                    ) {
+                                        // 籍贯
+                                        showHomeDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                0) == 0
+                                        ) {
+                                            // 体重
+                                            showWeightDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                    0) == 0
+                                            ) {
+                                                // 体型
+                                                showBodyDialog()
+                                            } else {
+                                                updateDateUI()
+                                                ToastUtils.showShort("刷新界面")
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            5 -> {
+                if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                    // 想不想要孩子
+                    showWantChildDialog()
+                } else {
+                    if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                            "") == ""
+                    ) {
+                        // 职业
+                        showJobDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                            // 购房情况
+                            showHouseDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                // 购车情况
+                                showCarDialog()
+                            } else {
+                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                        "") == ""
+                                ) {
+                                    // 籍贯
+                                    showHomeDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                            0) == 0
+                                    ) {
+                                        // 体重
+                                        showWeightDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                0) == 0
+                                        ) {
+                                            // 体型
+                                            showBodyDialog()
+                                        } else {
+                                            updateDateUI()
+                                            ToastUtils.showShort("刷新界面")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            6 -> {
+                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
+                    // 职业
+                    showJobDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                        // 购房情况
+                        showHouseDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                            // 购车情况
+                            showCarDialog()
+                        } else {
+                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                    "") == ""
+                            ) {
+                                // 籍贯
+                                showHomeDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                        0) == 0
+                                ) {
+                                    // 体重
+                                    showWeightDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                            0) == 0
+                                    ) {
+                                        // 体型
+                                        showBodyDialog()
+                                    } else {
+                                        updateDateUI()
+                                        ToastUtils.showShort("刷新界面")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            7 -> {
+                if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                    // 购房情况
+                    showHouseDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                        // 购车情况
+                        showCarDialog()
+                    } else {
+                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                "") == ""
+                        ) {
+                            // 籍贯
+                            showHomeDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                    0) == 0
+                            ) {
+                                // 体重
+                                showWeightDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                        0) == 0
+                                ) {
+                                    // 体型
+                                    showBodyDialog()
+                                } else {
+                                    updateDateUI()
+                                    ToastUtils.showShort("刷新界面")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            8 -> {
+                if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                    // 购车情况
+                    showCarDialog()
+                } else {
+                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                            "") == ""
+                    ) {
+                        // 籍贯
+                        showHomeDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                0) == 0
+                        ) {
+                            // 体重
+                            showWeightDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                    0) == 0
+                            ) {
+                                // 体型
+                                showBodyDialog()
+                            } else {
+                                updateDateUI()
+                                ToastUtils.showShort("刷新界面")
+                            }
+                        }
+                    }
+                }
+            }
+            9 -> {
+                if (SPStaticUtils.getString(Constant.ME_HOME, "") == "") {
+                    // 籍贯
+                    showHomeDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                            0) == 0
+                    ) {
+                        // 体重
+                        showWeightDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                0) == 0
+                        ) {
+                            // 体型
+                            showBodyDialog()
+                        } else {
+                            updateDateUI()
+                            ToastUtils.showShort("刷新界面")
+                        }
+                    }
+                }
+            }
+            10 -> {
+                if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
+                    // 体重
+                    showWeightDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_BODY,
+                            0) == 0
+                    ) {
+                        // 体型
+                        showBodyDialog()
+                    } else {
+                        updateDateUI()
+                        ToastUtils.showShort("刷新界面")
+                    }
+                }
+            }
+            11 -> {
+                if (SPStaticUtils.getInt(Constant.ME_BODY, 0) == 0) {
+                    // 体型
+                    showBodyDialog()
+                } else {
+                    updateDateUI()
+                    ToastUtils.showShort("刷新界面")
+                }
+            }
+        }
+
+    }
+
 
     // 获取所有数据更新视图
     private fun updateDateUI() {
@@ -514,7 +1236,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             7 -> income = "未填写"
         }
 
-
         when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 4)) {
             0 -> haveChild = "没有孩子"
             1 -> haveChild = "有孩子且住在一起"
@@ -540,10 +1261,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             5 -> house = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.ME_CAR, 2)) {
-            0 -> car = "买了"
-            1 -> car = "没买"
-            2 -> car = "未填写"
+        when (SPStaticUtils.getInt(Constant.ME_CAR, 0)) {
+            0 -> car = "未填写"
+            1 -> car = "买了"
+            2 -> car = "没买"
         }
 
         home = when (SPStaticUtils.getString(Constant.ME_HOME, "")) {
@@ -551,10 +1272,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             else -> SPStaticUtils.getString(Constant.ME_HOME, "")
         }
 
-
         weight = when (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0)) {
             0 -> "未填写"
-            else -> SPStaticUtils.getInt(Constant.ME_WEIGHT, 0).toString()
+            else -> "${SPStaticUtils.getInt(Constant.ME_WEIGHT, 0)}kg"
         }
 
         body = when (SPStaticUtils.getInt(Constant.ME_BODY, 10)) {
@@ -681,8 +1401,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         mMonthList.clear()
         mDayList.clear()
 
-        for (i in 0..(year - 1970)) {
-            mYearList.add(1970 + i)
+
+        for (i in 0..(100)) {
+            mYearList.add(year - 100 + i)
         }
 
         for (i in 0.until(12)) {
@@ -1229,12 +1950,40 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    // 获取招呼语信息
+    private fun getGreetInfo(): String {
+
+        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 0)
+        val voiceUrl = SPStaticUtils.getString(Constant.ME_VOICE, "")
+        val voiceLong = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "")
+        val voiceName = SPStaticUtils.getString(Constant.ME_VOICE_NAME, "")
+        val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
+
+        val greetInfo =
+            " {\"user_sex\":                    $sex, " +
+                    "\"voice_url\":           \"$voiceUrl\"," +
+                    "\"voice_long\":          \"$voiceLong\"," +
+                    "\"voice_name\":          \"$voiceName\"," +
+                    " \"zhaohuyu_content\":   \"$greet\"}"
+
+        return greetInfo
+
+    }
+
 
     override fun onLoading() {
 
     }
 
     override fun onError() {
+
+    }
+
+    override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
+
+    }
+
+    override fun onDoUpdateGreetInfoError() {
 
     }
 
@@ -1330,7 +2079,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     override fun onDoUpdateBaseInfoError() {
 
     }
-
 
     // ---------------------------------- 基础弹窗 ----------------------------------
 
@@ -1465,6 +2213,287 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    // 添加自我介绍
+    inner class IntroduceDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedUpdate = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_set_introduce
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val close = findViewById<ImageView>(R.id.iv_dialog_set_introduce_close)
+            val content = findViewById<EditText>(R.id.et_dialog_set_introduce_content)
+            val sum = findViewById<TextView>(R.id.tv_dialog_set_introduce_sum)
+            val confirm = findViewById<TextView>(R.id.tv_dialog_set_introduce_confirm)
+
+            var size = 0
+            var text = ""
+
+            content.setText(SPStaticUtils.getString(Constant.ME_INTRODUCE, ""))
+            text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
+            size = SPStaticUtils.getString(Constant.ME_INTRODUCE, "").length
+            sum.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "").length.toString()
+
+            if (size >= 10) {
+                confirm.setBackgroundResource(R.drawable.shape_bg_common_next)
+            } else {
+                confirm.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+            }
+
+            close.setOnClickListener {
+                isNeedUpdate = false
+                dismiss()
+            }
+
+            content.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int,
+                ) {
+
+                }
+
+                override fun afterTextChanged(s: Editable) {
+
+                    size = s.length
+                    text = s.toString()
+
+                    sum.text = s.length.toString()
+
+                    if (s.length >= 10) {
+                        confirm.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    } else {
+                        confirm.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                    }
+
+                    if (s.length >= 1000) {
+                        ToastUtils.showShort("已达到输入文字最大数量")
+                        KeyboardUtils.hideSoftInput(requireActivity())
+                    }
+                }
+            })
+
+            confirm.setOnClickListener {
+                if (size >= 10) {
+                    // 保存数据
+                    SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+                    isNeedUpdate = true
+                    dismiss()
+                } else {
+                    ToastUtils.showShort("请输入至少10字内容")
+                }
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            // 更新数据
+            if (isNeedUpdate) {
+                iv_user_data_introduce.visibility = View.GONE
+                tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
+            }
+        }
+
+    }
+
+    // 添加语音介绍
+    inner class VoiceDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedUpdate = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_set_voice
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val close = findViewById<ImageView>(R.id.iv_dialog_set_voice_close)
+            val delete = findViewById<LinearLayout>(R.id.ll_dialog_set_voice_delete)
+            val button = findViewById<LinearLayout>(R.id.ll_dialog_set_voice_button)
+            val confirm = findViewById<LinearLayout>(R.id.ll_dialog_set_voice_confirm)
+
+            val state = findViewById<ImageView>(R.id.iv_dialog_set_voice_state)
+            val animation = findViewById<AVLoadingIndicatorView>(R.id.avv_dialog_set_voice_state)
+
+            val timer = findViewById<Chronometer>(R.id.timer)
+            val mode = findViewById<TextView>(R.id.tv_dialog_set_voice_button)
+
+            mode.text = "点击开始录音"
+            recordMode = "start"
+
+            close.setOnClickListener {
+                isNeedUpdate = false
+                dismiss()
+            }
+
+            recordMode = "start"
+
+            button.setOnClickListener {
+
+                when (recordMode) {
+                    "start" -> {
+                        mode.text = "点击结束"
+                        recordMode = "stop"
+
+                        state.setImageResource(R.drawable.ic_record_start)
+                        state.visibility = View.GONE
+                        animation.visibility = View.VISIBLE
+
+                        FileUtils.delete(recordPath)
+
+                        // 计时器
+                        timer.base = SystemClock.elapsedRealtime() //计时器清零
+                        val hour = (SystemClock.elapsedRealtime() - timer.base) / 1000 / 3600
+                        timer.format = "0$hour:%s"
+                        timer.start()
+
+                        // 录音
+                        audioRecorder.createDefaultAudio("record", context)
+                        audioRecorder.startRecord(null)
+                    }
+                    "stop" -> {
+
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+
+                        // 存储录音文件的长度
+                        SPStaticUtils.put(Constant.ME_VOICE_LONG,
+                            (SystemClock.elapsedRealtime() - timer.base).toString())
+                        SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+
+                        mode.text = "点击播放"
+                        delete.visibility = View.VISIBLE
+                        confirm.visibility = View.VISIBLE
+                        recordMode = "listen"
+                        state.visibility = View.VISIBLE
+                        animation.visibility = View.GONE
+                        state.setImageResource(R.drawable.ic_record_play)
+
+                        timer.stop()
+
+                        audioRecorder.stopRecord()
+                    }
+                    "listen" -> {
+                        ToastUtils.showShort("播放录音")
+                        mode.text = "播放结束"
+                        state.visibility = View.GONE
+                        animation.visibility = View.VISIBLE
+                        recordMode = "listenStop"
+
+                        mediaPlayer.reset()
+                        mediaPlayer.setDataSource(recordPath);
+                        mediaPlayer.prepare();
+                        mediaPlayer.start();
+                    }
+                    "listenStop" -> {
+                        ToastUtils.showShort("结束播放录音")
+                        mode.text = "点击播放"
+                        recordMode = "listen"
+                        state.visibility = View.VISIBLE
+                        animation.visibility = View.GONE
+
+                        mediaPlayer.stop()
+                    }
+
+                }
+
+            }
+
+            delete.setOnClickListener {
+                delete.visibility = View.GONE
+                confirm.visibility = View.GONE
+                state.setImageResource(R.drawable.ic_record_start)
+                state.visibility = View.VISIBLE
+                animation.visibility = View.GONE
+
+                mode.text = "点击开始录音"
+                recordMode = "start"
+
+            }
+
+            confirm.setOnClickListener {
+
+                ToastUtils.showShort("录音选择完成，开始上传")
+
+                Thread {
+
+                    //上传Object
+                    val file = File(recordPath)
+                    // bucketName 为文件夹名 ，使用用户id来进行命名
+                    // key值为保存文件名，试用固定的几种格式来命名
+
+                    val putObjectFromFileResponse = client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID,
+                            "default")
+                    }", FileUtils.getFileName(recordPath), file)
+
+                    val mVoiceUrl = client.generatePresignedUrl("user${
+                        SPStaticUtils.getString(Constant.USER_ID,
+                            "default")
+                    }", FileUtils.getFileName(recordPath), -1).toString()
+
+                    Log.i("guo", mVoiceUrl)
+
+                    SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                    map[Contents.GREET_UPDATE] = getGreetInfo()
+                    doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+                }.start()
+
+                isNeedUpdate = true
+                dismiss()
+
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            // 更新数据的同时还需要上传数据
+            if (isNeedUpdate) {
+                rl_user_data_voice_non.visibility = View.GONE
+                rl_user_data_voice.visibility = View.VISIBLE
+
+                val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+                var formatTime = ""
+
+                formatTime = if (time.div(1000) / 60 >= 10) {
+                    if (time.div(1000) % 60 >= 10) {
+                        "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                } else {
+                    if (time.div(1000) % 60 >= 10) {
+                        "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                }
+
+                tv_user_data_voice.text = formatTime
+
+            }
+        }
+
+    }
+
     // 昵称
     inner class NameDialog(context: Context) : FullScreenPopupView(context) {
         private var isNeedJump = false // 是否需要跳转
@@ -1502,7 +2531,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showSexDialog()
+                showNextDialog(0)
             } else {
                 ToastUtils.showShort("刷新界面")
                 updateDateUI()
@@ -1611,7 +2640,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showBirthDialog()
+                showNextDialog(1)
             } else {
                 ToastUtils.showShort("刷新界面")
                 updateDateUI()
@@ -1657,7 +2686,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHeightDialog()
+                showNextDialog(1)
             } else {
                 ToastUtils.showShort("刷新界面")
                 updateDateUI()
@@ -1702,7 +2731,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHeightDialog()
+                showNextDialog(1)
             } else {
                 ToastUtils.showShort("刷新界面")
                 updateDateUI()
@@ -1887,7 +2916,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHeightDialog()
+                showNextDialog(2)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -1964,7 +2993,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showIncomeDialog()
+                showNextDialog(3)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2042,7 +3071,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHaveChildDialog()
+                showNextDialog(4)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2168,7 +3197,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showWantChildDialog()
+                showNextDialog(5)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2294,7 +3323,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showJobDialog()
+                showNextDialog(6)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2426,7 +3455,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHouseDialog()
+                showNextDialog(7)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2570,7 +3599,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showCarDialog()
+                showNextDialog(8)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2609,7 +3638,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_CAR, 0)
+                SPStaticUtils.put(Constant.ME_CAR, 1)
                 isNeedJump = true
                 dismiss()
             }
@@ -2618,7 +3647,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_CAR, 1)
+                SPStaticUtils.put(Constant.ME_CAR, 2)
                 isNeedJump = true
                 dismiss()
             }
@@ -2631,14 +3660,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.ME_CAR, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.ME_CAR, 0)) {
                 0 -> {
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -2658,7 +3687,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showHomeDialog()
+                showNextDialog(9)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2798,7 +3827,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showWeightDialog()
+                showNextDialog(10)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -2853,7 +3882,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
 
             wheel.setOnItemSelectedListener { picker, data, position ->
-                mWeight = mWeightList[position]
+                mWeight = position + 40
             }
 
             confirm.setOnClickListener {
@@ -2877,7 +3906,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showBodyDialog()
+                showNextDialog(11)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")

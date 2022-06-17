@@ -97,17 +97,6 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
             banTextList.add(UnicodeUtils.decode(array[i]))
         }
 
-
-        XXPermissions.with(this)
-            .permission(Permission.ACCESS_COARSE_LOCATION)
-            .permission(Permission.ACCESS_FINE_LOCATION)
-            .request(object : OnPermissionCallback {
-                override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-
-                }
-            })
-
-
     }
 
     override fun initPresent() {

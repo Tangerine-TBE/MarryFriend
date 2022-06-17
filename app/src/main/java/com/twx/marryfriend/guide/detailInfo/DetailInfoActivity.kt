@@ -984,7 +984,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             val map: MutableMap<String, String> = TreeMap()
 
                             map[Contents.ACCESS_TOKEN] =
-                                "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
+                                "24.0e56bbe36fe7b7c67ffcd78924e4b786.2592000.1658052230.282335-26278103"
                             map[Contents.CONTENT_TYPE] = "application/json"
                             map[Contents.ID_CARD_NUMBER] = identityCode
                             map[Contents.NAME] = name

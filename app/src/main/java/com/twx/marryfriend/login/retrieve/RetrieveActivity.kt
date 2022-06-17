@@ -16,12 +16,20 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.IdentityVerifyBean
+import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.login.retrieve.activity.FaceLivenessExpActivity
+import com.twx.marryfriend.net.callback.IDoIdentityVerifyCallback
+import com.twx.marryfriend.net.impl.doIdentityVerifyPresentImpl
 import kotlinx.android.synthetic.main.activity_retrieve.*
+import java.util.*
+import kotlin.collections.ArrayList
 
-class RetrieveActivity : MainBaseViewActivity() {
+class RetrieveActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     private var livenessList: MutableList<LivenessTypeEnum> = ArrayList()
+
+    private lateinit var doIdentityVerifyPresent: doIdentityVerifyPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_retrieve
 
@@ -29,6 +37,10 @@ class RetrieveActivity : MainBaseViewActivity() {
         super.initView()
 
         initLicense()
+
+        doIdentityVerifyPresent = doIdentityVerifyPresentImpl.getsInstance()
+        doIdentityVerifyPresent.registerCallback(this)
+
     }
 
     override fun initLoadData() {
@@ -67,19 +79,27 @@ class RetrieveActivity : MainBaseViewActivity() {
 
             // 做一个权限请求，若是不同意，则不允许用户进入
 
-            XXPermissions.with(this)
-                .permission(Permission.CAMERA)
-                .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent = Intent(this@RetrieveActivity, FaceLivenessExpActivity::class.java)
-                        startActivity(intent)
-                    }
+//            XXPermissions.with(this)
+//                .permission(Permission.CAMERA)
+//                .request(object : OnPermissionCallback {
+//                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+//                        val intent = Intent(this@RetrieveActivity, FaceLivenessExpActivity::class.java)
+//                        startActivity(intent)
+//                    }
+//
+//                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+//                        super.onDenied(permissions, never)
+//                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
+//                    }
+//                })
 
-                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                        super.onDenied(permissions, never)
-                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
-                    }
-                })
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ACCESS_TOKEN] =
+                "24.0e56bbe36fe7b7c67ffcd78924e4b786.2592000.1658052230.282335-26278103"
+            map[Contents.CONTENT_TYPE] = "application/json"
+            map[Contents.ID_CARD_NUMBER] = "42108119991112429X"
+            map[Contents.NAME] = "郭才"
+            doIdentityVerifyPresent.doIdentityVerify(map)
 
         }
 
@@ -114,7 +134,6 @@ class RetrieveActivity : MainBaseViewActivity() {
                 }
             })
     }
-
 
     private fun addActionLive() {
         // 根据需求添加活体动作
@@ -206,6 +225,28 @@ class RetrieveActivity : MainBaseViewActivity() {
     inner class RetrieveFailDialog(context: Context) : FullScreenPopupView(context) {
 
         override fun getImplLayoutId(): Int = R.layout.dialog_retrieve_fail
+
+    }
+
+    override fun onLoading() {
+
+    }
+
+    override fun onError() {
+
+    }
+
+    override fun onDoIdentityVerifySuccess(identityVerifyBean: IdentityVerifyBean) {
+        ToastUtils.showShort(identityVerifyBean.error_code)
+        ToastUtils.showShort(identityVerifyBean.error_msg)
+
+        Log.i("guo", "${identityVerifyBean.error_code}")
+        Log.i("guo", "${identityVerifyBean.error_msg}")
+
+    }
+
+    override fun onDoIdentityVerifyError() {
+        ToastUtils.showShort("success")
 
     }
 
