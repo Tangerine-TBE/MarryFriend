@@ -136,7 +136,7 @@ public class MySeekBar extends View implements ValueAnimator.AnimatorUpdateListe
         indicatorPaint.setColor(indicatorColor);
 
         //设置阴影 注意：当前view需要添加 android:layerType="software"
-        indicatorPaint.setShadowLayer(5, 2, 2, Color.LTGRAY);
+//        indicatorPaint.setShadowLayer(5, 2, 2, Color.LTGRAY);
         //初始化圆形区域
         mRectF = new RectF();
     }
@@ -190,21 +190,10 @@ public class MySeekBar extends View implements ValueAnimator.AnimatorUpdateListe
             //画区间线
             canvas.drawLine(mLeftCI.getCurX(), mLeftCI.getCurY(), mRightCI.getCurX(), mRightCI.getCurY(), bgPaint);
 
-
-            //画左边的Indicator
-//            mRectF.set(mLeftCI.getCurX() - mR, mLeftCI.getCurY() - mR,
-//                    mLeftCI.getCurX() + mR, mLeftCI.getCurY() + mR);
-//            canvas.drawOval(mRectF, indicatorPaint);
-
             canvas.drawBitmap(getBitmap(R.drawable.ic_seekbar_icon_left),
                     mLeftCI.getCurX() - getBitmap(R.drawable.ic_seekbar_icon_left).getWidth() / 2,
                     mLeftCI.getCurY() - getBitmap(R.drawable.ic_seekbar_icon_left).getWidth() / 2,
                     indicatorPaint);
-
-            //画右边的Indicator
-//            mRectF.set(mRightCI.getCurX() - mR, mRightCI.getCurY() - mR,
-//                    mRightCI.getCurX() + mR, mRightCI.getCurY() + mR);
-//            canvas.drawOval(mRectF, indicatorPaint);
 
             canvas.drawBitmap(getBitmap(R.drawable.ic_seekbar_icon_right),
                     mRightCI.getCurX() - getBitmap(R.drawable.ic_seekbar_icon_right).getWidth() / 2,

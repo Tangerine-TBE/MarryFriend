@@ -49,6 +49,7 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
@@ -73,6 +74,12 @@ import java.util.*
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
     IDoFaceDetectCallback, IDoUploadPhotoCallback, IDoUpdateProportionCallback,
     IDoUpdateGreetInfoCallback {
+
+    // 敏感字
+    private var banTextList: MutableList<String> = arrayListOf()
+
+    // 是否具有敏感词
+    private var haveBanText = false
 
     // 资料完成度
     private var proportion = 0
@@ -262,6 +269,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
         }
 
+        if (SPStaticUtils.getString(Constant.ME_TA, "") != "") {
+            iv_user_data_ideal.visibility = View.GONE
+            tv_user_data_ideal.text = SPStaticUtils.getString(Constant.ME_TA, "")
+        }
+
         updateLife()
 
     }
@@ -349,6 +361,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             rl_user_data_voice.visibility = View.GONE
         }
 
+
+        val banBean: BanBean =
+            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+
+        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+
+        val y = String(x)
+        var yy = "{\"data\":$y}"
+        var aa =
+            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+
+        for (i in 0.until(aa.data.size)) {
+            banTextList.add(aa.data[i])
+        }
+
     }
 
     private fun initPresent() {
@@ -421,7 +448,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
         }.start()
     }
-
 
     private fun initEvent() {
 
@@ -551,6 +577,18 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
                 .asCustom(IntroduceDialog(requireContext()))
                 .show()
+        }
+
+        ll_user_data_ideal.setOnClickListener {
+
+            XPopup.Builder(context)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IdealDialog(requireContext()))
+                .show()
+
         }
 
         tv_user_data_life_next.setOnClickListener {
@@ -2373,10 +2411,26 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             confirm.setOnClickListener {
                 if (size >= 10) {
-                    // 保存数据
-                    SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-                    isNeedUpdate = true
-                    dismiss()
+
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (text.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
+
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        text = ""
+                        content.setText("")
+                        haveBanText = false
+                    } else {
+                        // 保存数据
+                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+                        isNeedUpdate = true
+                        dismiss()
+                    }
+
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
                 }
@@ -2579,6 +2633,119 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    // 添加心目中的TA
+    inner class IdealDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedUpdate = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_set_ideal
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val close = findViewById<ImageView>(R.id.iv_dialog_set_ideal_close)
+            val content = findViewById<EditText>(R.id.et_dialog_set_ideal_content)
+            val sum = findViewById<TextView>(R.id.tv_dialog_set_ideal_sum)
+            val confirm = findViewById<TextView>(R.id.tv_dialog_set_ideal_confirm)
+
+            var size = 0
+            var text = ""
+
+            content.setText(SPStaticUtils.getString(Constant.ME_TA, ""))
+            text = SPStaticUtils.getString(Constant.ME_TA, "")
+            size = SPStaticUtils.getString(Constant.ME_TA, "").length
+            sum.text = SPStaticUtils.getString(Constant.ME_TA, "").length.toString()
+
+            if (size >= 10) {
+                confirm.setBackgroundResource(R.drawable.shape_bg_common_next)
+            } else {
+                confirm.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+            }
+
+            close.setOnClickListener {
+                isNeedUpdate = false
+                dismiss()
+            }
+
+            content.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int,
+                ) {
+
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    before: Int,
+                    count: Int,
+                ) {
+
+                }
+
+                override fun afterTextChanged(s: Editable) {
+
+                    size = s.length
+                    text = s.toString()
+
+                    sum.text = s.length.toString()
+
+                    if (s.length >= 10) {
+                        confirm.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    } else {
+                        confirm.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                    }
+
+                    if (s.length >= 1000) {
+                        ToastUtils.showShort("已达到输入文字最大数量")
+                        KeyboardUtils.hideSoftInput(requireActivity())
+                    }
+                }
+            })
+
+            confirm.setOnClickListener {
+                if (size >= 10) {
+
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (text.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
+
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        text = ""
+                        content.setText("")
+                        haveBanText = false
+                    } else {
+                        // 保存数据
+                        SPStaticUtils.put(Constant.ME_TA, text)
+                        isNeedUpdate = true
+                        dismiss()
+                    }
+
+                } else {
+                    ToastUtils.showShort("请输入至少10字内容")
+                }
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            // 更新数据
+            if (isNeedUpdate) {
+                iv_user_data_ideal.visibility = View.GONE
+                tv_user_data_ideal.text = SPStaticUtils.getString(Constant.ME_TA, "")
+            }
+        }
+
+    }
+
     // 昵称
     inner class NameDialog(context: Context) : FullScreenPopupView(context) {
         private var isNeedJump = false // 是否需要跳转
@@ -2595,11 +2762,33 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val confirm = findViewById<TextView>(R.id.tv_user_data_name_confirm)
 
             confirm.setOnClickListener {
-                val name = name.text.toString()
-                ToastUtils.showShort(name)
-                SPStaticUtils.put(Constant.ME_NAME, name)
-                isNeedJump = name.isNotEmpty()
-                dismiss()
+                var name1 = name.text.toString()
+
+                if (name1.isNotEmpty()) {
+
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (name1.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
+
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        name1 = ""
+                        name.setText("")
+                        haveBanText = false
+                    } else {
+                        // 保存数据
+                        SPStaticUtils.put(Constant.ME_NAME, name1)
+                        isNeedJump = true
+                        dismiss()
+                    }
+
+                } else {
+                    ToastUtils.showShort("请输入新昵称")
+                }
+
             }
 
             close.setOnClickListener {

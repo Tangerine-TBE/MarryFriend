@@ -132,8 +132,18 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
         SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
 
-        Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR))
-            .into(iv_mine_avatar)
+        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+            Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR, "")).into(iv_mine_avatar)
+            tv_mine_avatar_check.visibility = View.VISIBLE
+        } else {
+            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                Glide.with(requireContext()).load(R.drawable.ic_mine_male_default)
+                    .into(iv_mine_avatar)
+            } else {
+                Glide.with(requireContext()).load(R.drawable.ic_mine_female_default)
+                    .into(iv_mine_avatar)
+            }
+        }
 
         getDialogOrder()
 
@@ -545,41 +555,53 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
     }
 
-    override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean?) {
+    override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
 
-        ll_mine_loading.visibility = View.GONE
-        iv_mine_avatar.setImageBitmap(mBitmap)
-        tv_mine_avatar_check.visibility = View.VISIBLE
+        if (faceDetectBean.conclusion == "合规") {
 
-        FileUtils.delete(mPhotoPath)
-        mBitmap?.let { saveBitmap(it, mPhotoPath) }
-
-        Thread {
-
-            //上传Object
-            val file = File(mPhotoPath)
-            // bucketName 为文件夹名 ，使用用户id来进行命名
-            // key值为保存文件名，试用固定的几种格式来命名
-
-            val putObjectFromFileResponse =
-                client.putObject("user${
-                    SPStaticUtils.getString(Constant.USER_ID,
-                        "default")
-                }",
-                    FileUtils.getFileName(mPhotoPath), file)
+            ll_mine_loading.visibility = View.GONE
+            iv_mine_avatar.setImageBitmap(mBitmap)
+            tv_mine_avatar_check.visibility = View.VISIBLE
 
 
-            mPhotoUrl = client.generatePresignedUrl("user${
-                SPStaticUtils.getString(Constant.USER_ID, "default")
-            }", FileUtils.getFileName(mPhotoPath), -1).toString()
+            FileUtils.delete(mPhotoPath)
+            mBitmap?.let { saveBitmap(it, mPhotoPath) }
 
-            Log.i("guo", "onDoFaceDetectSuccess")
+            Thread {
 
-            SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+                //上传Object
+                val file = File(mPhotoPath)
+                // bucketName 为文件夹名 ，使用用户id来进行命名
+                // key值为保存文件名，试用固定的几种格式来命名
 
-        }.start()
+                val putObjectFromFileResponse =
+                    client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID,
+                            "default")
+                    }",
+                        FileUtils.getFileName(mPhotoPath), file)
 
-        getDialogOrder()
+                mPhotoUrl = client.generatePresignedUrl("user${
+                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                }", FileUtils.getFileName(mPhotoPath), -1).toString()
+
+                Log.i("guo", "onDoFaceDetectSuccess")
+
+                SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+
+                getDialogOrder()
+
+            }.start()
+
+
+        } else {
+
+            ll_mine_loading.visibility = View.GONE
+
+            ToastUtils.showShort(faceDetectBean.data[0].msg + faceDetectBean.data[0].conclusion)
+
+        }
+
     }
 
     override fun onDoFaceDetectError() {
@@ -776,6 +798,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                     if (haveBanText) {
                         ToastUtils.showShort("输入中存在敏感字，请重新输入")
                         name.setText("")
+                        haveBanText = false
                     } else {
                         SPStaticUtils.put(Constant.ME_NAME, name.text.toString())
                         isNeedUpdate = true
@@ -878,6 +901,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                         ToastUtils.showShort("输入中存在敏感字，请重新输入")
                         text = ""
                         content.setText("")
+                        haveBanText = false
                     } else {
                         // 保存数据
                         SPStaticUtils.put(Constant.ME_HOBBY, text)
@@ -977,6 +1001,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                         ToastUtils.showShort("输入中存在敏感字，请重新输入")
                         text = ""
                         content.setText("")
+                        haveBanText = false
                     } else {
                         // 保存数据
                         SPStaticUtils.put(Constant.ME_GREET, text)
@@ -1077,6 +1102,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                         ToastUtils.showShort("输入中存在敏感字，请重新输入")
                         text = ""
                         content.setText("")
+                        haveBanText = false
                     } else {
                         // 保存数据
                         SPStaticUtils.put(Constant.ME_INTRODUCE, text)

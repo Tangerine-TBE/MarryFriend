@@ -250,6 +250,7 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
                     if (haveBanText) {
                         ToastUtils.showShort("输入中存在敏感字，请重新输入")
                         findViewById<EditText>(R.id.et_dialog_school_name).setText("")
+                        haveBanText = false
                     } else {
                         if (s.length >= 4) {
                             findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(
@@ -285,6 +286,7 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 
                         diySchool = ""
                         findViewById<EditText>(R.id.et_dialog_school_name).setText("")
+                        haveBanText = false
 
                     } else {
                         dismiss()

@@ -62,7 +62,8 @@
                 android:gravity="center"
                 android:text="审核中"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:visibility="gone" />
 
         </FrameLayout>
 
@@ -523,48 +524,48 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/ll_mine_set_greet"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingVertical="16dp"
-                        android:visibility="invisible">
+                        android:paddingVertical="16dp">
 
                         <ImageView
                             android:layout_width="41dp"
                             android:layout_height="41dp"
-                            android:background="#878787" />
+                            android:src="@drawable/ic_mine_set_greet" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
-                            android:text="我的动态"
+                            android:text="招呼语"
                             android:textColor="#101010"
                             android:textSize="15sp" />
 
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/ll_mine_set_share"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:orientation="vertical"
-                        android:paddingVertical="16dp"
-                        android:visibility="invisible">
+                        android:paddingVertical="16dp">
 
                         <ImageView
                             android:layout_width="41dp"
                             android:layout_height="41dp"
-                            android:background="#878787" />
+                            android:src="@drawable/ic_mine_set_share" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="14dp"
-                            android:text="我的动态"
+                            android:text="分享牵手"
                             android:textColor="#101010"
                             android:textSize="15sp" />
 
