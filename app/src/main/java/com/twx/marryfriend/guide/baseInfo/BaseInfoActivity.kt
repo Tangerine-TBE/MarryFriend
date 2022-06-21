@@ -7,30 +7,27 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.*
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
-import com.hjq.permissions.OnPermissionCallback
-import com.hjq.permissions.Permission
-import com.hjq.permissions.XXPermissions
+import com.blankj.utilcode.util.*
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.BanBean
 import com.twx.marryfriend.bean.BaseInfoUpdateBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
 import com.twx.marryfriend.guide.baseInfo.step.StepOne
 import com.twx.marryfriend.guide.baseInfo.step.StepTwo
 import com.twx.marryfriend.guide.detailInfo.DetailInfoActivity
 import com.twx.marryfriend.net.callback.IDoUpdateBaseInfoCallback
 import com.twx.marryfriend.net.impl.doUpdateBaseInfoPresentImpl
-import com.twx.marryfriend.utils.UnicodeUtils
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.layout_guide_step_name.*
 import kotlinx.android.synthetic.main.layout_guide_step_sex.*
+import java.nio.ByteBuffer
+import java.nio.CharBuffer
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.util.*
-
 
 class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
@@ -70,9 +67,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
     // 是否具有敏感词
     private var haveBanText = false
 
-
     private lateinit var updateBaseInfoPresent: doUpdateBaseInfoPresentImpl
-
 
     override fun getLayoutView(): Int = R.layout.activity_base_info
 
@@ -90,14 +85,35 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
     override fun initLoadData() {
         super.initLoadData()
 
-        val banText = SPStaticUtils.getString(Constant.BAN_TEXT)
-        val array = banText.split(",")
 
-        for (i in 0.until(array.size)) {
-            banTextList.add(UnicodeUtils.decode(array[i]))
+        val banBean: BanBean =
+            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+
+        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+
+        val y = String(x)
+        var yy = "{\"data\":$y}"
+        var aa = com.twx.marryfriend.utils.GsonUtils.parseObject(yy, Test::class.java)
+
+        for (i in 0.until(aa.data.size)) {
+            banTextList.add(aa.data[i])
         }
 
     }
+
+    class Test {
+        var data: Array<String> = arrayOf()
+    }
+
+    fun getChars(bytes: ByteArray): CharArray? {
+        val cs: Charset = StandardCharsets.UTF_8
+        val bb: ByteBuffer = ByteBuffer.allocate(bytes.size)
+        bb.put(bytes)
+        bb.flip()
+        val cb: CharBuffer = cs.decode(bb)
+        return cb.array()
+    }
+
 
     override fun initPresent() {
         super.initPresent()
@@ -140,12 +156,15 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
                     if (haveName) {
                         // 已经填写昵称
                         for (i in 0.until(banTextList.size)) {
-                            if (name.contains(banTextList[i])) {
+                            val code = banTextList[i]
+
+                            if (name.contains(code)) {
                                 haveBanText = true
                             }
                         }
 
                         if (haveBanText) {
+
                             ToastUtils.showShort("输入中存在敏感字，请重新输入")
                             haveName = false
                             tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
@@ -153,6 +172,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
                             et_guide_name_name.setText("")
 
                             haveBanText = false
+
                         } else {
 
                             tv_guide_base_previous.visibility = View.VISIBLE
@@ -343,7 +363,6 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
         }
         return null
     }
-
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

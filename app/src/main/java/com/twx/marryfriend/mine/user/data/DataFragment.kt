@@ -49,6 +49,7 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
@@ -58,6 +59,7 @@ import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
+import kotlinx.android.synthetic.main.activity_life_photo.*
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.fragment_data.*
 import kotlinx.android.synthetic.main.fragment_mine.*
@@ -259,6 +261,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             iv_user_data_introduce.visibility = View.GONE
             tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
         }
+
+        updateLife()
 
     }
 
@@ -467,6 +471,35 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         rl_user_data_voice.setOnClickListener {
 
+            XXPermissions.with(context)
+                .permission(Permission.RECORD_AUDIO)
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(
+                        permissions: MutableList<String>?,
+                        all: Boolean,
+                    ) {
+                        XPopup.Builder(context)
+                            .dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false)
+                            .isDestroyOnDismiss(true)
+                            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                            .asCustom(VoiceDialog(requireContext()))
+                            .show()
+                    }
+
+                    override fun onDenied(
+                        permissions: MutableList<String>?,
+                        never: Boolean,
+                    ) {
+                        ToastUtils.showShort("请授予应用所需权限。")
+                    }
+                })
+
+        }
+
+        iv_user_data_voice.setOnClickListener {
+
             if (!isPlaying) {
                 // 开始播放
                 iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_pause)
@@ -518,6 +551,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
                 .asCustom(IntroduceDialog(requireContext()))
                 .show()
+        }
+
+        tv_user_data_life_next.setOnClickListener {
+            val intent = Intent(context, LifePhotoActivity::class.java)
+            startActivityForResult(intent, 0)
+        }
+
+        iv_user_data_life_next.setOnClickListener {
+            val intent = Intent(context, LifePhotoActivity::class.java)
+            startActivityForResult(intent, 0)
+        }
+
+        ll_user_data_life.setOnClickListener {
+            val intent = Intent(context, LifePhotoActivity::class.java)
+            startActivityForResult(intent, 0)
         }
 
         baseAdapter.setOnItemClickListener(object : DataBaseAdapter.OnItemClickListener {
@@ -1177,6 +1225,39 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
 
+    // 获取、更新生活照
+    private fun updateLife() {
+        val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
+        val lifePhotoTwo = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
+        val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
+
+        if (lifePhotoOne != "") {
+            if (lifePhotoTwo != "") {
+                if (lifePhotoThree != "") {
+                    // 有三张图片,全部正常显示
+                    Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                    Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
+                    Glide.with(this).load(lifePhotoThree).into(iv_user_data_life_three)
+                } else {
+                    // 有两张图片，,第一、二张正常显示，第三张显示为添加
+                    Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                    Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
+                    Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_three)
+                }
+            } else {
+                // 有一张图片,第一张正常显示，第二张显示为添加
+                Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
+                iv_user_data_life_three.visibility = View.GONE
+            }
+        } else {
+            Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
+            iv_user_data_life_two.visibility = View.GONE
+            iv_user_data_life_three.visibility = View.GONE
+        }
+
+    }
+
     // 获取所有数据更新视图
     private fun updateDateUI() {
 
@@ -1733,6 +1814,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == FragmentActivity.RESULT_OK) {
             when (requestCode) {
+                0 -> {
+                    // 更新生活照
+                    updateLife()
+                }
                 // 拍照返回至裁切
                 2 -> {
                     val temp = File(mTempPhotoPath)

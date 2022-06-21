@@ -104,18 +104,24 @@
             android:exported="true" />
         <activity
             android:name=".guide.baseInfo.BaseInfoActivity"
-            android:exported="true" />
-        <activity
-            android:name=".login.LoginActivity"
-            android:exported="true" />
-        <activity
-            android:name=".begin.BeginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".login.LoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".begin.BeginActivity"
+            android:exported="true">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".main.MainActivity"

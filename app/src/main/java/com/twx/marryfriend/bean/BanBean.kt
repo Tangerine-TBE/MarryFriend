@@ -6,6 +6,10 @@ package com.twx.marryfriend.bean
  */
 data class BanBean(
     val code: Int,
-    val data: List<String>,
-    val msg: String
+    val data: BanData,
+    val msg: String,
+)
+
+data class BanData(
+    val array_string: String,
 )

@@ -41,6 +41,7 @@ import com.twx.marryfriend.net.impl.doAutoLoginPresentImpl
 import com.twx.marryfriend.net.impl.getAccessTokenPresentImpl
 import com.twx.marryfriend.net.impl.getBanPresentImpl
 import com.twx.marryfriend.utils.SpUtil
+import com.twx.marryfriend.utils.UnicodeUtils
 import java.util.*
 
 class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTokenCallback,
@@ -260,13 +261,18 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTo
     }
 
     override fun onGetBanSuccess(banBean: BanBean) {
-        val x = EncodeUtils.base64Decode(banBean.data[0])
 
-        var z = String(x)
-        z = z.replaceFirst("[", "")
-        z = z.replaceFirst("]", "")
 
-        SPStaticUtils.put(Constant.BAN_TEXT, z)
+        // 省份总数
+        SPStaticUtils.put(Constant.BAN_TEXT, GsonUtils.toJson(banBean))
+//
+//        val x = EncodeUtils.base64Decode(banBean.data[0])
+//
+//        var z = String(x)
+//        z = z.replaceFirst("[", "")
+//        z = z.replaceFirst("]", "")
+
+//        SPStaticUtils.put(Constant.BAN_TEXT, z)
 
         // 储存这个 z 其他的直接需要时在处理 ， 不然第一次储存太慢，取的时候也要遍历，而且储存数组也需要遍历添加
 

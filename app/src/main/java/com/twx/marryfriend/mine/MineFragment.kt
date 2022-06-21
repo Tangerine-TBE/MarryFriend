@@ -44,12 +44,14 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
+import com.twx.marryfriend.bean.BanBean
 import com.twx.marryfriend.bean.FaceDetectBean
 import com.twx.marryfriend.bean.PhotoListBean
 import com.twx.marryfriend.bean.UpdateGreetInfoBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
@@ -95,6 +97,12 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
 
     private val dialogInfo: MutableList<String> = arrayListOf()
+
+    // 敏感字
+    private var banTextList: MutableList<String> = arrayListOf()
+
+    // 是否具有敏感词
+    private var haveBanText = false
 
     // 剪切后图像文件
     private var mDestination: Uri? = null
@@ -160,6 +168,20 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
         audioRecorder = AudioRecorder.getInstance()
         mediaPlayer = MediaPlayer()
+
+        val banBean: BanBean =
+            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+
+        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+
+        val y = String(x)
+        var yy = "{\"data\":$y}"
+        var aa =
+            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+
+        for (i in 0.until(aa.data.size)) {
+            banTextList.add(aa.data[i])
+        }
 
     }
 
@@ -686,6 +708,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
                 XXPermissions.with(context)
                     .permission(Permission.CAMERA)
+                    .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
                             permissions: MutableList<String>?,
@@ -741,11 +764,23 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             skip.visibility = View.GONE
 
             confirm.setOnClickListener {
-                isNeedUpdate = true
+
+                for (i in 0.until(banTextList.size)) {
+                    val code = banTextList[i]
+                    if (name.text.contains(code)) {
+                        haveBanText = true
+                    }
+                }
 
                 if (name.text.isNotEmpty()) {
-                    SPStaticUtils.put(Constant.ME_NAME, name.text.toString())
-                    dismiss()
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        name.setText("")
+                    } else {
+                        SPStaticUtils.put(Constant.ME_NAME, name.text.toString())
+                        isNeedUpdate = true
+                        dismiss()
+                    }
                 } else {
                     ToastUtils.showShort("请输入您需要更改的昵称")
                 }
@@ -831,10 +866,25 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
             confirm.setOnClickListener {
                 if (size >= 10) {
-                    // 保存数据
-                    SPStaticUtils.put(Constant.ME_HOBBY, text)
-                    isNeedUpdate = true
-                    dismiss()
+
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (text.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
+
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        text = ""
+                        content.setText("")
+                    } else {
+                        // 保存数据
+                        SPStaticUtils.put(Constant.ME_HOBBY, text)
+                        isNeedUpdate = true
+                        dismiss()
+                    }
+
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
                 }
@@ -915,10 +965,25 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
             confirm.setOnClickListener {
                 if (size >= 10) {
-                    // 保存数据
-                    SPStaticUtils.put(Constant.ME_GREET, text)
-                    isNeedUpdate = true
-                    dismiss()
+
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (text.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
+
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        text = ""
+                        content.setText("")
+                    } else {
+                        // 保存数据
+                        SPStaticUtils.put(Constant.ME_GREET, text)
+                        isNeedUpdate = true
+                        dismiss()
+                    }
+
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
                 }
@@ -1000,10 +1065,25 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
             confirm.setOnClickListener {
                 if (size >= 10) {
-                    // 保存数据
-                    SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-                    isNeedUpdate = true
-                    dismiss()
+
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (text.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
+
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                        text = ""
+                        content.setText("")
+                    } else {
+                        // 保存数据
+                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+                        isNeedUpdate = true
+                        dismiss()
+                    }
+
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
                 }

@@ -55,6 +55,7 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
 import com.twx.marryfriend.guide.detailInfo.artificial.IdentityActivity
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
@@ -354,7 +355,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     // 实名认证 身份证号
     private var identityCode = ""
 
-
     private lateinit var doIdentityVerifyPresent: doIdentityVerifyPresentImpl
 
     private lateinit var updateBaseInfoPresent: doUpdateBaseInfoPresentImpl
@@ -462,11 +462,17 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         cityJsonDate = SPStaticUtils.getString(Constant.CITY_JSON_DATE)
         cityDate = GsonUtils.fromJson(cityJsonDate, CityBean::class.java)
 
-        val banText = SPStaticUtils.getString(Constant.BAN_TEXT)
-        val array = banText.split(",")
+        val banBean: BanBean =
+            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+        val x = EncodeUtils.base64Decode(banBean.data.array_string)
 
-        for (i in 0.until(array.size)) {
-            banTextList.add(UnicodeUtils.decode(array[i]))
+        val y = String(x)
+        var yy = "{\"data\":$y}"
+        var aa =
+            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+
+        for (i in 0.until(aa.data.size)) {
+            banTextList.add(aa.data[i])
         }
 
         mEduData.add("大专以下")
@@ -475,7 +481,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         mEduData.add("硕士")
         mEduData.add("博士")
         mEduData.add("博士以上")
-
 
         incomeData.add("保密")
         incomeData.add("五千以下")
@@ -489,14 +494,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         targetVisibilityList.add("目标相同的人可见")
         targetVisibilityList.add("不公开")
 
-        mTempPhotoPath =
-            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+        mTempPhotoPath = Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(this.cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = externalCacheDir.toString() + File.separator + "photoPic.png"
 
-        mTempLifePath =
-            Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
+        mTempLifePath = Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
 
         mLifeFirstPath = externalCacheDir.toString() + File.separator + "lifeFirstPic.png"
         mLifeSecondPath = externalCacheDir.toString() + File.separator + "lifeSecondPic.png"
@@ -590,7 +593,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         tv_guide_detail_skip.setOnClickListener {
             ToastUtils.showShort("跳过整个流程，前往主页")
-            startActivity(Intent(this, JumpActivity::class.java))
+//            startActivity(Intent(this, JumpActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
         }
 
         tv_guide_detail_previous.setOnClickListener {
@@ -922,15 +926,35 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     if (isFinishIntroduce) {
 
-                        if (!isFinishHobby) {
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        for (i in 0.until(banTextList.size)) {
+                            val code = banTextList[i]
+                            if (introduceText.contains(code)) {
+                                haveBanText = true
+                            }
                         }
 
-                        vf_guide_detail_container.showNext()
+                        if (haveBanText) {
 
-                        tsb_guide_detail_guide.setPercent(0.73f, "73")
+                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
 
-                        SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+                            isFinishIntroduce = false
+                            haveBanText = false
+
+                            et_guide_mine_content.setText("")
+
+                        } else {
+
+                            if (!isFinishHobby) {
+                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            }
+
+                            vf_guide_detail_container.showNext()
+                            tsb_guide_detail_guide.setPercent(0.73f, "73")
+
+                            SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+
+                        }
 
                     } else {
                         ToastUtils.showShort("请添加一份30字左右的自我介绍")
@@ -941,14 +965,36 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     if (isFinishHobby) {
 
-                        if (!isFinishIdeal) {
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        for (i in 0.until(banTextList.size)) {
+                            val code = banTextList[i]
+                            if (hobbyText.contains(code)) {
+                                haveBanText = true
+                            }
                         }
 
-                        vf_guide_detail_container.showNext()
-                        tsb_guide_detail_guide.setPercent(0.88f, "88")
 
-                        SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
+                        if (haveBanText) {
+
+                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+                            isFinishHobby = false
+                            haveBanText = false
+
+                            et_guide_hobby_content.setText("")
+
+                        } else {
+
+                            if (!isFinishIdeal) {
+                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            }
+
+                            vf_guide_detail_container.showNext()
+                            tsb_guide_detail_guide.setPercent(0.88f, "88")
+
+                            SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
+
+                        }
 
                     } else {
                         ToastUtils.showShort("请添加一些您的日常爱好")
@@ -959,17 +1005,39 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     if (isFinishIdeal) {
 
-                        if (!(name != "" && identityCode != "")) {
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+                        for (i in 0.until(banTextList.size)) {
+                            val code = banTextList[i]
+                            if (idealText.contains(code)) {
+                                haveBanText = true
+                            }
                         }
 
-                        vf_guide_detail_container.showNext()
-                        tv_guide_detail_privacy.visibility = View.VISIBLE
-                        tv_guide_detail_service.visibility = View.VISIBLE
+                        if (haveBanText) {
 
-                        tsb_guide_detail_guide.setPercent(1.0f, "100")
+                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
 
-                        SPStaticUtils.put(Constant.ME_TA, idealText)
+                            isFinishIdeal = false
+                            haveBanText = false
+
+                            et_guide_ideal_content.setText("")
+
+                        } else {
+
+                            if (!(name != "" && identityCode != "")) {
+                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            }
+
+                            vf_guide_detail_container.showNext()
+                            tv_guide_detail_privacy.visibility = View.VISIBLE
+                            tv_guide_detail_service.visibility = View.VISIBLE
+
+                            tsb_guide_detail_guide.setPercent(1.0f, "100")
+
+                            SPStaticUtils.put(Constant.ME_TA, idealText)
+
+                        }
 
                     } else {
                         ToastUtils.showShort("请描述一下您心中理想的对象")
@@ -1309,23 +1377,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 tv_guide_mine_sum.text = s.length.toString()
 
-                for (i in 0.until(banTextList.size)) {
-                    haveBanText = introduceText.contains(banTextList[i])
-                }
-
-                if (haveBanText) {
-                    ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                if (s.length >= 10) {
+                    tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    isFinishIntroduce = true
+                } else {
                     tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                     isFinishIntroduce = false
-                } else {
-                    if (s.length >= 10) {
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                        isFinishIntroduce = true
-                    } else {
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        isFinishIntroduce = false
 
-                    }
                 }
 
                 if (s.length == 1000) {
@@ -1353,23 +1411,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 tv_guide_hobby_sum.text = s.length.toString()
 
-                for (i in 0.until(banTextList.size)) {
-                    haveBanText = hobbyText.contains(banTextList[i])
-                }
 
-                if (haveBanText) {
-                    ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                if (s.length >= 10) {
+                    tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    isFinishHobby = true
+                } else {
                     tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                     isFinishHobby = false
-                } else {
-                    if (s.length >= 10) {
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                        isFinishHobby = true
-                    } else {
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        isFinishHobby = false
-                    }
                 }
+
 
                 if (s.length == 1000) {
                     ToastUtils.showShort("已达到输入文字最大数量")
@@ -1396,24 +1446,17 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 tv_guide_ideal_sum.text = s.length.toString()
 
-                for (i in 0.until(banTextList.size)) {
-                    haveBanText = idealText.contains(banTextList[i])
-                }
 
-                if (haveBanText) {
-                    ToastUtils.showShort("输入中存在敏感字，请重新输入")
+
+                if (s.length >= 10) {
+                    tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    isFinishIdeal = true
+                } else {
                     tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                     isFinishIdeal = false
-                } else {
-                    if (s.length >= 10) {
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                        isFinishIdeal = true
-                    } else {
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        isFinishIdeal = false
-                    }
-
                 }
+
+
 
 
                 if (s.length == 1000) {
@@ -1683,7 +1726,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         }
 
     }
-
 
     // -------------------  择偶条件界面  -----------------
 
@@ -2108,20 +2150,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 ToastUtils.showShort(identityVerifyBean.error_msg)
             }
 
-            XXPermissions.with(this)
-                .permission(Permission.CAMERA)
-                .request(object : OnPermissionCallback {
-                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent =
-                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
-                        startActivity(intent)
-                    }
-
-                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                        super.onDenied(permissions, never)
-                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
-                    }
-                })
 
         }
 
@@ -2265,21 +2293,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     override fun onDoIdentityVerifyError() {
 
         ToastUtils.showShort("身份验证接口暂不可用")
-
-        XXPermissions.with(this)
-            .permission(Permission.CAMERA)
-            .request(object : OnPermissionCallback {
-                override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                    val intent =
-                        Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
-                    startActivity(intent)
-                }
-
-                override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                    super.onDenied(permissions, never)
-                    ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
-                }
-            })
 
     }
 

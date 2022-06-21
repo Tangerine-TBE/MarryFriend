@@ -12,17 +12,17 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.blankj.utilcode.util.KeyboardUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.FullScreenDialog
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.BanBean
 import com.twx.marryfriend.bean.SchoolBean
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.net.callback.IGetSchoolCallback
 import com.twx.marryfriend.net.impl.getSchoolPresentImpl
 import com.twx.marryfriend.utils.UnicodeUtils
@@ -79,11 +79,18 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
             getData()
         }
 
-        val banText = SPStaticUtils.getString(Constant.BAN_TEXT)
-        val array = banText.split(",")
+        val banBean: BanBean =
+            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
 
-        for (i in 0.until(array.size)) {
-            banTextList.add(UnicodeUtils.decode(array[i]))
+        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+
+        val y = String(x)
+        var yy = "{\"data\":$y}"
+        var aa =
+            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+
+        for (i in 0.until(aa.data.size)) {
+            banTextList.add(aa.data[i])
         }
 
     }
@@ -211,9 +218,9 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 
             diySchool = inputSchool
 
-            if(inputSchool.length >= 4){
+            if (inputSchool.length >= 4) {
                 findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(R.drawable.shape_bg_common_next)
-            }else{
+            } else {
                 findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(R.drawable.shape_bg_common_next_non)
             }
 
@@ -265,13 +272,28 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
                 if (diySchool.length < 4) {
                     ToastUtils.showShort("学校名称至少为4个字")
                 } else {
-                    dismiss()
 
-                    val intent = intent
-                    intent.putExtra("schoolName", diySchool)
-                    setResult(RESULT_OK, intent)
-                    finish()
+                    for (i in 0.until(banTextList.size)) {
+                        val code = banTextList[i]
+                        if (diySchool.contains(code)) {
+                            haveBanText = true
+                        }
+                    }
 
+                    if (haveBanText) {
+                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+
+                        diySchool = ""
+                        findViewById<EditText>(R.id.et_dialog_school_name).setText("")
+
+                    } else {
+                        dismiss()
+
+                        val intent = intent
+                        intent.putExtra("schoolName", diySchool)
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
                 }
             }
 

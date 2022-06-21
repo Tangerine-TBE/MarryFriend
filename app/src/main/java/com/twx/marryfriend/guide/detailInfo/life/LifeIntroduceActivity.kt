@@ -51,6 +51,7 @@ class LifeIntroduceActivity : MainBaseViewActivity() {
 
         iv_life_introduce_finish.setOnClickListener {
             finish()
+            this.finish()
         }
 
 
