@@ -25,3 +25,4 @@ include ':faceplatform-ui'
 
 include ':module_base'
 include ':module_dynamic'
+include ':myutils'

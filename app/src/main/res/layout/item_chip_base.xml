@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.chip.Chip
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/chip"
+    android:text="黑龙江牡丹江人"
+    app:chipIcon="@mipmap/ic_launcher"
+    app:textStartPadding="4dp"
+    app:iconStartPadding="8dp"
+    app:textEndPadding="12dp"
+    android:textSize="13sp"
+    android:textColor="#FF404040"
+    app:chipBackgroundColor="#FFF5F5F5"
+    app:chipIconSize="18dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"/>

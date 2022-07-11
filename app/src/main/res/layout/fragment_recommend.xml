@@ -1,14 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFF0F0F0"
+    android:orientation="vertical"
     tools:context=".recommend.RecommendFragment">
-
-
-    <TextView
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:paddingTop="44dp"
+        android:background="#FFF"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp">
+            <TextView
+                android:text="推荐"
+                android:textColor="#FF101010"
+                android:textSize="24sp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
-</FrameLayout>
+            <ImageView
+                android:id="@+id/recommendSetting"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:paddingEnd="21dp"
+                android:src="@mipmap/ic_home_heartbeat" />
+
+            <ImageView
+                android:id="@+id/heartbeat"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="13dp"
+                android:layout_toStartOf="@id/recommendSetting"
+                android:src="@mipmap/ic_home_setting" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <FrameLayout
+        android:id="@+id/contentViewSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cardSwipeView"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <com.twx.marryfriend.recommend.widget.RecommendGuideView
+            android:id="@+id/guideView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <include android:id="@+id/mutualLike"
+            android:visibility="gone"
+            layout="@layout/item_recommend_mutual_like"/>
+        <include android:id="@+id/notContent"
+            android:visibility="gone"
+            layout="@layout/item_recommend_not_content"/>
+    </FrameLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

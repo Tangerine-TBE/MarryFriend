@@ -40,6 +40,18 @@
         <item name="indicatorName">BallPulseIndicator</item>
     </style>
 
+    <style name="roundedCornerStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
 
+    <style name="recommendMutualLike">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">44dp</item>
+    </style>
 
+    <style name="recommendLoading">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">44dp</item>
+    </style>
 </resources>

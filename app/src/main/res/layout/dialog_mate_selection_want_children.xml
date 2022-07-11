@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="你期望Ta的学历?"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/edu_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_close_small" />
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/unlimited"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/selector_dialog_multiple_choice"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="不限"
+                android:textColor="@color/selector_choose_item"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/option1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/selector_dialog_multiple_choice"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="没有孩子"
+                android:textColor="@color/selector_choose_item"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/option2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/selector_dialog_multiple_choice"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="有孩子且住一起"
+                android:textColor="@color/selector_choose_item"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/option3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/selector_dialog_multiple_choice"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="有孩子偶尔会住在一起"
+                android:textColor="@color/selector_choose_item"
+                android:textSize="17sp" />
+            <TextView
+                android:id="@+id/option4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/selector_dialog_multiple_choice"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="有孩子但不在身边"
+                android:textColor="@color/selector_choose_item"
+                android:textSize="17sp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+    <TextView
+        android:id="@+id/confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_confirm"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="确定"
+        android:textColor="#FFFFFFFF"
+        android:textSize="17sp" />
+
+</LinearLayout>
