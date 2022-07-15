@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="是否在线？"
+        android:textColor="#404040"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/unlimited"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/selector_dialog_multiple_choice"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="不限"
+            android:textColor="@color/selector_choose_item"
+            android:textSize="17sp" />
+        <TextView
+            android:id="@+id/option1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/selector_dialog_multiple_choice"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="在线"
+            android:textColor="@color/selector_choose_item"
+            android:textSize="17sp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp"
+        android:text="跳过"
+        android:textColor="#9A9A9A"
+        android:textSize="17sp" />
+</LinearLayout>

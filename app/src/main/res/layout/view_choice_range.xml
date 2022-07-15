@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:layout_height="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <View
+        android:background="@drawable/shape_choice_range"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/point1"
+        app:layout_constraintStart_toStartOf="parent"
+        android:src="@mipmap/ic_choice_range_start"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+    <ImageView
+        android:id="@+id/point2"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@mipmap/ic_choice_range_end"
+        app:layout_constraintDimensionRatio="1:1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,6 @@ data class IndustryBean(
 
 data class IndustryData(
     val id: Int,
-    val level: Any,
     val name: String,
     val pid: Int,
 )
