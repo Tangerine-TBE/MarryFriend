@@ -19,6 +19,8 @@ import com.google.android.material.chip.ChipGroup
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.enumeration.HomeCardAction
+import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.toast
@@ -52,6 +54,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
     var myLongitude:Double?=null
     var myLatitude:Double?=null
     private var currentPlayVoiceItem:RecommendBean?=null
+    var itemAction:((HomeCardAction?)->Unit)?=null
 
     fun getData():List<RecommendBean>{
         return listData
@@ -315,10 +318,12 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
             }
         }
 
-        holder.getView<NestedScrollView>(R.id.nestedScrollView).apply {
+        holder.getView<MyNestedScrollView>(R.id.nestedScrollView).apply {
             val itemInteraction=holder.getView<View>(R.id.itemInteraction)
             val itemInteraction2=holder.getView<View>(R.id.itemInteraction2)
 
+            var oldScroll=0
+            var scrollDY=0
             val richang=holder.getView<View>(R.id.richang)
             this.setOnScrollChangeListener (object :NestedScrollView.OnScrollChangeListener{
                 override fun onScrollChange(
@@ -328,6 +333,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     oldScrollX: Int,
                     oldScrollY: Int
                 ) {
+                    scrollDY=scrollY-oldScroll
 //                    itemInteraction
                     if (richang.bottom-this@apply.height<=scrollY){
                         richang.visibility=View.GONE
@@ -340,6 +346,14 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     }
                 }
             })
+            if (itemAction!=null){
+                this.actionUp={
+                    oldScroll=this.scrollY
+                    if (scrollDY>10){
+                        itemAction?.invoke(HomeCardAction.upSlide)
+                    }
+                }
+            }
         }
     }
 

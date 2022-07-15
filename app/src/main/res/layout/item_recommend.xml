@@ -4,9 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/shape_recommend_item"
+    android:layout_marginTop="28dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <androidx.core.widget.NestedScrollView
+    <com.twx.marryfriend.recommend.widget.MyNestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -25,12 +26,12 @@
                     android:scaleType="centerCrop"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:src="#f00"
+                    android:foreground="@drawable/shape_recommend_frame"
                     app:layout_constraintDimensionRatio="347:428"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:layout_editor_absoluteX="-16dp" />
-
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/distanceView"
                     app:layout_constraintStart_toStartOf="parent"
@@ -229,7 +230,7 @@
                     <ImageView
                         android:id="@+id/aboutMePhoto"
                         android:scaleType="centerCrop"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintDimensionRatio="319:148"
                         android:layout_width="match_parent"
@@ -384,7 +385,7 @@
                     android:layout_marginBottom="24dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -631,7 +632,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/myLife"
-                tools:visibility="visible"
+                android:visibility="gone"
                 android:background="@drawable/shape_recommend_about_me"
                 android:orientation="vertical"
                 android:paddingStart="18dp"
@@ -776,8 +777,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.core.widget.NestedScrollView>
-
+    </com.twx.marryfriend.recommend.widget.MyNestedScrollView>
     <ImageView
         android:id="@+id/homeLike"
         android:alpha="0"

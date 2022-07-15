@@ -1,9 +1,9 @@
 package com.twx.marryfriend.search
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
@@ -16,11 +16,8 @@ import com.twx.marryfriend.getOccupationData
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.toast
 import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class SearchActivity:AppCompatActivity(R.layout.activity_search) {
+class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private val searchViewModel by lazy {
         ViewModelProvider(this).get(SearchViewModel::class.java)
     }
@@ -407,25 +404,10 @@ class SearchActivity:AppCompatActivity(R.layout.activity_search) {
             onLineDialog.show()
         }
         startSearch.setOnClickListener {
-            lifecycleScope.launch(Dispatchers.IO) {
-                withContext(Dispatchers.Main){
-                    loadingDialog.show()
-                }
-                try {
-                    val result=searchViewModel.filtrateSearch()
-                    withContext(Dispatchers.Main){
-                        toast(result)
-                    }
-                }catch (e:Exception){
-                    withContext(Dispatchers.Main){
-                        toast(e.message?:"")
-                    }
-                }
-                withContext(Dispatchers.Main){
-                    loadingDialog.dismiss()
-                }
-            }
-
+            startActivity(SearchResultActivity.getIntent(this@SearchParamActivity,searchViewModel.getParameter()))
+        }
+        accurateSearch.setOnClickListener {
+            startActivity(Intent(this,AccurateSearchActivity::class.java))
         }
     }
 

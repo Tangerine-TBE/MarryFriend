@@ -4,8 +4,10 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.view.View
 import android.view.animation.LinearInterpolator
+import com.bumptech.glide.Glide
 import com.kingja.loadsir.callback.Callback
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import kotlinx.android.synthetic.main.item_recommend_loading_animation.view.*
 
 class LoadingCallback: Callback() {
@@ -18,8 +20,9 @@ class LoadingCallback: Callback() {
 
     override fun onViewCreate(context: Context?, view: View?) {
         super.onViewCreate(context, view)
-        val scx=5f
+        val scx=6f
         view?.apply {
+            Glide.with(userHeadImage).load(UserInfo.getHeadPortrait()).into(userHeadImage)
             valueAnimator?.addUpdateListener {
                 view1.scaleX=view1.scaleX.let {sx->
                     (sx+0.02f)%scx
@@ -56,12 +59,12 @@ class LoadingCallback: Callback() {
 //                    (sx+0.02f+3f)%scx
 //                }
 
-                view6.scaleX=view1.scaleX.let {sx->
-                    (sx+0.02f+3.5f)%scx
-                }
-                view6.scaleY=view1.scaleX.let {sx->
-                    (sx+0.02f+3.5f)%scx
-                }
+//                view6.scaleX=view1.scaleX.let {sx->
+//                    (sx+0.02f+3.5f)%scx
+//                }
+//                view6.scaleY=view1.scaleX.let {sx->
+//                    (sx+0.02f+3.5f)%scx
+//                }
             }
             valueAnimator?.duration=3000
             valueAnimator?.interpolator=LinearInterpolator()

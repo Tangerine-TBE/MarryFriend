@@ -10,16 +10,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <View
+        android:id="@+id/mutualLikeView1"
         app:layout_constraintTop_toTopOf="@id/centerLine"
         app:layout_constraintBottom_toBottomOf="@id/centerLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.7"
-        app:layout_constraintDimensionRatio="1:1"
-        android:background="#8003A9F4"
-        android:layout_width="0dp"
-        android:layout_height="0dp"/>
+        android:background="@drawable/shape_recommend_loading"
+        android:layout_width="88dp"
+        android:layout_height="88dp"/>
+    <View
+        android:id="@+id/mutualLikeView3"
+        app:layout_constraintTop_toTopOf="@id/centerLine"
+        app:layout_constraintBottom_toBottomOf="@id/centerLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/shape_recommend_loading"
+        android:layout_width="88dp"
+        android:layout_height="88dp"/>
+    <View
+        android:id="@+id/mutualLikeView2"
+        app:layout_constraintTop_toTopOf="@id/centerLine"
+        app:layout_constraintBottom_toBottomOf="@id/centerLine"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/shape_recommend_loading"
+        android:layout_width="88dp"
+        android:layout_height="88dp"/>
     <FrameLayout
+        android:id="@+id/taHeadView"
         app:layout_constraintTop_toTopOf="@id/centerLine"
         app:layout_constraintBottom_toBottomOf="@id/centerLine"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +55,7 @@
             android:layout_height="match_parent"/>
     </FrameLayout>
     <FrameLayout
+        android:id="@+id/myHeadView"
         app:layout_constraintTop_toTopOf="@id/centerLine"
         app:layout_constraintBottom_toBottomOf="@id/centerLine"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,6 +73,7 @@
             android:layout_height="match_parent"/>
     </FrameLayout>
     <ImageView
+        android:id="@+id/myselfHead"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/centerLine"

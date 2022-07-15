@@ -1,86 +1,104 @@
 package com.twx.marryfriend.recommend.widget
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
+import com.blankj.utilcode.util.SPStaticUtils
+import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
-import com.xyzz.myutils.toast
+import com.twx.marryfriend.enumeration.HomeCardAction
 import kotlinx.android.synthetic.main.item_recommend_guide.view.*
-import kotlin.math.abs
 
 class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet: AttributeSet?=null,defSty:Int=0):FrameLayout(context,attributeSet,defSty) {
+    companion object{
+        private const val IS_USE_FIRST="is_first_use"
+        fun notShowGuide(){
+            SPStaticUtils.put(IS_USE_FIRST,true)
+        }
+        fun isShowGuide():Boolean{
+            return !SPStaticUtils.getBoolean(IS_USE_FIRST,false)
+        }
+    }
     init {
         inflate(context,R.layout.item_recommend_guide,this)
     }
-    private var isUpScroll=false
-    private var isLeftScroll=false
-    private var isRightScroll=false
-    private var isClick=false
-    private var isHandler=false
+    private var currentType:HomeCardAction?=HomeCardAction.upSlide
 
-    private val gesturelistener by lazy {
-        object : GestureDetector.SimpleOnGestureListener(){
-            override fun onDown(e: MotionEvent?): Boolean {
-                isHandler=false
-                return true
+    fun guideComplete(type:HomeCardAction){
+        if (type==currentType){
+            when(currentType){
+                HomeCardAction.upSlide -> {
+                    showGuide(HomeCardAction.leftSlide)
+                }
+                HomeCardAction.leftSlide -> {
+                    showGuide(HomeCardAction.rightSlide)
+                }
+                HomeCardAction.rightSlide -> {
+                    showGuide(HomeCardAction.clickFlower)
+                }
+                HomeCardAction.clickFlower -> {
+                    currentType=null
+                    notShowGuide()
+                    this.visibility=View.GONE
+                }
             }
+        }else{
+            showGuide(currentType?:return)
+        }
+    }
+    fun showGuide(){
+        showGuide(currentType?:return)
+    }
 
-            override fun onScroll(
-                e1: MotionEvent?,
-                e2: MotionEvent?,
-                distanceX: Float,
-                distanceY: Float
-            ): Boolean {
-                if (isHandler){
-                    return false
-                }
-                if (!isUpScroll){
-                    if (abs(distanceY)> abs(distanceX)){
-                        if (distanceY>0){
-                            isUpScroll=true
-                            testText.text="上划完成"
-                            isHandler= true
-                        }
-                    }
-                }
-                if (!isLeftScroll&&isUpScroll){
-                    if (abs(distanceY) < abs(distanceX)){
-                        if (distanceX>0){
-                            isLeftScroll=true
-                            testText.text="左划完成"
-                            isHandler= true
-                        }
-                    }
-                }
-                if (!isRightScroll&&isUpScroll&&isLeftScroll){
-                    if (abs(distanceY) < abs(distanceX)){
-                        if (distanceX<0){
-                            isRightScroll=true
-                            testText.text="右划完成"
-                            isHandler= true
-                        }
-                    }
-                }
-
-                return true
+    private fun showGuide(type:HomeCardAction){
+        showView()
+        currentType=type
+        when(type){
+            HomeCardAction.upSlide -> {
+                actionName.text="上滑"
+                actionName.setTextColor(Color.parseColor("#FFFF40CC"))
+                actionDes1.text="可以查看更多资料"
+                actionDes2.text="更多了解这位嘉宾"
+                Glide.with(this).load(R.drawable.guide_recommend_top).into(contentImg)
             }
-
-            override fun onSingleTapUp(e: MotionEvent?): Boolean {
-                if (!isClick&&isUpScroll&&isLeftScroll&&isRightScroll){
-                    isClick=true
-                    testText.text="送花完成"
-                    visibility= View.GONE
-                    return true
-                }
-                return super.onSingleTapUp(e)
+            HomeCardAction.leftSlide -> {
+                actionName.text="左滑"
+                actionName.setTextColor(Color.parseColor("#FF5840FF"))
+                actionDes1.text="表示对TA不感兴趣"
+                actionDes2.text="并且切换到下一位嘉宾"
+                Glide.with(this).load(R.drawable.guide_recommend_left).into(contentImg)
+            }
+            HomeCardAction.rightSlide -> {
+                actionName.text="右滑"
+                actionName.setTextColor(Color.parseColor("#FF5840FF"))
+                actionDes1.text="可以喜欢TA"
+                actionDes2.text="遇到心仪的就不要错过啦"
+                Glide.with(this).load(R.drawable.guide_recommend_right).into(contentImg)
+            }
+            HomeCardAction.clickFlower -> {
+                actionName.text="送花"
+                actionName.setTextColor(Color.parseColor("#FFFF4444"))
+                actionDes1.text="表示超级喜欢"
+                actionDes2.text="通知对方已喜欢，并在其首页置顶，\n配对率提升2倍"
+                contentImg.visibility=View.GONE
+                Glide.with(this).load(R.drawable.guide_recommend_click).into(contentImg2)
             }
         }
     }
-    private val gestureDetector=GestureDetector(context,gesturelistener)
+
+    private fun showView(){
+        if(this.visibility!=View.VISIBLE)
+            this.visibility=View.VISIBLE
+    }
+
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        return gestureDetector.onTouchEvent(event)
+        if (event?.action==MotionEvent.ACTION_DOWN){
+            this.visibility=View.GONE
+        }
+        return super.onTouchEvent(event)
     }
 }

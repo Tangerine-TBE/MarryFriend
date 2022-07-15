@@ -9,6 +9,8 @@ import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
 import com.twx.marryfriend.bean.post.OccupationBean
 import com.twx.marryfriend.bean.post.OccupationDataBean
+import com.twx.marryfriend.bean.search.SearchResultBean
+import com.twx.marryfriend.bean.search.SearchResultItem
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.enumeration.*
 import com.xyzz.myutils.NetworkUtil
@@ -31,7 +33,16 @@ class SearchViewModel:ViewModel() {
         }
     }
 
-    suspend fun filtrateSearch()= suspendCoroutine<String>{ coroutine->
+    fun setParameter(map: Map<String,String>){
+        searchParameterMap.clear()
+        searchParameterMap.putAll(map)
+    }
+
+    fun getParameter():Map<String,String>{
+        return searchParameterMap
+    }
+
+    suspend fun filtrateSearch()= suspendCoroutine<List<SearchResultItem>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/filtrateSearch"
         val map= mapOf(
             "user_id" to UserInfo.getUserId(),
@@ -39,13 +50,32 @@ class SearchViewModel:ViewModel() {
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-                coroutine.resume(response)
+                val gson=Gson()
+                coroutine.resume(gson.fromJson(response,SearchResultBean::class.java).data?.list?: emptyList())
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
         },{
             coroutine.resumeWithException(Exception(it))
         },searchParameterMap)
+    }
+
+    suspend fun accurateSearch(text:String) = suspendCoroutine<List<SearchResultItem>> {coroutine->
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/idNickSearch"
+        val map= mapOf(
+            "user_id" to UserInfo.getUserId(),
+            "id_nick" to text
+        )
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val gson=Gson()
+                coroutine.resume(gson.fromJson(response,SearchResultBean::class.java).data?.list?: emptyList())
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        }, mapOf("page" to "1","size" to "20"))
     }
 
     fun setAgeParameter(intRange:IntRange?){

@@ -52,15 +52,18 @@
             android:layout_marginEnd="14dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <com.twx.marryfriend.recommend.widget.RecommendGuideView
-            android:id="@+id/guideView"
+        <com.twx.marryfriend.recommend.widget.MutualLikeView
+            android:id="@+id/mutualLike"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <include android:id="@+id/mutualLike"
-            android:visibility="gone"
-            layout="@layout/item_recommend_mutual_like"/>
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
         <include android:id="@+id/notContent"
             android:visibility="gone"
             layout="@layout/item_recommend_not_content"/>
+        <com.twx.marryfriend.recommend.widget.RecommendGuideView
+            android:id="@+id/guideView"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </FrameLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

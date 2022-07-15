@@ -90,9 +90,8 @@ data class RecommendBean(
         return "${numberFormat.format(duration/60)}:${numberFormat.format(duration%60)}"
     }
 
-    data class Label(val icon:Int,val label: String)
     companion object{
-        private fun String.toLabel(icon: Int):Label?{
+        private fun String.toLabel(icon: Int): Label?{
             return if (this.isBlank()) {
                 null
             }else{
@@ -102,7 +101,7 @@ data class RecommendBean(
         /**
          * 0没填写, 1大专以下,2大专，3本科，4硕士，5博士,6博士以上
          */
-        fun getEducationStr(education:Int?):Label?{
+        fun getEducationStr(education:Int?): Label?{
             return when(education){
                 0->{
                     null
@@ -128,7 +127,7 @@ data class RecommendBean(
                 else-> null
             }?.toLabel(R.mipmap.ic_label_school)
         }
-        fun getMarry_hadStr(marry_status:Int?):Label?{
+        fun getMarry_hadStr(marry_status:Int?): Label?{
             return when(marry_status){
                 0->{
                     null//"不限"
@@ -147,7 +146,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_marriage)
         }
-        fun getChild_hadStr(child_had:Int?):Label?{
+        fun getChild_hadStr(child_had:Int?): Label?{
             return when(child_had){
                 0->{
                     null//"不限"
@@ -169,7 +168,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_children)
         }
-        fun getWant_childStr(want_child:Int?):Label?{
+        fun getWant_childStr(want_child:Int?): Label?{
             return when(want_child){
                 0->{
                     null//"不限"
@@ -191,7 +190,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_children)
         }
-        fun getIs_smoking(is_smoking:Int?):Label?{
+        fun getIs_smoking(is_smoking:Int?): Label?{
             return when(is_smoking){
                 0->{
                     null//"不限"
@@ -213,7 +212,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_smoking)
         }
-        fun getDrink_wine(drink_wine:Int?):Label?{
+        fun getDrink_wine(drink_wine:Int?): Label?{
             return when(drink_wine){
                 0->{
                     null//"不限"
@@ -235,7 +234,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_drink)
         }
-        fun getIs_headface(is_headface:Int?):Label?{
+        fun getIs_headface(is_headface:Int?): Label?{
             return when(is_headface){
                 0->{
                     null//"不限"
@@ -251,7 +250,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_hometown)
         }
-        fun getSalary_range(salary_range:Int?):Label?{
+        fun getSalary_range(salary_range:Int?): Label?{
             return when(salary_range){
                 0->{
                     null//"不限"
@@ -279,7 +278,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_income)
         }
-        fun getFigure_nan(figure_nan:Int?):Label?{
+        fun getFigure_nan(figure_nan:Int?): Label?{
             return when(figure_nan){
                 1->{
                     "一般"
@@ -304,7 +303,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_figure)
         }
-        fun getFigure_nv(figure_nv:Int?):Label?{
+        fun getFigure_nv(figure_nv:Int?): Label?{
             return when(figure_nv){
                 1->{
                     "一般"
@@ -332,7 +331,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_figure)
         }
-        fun getMarry_time(marry_time:Int?):Label?{
+        fun getMarry_time(marry_time:Int?): Label?{
             return when(marry_time){
                 0->{
                     null//"不限"
@@ -354,7 +353,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_card)
         }
-        fun getBuy_car(buy_car:Int?):Label?{
+        fun getBuy_car(buy_car:Int?): Label?{
             return when(buy_car){
                 0->{
                     null//"不限"
@@ -370,7 +369,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_vehicle)
         }
-        fun getBuy_house(buy_house:Int?):Label?{
+        fun getBuy_house(buy_house:Int?): Label?{
             return when(buy_house){
                 0->{
                     null//"不限"
@@ -389,7 +388,7 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_house)
         }
-        fun getIndustry_str(industry_str:String?):Label?{
+        fun getIndustry_str(industry_str:String?): Label?{
             return industry_str?.toLabel(R.mipmap.ic_label_work)
         }
     }
@@ -397,19 +396,19 @@ data class RecommendBean(
     /**
      * 工作城市
      */
-    fun getCurrentResidence():Label?{
+    fun getCurrentResidence(): Label?{
 //        return findIndustry(base?.work_city_num?.toIntOrNull()?:0)
         return (base?.work_province_str?.let { "现居${it}" })?.toLabel(R.mipmap.ic_label_residence)
     }
 
-    fun getHeight():Label?{
+    fun getHeight(): Label?{
         return ((base?.height?:return null).toString()+"cm").toLabel(R.mipmap.ic_label_height)
     }
-    fun getHometown():Label?{
+    fun getHometown(): Label?{
         return base?.hometown_city_str?.toLabel(R.mipmap.ic_label_hometown)
     }
 
-    fun getHeightDemand():Label?{
+    fun getHeightDemand(): Label?{
         val min_high=demand?.min_high?.toIntOrNull()?:0
         val max_high=demand?.max_high?.toIntOrNull()?:0
         if (max_high==0){
@@ -418,7 +417,7 @@ data class RecommendBean(
             return "${min_high}-${max_high}cm".toLabel(R.mipmap.ic_label_height)
         }
     }
-    fun getAgeDemand():Label?{
+    fun getAgeDemand(): Label?{
         val age_min=demand?.age_min?:0
         val age_max=demand?.age_max?:0
         if (age_max==0){
@@ -452,7 +451,7 @@ data class RecommendBean(
 //        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
     }
 
-    fun getDemandWork_place_str():Label?{
+    fun getDemandWork_place_str(): Label?{
         return ("现居"+(demand?.work_place_str?:return null)).toLabel(R.mipmap.ic_label_residence)
     }
 

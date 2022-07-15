@@ -40,11 +40,17 @@
         android:background="@drawable/shape_recommend_loading"
         android:layout_width="88dp"
         android:layout_height="88dp"/>
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/userHeadImage"
+    <FrameLayout
         android:layout_gravity="center"
-        android:src="#000"
-        app:shapeAppearance="@style/recommendLoading"
+        android:padding="2dp"
+        android:background="@drawable/shape_red_frame"
         android:layout_width="88dp"
-        android:layout_height="88dp"/>
+        android:layout_height="88dp">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/userHeadImage"
+            app:shapeAppearance="@style/recommendMutualLike"
+            android:src="#000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
 </FrameLayout>

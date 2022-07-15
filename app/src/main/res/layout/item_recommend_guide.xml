@@ -4,10 +4,13 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <ImageView
-        tools:src="@mipmap/ic_launcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:src="@mipmap/ic_launcher" />
 
     <View
         android:background="#E8FFFFFF"
@@ -35,6 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/actionName"
             android:text="上滑"
             android:letterSpacing="0.1"
             android:textColor="#FFFF40CC"
@@ -42,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
         <TextView
+            android:id="@+id/actionDes1"
             android:text="可以查看更多资料"
             android:letterSpacing="0.1"
             android:textColor="#FF404040"
@@ -50,7 +55,7 @@
             android:layout_height="wrap_content"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
     <TextView
-        android:id="@+id/text2"
+        android:id="@+id/actionDes2"
         app:layout_constraintTop_toBottomOf="@id/text1"
         app:layout_constraintStart_toStartOf="@id/text1"
         app:layout_constraintEnd_toEndOf="@id/text1"
@@ -61,17 +66,29 @@
         android:textColor="#FF404040"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
+    <ImageView
+        android:id="@+id/contentImg"
+        app:layout_constraintTop_toBottomOf="@id/actionDes2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="1.1"
+        app:layout_constraintDimensionRatio="1:1"
+        tools:src="@drawable/guide_recommend_top"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/upSlideLine"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.483412322275"
+        android:id="@+id/guideLine"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
     <ImageView
-        app:layout_constraintTop_toBottomOf="@id/upSlideLine"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@mipmap/ic_launcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/contentImg2"
+        app:layout_constraintTop_toBottomOf="@id/actionDes2"
+        app:layout_constraintStart_toStartOf="@id/guideLine"
+        app:layout_constraintWidth_percent="1.1"
+        app:layout_constraintDimensionRatio="1:1"
+        tools:src="@drawable/guide_recommend_click"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

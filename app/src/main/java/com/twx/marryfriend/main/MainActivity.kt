@@ -1,8 +1,7 @@
 package com.twx.marryfriend.main
 
 import android.content.Intent
-import android.util.Log
-import android.view.View
+import android.view.MotionEvent
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.twx.marryfriend.R
@@ -13,7 +12,6 @@ import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_detail_info.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MainBaseViewActivity() {
@@ -160,9 +158,9 @@ class MainActivity : MainBaseViewActivity() {
         }
     }
 
-
-
-
-
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        recommend?.dispatchTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
+    }
 
 }

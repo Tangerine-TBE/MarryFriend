@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
+            android:id="@+id/accurateSearch"
             android:layout_gravity="end"
             android:paddingEnd="21dp"
             android:paddingStart="21dp"

@@ -54,4 +54,13 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">44dp</item>
     </style>
+
+    <style name="searchResultHead">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">31dp</item>
+    </style>
+    <style name="loveMeImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>
