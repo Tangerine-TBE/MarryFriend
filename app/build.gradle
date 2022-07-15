@@ -207,6 +207,7 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.2.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
     implementation project(path: ':faceplatform-ui')
     implementation project(path: ':faceplatform-ui')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
