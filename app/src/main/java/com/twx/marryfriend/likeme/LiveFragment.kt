@@ -1,4 +1,4 @@
-package com.twx.marryfriend.love
+package com.twx.marryfriend.likeme
 
 import android.os.Bundle
 import android.view.View
@@ -14,7 +14,7 @@ import com.xyzz.myutils.toast
 import kotlinx.android.synthetic.main.fragment_love.*
 import kotlinx.coroutines.launch
 
-class LoveFragment : Fragment(R.layout.fragment_love) {
+class LiveFragment : Fragment(R.layout.fragment_love) {
     private val loadingDialog by lazy {
         LoadingDialogManager
             .createLoadingDialog()
@@ -22,7 +22,7 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
     }
     private val loadSir by lazy {
         LoadSir.Builder()
-            .addCallback(LoveEmptyData())
+            .addCallback(LiveEmptyData())
             .build()
     }
     private val loadService by lazy {
@@ -31,27 +31,27 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
             iLog("重加载")
         }
     }
-    private val loveViewModel by lazy {
-        ViewModelProvider(this).get(LoveViewModel::class.java)
+    private val liveViewModel by lazy {
+        ViewModelProvider(this).get(LiveViewModel::class.java)
     }
-    private val loveAdapter by lazy {
-        LoveAdapter()
+    private val liveAdapter by lazy {
+        LiveAdapter()
     }
     private var pager=1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loveRecyclerView.layoutManager=GridLayoutManager(requireContext(),2)
-        loveRecyclerView.adapter=loveAdapter
+        loveRecyclerView.adapter=liveAdapter
         lifecycleScope.launch {
             loadingDialog.show()
             try {
-                val data=loveViewModel.loadLoveMe(pager)
-                loveAdapter.setData(data?.list?: emptyList())
+                val data=liveViewModel.loadLoveMe(pager)
+                liveAdapter.setData(data?.list?: emptyList())
                 if (data?.total!=null&& data.total !=0){
                     loveCount.text="${data?.total}人喜欢我"
                 }else{
-                    loadService.showCallback(LoveEmptyData::class.java)
+                    loadService.showCallback(LiveEmptyData::class.java)
                 }
             }catch (e:Exception){
                 toast(e.message)
@@ -66,8 +66,8 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
             lifecycleScope.launch {
                 pager++
                 loadingDialog.show()
-                loveViewModel.loadLoveMe(pager)
-                loveAdapter
+                liveViewModel.loadLoveMe(pager)
+                liveAdapter
                 loveSwipeRefreshLayout.isRefreshing=false
                 loadingDialog.dismiss()
             }

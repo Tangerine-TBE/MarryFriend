@@ -1,4 +1,4 @@
-package com.twx.marryfriend.love
+package com.twx.marryfriend.likeme
 
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
@@ -12,7 +12,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class LoveViewModel():ViewModel() {
+class LiveViewModel():ViewModel() {
 
     suspend fun loadLoveMe(page:Int)=suspendCoroutine<LikeMeData?>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/otherPutongXihuanMeList"

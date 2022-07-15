@@ -5,7 +5,7 @@
     android:background="#FFFFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".love.LoveFragment">
+    tools:context=".likeme.LiveFragment">
 
     <TextView
         android:id="@+id/loveCount"

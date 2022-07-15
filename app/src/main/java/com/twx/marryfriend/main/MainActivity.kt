@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.dynamic.DynamicFragment
-import com.twx.marryfriend.love.LoveFragment
+import com.twx.marryfriend.likeme.LiveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.recommend.RecommendFragment
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : MainBaseViewActivity() {
 
     private var recommend: RecommendFragment? = null
-    private var love: LoveFragment? = null
+    private var love: LiveFragment? = null
     private var dynamic: DynamicFragment? = null
     private var message: MessageFragment? = null
     private var mine: MineFragment? = null
@@ -79,7 +79,7 @@ class MainActivity : MainBaseViewActivity() {
     private fun initLoveFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (love == null) {
-            love = LoveFragment()
+            love = LiveFragment()
             transaction.add(R.id.fl_main_container, love!!)
         }
         hideFragment(transaction)

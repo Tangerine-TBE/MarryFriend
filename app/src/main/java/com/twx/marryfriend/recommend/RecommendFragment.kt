@@ -211,11 +211,11 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private fun disLike(item:RecommendBean){
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
-//            try {
-//                recommendViewModel.disLike(item.getId())
-//            }catch (e:Exception){
-//                toast(e.message)
-//            }
+            try {
+                recommendViewModel.disLike(item.getId())
+            }catch (e:Exception){
+                toast(e.message)
+            }
             loadingDialog.dismiss()
         }
     }
@@ -227,11 +227,11 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {
-//                val isMutualLike=recommendViewModel.like(item.getId())
-//                if (isMutualLike){
-//                    showView(ViewType.mutual)
-//                    Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
-//                }
+                val isMutualLike=recommendViewModel.like(item.getId())
+                if (isMutualLike){
+                    showView(ViewType.mutual)
+                    Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
+                }
             }catch (e:Exception){
                 toast(e.message)
             }
@@ -246,7 +246,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
             try {
-//                recommendViewModel.superLike(item.getId())
+                recommendViewModel.superLike(item.getId())
             }catch (e:Exception){
                 toast(e.message)
             }

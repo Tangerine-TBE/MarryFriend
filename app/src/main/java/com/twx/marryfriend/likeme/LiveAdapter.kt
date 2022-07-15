@@ -1,4 +1,4 @@
-package com.twx.marryfriend.love
+package com.twx.marryfriend.likeme
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,7 @@ import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.likeme.LikeMeItemBean
 import com.xyzz.myutils.display.DateDisplayManager
 
-class LoveAdapter:RecyclerView.Adapter<BaseViewHolder>() {
+class LiveAdapter:RecyclerView.Adapter<BaseViewHolder>() {
     private val listData=ArrayList<LikeMeItemBean>()
 
     fun setData(list: List<LikeMeItemBean>){
