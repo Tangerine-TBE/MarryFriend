@@ -188,17 +188,25 @@
 
             </RelativeLayout>
 
-            <com.twx.marryfriend.view.MySeekBar
-                android:id="@+id/msb_guide_target_age"
+            <com.twx.marryfriend.view.DoubleSlideSeekBar
+                android:id="@+id/dssb_guide_target_age"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
-                android:layout_marginTop="16dp"
-                app:back_line_color="#F2F2F2"
-                app:min="0"
-                app:per_value="1"
-                app:point_count="43" />
-
+                android:layout_height="20dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="20dp"
+                app:bigValue="60"
+                app:equal="10"
+                app:hasRule="false"
+                app:imageBig="@mipmap/icon_seekbar_right"
+                app:imageLow="@mipmap/icon_seekbar_left"
+                app:imageheight="16dp"
+                app:imagewidth="16dp"
+                app:inColor="@color/item_main_color_selected"
+                app:lineHeight="4dp"
+                app:outColor="#F2F2F2"
+                app:smallValue="18"
+                app:textColor="#0628e4"
+                app:textSize="0sp" />
 
         </LinearLayout>
 

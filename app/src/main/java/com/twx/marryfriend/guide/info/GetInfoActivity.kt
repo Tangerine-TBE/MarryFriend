@@ -8,16 +8,20 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.AccessTokenBean
 import com.twx.marryfriend.bean.CityBean
 import com.twx.marryfriend.bean.IndustryBean
 import com.twx.marryfriend.bean.JobBean
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.guide.detailInfo.DetailInfoActivity
 import com.twx.marryfriend.main.MainActivity
+import com.twx.marryfriend.net.callback.IGetAccessTokenCallback
 import com.twx.marryfriend.net.callback.IGetCityCallback
 import com.twx.marryfriend.net.callback.IGetIndustryCallback
 import com.twx.marryfriend.net.callback.IGetJobCallback
+import com.twx.marryfriend.net.impl.getAccessTokenPresentImpl
 import com.twx.marryfriend.net.impl.getCityPresentImpl
 import com.twx.marryfriend.net.impl.getIndustryPresentImpl
 import com.twx.marryfriend.net.impl.getJobPresentImpl
@@ -25,7 +29,7 @@ import java.util.*
 
 
 class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCallback,
-    IGetJobCallback {
+    IGetJobCallback, IGetAccessTokenCallback {
 
     // 是否加载城市
     private var isLoadCity = false
@@ -41,6 +45,8 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     private lateinit var getIndustryPresent: getIndustryPresentImpl
     private lateinit var getJobPresent: getJobPresentImpl
 
+    private lateinit var getAccessTokenPresent: getAccessTokenPresentImpl
+
     override fun getLayoutView(): Int = R.layout.activity_get_info
 
     override fun initView() {
@@ -55,10 +61,15 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         getJobPresent = getJobPresentImpl.getsInstance()
         getJobPresent.registerCallback(this)
 
+        getAccessTokenPresent = getAccessTokenPresentImpl.getsInstance()
+        getAccessTokenPresent.registerCallback(this)
+
     }
 
     override fun initLoadData() {
         super.initLoadData()
+
+        getAccessToken()
 
     }
 
@@ -85,6 +96,16 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
             val industryMap: MutableMap<String, String> = TreeMap()
             getIndustryPresent.getIndustry(industryMap)
         }
+    }
+
+    // 获取  accessToken
+    private fun getAccessToken() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.GRANT_TYPE] = "client_credentials"
+        map[Contents.CLIENT_ID] = "jjKDyljlCOX3TcEcnXidYCcU"
+        map[Contents.CLIENT_SECRET] = "GQcKzFuA87uEQZhIDnlcxTpkjT2oLxdX"
+        getAccessTokenPresent.getAccessToken(map)
+
     }
 
     private fun isCompleteLoading() {
@@ -122,6 +143,14 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onError() {
+
+    }
+
+    override fun onGetAccessTokenSuccess(accessTokenBean: AccessTokenBean) {
+        SPStaticUtils.put(Constant.ACCESS_TOKEN,accessTokenBean.access_token)
+    }
+
+    override fun onGetAccessTokenFail() {
 
     }
 

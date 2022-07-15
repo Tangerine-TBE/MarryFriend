@@ -1,28 +1,55 @@
 plugins {
-    id 'com.android.application'
+//    id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android-extensions'
 }
 
+if (Integer.valueOf(runModule) == 1) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+
 android {
+
+    if (Integer.valueOf(runModule) != 1) {
+        sourceSets {
+            // main源集（source set）的闭包配置。
+            main {
+                //每个源集只能有一个AndroidManifest.xml清单文件，
+                //默认情况下，main源集的清单文件在src/main/ 目录中。
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+            }
+        }
+    }
 
     compileSdkVersion rootProject.ext.version.compileSdkVersion
     buildToolsVersion rootProject.ext.version.buildToolsVersion
 
     signingConfigs {
         debug {
-            storeFile file('cn.yuntk.reader.jks')
-            storePassword 'ltreader888'
-            keyPassword 'ltreader888'
+//            storeFile file('cn.yuntk.reader.jks')
+//            storePassword 'ltreader888'
+//            keyPassword 'ltreader888'
+//            keyAlias 'reader'
+
+            storeFile file('reader.jks')
+            storePassword 'admin123'
+            keyPassword 'admin123'
             keyAlias 'reader'
 
             v1SigningEnabled true
             v2SigningEnabled true
         }
         release {
-            storeFile file('cn.yuntk.reader.jks')
-            storePassword 'ltreader888'
-            keyPassword 'ltreader888'
+//            storeFile file('cn.yuntk.reader.jks')
+//            storePassword 'ltreader888'
+//            keyPassword 'ltreader888'
+//            keyAlias 'reader'
+
+            storeFile file('reader.jks')
+            storePassword 'admin123'
+            keyPassword 'admin123'
             keyAlias 'reader'
 
             v1SigningEnabled true
@@ -31,7 +58,13 @@ android {
     }
 
     defaultConfig {
-        applicationId rootProject.ext.version.applicationId
+//        applicationId rootProject.ext.version.applicationId
+
+        if (Integer.valueOf(runModule) == 1) {
+//当为运行module时才有applicationId属性（可以做到不同module的app能在手机上共存）
+            applicationId rootProject.ext.version.applicationId
+        }
+
         minSdk rootProject.ext.version.minSdkVersion
         targetSdk rootProject.ext.version.targetSdkVersion
         versionCode rootProject.ext.version.versionCode
@@ -221,7 +254,6 @@ dependencies {
 
     // 百度定位
     implementation 'com.baidu.lbsyun:BaiduMapSDK_Location:9.1.8'
-
 
 
 }

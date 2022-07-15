@@ -61,7 +61,6 @@ import com.twx.marryfriend.guide.detailInfo.artificial.IdentityActivity
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
 import com.twx.marryfriend.guide.detailInfo.search.SchoolSearchActivity
 import com.twx.marryfriend.guide.detailInfo.step.*
-import com.twx.marryfriend.guide.jumpInfo.JumpActivity
 import com.twx.marryfriend.login.retrieve.QualityConfig
 import com.twx.marryfriend.login.retrieve.QualityConfigManager
 import com.twx.marryfriend.login.retrieve.activity.FaceLivenessExpActivity
@@ -69,7 +68,7 @@ import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.GlideEngine
-import com.twx.marryfriend.utils.UnicodeUtils
+import com.twx.marryfriend.view.DoubleSlideSeekBar
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
 import kotlinx.android.synthetic.main.layout_guide_step_address.*
@@ -88,7 +87,8 @@ import java.util.*
 
 class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJobCallback,
     IDoFaceDetectCallback, IDoIdentityVerifyCallback, IDoUpdateBaseInfoCallback,
-    IDoUpdateMoreInfoCallback, IDoUpdateDemandInfoCallback, IDoUploadPhotoCallback {
+    IDoUpdateMoreInfoCallback, IDoUpdateDemandInfoCallback, IDoUploadPhotoCallback,
+    IDoTextVerifyCallback {
 
     // 敏感字
     private var banTextList: MutableList<String> = arrayListOf()
@@ -137,9 +137,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private lateinit var getIndustryPresent: getIndustryPresentImpl
     private lateinit var getJobPresent: getJobPresentImpl
 
-
     // -------------------  居住地和家乡界面  -----------------
-
 
     // 工作是定位模式还是自主选择模式
     private var isJobLocal = false
@@ -179,6 +177,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     //  用户家乡
     private var home = ""
 
+    // 用户家乡
+    private var homeCityFirst = 0
+    private var homeCitySecond = 0
+    private var homeCityThird = 0
+
 
     // 城市json数据
     private var cityJsonDate = ""
@@ -211,12 +214,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private var chooseTarget = false
 
     // 期望年龄
-    private var targetAgeMin = 0
-    private var targetAgeMax = 0
+    private var targetAgeMin = 18
+    private var targetAgeMax = 60
 
     //期望年龄是否选择   先true 验证 后面再改回来
     private var chooseAge = true
-
 
     // -------------------  上传头像界面  -----------------
 
@@ -243,7 +245,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private var mPhotoUrl = ""
 
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
-
 
     // -------------------  我的生活界面  -----------------
 
@@ -319,7 +320,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     private var lifeThirdBitmap: Bitmap? = null
 
-
     // -------------------  关于我界面  -----------------
 
     // 是否完成自我介绍
@@ -344,8 +344,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     // 心目中的TA
     private var idealText = ""
 
-    private lateinit var client: BosClient
+    // 是否完成文字校验
+    private var isCompleteIntroduce = false
+    private var isCompleteHobby = false
+    private var isCompleteIdeal = false
 
+    private lateinit var client: BosClient
 
     // -------------------  实名认证界面  -----------------
 
@@ -364,6 +368,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
 
     private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
+
+    private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
     // 百度人脸识别动作
     private var livenessList: MutableList<LivenessTypeEnum> = ArrayList()
@@ -420,6 +426,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         uploadPhotoPresent.registerCallback(this)
 
+        doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+        doTextVerifyPresent.registerCallback(this)
+
         mLocationClient = LocationClient(this)
 
         val str1 = "遇到问题？联系客服"
@@ -462,18 +471,17 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         cityJsonDate = SPStaticUtils.getString(Constant.CITY_JSON_DATE)
         cityDate = GsonUtils.fromJson(cityJsonDate, CityBean::class.java)
 
-        val banBean: BanBean =
-            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-
-        val y = String(x)
-        var yy = "{\"data\":$y}"
-        var aa =
-            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-
-        for (i in 0.until(aa.data.size)) {
-            banTextList.add(aa.data[i])
-        }
+//        val banBean: BanBean = GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+//
+//        val y = String(x)
+//        var yy = "{\"data\":$y}"
+//        var aa =
+//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+//
+//        for (i in 0.until(aa.data.size)) {
+//            banTextList.add(aa.data[i])
+//        }
 
         mEduData.add("大专以下")
         mEduData.add("大专")
@@ -494,16 +502,18 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         targetVisibilityList.add("目标相同的人可见")
         targetVisibilityList.add("不公开")
 
-        mTempPhotoPath = Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+        mTempPhotoPath =
+            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(this.cacheDir, "photoCropImage.jpeg"))
 
-        mPhotoPath = externalCacheDir.toString() + File.separator + "photoPic.png"
+        mPhotoPath = externalCacheDir.toString() + File.separator + "head.png"
 
-        mTempLifePath = Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
+        mTempLifePath =
+            Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
 
-        mLifeFirstPath = externalCacheDir.toString() + File.separator + "lifeFirstPic.png"
-        mLifeSecondPath = externalCacheDir.toString() + File.separator + "lifeSecondPic.png"
-        mLifeThirdPath = externalCacheDir.toString() + File.separator + "lifeThirdPic.png"
+        mLifeFirstPath = externalCacheDir.toString() + File.separator + "live1.png"
+        mLifeSecondPath = externalCacheDir.toString() + File.separator + "live2.png"
+        mLifeThirdPath = externalCacheDir.toString() + File.separator + "live3.png"
 
         lifeFirstPic = Uri.fromFile(File(this.cacheDir, "lifeFirstPic.jpeg"))
         lifeSecondPic = Uri.fromFile(File(this.cacheDir, "lifeSecondPic.jpeg"))
@@ -567,9 +577,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         targetAgeMin = minAge
         targetAgeMax = maxAge
 
+        tv_guide_target_age.text = "${targetAgeMin}~${targetAgeMax}岁"
 
-
-        msb_guide_target_age.setPos(minAge - 18, maxAge - 18)
+        SPStaticUtils.put(Constant.TA_AGE_MIN, targetAgeMin)
+        SPStaticUtils.put(Constant.TA_AGE_MAX, targetAgeMax)
 
     }
 
@@ -579,12 +590,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         val config: BosClientConfiguration = BosClientConfiguration()
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
-        config.endpoint = "http://androidmarryfriend.gz.bcebos.com"
+        config.endpoint = "http://adrmf.gz.bcebos.com"
         client = BosClient(config)
 
-
         initLicense()
-
 
     }
 
@@ -767,6 +776,25 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         SPStaticUtils.put(Constant.ME_HOME, home)
 
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE,
+                            cityIDFirstList[homeCityFirst])
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                            cityFirstList[homeCityFirst])
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_CODE,
+                            cityIDSecondList[homeCitySecond])
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
+                            citySecondList[homeCitySecond])
+
+                        val task: TimerTask = object : TimerTask() {
+                            override fun run() {
+                                dssb_guide_target_age.setMin(targetAgeMin)
+                                dssb_guide_target_age.setMax(targetAgeMax)
+                            }
+                        }
+                        val timer = Timer()
+                        timer.schedule(task, 100)
+
+
                     } else {
 
                         if (!chooseJobCity) {
@@ -794,8 +822,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_LOVE_TARGET_SHOW, targetVisibilityPosition)
                         SPStaticUtils.put(Constant.ME_LOVE_TARGET, target)
 
-                        SPStaticUtils.put(Constant.TA_AGE_MIN, targetAgeMin)
-                        SPStaticUtils.put(Constant.TA_AGE_MAX, targetAgeMax)
 
                     } else {
 
@@ -826,8 +852,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             val putObjectFromFileResponse =
                                 client.putObject("user${
-                                    SPStaticUtils.getString(Constant.USER_ID,
-                                        "default")
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
                                 }",
                                     FileUtils.getFileName(mPhotoPath), file)
 
@@ -926,35 +951,42 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     if (isFinishIntroduce) {
 
-                        for (i in 0.until(banTextList.size)) {
-                            val code = banTextList[i]
-                            if (introduceText.contains(code)) {
-                                haveBanText = true
-                            }
-                        }
+//                        for (i in 0.until(banTextList.size)) {
+//                            val code = banTextList[i]
+//                            if (introduceText.contains(code)) {
+//                                haveBanText = true
+//                            }
+//                        }
+//                        if (haveBanText) {
+//
+//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//
+//                            isFinishIntroduce = false
+//                            haveBanText = false
+//
+//                            et_guide_mine_content.setText("")
+//
+//                        } else {
+//
+//                            if (!isFinishHobby) {
+//                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//                            }
+//
+//                            vf_guide_detail_container.showNext()
+//                            tsb_guide_detail_guide.setPercent(0.73f, "73")
+//
+//                            SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+//
+//                        }
 
-                        if (haveBanText) {
-
-                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-
-                            isFinishIntroduce = false
-                            haveBanText = false
-
-                            et_guide_mine_content.setText("")
-
-                        } else {
-
-                            if (!isFinishHobby) {
-                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                            }
-
-                            vf_guide_detail_container.showNext()
-                            tsb_guide_detail_guide.setPercent(0.73f, "73")
-
-                            SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
-
-                        }
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = introduceText
+                        isCompleteIntroduce = true
+                        doTextVerifyPresent.doTextVerify(map)
 
                     } else {
                         ToastUtils.showShort("请添加一份30字左右的自我介绍")
@@ -962,39 +994,43 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 }
                 7 -> {
-
                     if (isFinishHobby) {
 
-                        for (i in 0.until(banTextList.size)) {
-                            val code = banTextList[i]
-                            if (hobbyText.contains(code)) {
-                                haveBanText = true
-                            }
-                        }
+//                        for (i in 0.until(banTextList.size)) {
+//                            val code = banTextList[i]
+//                            if (hobbyText.contains(code)) {
+//                                haveBanText = true
+//                            }
+//                        }
+//                        if (haveBanText) {
+//
+//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//
+//                            isFinishHobby = false
+//                            haveBanText = false
+//
+//                            et_guide_hobby_content.setText("")
+//
+//                        } else {
+//
+//                            if (!isFinishIdeal) {
+//                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//                            }
+//
+//                            vf_guide_detail_container.showNext()
+//                            tsb_guide_detail_guide.setPercent(0.88f, "88")
+//
+//                            SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
+//                        }
 
-
-                        if (haveBanText) {
-
-                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-
-                            isFinishHobby = false
-                            haveBanText = false
-
-                            et_guide_hobby_content.setText("")
-
-                        } else {
-
-                            if (!isFinishIdeal) {
-                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                            }
-
-                            vf_guide_detail_container.showNext()
-                            tsb_guide_detail_guide.setPercent(0.88f, "88")
-
-                            SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
-
-                        }
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = hobbyText
+                        isCompleteHobby = true
+                        doTextVerifyPresent.doTextVerify(map)
 
                     } else {
                         ToastUtils.showShort("请添加一些您的日常爱好")
@@ -1005,39 +1041,45 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     if (isFinishIdeal) {
 
+//                        for (i in 0.until(banTextList.size)) {
+//                            val code = banTextList[i]
+//                            if (idealText.contains(code)) {
+//                                haveBanText = true
+//                            }
+//                        }
+//                        if (haveBanText) {
+//
+//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//
+//                            isFinishIdeal = false
+//                            haveBanText = false
+//
+//                            et_guide_ideal_content.setText("")
+//
+//                        } else {
+//
+//                            if (!(name != "" && identityCode != "")) {
+//                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//                            }
+//
+//                            vf_guide_detail_container.showNext()
+//                            tv_guide_detail_privacy.visibility = View.VISIBLE
+//                            tv_guide_detail_service.visibility = View.VISIBLE
+//
+//                            tsb_guide_detail_guide.setPercent(1.0f, "100")
+//
+//                            SPStaticUtils.put(Constant.ME_TA, idealText)
+//
+//                        }
 
-                        for (i in 0.until(banTextList.size)) {
-                            val code = banTextList[i]
-                            if (idealText.contains(code)) {
-                                haveBanText = true
-                            }
-                        }
-
-                        if (haveBanText) {
-
-                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-
-                            isFinishIdeal = false
-                            haveBanText = false
-
-                            et_guide_ideal_content.setText("")
-
-                        } else {
-
-                            if (!(name != "" && identityCode != "")) {
-                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                            }
-
-                            vf_guide_detail_container.showNext()
-                            tv_guide_detail_privacy.visibility = View.VISIBLE
-                            tv_guide_detail_service.visibility = View.VISIBLE
-
-                            tsb_guide_detail_guide.setPercent(1.0f, "100")
-
-                            SPStaticUtils.put(Constant.ME_TA, idealText)
-
-                        }
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = idealText
+                        isCompleteIdeal = true
+                        doTextVerifyPresent.doTextVerify(map)
 
                     } else {
                         ToastUtils.showShort("请描述一下您心中理想的对象")
@@ -1052,7 +1094,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             val map: MutableMap<String, String> = TreeMap()
 
                             map[Contents.ACCESS_TOKEN] =
-                                "24.0e56bbe36fe7b7c67ffcd78924e4b786.2592000.1658052230.282335-26278103"
+                                "24.2dad8b163be9d558404bde4557fe8ad2.2592000.1658889671.282335-26278103"
                             map[Contents.CONTENT_TYPE] = "application/json"
                             map[Contents.ID_CARD_NUMBER] = identityCode
                             map[Contents.NAME] = name
@@ -1066,7 +1108,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     } else {
                         ToastUtils.showShort("请填写您的真实姓名与身份证号，以用于实名认证")
                     }
-
 
                 }
             }
@@ -1192,12 +1233,22 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             verifyTargetNext()
         }
 
-        msb_guide_target_age.setListener { left, right ->
-            targetAgeMin = 18 + left.point.mark
-            targetAgeMax = 18 + right.point.mark
+//        msb_guide_target_age.setListener { left, right ->
+//            targetAgeMin = 18 + left.point.mark
+//            targetAgeMax = 18 + right.point.mark
+//
+//            tv_guide_target_age.text = "$targetAgeMin ~ $targetAgeMax 岁"
+//        }
 
-            tv_guide_target_age.text = "$targetAgeMin ~ $targetAgeMax 岁"
-        }
+        dssb_guide_target_age.setOnRangeListener(object : DoubleSlideSeekBar.onRangeListener {
+            override fun onRange(low: Float, big: Float) {
+                targetAgeMin = low.toInt()
+                targetAgeMax = big.toInt()
+
+                tv_guide_target_age.text = "${targetAgeMin} ~ ${targetAgeMax}岁"
+
+            }
+        })
 
 
         // -------------------  上传头像界面  -----------------
@@ -1557,7 +1608,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         return null
     }
 
-
     // 百度人脸采集sdk设置
     private fun initLicense() {
         val success = setFaceConfig()
@@ -1569,7 +1619,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         // 应用上下文
         // 申请License取得的APPID
         // assets目录下License文件名
-        FaceSDKManager.getInstance().initialize(this, "hunlian-android-face-android",
+        FaceSDKManager.getInstance().initialize(this, "huanlian-android-face-android",
             "idl-license.face-android", object : IInitCallback {
                 override fun initSuccess() {
                     runOnUiThread {
@@ -1831,7 +1881,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         val map: MutableMap<String, String> = TreeMap()
                         map[Contents.ACCESS_TOKEN] =
-                            "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
+                            "24.ddcbe8945673632ce50ebb351d396dc3.2592000.1658890180.282335-26330258"
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
@@ -1991,8 +2041,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             val map: MutableMap<String, String> = TreeMap()
 
-            map[Contents.ACCESS_TOKEN] =
-                "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
             map[Contents.IMAGE] = bitmapToBase64(bitmap)
 
@@ -2076,6 +2125,96 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     }
 
+    override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+        when (vf_guide_detail_container.displayedChild) {
+
+            6 -> {
+
+                if (isCompleteIntroduce) {
+                    if (textVerifyBean.conclusion == "合规") {
+
+                        if (!isFinishHobby) {
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        }
+
+                        vf_guide_detail_container.showNext()
+                        tsb_guide_detail_guide.setPercent(0.73f, "73")
+
+                        SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+
+                    } else {
+                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        isFinishIntroduce = false
+                        haveBanText = false
+                        et_guide_mine_content.setText("")
+                    }
+                    isCompleteIntroduce = false
+                }
+
+            }
+
+            7 -> {
+                if (isCompleteHobby) {
+                    if (textVerifyBean.conclusion == "合规") {
+                        if (!isFinishIdeal) {
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        }
+                        vf_guide_detail_container.showNext()
+                        tsb_guide_detail_guide.setPercent(0.88f, "88")
+                        SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
+                    } else {
+                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        isFinishHobby = false
+                        haveBanText = false
+                        et_guide_hobby_content.setText("")
+                    }
+                    isCompleteHobby = false
+                }
+
+            }
+            8 -> {
+
+                if (isCompleteIdeal) {
+                    if (textVerifyBean.conclusion == "合规") {
+
+                        if (!(name != "" && identityCode != "")) {
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                        }
+
+                        vf_guide_detail_container.showNext()
+                        tv_guide_detail_privacy.visibility = View.VISIBLE
+                        tv_guide_detail_service.visibility = View.VISIBLE
+
+                        tsb_guide_detail_guide.setPercent(1.0f, "100")
+
+                        SPStaticUtils.put(Constant.ME_TA, idealText)
+
+                    } else {
+
+                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+                        isFinishIdeal = false
+                        haveBanText = false
+
+                        et_guide_ideal_content.setText("")
+                    }
+                    isCompleteIdeal = false
+                }
+            }
+
+        }
+
+
+    }
+
+    override fun onDoTextVerifyError() {
+
+    }
+
     override fun onDoUploadPhotoSuccess(uploadPhotoBean: UploadPhotoBean?) {
 
         photoCompleteLoad = true
@@ -2126,6 +2265,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     override fun onDoIdentityVerifySuccess(identityVerifyBean: IdentityVerifyBean) {
 
         if (identityVerifyBean.error_msg == "SUCCESS") {
+
+            SPStaticUtils.put(Constant.TRUE_NAME, name)
+            SPStaticUtils.put(Constant.TRUE_ID, identityCode)
 
             XXPermissions.with(this)
                 .permission(Permission.CAMERA)
@@ -2226,7 +2368,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 //            uploadPhotoMap[Contents.USER_ID] = id
 //            uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
 //            uploadPhotoMap[Contents.FILE_TYPE] = "png"
-//            uploadPhotoMap[Contents.FILE_NAME] = "photoPic.png"
+//            uploadPhotoMap[Contents.FILE_NAME] = "head.png"
 //            uploadPhotoMap[Contents.CONTENT] = "0"
 //            uploadPhotoMap[Contents.KIND] = 1.toString()
 //            uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
@@ -2979,9 +3121,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     inner class AddressHomeCity(context: Context) : FullScreenPopupView(context) {
 
-        private var jobCityFirst = 0
-        private var jobCitySecond = 0
-        private var jobCityThird = 0
 
         override fun getImplLayoutId(): Int = R.layout.dialog_info_address_jobcity
 
@@ -2996,9 +3135,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             two.data = citySecondList
             three.data = cityThirdList
 
-            jobCityFirst = 0
-            jobCitySecond = 0
-            jobCityThird = 0
+            homeCityFirst = 0
+            homeCitySecond = 0
+            homeCityThird = 0
 
             getJobCitySecondList(0)
             getJobCityThirdList(0, 0)
@@ -3073,16 +3212,16 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             three.itemAlign = WheelPicker.ALIGN_CENTER
 
             one.setOnItemSelectedListener { picker, data, position ->
-                jobCityFirst = position
+                homeCityFirst = position
 
-                getJobCitySecondList(jobCityFirst)
+                getJobCitySecondList(homeCityFirst)
 
                 // 当二级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位 ， 不至于出现没有数据的情况
-                if (jobCitySecond >= citySecondList.size) {
-                    jobCitySecond = citySecondList.size - 1
+                if (homeCitySecond >= citySecondList.size) {
+                    homeCitySecond = citySecondList.size - 1
                 }
 
-                getJobCityThirdList(jobCityFirst, jobCitySecond)
+                getJobCityThirdList(homeCityFirst, homeCitySecond)
 
                 two.data = citySecondList
                 three.data = cityThirdList
@@ -3091,9 +3230,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             two.setOnItemSelectedListener { picker, data, position ->
 
-                jobCitySecond = position
+                homeCitySecond = position
 
-                getJobCityThirdList(jobCityFirst, jobCitySecond)
+                getJobCityThirdList(homeCityFirst, homeCitySecond)
 
                 three.data = cityThirdList
 
@@ -3101,7 +3240,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             three.setOnItemSelectedListener { picker, data, position ->
 
-                jobCityThird = position
+                homeCityThird = position
 
             }
 
@@ -3219,13 +3358,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 isHomeLocal = false
 
-                home = if (cityThirdList[jobCityThird] == "") {
+                home = if (cityThirdList[homeCityThird] == "") {
 
-                    "${cityFirstList[jobCityFirst]}-${citySecondList[jobCitySecond]}"
+                    "${cityFirstList[homeCityFirst]}-${citySecondList[homeCitySecond]}"
 
                 } else {
 
-                    "${cityFirstList[jobCityFirst]}-${citySecondList[jobCitySecond]}-${cityThirdList[jobCityThird]}"
+                    "${cityFirstList[homeCityFirst]}-${citySecondList[homeCitySecond]}-${cityThirdList[homeCityThird]}"
 
                 }
 
@@ -3395,6 +3534,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 XXPermissions.with(this@DetailInfoActivity)
                     .permission(Permission.CAMERA)
+                    .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
                             permissions: MutableList<String>?,
@@ -3408,9 +3548,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                                 val authority = context.packageName.toString() + ".fileProvider"
                                 val contentUri: Uri =
-                                    FileProvider.getUriForFile(context,
-                                        authority,
-                                        tempPhotoFile)
+                                    FileProvider.getUriForFile(context, authority, tempPhotoFile)
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
                             } else {
                                 intent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -3542,7 +3680,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             val map: MutableMap<String, String> = TreeMap()
                             map[Contents.ACCESS_TOKEN] =
-                                "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
+                                "24.ddcbe8945673632ce50ebb351d396dc3.2592000.1658890180.282335-26330258"
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                             map[Contents.IMAGE] =
                                 bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))

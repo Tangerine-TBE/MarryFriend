@@ -136,7 +136,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:background="@color/white" />
+                                android:src="@drawable/ic_life_photo_edit" />
 
                             <TextView
                                 android:id="@+id/tv_life_photo_pic_one"
@@ -192,7 +192,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:background="@color/white" />
+                                android:src="@drawable/ic_life_photo_edit" />
 
                             <TextView
                                 android:id="@+id/tv_life_photo_pic_two"
@@ -248,7 +248,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_gravity="center"
-                                android:background="@color/white" />
+                                android:src="@drawable/ic_life_photo_edit" />
 
                             <TextView
                                 android:id="@+id/tv_life_photo_pic_three"
@@ -325,7 +325,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="wrap_content"

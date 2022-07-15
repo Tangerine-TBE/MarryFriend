@@ -42,6 +42,7 @@ import com.luck.picture.lib.language.LanguageConfig
 import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.style.PictureWindowAnimationStyle
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
@@ -174,6 +175,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
 
+    private var introduceDialog: BasePopupView? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -209,11 +212,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
         doUpdateGreetPresent.registerCallback(this)
 
+
         mTempPhotoPath =
             Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(requireActivity().cacheDir, "photoCropImage.jpeg"))
 
-        mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "photoPic.png"
+        mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "head.png"
 
         recordPath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/record.wav"
 
@@ -362,19 +366,19 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
 
-        val banBean: BanBean =
-            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-
-        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-
-        val y = String(x)
-        var yy = "{\"data\":$y}"
-        var aa =
-            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-
-        for (i in 0.until(aa.data.size)) {
-            banTextList.add(aa.data[i])
-        }
+//        val banBean: BanBean =
+//            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+//
+//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+//
+//        val y = String(x)
+//        var yy = "{\"data\":$y}"
+//        var aa =
+//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+//
+//        for (i in 0.until(aa.data.size)) {
+//            banTextList.add(aa.data[i])
+//        }
 
     }
 
@@ -385,8 +389,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val config: BosClientConfiguration = BosClientConfiguration()
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
-        config.endpoint = "http://androidmarryfriend.gz.bcebos.com"
+        config.endpoint = "http://adrmf.gz.bcebos.com"
         client = BosClient(config)
+
+
+        introduceDialog = XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(IntroduceDialog(requireContext()))
 
     }
 
@@ -569,14 +581,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         ll_user_data_introduce.setOnClickListener {
-
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(IntroduceDialog(requireContext()))
-                .show()
+            introduceDialog!!.show()
         }
 
         ll_user_data_ideal.setOnClickListener {
@@ -593,16 +598,19 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         tv_user_data_life_next.setOnClickListener {
             val intent = Intent(context, LifePhotoActivity::class.java)
+            intent.putExtra("activity", "data")
             startActivityForResult(intent, 0)
         }
 
         iv_user_data_life_next.setOnClickListener {
             val intent = Intent(context, LifePhotoActivity::class.java)
+            intent.putExtra("activity", "data")
             startActivityForResult(intent, 0)
         }
 
         ll_user_data_life.setOnClickListener {
             val intent = Intent(context, LifePhotoActivity::class.java)
+            intent.putExtra("activity", "data")
             startActivityForResult(intent, 0)
         }
 
@@ -616,7 +624,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         showSexDialog()
                     }
                     2 -> {
-                        showBirthDialog()
+                        if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
+                            ToastUtils.showShort("已经实名认证, 生日无法修改")
+                        } else {
+                            showBirthDialog()
+                        }
                     }
                     3 -> {
                         showHeightDialog()
@@ -687,7 +699,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -725,8 +737,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                         // 体重
                                                         showWeightDialog()
                                                     } else {
-                                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                                0) == 0
+                                                        if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10
                                                         ) {
                                                             // 体型
                                                             showBodyDialog()
@@ -761,7 +772,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 身高
                             showHeightDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
                                 // 月收入
                                 showIncomeDialog()
                             } else {
@@ -800,7 +811,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                             showWeightDialog()
                                                         } else {
                                                             if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                                    0) == 0
+                                                                    10) == 10
                                                             ) {
                                                                 // 体型
                                                                 showBodyDialog()
@@ -829,7 +840,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -868,7 +879,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                         showWeightDialog()
                                                     } else {
                                                         if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                                0) == 0
+                                                                10) == 10
                                                         ) {
                                                             // 体型
                                                             showBodyDialog()
@@ -892,7 +903,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
                         // 月收入
                         showIncomeDialog()
                     } else {
@@ -931,7 +942,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                     showWeightDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                            0) == 0
+                                                            10) == 10
                                                     ) {
                                                         // 体型
                                                         showBodyDialog()
@@ -950,7 +961,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             3 -> {
-                if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 0) {
+                if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -989,7 +1000,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 showWeightDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                        0) == 0
+                                                        10) == 10
                                                 ) {
                                                     // 体型
                                                     showBodyDialog()
@@ -1042,7 +1053,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             showWeightDialog()
                                         } else {
                                             if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                    0) == 0
+                                                    10) == 10
                                             ) {
                                                 // 体型
                                                 showBodyDialog()
@@ -1090,7 +1101,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         showWeightDialog()
                                     } else {
                                         if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                0) == 0
+                                                10) == 10
                                         ) {
                                             // 体型
                                             showBodyDialog()
@@ -1131,7 +1142,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                     showWeightDialog()
                                 } else {
                                     if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                            0) == 0
+                                            10) == 10
                                     ) {
                                         // 体型
                                         showBodyDialog()
@@ -1167,7 +1178,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                 showWeightDialog()
                             } else {
                                 if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                        0) == 0
+                                        10) == 10
                                 ) {
                                     // 体型
                                     showBodyDialog()
@@ -1198,7 +1209,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             showWeightDialog()
                         } else {
                             if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                    0) == 0
+                                    10) == 10
                             ) {
                                 // 体型
                                 showBodyDialog()
@@ -1222,7 +1233,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         showWeightDialog()
                     } else {
                         if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                0) == 0
+                                10) == 10
                         ) {
                             // 体型
                             showBodyDialog()
@@ -1239,7 +1250,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     showWeightDialog()
                 } else {
                     if (SPStaticUtils.getInt(Constant.ME_BODY,
-                            0) == 0
+                            10) == 10
                     ) {
                         // 体型
                         showBodyDialog()
@@ -1250,7 +1261,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             11 -> {
-                if (SPStaticUtils.getInt(Constant.ME_BODY, 0) == 0) {
+                if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                     // 体型
                     showBodyDialog()
                 } else {
@@ -1273,25 +1284,39 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             if (lifePhotoTwo != "") {
                 if (lifePhotoThree != "") {
                     // 有三张图片,全部正常显示
-                    Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
-                    Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
-                    Glide.with(this).load(lifePhotoThree).into(iv_user_data_life_three)
+                    ThreadUtils.runOnUiThread {
+                        Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                        iv_user_data_life_two.visibility = View.VISIBLE
+                        Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
+                        iv_user_data_life_three.visibility = View.VISIBLE
+                        Glide.with(this).load(lifePhotoThree).into(iv_user_data_life_three)
+                    }
                 } else {
                     // 有两张图片，,第一、二张正常显示，第三张显示为添加
-                    Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
-                    Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
-                    Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_three)
+                    ThreadUtils.runOnUiThread {
+                        Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                        iv_user_data_life_two.visibility = View.VISIBLE
+                        Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
+                        iv_user_data_life_three.visibility = View.VISIBLE
+                        Glide.with(this).load(R.drawable.ic_data_life_add)
+                            .into(iv_user_data_life_three)
+                    }
                 }
             } else {
                 // 有一张图片,第一张正常显示，第二张显示为添加
-                Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
-                Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
-                iv_user_data_life_three.visibility = View.GONE
+                ThreadUtils.runOnUiThread {
+                    Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                    iv_user_data_life_two.visibility = View.VISIBLE
+                    Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
+                    iv_user_data_life_three.visibility = View.GONE
+                }
             }
         } else {
-            Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
-            iv_user_data_life_two.visibility = View.GONE
-            iv_user_data_life_three.visibility = View.GONE
+            ThreadUtils.runOnUiThread {
+                Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
+                iv_user_data_life_two.visibility = View.GONE
+                iv_user_data_life_three.visibility = View.GONE
+            }
         }
 
     }
@@ -1531,6 +1556,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         for (i in 0.until(31)) {
             mDayList.add(1 + i)
+        }
+
+        if (SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0) != 0) {
+
+            val year = mYearList[SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0)]
+            val month = mMonthList[SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0)]
+            val day = mDayList[SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0)]
+
+            SPStaticUtils.put(Constant.ME_BIRTH, "$year-$month-$day")
         }
 
     }
@@ -1886,8 +1920,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             val map: MutableMap<String, String> = TreeMap()
 
-            map[Contents.ACCESS_TOKEN] =
-                "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
             map[Contents.IMAGE] = bitmapToBase64(bitmap)
 
@@ -1969,7 +2002,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
         uploadPhotoMap[Contents.FILE_TYPE] = "png"
-        uploadPhotoMap[Contents.FILE_NAME] = "photoPic.png"
+        uploadPhotoMap[Contents.FILE_NAME] = "head.png"
         uploadPhotoMap[Contents.CONTENT] = "0"
         uploadPhotoMap[Contents.KIND] = 1.toString()
         uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
@@ -2000,7 +2033,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val cityCode = SPStaticUtils.getString(Constant.ME_WORK_CITY_CODE, "")
         val cityName = SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "")
         val home = SPStaticUtils.getString(Constant.ME_HOME, "")
-        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 0)
+        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 7)
         val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
         val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
         val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
@@ -2037,7 +2070,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         val sex = SPStaticUtils.getInt(Constant.ME_SEX, 0)
         val weight = SPStaticUtils.getInt(Constant.ME_WEIGHT, 0)
-        val body = SPStaticUtils.getInt(Constant.ME_BODY, 0)
+        val body = SPStaticUtils.getInt(Constant.ME_BODY, 10)
         val blood = SPStaticUtils.getString(Constant.ME_BLOOD, "")
         val constellation = SPStaticUtils.getString(Constant.ME_CONSTELLATION, "")
         val nationality = SPStaticUtils.getString(Constant.ME_NATIONALITY, "")
@@ -2337,22 +2370,29 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     // 添加自我介绍
-    inner class IntroduceDialog(context: Context) : FullScreenPopupView(context) {
+    inner class IntroduceDialog(context: Context) : FullScreenPopupView(context),
+        IDoTextVerifyCallback {
 
         private var isNeedUpdate = false
+
+        private var size = 0
+        private var text = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
+
 
         override fun getImplLayoutId(): Int = R.layout.dialog_set_introduce
 
         override fun onCreate() {
             super.onCreate()
 
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
+
             val close = findViewById<ImageView>(R.id.iv_dialog_set_introduce_close)
             val content = findViewById<EditText>(R.id.et_dialog_set_introduce_content)
             val sum = findViewById<TextView>(R.id.tv_dialog_set_introduce_sum)
             val confirm = findViewById<TextView>(R.id.tv_dialog_set_introduce_confirm)
-
-            var size = 0
-            var text = ""
 
             content.setText(SPStaticUtils.getString(Constant.ME_INTRODUCE, ""))
             text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
@@ -2412,24 +2452,29 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (text.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (text.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        text = ""
+//                        content.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        // 保存数据
+//                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+//                        isNeedUpdate = true
+//                        dismiss()
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        text = ""
-                        content.setText("")
-                        haveBanText = false
-                    } else {
-                        // 保存数据
-                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-                        isNeedUpdate = true
-                        dismiss()
-                    }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2445,6 +2490,29 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 iv_user_data_introduce.visibility = View.GONE
                 tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
             }
+        }
+
+        override fun onLoading() {}
+
+        override fun onError() {}
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+                SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+                isNeedUpdate = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                text = ""
+                findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
+                haveBanText = false
+            }
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
         }
 
     }
@@ -2634,22 +2702,28 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     // 添加心目中的TA
-    inner class IdealDialog(context: Context) : FullScreenPopupView(context) {
+    inner class IdealDialog(context: Context) : FullScreenPopupView(context),
+        IDoTextVerifyCallback {
 
         private var isNeedUpdate = false
+
+        private var size = 0
+        private var text = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_set_ideal
 
         override fun onCreate() {
             super.onCreate()
 
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
+
             val close = findViewById<ImageView>(R.id.iv_dialog_set_ideal_close)
             val content = findViewById<EditText>(R.id.et_dialog_set_ideal_content)
             val sum = findViewById<TextView>(R.id.tv_dialog_set_ideal_sum)
             val confirm = findViewById<TextView>(R.id.tv_dialog_set_ideal_confirm)
-
-            var size = 0
-            var text = ""
 
             content.setText(SPStaticUtils.getString(Constant.ME_TA, ""))
             text = SPStaticUtils.getString(Constant.ME_TA, "")
@@ -2709,24 +2783,30 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (text.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (text.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
+//
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        text = ""
+//                        content.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        // 保存数据
+//                        SPStaticUtils.put(Constant.ME_TA, text)
+//                        isNeedUpdate = true
+//                        dismiss()
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        text = ""
-                        content.setText("")
-                        haveBanText = false
-                    } else {
-                        // 保存数据
-                        SPStaticUtils.put(Constant.ME_TA, text)
-                        isNeedUpdate = true
-                        dismiss()
-                    }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2744,16 +2824,47 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
         }
 
+        override fun onLoading() {}
+
+        override fun onError() {}
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+                SPStaticUtils.put(Constant.ME_TA, text)
+                isNeedUpdate = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                text = ""
+                findViewById<EditText>(R.id.et_dialog_set_ideal_content).setText("")
+                haveBanText = false
+            }
+
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
+        }
+
     }
 
     // 昵称
-    inner class NameDialog(context: Context) : FullScreenPopupView(context) {
+    inner class NameDialog(context: Context) : FullScreenPopupView(context), IDoTextVerifyCallback {
         private var isNeedJump = false // 是否需要跳转
+
+        private var name1 = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_user_data_name
 
         override fun onCreate() {
             super.onCreate()
+
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_user_data_name_close)
             val skip = findViewById<TextView>(R.id.tv_user_data_name_skip)
@@ -2762,28 +2873,34 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val confirm = findViewById<TextView>(R.id.tv_user_data_name_confirm)
 
             confirm.setOnClickListener {
-                var name1 = name.text.toString()
+                name1 = name.text.toString()
 
                 if (name1.isNotEmpty()) {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (name1.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (name1.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
+//
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        name1 = ""
+//                        name.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        // 保存数据
+//                        SPStaticUtils.put(Constant.ME_NAME, name1)
+//                        isNeedJump = true
+//                        dismiss()
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        name1 = ""
-                        name.setText("")
-                        haveBanText = false
-                    } else {
-                        // 保存数据
-                        SPStaticUtils.put(Constant.ME_NAME, name1)
-                        isNeedJump = true
-                        dismiss()
-                    }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = name1
+                    doTextVerifyPresent.doTextVerify(map)
 
                 } else {
                     ToastUtils.showShort("请输入新昵称")
@@ -2810,6 +2927,34 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 ToastUtils.showShort("刷新界面")
                 updateDateUI()
             }
+        }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+                SPStaticUtils.put(Constant.ME_NAME, name1)
+                isNeedJump = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                name1 = ""
+                findViewById<EditText>(R.id.et_user_data_name_name).setText("")
+                haveBanText = false
+            }
+
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
         }
 
     }
@@ -3042,8 +3187,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mMonthPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0)
             mDayPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0)
 
-            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0),
-                false)
+            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0), false)
             getMonthData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0))
             wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0),
                 false)
@@ -3115,7 +3259,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             wheelThree.isCurved = true
             // 设置滚轮选择器数据项的对齐方式
             wheelThree.itemAlign = WheelPicker.ALIGN_CENTER
-
 
             wheelOne.setOnItemSelectedListener { picker, data, position ->
                 mYearPosition = position
@@ -3391,7 +3534,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 0)
+                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 1)
                 isNeedJump = true
                 dismiss()
             }
@@ -3400,7 +3543,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 1)
+                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 2)
                 isNeedJump = true
                 dismiss()
             }
@@ -3409,7 +3552,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 2)
+                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 3)
                 isNeedJump = true
                 dismiss()
             }
@@ -3418,7 +3561,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 3)
+                SPStaticUtils.put(Constant.ME_HAVE_CHILD, 4)
                 isNeedJump = true
                 dismiss()
             }
@@ -3516,7 +3659,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_WANT_CHILD, 0)
+                SPStaticUtils.put(Constant.ME_WANT_CHILD, 1)
                 isNeedJump = true
                 dismiss()
             }
@@ -3525,7 +3668,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_WANT_CHILD, 1)
+                SPStaticUtils.put(Constant.ME_WANT_CHILD, 2)
                 isNeedJump = true
                 dismiss()
             }
@@ -3534,7 +3677,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_WANT_CHILD, 2)
+                SPStaticUtils.put(Constant.ME_WANT_CHILD, 3)
                 isNeedJump = true
                 dismiss()
             }
@@ -3543,7 +3686,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_WANT_CHILD, 3)
+                SPStaticUtils.put(Constant.ME_WANT_CHILD, 4)
                 isNeedJump = true
                 dismiss()
             }
@@ -3775,7 +3918,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HOUSE, 0)
+                SPStaticUtils.put(Constant.ME_HOUSE, 1)
                 isNeedJump = true
                 dismiss()
             }
@@ -3784,7 +3927,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HOUSE, 1)
+                SPStaticUtils.put(Constant.ME_HOUSE, 2)
                 isNeedJump = true
                 dismiss()
             }
@@ -3793,7 +3936,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HOUSE, 2)
+                SPStaticUtils.put(Constant.ME_HOUSE, 3)
                 isNeedJump = true
                 dismiss()
             }
@@ -3802,7 +3945,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HOUSE, 3)
+                SPStaticUtils.put(Constant.ME_HOUSE, 4)
                 isNeedJump = true
                 dismiss()
             }
@@ -3811,7 +3954,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_five.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.ME_HOUSE, 4)
+                SPStaticUtils.put(Constant.ME_HOUSE, 5)
                 isNeedJump = true
                 dismiss()
             }

@@ -10,15 +10,19 @@ import android.widget.*
 import com.blankj.utilcode.util.*
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.BanBean
-import com.twx.marryfriend.bean.BaseInfoUpdateBean
+import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
 import com.twx.marryfriend.guide.baseInfo.step.StepOne
 import com.twx.marryfriend.guide.baseInfo.step.StepTwo
 import com.twx.marryfriend.guide.detailInfo.DetailInfoActivity
+import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
+import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
 import com.twx.marryfriend.net.callback.IDoUpdateBaseInfoCallback
+import com.twx.marryfriend.net.callback.IGetAccessTokenCallback
+import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
+import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateBaseInfoPresentImpl
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.layout_guide_step_name.*
@@ -29,10 +33,12 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
+class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoTextVerifyCallback{
 
     private var mStepOne: StepOne? = null
     private var mStepTwo: StepTwo? = null
+
+    private var isTextVerify = false
 
 
     // 基本资料界面判断下一步是否准备就绪
@@ -68,6 +74,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
     private var haveBanText = false
 
     private lateinit var updateBaseInfoPresent: doUpdateBaseInfoPresentImpl
+    private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_base_info
 
@@ -76,6 +83,9 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
         updateBaseInfoPresent = doUpdateBaseInfoPresentImpl.getsInstance()
         updateBaseInfoPresent.registerCallback(this)
+
+        doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+        doTextVerifyPresent.registerCallback(this)
 
         initStep()
 
@@ -86,18 +96,17 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
         super.initLoadData()
 
 
-        val banBean: BanBean =
-            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-
-        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-
-        val y = String(x)
-        var yy = "{\"data\":$y}"
-        var aa = com.twx.marryfriend.utils.GsonUtils.parseObject(yy, Test::class.java)
-
-        for (i in 0.until(aa.data.size)) {
-            banTextList.add(aa.data[i])
-        }
+//        val banBean: BanBean = GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+//
+//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+//
+//        val y = String(x)
+//        var yy = "{\"data\":$y}"
+//        var aa = com.twx.marryfriend.utils.GsonUtils.parseObject(yy, Test::class.java)
+//
+//        for (i in 0.until(aa.data.size)) {
+//            banTextList.add(aa.data[i])
+//        }
 
     }
 
@@ -155,36 +164,49 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
                     if (haveName) {
                         // 已经填写昵称
-                        for (i in 0.until(banTextList.size)) {
-                            val code = banTextList[i]
 
-                            if (name.contains(code)) {
-                                haveBanText = true
-                            }
-                        }
+//                        for (i in 0.until(banTextList.size)) {
+//                            val code = banTextList[i]
+//
+//                            if (name.contains(code)) {
+//                                haveBanText = true
+//                            }
+//                        }
+//
+//                        if (haveBanText) {
+//
+//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                            haveName = false
+//                            tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//
+//                            et_guide_name_name.setText("")
+//
+//                            haveBanText = false
+//
+//                        } else {
+//                            tv_guide_base_previous.visibility = View.VISIBLE
+//                            tv_guide_base_tip.visibility = View.VISIBLE
+//                            vf_guide_base_container.showNext()
+//                            if (chooseSex && chooseAge && chooseHeight) {
+//                                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+//                            } else {
+//                                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+//                            }
+//                        }
 
-                        if (haveBanText) {
+                        if (SPStaticUtils.getString(Constant.ACCESS_TOKEN,"") !=null){
 
-                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                            haveName = false
-                            tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            Log.i("guo",SPStaticUtils.getString(Constant.ACCESS_TOKEN,""))
 
-                            et_guide_name_name.setText("")
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN,"")
+                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                            map[Contents.TEXT] = name
+                            isTextVerify = true
+                            doTextVerifyPresent.doTextVerify(map)
 
-                            haveBanText = false
-
-                        } else {
-
-                            tv_guide_base_previous.visibility = View.VISIBLE
-                            tv_guide_base_tip.visibility = View.VISIBLE
-                            vf_guide_base_container.showNext()
-
-                            if (chooseSex && chooseAge && chooseHeight) {
-                                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                            } else {
-                                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                            }
-
+                        }else{
+                            ToastUtils.showShort("数据加载失败，请重新打开应用")
                         }
 
                     } else {
@@ -379,6 +401,41 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
     }
 
+    override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+        if (isTextVerify) {
+            if (textVerifyBean.conclusion == "合规") {
+                tv_guide_base_previous.visibility = View.VISIBLE
+                tv_guide_base_tip.visibility = View.VISIBLE
+                vf_guide_base_container.showNext()
+                if (chooseSex && chooseAge && chooseHeight) {
+                    tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                } else {
+                    tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                }
+
+                isTextVerify = false
+
+            } else {
+
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                haveName = false
+                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+                et_guide_name_name.setText("")
+
+                haveBanText = false
+
+            }
+        }
+
+    }
+
+
+    override fun onDoTextVerifyError() {
+        ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
+    }
+
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
 
         val intent = Intent(this, DetailInfoActivity::class.java)
@@ -392,6 +449,5 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
     override fun onDoUpdateBaseInfoError() {
 
     }
-
 
 }

@@ -99,8 +99,16 @@ object Constant {
 
     const val ME_LIFE_PHOTO_THREE_TEXT = "ME_life_photo_three_text"// 第三张生活照描述
 
-    // 是否实名认证
-    const val IS_IDENTITY_VERIFY = "is_identity_verify"
+
+    const val IS_IDENTITY_VERIFY = "is_identity_verify"    // 是否实名认证
+
+    const val TRUE_NAME = "true_name"    // 真实姓名
+
+    const val TRUE_ID = "true_id"    // 真实ID
+
+    const val ME_TURE_NAME = "ME_true_name"  // 带有*号的真实名字
+
+    const val ME_TURE_ID = "ME_true_id"  // 带有*号的真实名字
 
     //         -----------  基础信息  ----------
 
@@ -154,12 +162,6 @@ object Constant {
 
     const val ME_TA = "ME_ta"  // 我心目中的Ta
 
-
-    const val ME_TURE_NAME = "ME_true_name"  // 带有*号的真实名字
-
-    const val ME_TURE_ID = "ME_true_id"  // 带有*号的真实名字
-
-
     //         -----------  更多信息  ----------
 
 
@@ -204,8 +206,8 @@ object Constant {
 
     const val TA_HEIGHT_MAX = "TA_height_max"  // 最大身高
 
-    const val TA_INCOME = "TA_income"  // 月收入
-
+    const val TA_INCOME_MIN = "TA_income_min"  // 最低月收入
+    const val TA_INCOME_MAX = "TA_income_max"  // 最高月收入
     const val TA_EDU = "TA_edu"  // 学历
 
     const val TA_MARRY_STATE = "TA_marry_state"  // 婚况

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/riv_detail_dynamic_like_avatar"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginVertical="16dp"
+        android:layout_marginStart="14dp"
+        android:scaleType="centerCrop"
+        app:riv_oval="true" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@+id/riv_detail_dynamic_like_avatar"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_detail_dynamic_like_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="罐头香菜"
+                android:textColor="#404040"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:id="@+id/iv_detail_dynamic_like_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_toEndOf="@+id/tv_detail_dynamic_like_name"
+                android:src="@drawable/ic_male" />
+
+            <TextView
+                android:id="@+id/tv_detail_dynamic_like_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="17dp"
+                android:text="2022/11/12"
+                android:textColor="#9A9A9A"
+                android:textSize="13sp" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/tv_detail_dynamic_like_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="98年  武汉  本科  教育/科研"
+                android:textColor="#9A9A9A"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/riv_detail_dynamic_like_avatar"
+        android:layout_marginHorizontal="15dp"
+        android:background="#F5F5F5" />
+
+</RelativeLayout>

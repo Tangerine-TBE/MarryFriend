@@ -13,6 +13,7 @@ import com.twx.marryfriend.bean.JobBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
 import com.twx.marryfriend.bean.PhotoListBean;
 import com.twx.marryfriend.bean.SchoolBean;
+import com.twx.marryfriend.bean.TextVerifyBean;
 import com.twx.marryfriend.bean.UpdateDemandInfoBean;
 import com.twx.marryfriend.bean.UpdateGreetInfoBean;
 import com.twx.marryfriend.bean.UpdateMoreInfoBean;
@@ -115,6 +116,11 @@ public interface Api {
     @FormUrlEncoded
     @POST("/rest/2.0/solution/v1/img_censor/v2/user_defined")
     Call<FaceDetectBean> doFaceDetect(@FieldMap Map<String, Object> params);
+
+    // 百度文字审核识别
+    @FormUrlEncoded
+    @POST("/rest/2.0/solution/v1/text_censor/v2/user_defined")
+    Call<TextVerifyBean> doTextVerify(@FieldMap Map<String, Object> params);
 
 }
 

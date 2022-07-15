@@ -44,28 +44,30 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
-import com.twx.marryfriend.bean.BanBean
-import com.twx.marryfriend.bean.FaceDetectBean
-import com.twx.marryfriend.bean.PhotoListBean
-import com.twx.marryfriend.bean.UpdateGreetInfoBean
+import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
+import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
+import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
 import com.twx.marryfriend.net.callback.IDoUpdateGreetInfoCallback
 import com.twx.marryfriend.net.callback.IGetPhotoListCallback
 import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
+import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
 import com.twx.marryfriend.net.impl.getPhotoListPresentImpl
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.fragment_mine.*
+import kotlinx.android.synthetic.main.layout_guide_step_name.*
 import java.io.*
 import java.util.*
 
@@ -130,19 +132,24 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
     private fun initView() {
 
-        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
-
         if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
-            Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR, "")).into(iv_mine_avatar)
+            Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                .into(iv_mine_avatar)
             tv_mine_avatar_check.visibility = View.VISIBLE
         } else {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                Glide.with(requireContext()).load(R.drawable.ic_mine_male_default)
+                Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
                     .into(iv_mine_avatar)
             } else {
-                Glide.with(requireContext()).load(R.drawable.ic_mine_female_default)
+                Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
                     .into(iv_mine_avatar)
             }
+        }
+
+        if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
+            iv_mine_identity.setImageResource(R.mipmap.icon_identify_success)
+        } else {
+            iv_mine_identity.setImageResource(R.mipmap.icon_identify_non)
         }
 
         getDialogOrder()
@@ -151,7 +158,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(requireActivity().cacheDir, "photoCropImage.jpeg"))
 
-        mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "photoPic.png"
+        mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "head.png"
 
         getPhotoListPresent = getPhotoListPresentImpl.getsInstance()
         getPhotoListPresent.registerCallback(this)
@@ -179,19 +186,18 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
         audioRecorder = AudioRecorder.getInstance()
         mediaPlayer = MediaPlayer()
 
-        val banBean: BanBean =
-            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-
-        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-
-        val y = String(x)
-        var yy = "{\"data\":$y}"
-        var aa =
-            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-
-        for (i in 0.until(aa.data.size)) {
-            banTextList.add(aa.data[i])
-        }
+//        val banBean: BanBean = GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+//
+//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+//
+//        val y = String(x)
+//        var yy = "{\"data\":$y}"
+//        var aa =
+//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+//
+//        for (i in 0.until(aa.data.size)) {
+//            banTextList.add(aa.data[i])
+//        }
 
     }
 
@@ -200,7 +206,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
         val config: BosClientConfiguration = BosClientConfiguration()
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
-        config.endpoint = "http://androidmarryfriend.gz.bcebos.com"
+        config.endpoint = "http://adrmf.gz.bcebos.com"
 
         client = BosClient(config)
 
@@ -233,8 +239,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                 2 -> {
                     // 实名认证
                     val intent = Intent(context, VerifyActivity::class.java)
-                    startActivity(intent)
-
+                    startActivityForResult(intent, 3)
                 }
                 3 -> {
                     // 添加爱好
@@ -324,9 +329,18 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
         }
 
         ll_mine_set_verify.setOnClickListener {
-            startActivity(Intent(context, VerifyActivity::class.java))
+
+            val intent = Intent(context, VerifyActivity::class.java)
+            startActivityForResult(intent, 3)
+
         }
 
+        ll_mine_set_greet.setOnClickListener {
+
+            val intent = Intent(context, GreetInfoActivity::class.java)
+            startActivityForResult(intent, 4)
+
+        }
     }
 
     private fun getDialogOrder() {
@@ -354,7 +368,6 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                     SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 2)
                     iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_verify)
                 } else {
-                    tv_zz.visibility = View.VISIBLE
                     if (SPStaticUtils.getString(Constant.ME_HOBBY, "") == "") {
                         SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 3)
                         iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_hobby)
@@ -469,8 +482,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             mBitmap = bitmap
 
             val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ACCESS_TOKEN] =
-                "24.50f0594e1d3ff58ff07ac59e645da8da.2592000.1656229858.282335-26330192"
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
             map[Contents.IMAGE] = bitmapToBase64(bitmap)
             doFaceDetectPresent.doFaceDetect(map)
@@ -535,9 +547,19 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                     val temp = File(mTempPhotoPath)
                     startPhotoCropActivity(Uri.fromFile(temp))
                 }
+                3 -> {
+                    getDialogOrder()
+                    if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
+                        iv_mine_identity.setImageResource(R.mipmap.icon_identify_success)
+                    } else {
+                        iv_mine_identity.setImageResource(R.mipmap.icon_identify_non)
+                    }
+                }
+                4 -> {
+                    getDialogOrder()
+                }
             }
         }
-
     }
 
     override fun onLoading() {
@@ -629,7 +651,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                     2 -> {
                         // 拒绝
                         ToastUtils.showShort("您的头像已违规，请重新更换头像")
-                        iv_mine_avatar.setImageResource(R.drawable.ic_mine_male_default)
+                        iv_mine_avatar.setImageResource(R.mipmap.icon_mine_male_default)
                         SPStaticUtils.put(Constant.ME_AVATAR, "")
                         getDialogOrder()
                     }
@@ -768,14 +790,21 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
     }
 
     // 昵称
-    inner class NameDialog(context: Context) : FullScreenPopupView(context) {
+    inner class NameDialog(context: Context) : FullScreenPopupView(context), IDoTextVerifyCallback {
 
         private var isNeedUpdate = false
+
+        private var nick = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_user_data_name
 
         override fun onCreate() {
             super.onCreate()
+
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_user_data_name_close)
             val skip = findViewById<TextView>(R.id.tv_user_data_name_skip)
@@ -787,23 +816,33 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
             confirm.setOnClickListener {
 
-                for (i in 0.until(banTextList.size)) {
-                    val code = banTextList[i]
-                    if (name.text.contains(code)) {
-                        haveBanText = true
-                    }
-                }
+                nick = name.text.toString()
 
-                if (name.text.isNotEmpty()) {
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        name.setText("")
-                        haveBanText = false
-                    } else {
-                        SPStaticUtils.put(Constant.ME_NAME, name.text.toString())
-                        isNeedUpdate = true
-                        dismiss()
-                    }
+//                for (i in 0.until(banTextList.size)) {
+//                    val code = banTextList[i]
+//                    if (nick.contains(code)) {
+//                        haveBanText = true
+//                    }
+//                }
+
+                if (nick.isNotEmpty()) {
+
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        name.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        SPStaticUtils.put(Constant.ME_NAME, nick)
+//                        isNeedUpdate = true
+//                        dismiss()
+//                    }
+
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = nick
+                    doTextVerifyPresent.doTextVerify(map)
+
                 } else {
                     ToastUtils.showShort("请输入您需要更改的昵称")
                 }
@@ -823,25 +862,58 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                 tv_mine_nick.text = SPStaticUtils.getString(Constant.ME_NAME, "未填写")
             }
         }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                SPStaticUtils.put(Constant.ME_NAME, nick)
+                isNeedUpdate = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort("输入中存在敏感字，请重新输入")
+                findViewById<EditText>(R.id.et_user_data_name_name).setText("")
+                haveBanText = false
+            }
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
+        }
     }
 
     // 添加爱好
-    inner class HobbyDialog(context: Context) : FullScreenPopupView(context) {
+    inner class HobbyDialog(context: Context) : FullScreenPopupView(context),
+        IDoTextVerifyCallback {
 
         private var isNeedUpdate = false
+        private var size = 0
+        private var text = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_set_hobby
 
         override fun onCreate() {
             super.onCreate()
 
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
+
             val close = findViewById<ImageView>(R.id.iv_dialog_set_hobby_close)
             val content = findViewById<EditText>(R.id.et_dialog_set_hobby_content)
             val sum = findViewById<TextView>(R.id.tv_dialog_set_hobby_sum)
             val confirm = findViewById<TextView>(R.id.tv_dialog_set_hobby_confirm)
 
-            var size = 0
-            var text = ""
+
 
             close.setOnClickListener {
                 isNeedUpdate = false
@@ -890,24 +962,30 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (text.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (text.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
+//
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        text = ""
+//                        content.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        // 保存数据
+//                        SPStaticUtils.put(Constant.ME_HOBBY, text)
+//                        isNeedUpdate = true
+//                        dismiss()
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        text = ""
-                        content.setText("")
-                        haveBanText = false
-                    } else {
-                        // 保存数据
-                        SPStaticUtils.put(Constant.ME_HOBBY, text)
-                        isNeedUpdate = true
-                        dismiss()
-                    }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -923,25 +1001,59 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                 getDialogOrder()
             }
         }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+                SPStaticUtils.put(Constant.ME_HOBBY, text)
+                isNeedUpdate = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                text = ""
+                findViewById<EditText>(R.id.et_dialog_set_hobby_content).setText("")
+                haveBanText = false
+            }
+
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
+        }
     }
 
     // 添加招呼语
-    inner class GreetDialog(context: Context) : FullScreenPopupView(context) {
+    inner class GreetDialog(context: Context) : FullScreenPopupView(context),
+        IDoTextVerifyCallback {
 
         private var isNeedUpdate = false
+        private var size = 0
+        private var text = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_set_greet
 
         override fun onCreate() {
             super.onCreate()
 
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
+
             val close = findViewById<ImageView>(R.id.iv_dialog_set_greet_close)
             val content = findViewById<EditText>(R.id.et_dialog_set_greet_content)
             val sum = findViewById<TextView>(R.id.tv_dialog_set_greet_sum)
             val confirm = findViewById<TextView>(R.id.tv_dialog_set_greet_confirm)
 
-            var size = 0
-            var text = ""
 
             close.setOnClickListener {
                 isNeedUpdate = false
@@ -990,24 +1102,30 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (text.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (text.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
+//
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        text = ""
+//                        content.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        // 保存数据
+//                        SPStaticUtils.put(Constant.ME_GREET, text)
+//                        isNeedUpdate = true
+//                        dismiss()
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        text = ""
-                        content.setText("")
-                        haveBanText = false
-                    } else {
-                        // 保存数据
-                        SPStaticUtils.put(Constant.ME_GREET, text)
-                        isNeedUpdate = true
-                        dismiss()
-                    }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -1024,25 +1142,58 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             }
         }
 
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+                SPStaticUtils.put(Constant.ME_GREET, text)
+                isNeedUpdate = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                text = ""
+                findViewById<EditText>(R.id.et_dialog_set_greet_content).setText("")
+                haveBanText = false
+            }
+
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
+        }
+
     }
 
     // 添加自我介绍
-    inner class IntroduceDialog(context: Context) : FullScreenPopupView(context) {
+    inner class IntroduceDialog(context: Context) : FullScreenPopupView(context),
+        IDoTextVerifyCallback {
 
         private var isNeedUpdate = false
+        private var size = 0
+        private var text = ""
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_set_introduce
 
         override fun onCreate() {
             super.onCreate()
 
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
+
             val close = findViewById<ImageView>(R.id.iv_dialog_set_introduce_close)
             val content = findViewById<EditText>(R.id.et_dialog_set_introduce_content)
             val sum = findViewById<TextView>(R.id.tv_dialog_set_introduce_sum)
             val confirm = findViewById<TextView>(R.id.tv_dialog_set_introduce_confirm)
-
-            var size = 0
-            var text = ""
 
             close.setOnClickListener {
                 isNeedUpdate = false
@@ -1091,24 +1242,30 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (text.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (text.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
+//
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                        text = ""
+//                        content.setText("")
+//                        haveBanText = false
+//                    } else {
+//                        // 保存数据
+//                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+//                        isNeedUpdate = true
+//                        dismiss()
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        text = ""
-                        content.setText("")
-                        haveBanText = false
-                    } else {
-                        // 保存数据
-                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-                        isNeedUpdate = true
-                        dismiss()
-                    }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -1124,6 +1281,34 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
                 getDialogOrder()
             }
 
+        }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+                SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+                isNeedUpdate = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                text = ""
+                findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
+                haveBanText = false
+            }
+
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
         }
 
     }

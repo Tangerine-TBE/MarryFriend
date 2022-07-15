@@ -44,8 +44,7 @@ import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.UnicodeUtils
 import java.util.*
 
-class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTokenCallback,
-    IGetBanCallback {
+class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback{
 
     val AUTH_SECRET =
         "5Z/38d9XNQ5HDw9qYt6e0lvJfnFolhg3t+3deOgkQCJKwVxUYes1NHLjRNTEM9jKxzRLscIOBo/KkIxczkjgACt4EIkmqYrSSfEAvxGtYltNxSZcazVViGxVQS6RKHLWuNJA2/bg2T5QixDps8eV+Z4VqCT+09VAkE5zX4JuAS8JavAPjCRzILYkP/z1TPKxOgKJfjr3MRgloQO6VIzY/NdqMKvF3tlX7meLgivnIBpHucj4i/N3N7yYwHuLjRXbFjkTV5KNtfwfnuT5MWQi+axzGuihMX4U7QAeV3q4XPxko5zSc+X4MGji2jltoHQ7"
@@ -62,10 +61,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTo
 
     private lateinit var doAutoLoginPresent: doAutoLoginPresentImpl
 
-    private lateinit var getAccessTokenPresent: getAccessTokenPresentImpl
-
-    private lateinit var getBanPresent: getBanPresentImpl
-
     override fun getLayoutView(): Int = R.layout.activity_begin
 
     override fun initView() {
@@ -74,12 +69,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTo
         doAutoLoginPresent = doAutoLoginPresentImpl.getsInstance()
         doAutoLoginPresent.registerCallback(this)
 
-        getAccessTokenPresent = getAccessTokenPresentImpl.getsInstance()
-        getAccessTokenPresent.registerCallback(this)
-
-        getBanPresent = getBanPresentImpl.getsInstance()
-        getBanPresent.registerCallback(this)
-
         sdkInit(AUTH_SECRET)
         mUIConfig = BaseUIConfig.init(0, this, mPhoneNumberAuthHelper)
 
@@ -87,10 +76,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTo
 
     override fun initLoadData() {
         super.initLoadData()
-
-        getAccessToken()
-        getBan()
-
     }
 
     override fun initPresent() {
@@ -119,27 +104,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTo
             .asCustom(PhoneLoginDialog(this))
             .show()
     }
-
-
-    // 获取accessToken
-    private fun getAccessToken() {
-
-        val map: MutableMap<String, String> = TreeMap()
-
-        map[Contents.GRANT_TYPE] = "client_credentials"
-        map[Contents.CLIENT_ID] = "YLnCFKMcNiSBGxETIg4DeMht"
-        map[Contents.CLIENT_SECRET] = "ufkmEoIT4Oto1CP3oEFeKOSlU5OXtL8v"
-        getAccessTokenPresent.getAccessToken(map)
-
-
-    }
-
-    // 获取敏感词
-    private fun getBan() {
-        val map: MutableMap<String, String> = TreeMap()
-        getBanPresent.getBan(map)
-    }
-
 
     fun sdkInit(secretInfo: String?) {
         mTokenResultListener = object : TokenResultListener {
@@ -257,46 +221,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback, IGetAccessTo
     }
 
     override fun onError() {
-
-    }
-
-    override fun onGetBanSuccess(banBean: BanBean) {
-
-
-        // 省份总数
-        SPStaticUtils.put(Constant.BAN_TEXT, GsonUtils.toJson(banBean))
-//
-//        val x = EncodeUtils.base64Decode(banBean.data[0])
-//
-//        var z = String(x)
-//        z = z.replaceFirst("[", "")
-//        z = z.replaceFirst("]", "")
-
-//        SPStaticUtils.put(Constant.BAN_TEXT, z)
-
-        // 储存这个 z 其他的直接需要时在处理 ， 不然第一次储存太慢，取的时候也要遍历，而且储存数组也需要遍历添加
-
-//        val array = z.split(",")
-//
-//        val list: MutableList<String> = ArrayList<String>()
-//
-//        for (i in 0.until(array.size)) {
-//            list.add(UnicodeUtils.decode(array[i]))
-//        }
-
-    }
-
-    override fun onGetBanCodeError() {
-
-    }
-
-    override fun onGetAccessTokenSuccess(accessTokenBean: AccessTokenBean) {
-
-        SPStaticUtils.put(Constant.ACCESS_TOKEN, accessTokenBean.access_token)
-
-    }
-
-    override fun onGetAccessTokenFail() {
 
     }
 

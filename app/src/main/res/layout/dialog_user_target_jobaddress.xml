@@ -17,13 +17,13 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:text="TA的工作区域"
+            android:text="TA的工作区域  (可多选)"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/iv_user_data_home_close"
+            android:id="@+id/iv_user_target_jobaddress_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -33,26 +33,57 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="可选地点"
+            android:textColor="#404040"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tv_user_target_jobaddress_sum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="#404040"
+            android:textSize="17sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/5"
+            android:textColor="#404040"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_user_target_jobaddress_wheel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <com.aigestudio.wheelpicker.WheelPicker
-            android:id="@+id/wp_user_data_home_one"
+            android:id="@+id/wp_user_target_jobaddress_one"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             app:wheel_item_space="80dp"
             app:wheel_item_text_size="17sp" />
 
-
         <com.aigestudio.wheelpicker.WheelPicker
-            android:id="@+id/wp_user_data_home_two"
+            android:id="@+id/wp_user_target_jobaddress_two"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:layout_gravity="center"
             android:layout_weight="1"
             app:wheel_item_space="80dp"
@@ -60,8 +91,34 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/rl_user_target_jobaddress_content"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="30dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_user_target_jobaddress_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_user_target_jobaddress_add"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="50dp"
+            android:background="@drawable/shape_bg_common_next"
+            android:gravity="center"
+            android:paddingVertical="16dp"
+            android:text="添加"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
     <TextView
-        android:id="@+id/tv_user_data_home_confirm"
+        android:id="@+id/tv_user_target_jobaddress_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="50dp"
@@ -74,7 +131,7 @@
         android:textSize="17sp" />
 
     <TextView
-        android:id="@+id/tv_user_data_home_skip"
+        android:id="@+id/tv_user_target_jobaddress_skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

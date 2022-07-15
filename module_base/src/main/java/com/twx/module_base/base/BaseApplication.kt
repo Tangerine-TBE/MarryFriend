@@ -4,6 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.Handler
+import android.util.Log
+import androidx.core.provider.FontRequest
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.FontRequestEmojiCompatConfig
+import com.twx.module_base.R
 
 open class BaseApplication : Application() {
 
@@ -43,18 +48,7 @@ open class BaseApplication : Application() {
         packName = packageName
 
 
-//        UMConfigure.init(
-//            applicationContext,
-//            UMConfigure.DEVICE_TYPE_PHONE,
-//            "621dca382b8de26e11d274d8"
-//        )
-//        UMConfigure.setLogEnabled(true)
-
-
-
-
         initChild()
-
 
     }
 

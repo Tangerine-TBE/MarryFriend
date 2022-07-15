@@ -19,7 +19,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_guide_star"/>
+                android:src="@drawable/ic_guide_star" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -28,12 +28,12 @@
                 android:text="选择你的居住城市和家乡"
                 android:textColor="#404040"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_guide_star"/>
+                android:src="@drawable/ic_guide_star" />
 
         </LinearLayout>
 
@@ -61,17 +61,31 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/shape_bg_common_input">
 
+            <ImageView
+                android:id="@+id/iv_guide_address_jobcity_front"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_common_input_next"
+                android:visibility="invisible" />
+
             <TextView
                 android:id="@+id/tv_guide_address_jobcity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginVertical="20dp"
+                android:layout_toStartOf="@+id/iv_guide_address_jobcity_back"
+                android:layout_toEndOf="@+id/iv_guide_address_jobcity_front"
+                android:gravity="center"
                 android:text="请选择"
                 android:textColor="#9A9A9A"
                 android:textSize="17sp" />
 
             <ImageView
+                android:id="@+id/iv_guide_address_jobcity_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -97,17 +111,31 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/shape_bg_common_input">
 
+            <ImageView
+                android:id="@+id/iv_guide_address_homecity_front"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_common_input_next"
+                android:visibility="invisible" />
+
             <TextView
                 android:id="@+id/tv_guide_address_homecity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginVertical="20dp"
+                android:layout_toStartOf="@+id/iv_guide_address_homecity_back"
+                android:layout_toEndOf="@+id/iv_guide_address_homecity_front"
+                android:gravity="center"
                 android:text="请选择"
                 android:textColor="#9A9A9A"
                 android:textSize="17sp" />
 
             <ImageView
+                android:id="@+id/iv_guide_address_homecity_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

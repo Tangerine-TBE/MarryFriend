@@ -21,9 +21,13 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.BanBean
 import com.twx.marryfriend.bean.SchoolBean
+import com.twx.marryfriend.bean.TextVerifyBean
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
+import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
 import com.twx.marryfriend.net.callback.IGetSchoolCallback
+import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.getSchoolPresentImpl
 import com.twx.marryfriend.utils.UnicodeUtils
 import kotlinx.android.synthetic.main.activity_login.*
@@ -79,19 +83,18 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
             getData()
         }
 
-        val banBean: BanBean =
-            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-
-        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-
-        val y = String(x)
-        var yy = "{\"data\":$y}"
-        var aa =
-            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-
-        for (i in 0.until(aa.data.size)) {
-            banTextList.add(aa.data[i])
-        }
+//        val banBean: BanBean = GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
+//
+//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
+//
+//        val y = String(x)
+//        var yy = "{\"data\":$y}"
+//        var aa =
+//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
+//
+//        for (i in 0.until(aa.data.size)) {
+//            banTextList.add(aa.data[i])
+//        }
 
     }
 
@@ -206,12 +209,18 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 
     }
 
-    inner class SchoolCreateDialog(context: Context) : FullScreenPopupView(context) {
+    inner class SchoolCreateDialog(context: Context) : FullScreenPopupView(context),
+        IDoTextVerifyCallback {
+
+        private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_school_create
 
         override fun onCreate() {
             super.onCreate()
+
+            doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+            doTextVerifyPresent.registerCallback(this)
 
             findViewById<EditText>(R.id.et_dialog_school_name).setText(inputSchool)
             findViewById<EditText>(R.id.et_dialog_school_name).setSelection(inputSchool.length);
@@ -243,22 +252,12 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 
                     diySchool = s.toString()
 
-                    for (i in 0.until(banTextList.size)) {
-                        haveBanText = diySchool.contains(banTextList[i])
-                    }
-
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-                        findViewById<EditText>(R.id.et_dialog_school_name).setText("")
-                        haveBanText = false
+                    if (s.length >= 4) {
+                        findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(
+                            R.drawable.shape_bg_common_next)
                     } else {
-                        if (s.length >= 4) {
-                            findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(
-                                R.drawable.shape_bg_common_next)
-                        } else {
-                            findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(
-                                R.drawable.shape_bg_common_next_non)
-                        }
+                        findViewById<TextView>(R.id.tv_dialog_school_confirm).setBackgroundResource(
+                            R.drawable.shape_bg_common_next_non)
                     }
 
                 }
@@ -274,28 +273,36 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
                     ToastUtils.showShort("学校名称至少为4个字")
                 } else {
 
-                    for (i in 0.until(banTextList.size)) {
-                        val code = banTextList[i]
-                        if (diySchool.contains(code)) {
-                            haveBanText = true
-                        }
-                    }
+//                    for (i in 0.until(banTextList.size)) {
+//                        val code = banTextList[i]
+//                        if (diySchool.contains(code)) {
+//                            haveBanText = true
+//                        }
+//                    }
 
-                    if (haveBanText) {
-                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//                    if (haveBanText) {
+//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
+//
+//                        diySchool = ""
+//                        findViewById<EditText>(R.id.et_dialog_school_name).setText("")
+//                        haveBanText = false
+//
+//                    } else {
+//                        dismiss()
+//
+//                        val intent = intent
+//                        intent.putExtra("schoolName", diySchool)
+//                        setResult(RESULT_OK, intent)
+//                        finish()
+//                    }
 
-                        diySchool = ""
-                        findViewById<EditText>(R.id.et_dialog_school_name).setText("")
-                        haveBanText = false
 
-                    } else {
-                        dismiss()
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = diySchool
+                    doTextVerifyPresent.doTextVerify(map)
 
-                        val intent = intent
-                        intent.putExtra("schoolName", diySchool)
-                        setResult(RESULT_OK, intent)
-                        finish()
-                    }
                 }
             }
 
@@ -303,6 +310,39 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 
         override fun onDismiss() {
             super.onDismiss()
+        }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+        }
+
+        override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
+
+            if (textVerifyBean.conclusion == "合规") {
+                // 保存数据
+
+                dismiss()
+
+                val intent = intent
+                intent.putExtra("schoolName", diySchool)
+                setResult(RESULT_OK, intent)
+                finish()
+
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+
+                diySchool = ""
+                findViewById<EditText>(R.id.et_dialog_school_name).setText("")
+                haveBanText = false
+            }
+
+        }
+
+        override fun onDoTextVerifyError() {
+            ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
         }
 
     }

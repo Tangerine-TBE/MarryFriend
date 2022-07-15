@@ -29,7 +29,9 @@ class MainActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
 
-        initMineFragment()
+//        initMineFragment()
+
+        initRecommendFragment()
 
     }
 
@@ -141,7 +143,6 @@ class MainActivity : MainBaseViewActivity() {
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == FragmentActivity.RESULT_OK) {
@@ -159,10 +160,6 @@ class MainActivity : MainBaseViewActivity() {
             }
         }
     }
-
-
-
-
 
 
 }

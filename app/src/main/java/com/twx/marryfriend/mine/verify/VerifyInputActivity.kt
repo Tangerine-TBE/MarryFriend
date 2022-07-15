@@ -1,24 +1,39 @@
 package com.twx.marryfriend.mine.verify
 
+import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
+import com.baidu.idl.face.platform.FaceEnvironment
+import com.baidu.idl.face.platform.FaceSDKManager
+import com.baidu.idl.face.platform.LivenessTypeEnum
+import com.baidu.idl.face.platform.listener.IInitCallback
 import com.blankj.utilcode.util.KeyboardUtils
 import com.blankj.utilcode.util.RegexUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.AccessTokenBean
 import com.twx.marryfriend.bean.IdentityVerifyBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.login.retrieve.QualityConfig
+import com.twx.marryfriend.login.retrieve.QualityConfigManager
+import com.twx.marryfriend.mine.verify.face.VerifyFaceLivenessExpActivity
 import com.twx.marryfriend.net.callback.IDoIdentityVerifyCallback
 import com.twx.marryfriend.net.impl.doIdentityVerifyPresentImpl
 import kotlinx.android.synthetic.main.activity_verify_input.*
 import java.util.*
 
 class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
+
+    private var state = ""
+
+    private var livenessList: MutableList<LivenessTypeEnum> = ArrayList()
 
     // 实名认证 姓名
     private var name = ""
@@ -32,6 +47,8 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     override fun initView() {
         super.initView()
+
+        initLicense()
 
         doIdentityVerifyPresent = doIdentityVerifyPresentImpl.getsInstance()
         doIdentityVerifyPresent.registerCallback(this)
@@ -48,6 +65,10 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     override fun initEvent() {
         super.initEvent()
+
+        iv_verify_input_finish.setOnClickListener {
+            finish()
+        }
 
         et_verify_name.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -82,12 +103,13 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
                 if (RegexUtils.isIDCard18Exact(identityCode)) {
                     val map: MutableMap<String, String> = TreeMap()
 
-                    map[Contents.ACCESS_TOKEN] =
-                        SPStaticUtils.getString(Constant.ACCESS_TOKEN)
+                    map[Contents.ACCESS_TOKEN] = "24.f4e44a2c0b880596d8478a8505e6df57.2592000.1659079496.282335-26278103"
                     map[Contents.CONTENT_TYPE] = "application/json"
                     map[Contents.ID_CARD_NUMBER] = identityCode
                     map[Contents.NAME] = name
+                    state = "VerifyInputActivity"
                     doIdentityVerifyPresent.doIdentityVerify(map)
+
 
                     ll_verify_input_loading.visibility = View.VISIBLE
 
@@ -97,7 +119,128 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
             } else {
                 ToastUtils.showShort("请填写详细信息")
             }
+        }
 
+    }
+
+    private fun initLicense() {
+        val success = setFaceConfig()
+        if (!success) {
+            ToastUtils.showShort("初始化失败 = json配置文件解析出错")
+            return
+        }
+        // 为了android和ios 区分授权，appId=appname_face_android ,其中appname为申请sdk时的应用名
+        // 应用上下文
+        // 申请License取得的APPID
+        // assets目录下License文件名
+        FaceSDKManager.getInstance().initialize(this, "huanlian-android-face-android",
+            "idl-license.face-android", object : IInitCallback {
+                override fun initSuccess() {
+                    runOnUiThread {
+                        Log.e("guo", "初始化成功")
+                        ToastUtils.showShort("初始化成功")
+//                        mIsInitSuccess = true
+                    }
+                }
+
+                override fun initFailure(errCode: Int, errMsg: String) {
+                    runOnUiThread {
+                        Log.i("guo", "初始化失败 = $errCode $errMsg")
+                        ToastUtils.showShort("初始化失败 = $errCode, $errMsg")
+//                        mIsInitSuccess = false
+                    }
+                }
+            })
+    }
+
+    private fun addActionLive() {
+        // 根据需求添加活体动作
+        livenessList.clear()
+        livenessList.add(LivenessTypeEnum.Eye)
+        livenessList.add(LivenessTypeEnum.Mouth)
+        livenessList.add(LivenessTypeEnum.HeadRight)
+    }
+
+    /**
+     * 参数配置方法
+     */
+    private fun setFaceConfig(): Boolean {
+        val config = FaceSDKManager.getInstance().faceConfig
+        // SDK初始化已经设置完默认参数（推荐参数），也可以根据实际需求进行数值调整
+        // 质量等级（0：正常、1：宽松、2：严格、3：自定义）
+        // 获取保存的质量等级
+
+        val qualityLevel = 0
+
+        // 根据质量等级获取相应的质量值（注：第二个参数要与质量等级的set方法参数一致）
+        val manager: QualityConfigManager = QualityConfigManager.getInstance()
+        manager.readQualityFile(this.applicationContext, qualityLevel)
+        val qualityConfig: QualityConfig = manager.config ?: return false
+        // 设置模糊度阈值
+        config.blurnessValue = qualityConfig.blur
+        // 设置最小光照阈值（范围0-255）
+        config.brightnessValue = qualityConfig.minIllum
+        // 设置最大光照阈值（范围0-255）
+        config.brightnessMaxValue = qualityConfig.maxIllum
+        // 设置左眼遮挡阈值
+        config.occlusionLeftEyeValue = qualityConfig.leftEyeOcclusion
+        // 设置右眼遮挡阈值
+        config.occlusionRightEyeValue = qualityConfig.rightEyeOcclusion
+        // 设置鼻子遮挡阈值
+        config.occlusionNoseValue = qualityConfig.noseOcclusion
+        // 设置嘴巴遮挡阈值
+        config.occlusionMouthValue = qualityConfig.mouseOcclusion
+        // 设置左脸颊遮挡阈值
+        config.occlusionLeftContourValue = qualityConfig.leftContourOcclusion
+        // 设置右脸颊遮挡阈值
+        config.occlusionRightContourValue = qualityConfig.rightContourOcclusion
+        // 设置下巴遮挡阈值
+        config.occlusionChinValue = qualityConfig.chinOcclusion
+        // 设置人脸姿态角阈值
+        config.headPitchValue = qualityConfig.pitch
+        config.headYawValue = qualityConfig.yaw
+        config.headRollValue = qualityConfig.roll
+        // 设置可检测的最小人脸阈值
+        config.minFaceSize = FaceEnvironment.VALUE_MIN_FACE_SIZE
+        // 设置可检测到人脸的阈值
+        config.notFaceValue = FaceEnvironment.VALUE_NOT_FACE_THRESHOLD
+        // 设置闭眼阈值
+        config.eyeClosedValue = FaceEnvironment.VALUE_CLOSE_EYES
+        // 设置图片缓存数量
+        config.cacheImageNum = FaceEnvironment.VALUE_CACHE_IMAGE_NUM
+        // 设置活体动作，通过设置list，LivenessTypeEunm.Eye, LivenessTypeEunm.Mouth,
+        // LivenessTypeEunm.HeadUp, LivenessTypeEunm.HeadDown, LivenessTypeEunm.HeadLeft,
+        // LivenessTypeEunm.HeadRight
+        config.livenessTypeList = livenessList
+        // 设置动作活体是否随机
+        config.isLivenessRandom = true
+        // 设置开启提示音
+        config.isSound = false
+        // 原图缩放系数
+        config.scale = FaceEnvironment.VALUE_SCALE
+        // 抠图宽高的设定，为了保证好的抠图效果，建议高宽比是4：3
+        config.cropHeight = FaceEnvironment.VALUE_CROP_HEIGHT
+        config.cropWidth = FaceEnvironment.VALUE_CROP_WIDTH
+        // 抠图人脸框与背景比例
+        config.enlargeRatio = FaceEnvironment.VALUE_CROP_ENLARGERATIO
+        // 检测超时设置
+        config.timeDetectModule = FaceEnvironment.TIME_DETECT_MODULE
+        // 检测框远近比率
+        config.faceFarRatio = FaceEnvironment.VALUE_FAR_RATIO
+        config.faceClosedRatio = FaceEnvironment.VALUE_CLOSED_RATIO
+        FaceSDKManager.getInstance().faceConfig = config
+        return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == RESULT_OK && requestCode == 1) {
+            val intent = intent
+            intent.putExtra("name", name)
+            intent.putExtra("id", identityCode)
+            setResult(RESULT_OK, intent)
+            finish()
         }
 
     }
@@ -112,18 +255,39 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     override fun onDoIdentityVerifySuccess(identityVerifyBean: IdentityVerifyBean) {
 
-        ToastUtils.showShort("身份证验证通过，准备开始传递数据")
+        if (state == "VerifyInputActivity"){
+            ll_verify_input_loading.visibility = View.GONE
 
-        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
+            SPStaticUtils.put(Constant.TRUE_NAME, name)
+            SPStaticUtils.put(Constant.TRUE_ID, identityCode)
 
-        ll_verify_input_loading.visibility = View.GONE
+            if (identityVerifyBean.error_msg == "SUCCESS") {
 
-        val intent = intent
-        intent.putExtra("name", name)
-        intent.putExtra("id", identityCode)
-        setResult(RESULT_OK, intent)
-        finish()
+                XXPermissions.with(this)
+                    .permission(Permission.CAMERA)
+                    .request(object : OnPermissionCallback {
+                        override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                            val intent = Intent(this@VerifyInputActivity,
+                                VerifyFaceLivenessExpActivity::class.java)
+                            startActivityForResult(intent, 1)
+                        }
 
+                        override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                            super.onDenied(permissions, never)
+                            ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
+                        }
+                    })
+
+            } else {
+
+                if (identityVerifyBean.error_code == 222351) {
+                    ToastUtils.showShort("身份证号与姓名不匹配或身份证号不存在")
+                } else {
+                    ToastUtils.showShort(identityVerifyBean.error_msg)
+                }
+            }
+
+        }
     }
 
     override fun onDoIdentityVerifyError() {

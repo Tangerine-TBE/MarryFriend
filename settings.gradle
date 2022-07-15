@@ -10,7 +10,7 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-
+        maven { url "https://maven.aliyun.com/repository/public" }
         maven { url 'https://jitpack.io' }
         google()
         mavenCentral()
@@ -21,7 +21,6 @@ rootProject.name = "MarryFriend"
 
 include ':app', ':faceplatform-release'
 include ':faceplatform-ui'
-
 
 include ':module_base'
 include ':module_dynamic'

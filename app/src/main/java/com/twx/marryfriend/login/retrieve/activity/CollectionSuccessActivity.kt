@@ -9,10 +9,7 @@ import com.baidu.idl.face.platform.FaceSDKManager
 import com.baidu.idl.face.platform.ui.utils.IntentUtils
 import com.baidu.idl.face.platform.utils.Base64Utils
 import com.baidu.idl.face.platform.utils.DensityUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.PathUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.*
@@ -109,8 +106,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
         btn_recollect.setOnClickListener {
             val map: MutableMap<String, String> = TreeMap()
-            map["access_token"] =
-                "24.4b751c0ec563309da71a3aa85d43236f.2592000.1656486335.282335-26278103"
+            map["access_token"] = "24.4b751c0ec563309da71a3aa85d43236f.2592000.1656486335.282335-26278103"
             map["Content-Type"] = "application/json"
             map["image_type"] = "BASE64"
             map["image"] = str.toString()
@@ -154,7 +150,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         uploadPhotoMap[Contents.IMAGE_URL] = SPStaticUtils.getString(Constant.ME_AVATAR)
         uploadPhotoMap[Contents.FILE_TYPE] = "png"
-        uploadPhotoMap[Contents.FILE_NAME] = "photoPic.png"
+        uploadPhotoMap[Contents.FILE_NAME] = "head.png"
         uploadPhotoMap[Contents.CONTENT] = "0"
         uploadPhotoMap[Contents.KIND] = 1.toString()
         uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
@@ -261,8 +257,9 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         val ageMax = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)
         val heightMin = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)
         val heightMax = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
-        val income = SPStaticUtils.getInt(Constant.TA_INCOME, 0)
-        val edu = SPStaticUtils.getInt(Constant.TA_EDU, 0)
+        val income = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
+        val incomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
+        val edu = SPStaticUtils.getString(Constant.TA_EDU, "")
         val marryState = SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 0)
         val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
         val childHave = SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 0)
@@ -305,6 +302,14 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
     private fun judgeLoading() {
         if (photoCompleteLoad && demandCompleteLoad && moreInfoCompleteLoad && baseInfoCompleteLoad) {
             ToastUtils.showShort("资料全部上传完成，跳转至首页")
+
+            SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
+
+            val identityCode = SPStaticUtils.getString(Constant.TRUE_ID, "")
+
+            SPStaticUtils.put(Constant.ME_BIRTH_YEAR, identityCode.substring(6, 10).toInt() - TimeUtils.date2String(TimeUtils.getNowDate(), "yyyy").toInt() + 100)
+            SPStaticUtils.put(Constant.ME_BIRTH_MONTH, identityCode.substring(10, 12).toInt() - 1)
+            SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
 
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
             val intent = Intent(this, MainActivity::class.java)

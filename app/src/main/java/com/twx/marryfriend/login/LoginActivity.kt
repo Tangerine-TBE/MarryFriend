@@ -401,6 +401,8 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
             startActivity(intent)
             this.finish()
         } else {
+            Log.i("guo","errormsg : ${phoneLoginBean.msg}")
+
             ToastUtils.showShort(phoneLoginBean.msg)
         }
 

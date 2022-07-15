@@ -50,7 +50,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="16dp"
-                android:src="@drawable/ic_mine_male_default"
+                android:src="@mipmap/icon_mine_male_default"
                 app:riv_oval="true" />
 
             <TextView
@@ -112,18 +112,10 @@
                 android:layout_alignParentBottom="true">
 
                 <ImageView
+                    android:id="@+id/iv_mine_identity"
                     android:layout_width="63dp"
                     android:layout_height="21dp"
                     android:src="@mipmap/icon_identify_non" />
-
-                <TextView
-                    android:id="@+id/tv_zz"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="已实名"
-                    android:textColor="#010101"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
 
             </LinearLayout>
 

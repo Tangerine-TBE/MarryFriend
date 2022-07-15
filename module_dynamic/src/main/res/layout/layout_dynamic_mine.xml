@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="14dp"
+    android:layout_marginVertical="7dp"
+    android:background="@drawable/shape_bg_base_card"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_detail_dynamic_mine_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="疫情前的游乐场"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_mine_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp">
+
+        <FrameLayout
+            android:id="@+id/fl_detail_dynamic_mine_video"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/iv_detail_dynamic_mine_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="8dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_base_play"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_mine_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_one"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_two"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_three"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_mine_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_four"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_five"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_six"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_mine_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_seven"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_eight"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_mine_nine"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/shape_bg_dynamic_address">
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_base_location" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_mine_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="16dp"
+            android:text="深圳市国人通信大厦"
+            android:textColor="#9A9A9A"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp">
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_mine_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:text="1小时前"
+            android:textColor="#9A9A9A"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/iv_detail_dynamic_mine_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@+id/tv_detail_dynamic_mine_like"
+            android:src="@drawable/ic_dynamic_like" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_mine_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_toStartOf="@+id/iv_detail_dynamic_mine_comment"
+            android:text="0"
+            android:textColor="#717171"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/iv_detail_dynamic_mine_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@+id/tv_detail_dynamic_mine_comment"
+            android:src="@drawable/ic_dynamic_comment" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_mine_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:text="0"
+            android:textColor="#717171"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

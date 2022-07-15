@@ -4,10 +4,8 @@
     package="com.twx.marryfriend">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 这个权限添加之后，比较老的手机会无法调用相机，删除之后则能调用 -->
-    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" /><!-- 解决上方问题而添加 -->
-
+    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" /> <!-- 解决上方问题而添加 -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 这是在sd卡内创建和删除文件权限 -->
@@ -25,6 +23,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 适配Android R包可见性 开始 -->
 
     <queries package="${applicationId}">
@@ -49,6 +48,12 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".mine.greet.GreetEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mine.greet.GreetInfoActivity"
+            android:exported="false" />
+        <activity
             android:name=".mine.verify.VerifyInputActivity"
             android:exported="false" />
         <activity
@@ -59,21 +64,21 @@
             android:exported="true" />
         <activity
             android:name=".mine.user.UserActivity"
-            android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".mine.verify.VerifyActivity"
             android:exported="false" />
         <activity
-            android:name=".login.retrieve.activity.CollectionSuccessActivity"
+            android:name=".mine.verify.face.VerifyCollectionSuccessActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mine.verify.face.VerifyFaceLivenessExpActivity"
             android:exported="false" />
         <activity
             android:name=".login.retrieve.activity.FaceLivenessExpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".login.retrieve.activity.CollectionSuccessActivity"
             android:exported="false" />
         <activity
             android:name=".login.retrieve.RetrieveActivity"
@@ -92,25 +97,13 @@
             android:exported="false" />
         <activity
             android:name=".guide.detailInfo.DetailInfoActivity"
-            android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".guide.detailInfo.search.SchoolSearchActivity"
             android:exported="true" />
         <activity
             android:name=".guide.baseInfo.BaseInfoActivity"
-            android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".login.LoginActivity"
             android:exported="true" />
@@ -125,15 +118,7 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-        </activity>
-
-        <!-- 联通电信授权页 -->
+            android:exported="true"></activity> <!-- 联通电信授权页 -->
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -169,7 +154,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-
     </application>
 
 </manifest>

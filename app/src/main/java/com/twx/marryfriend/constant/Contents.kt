@@ -79,6 +79,9 @@ object Contents {
     // 百度人脸识别(鉴黄)
     const val DO_FACE_DETECT = "2.0/solution/v1/img_censor/v2/user_defined"
 
+    // 百度文字审核识别
+    const val DO_TEXT_VERIFY = "2.0/solution/v1/text_censor/v2/user_defined"
+
 
     //----------------------------- 发送参数值 -----------------------------//
 
@@ -165,5 +168,7 @@ object Contents {
     // const val CONTENT_TYPE = "Content-Type" // 固定值 ： application/json
     const val IMAGE = "image" // 图片信息
     const val IMAGE_TYPE = "image_type" // 图片类型 BASE64、URL、FACE_TOKEN
+
+    const val TEXT = "text" // 待审核文本字符串
 
 }

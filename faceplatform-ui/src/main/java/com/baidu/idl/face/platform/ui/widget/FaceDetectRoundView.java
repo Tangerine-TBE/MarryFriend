@@ -188,14 +188,14 @@ public class FaceDetectRoundView extends View {
         super.onDraw(canvas);
         canvas.drawColor(Color.TRANSPARENT);
         canvas.drawPaint(mBGPaint);
-        canvas.drawCircle(mX, mY, mR, mFaceRoundPaint);
+        canvas.drawCircle(mX, mY + 120, mR, mFaceRoundPaint);
         // TODO：画检测区域（用于调试，这4个参数分别表示屏幕宽高和手机摄像头分辨率宽高，需要手动修改）
         // TODO：（使用时，将注释放开）
-        // canvas.drawRect(getPreviewDetectRect(1080, 1920, 432, 768), mCircleLinePaint);
+//        canvas.drawRect(getPreviewDetectRect(1080, 1920, 600, 768), mCircleLinePaint);
         // TODO：画人脸检测框（用于调试，使用时，将注释放开）
-        // if (getFaceInfoRect(mFaceExtInfo) != null) {
-        //     canvas.drawRect(getFaceInfoRect(mFaceExtInfo), mCircleLinePaint);
-        // }
+//        if (getFaceInfoRect(mFaceExtInfo) != null) {
+//            canvas.drawRect(getFaceInfoRect(mFaceExtInfo), mCircleLinePaint);
+//        }
         // 画文字
         if (!TextUtils.isEmpty(mTipSecondText)) {
             canvas.drawText(mTipSecondText, mX, mY - mR - 40 - 25 - 59, mTextSecondPaint);
@@ -204,7 +204,7 @@ public class FaceDetectRoundView extends View {
             canvas.drawText(mTipTopText, mX, mY - mR - 40 - 25 - 59 - 90, mTextTopPaint);
         }
         if (mIsActiveLive) {
-            canvas.translate(mX, mY);
+            canvas.translate(mX, mY + 120);
             // 画默认进度
             drawCircleLine(canvas);
             // 画成功进度

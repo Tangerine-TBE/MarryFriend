@@ -79,27 +79,26 @@ class RetrieveActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
             // 做一个权限请求，若是不同意，则不允许用户进入
 
-//            XXPermissions.with(this)
-//                .permission(Permission.CAMERA)
-//                .request(object : OnPermissionCallback {
-//                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-//                        val intent = Intent(this@RetrieveActivity, FaceLivenessExpActivity::class.java)
-//                        startActivity(intent)
-//                    }
-//
-//                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-//                        super.onDenied(permissions, never)
-//                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
-//                    }
-//                })
+            XXPermissions.with(this)
+                .permission(Permission.CAMERA)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                        val intent = Intent(this@RetrieveActivity, FaceLivenessExpActivity::class.java)
+                        startActivity(intent)
+                    }
 
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ACCESS_TOKEN] =
-                "24.0e56bbe36fe7b7c67ffcd78924e4b786.2592000.1658052230.282335-26278103"
-            map[Contents.CONTENT_TYPE] = "application/json"
-            map[Contents.ID_CARD_NUMBER] = "42108119991112429X"
-            map[Contents.NAME] = "郭才"
-            doIdentityVerifyPresent.doIdentityVerify(map)
+                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                        super.onDenied(permissions, never)
+                        ToastUtils.showShort("请授予应用拍照权限，否则应用无法进行人脸识别认证")
+                    }
+                })
+
+//            val map: MutableMap<String, String> = TreeMap()
+//            map[Contents.ACCESS_TOKEN] = "24.2dad8b163be9d558404bde4557fe8ad2.2592000.1658889671.282335-26278103"
+//            map[Contents.CONTENT_TYPE] = "application/json"
+//            map[Contents.ID_CARD_NUMBER] = "42108119991112429X"
+//            map[Contents.NAME] = "郭才"
+//            doIdentityVerifyPresent.doIdentityVerify(map)
 
         }
 
@@ -115,7 +114,7 @@ class RetrieveActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
         // 应用上下文
         // 申请License取得的APPID
         // assets目录下License文件名
-        FaceSDKManager.getInstance().initialize(this, "hunlian-android-face-android",
+        FaceSDKManager.getInstance().initialize(this, "huanlian-android-face-android",
             "idl-license.face-android", object : IInitCallback {
                 override fun initSuccess() {
                     runOnUiThread {

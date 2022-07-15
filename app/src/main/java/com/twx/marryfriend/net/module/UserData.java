@@ -15,6 +15,7 @@ import com.twx.marryfriend.bean.JobBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
 import com.twx.marryfriend.bean.PhotoListBean;
 import com.twx.marryfriend.bean.SchoolBean;
+import com.twx.marryfriend.bean.TextVerifyBean;
 import com.twx.marryfriend.bean.UpdateDemandInfoBean;
 import com.twx.marryfriend.bean.UpdateGreetInfoBean;
 import com.twx.marryfriend.bean.UpdateMoreInfoBean;
@@ -156,8 +157,6 @@ public class UserData {
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_GREET_INFO, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateGreetInfo(map1).enqueue(callback);
     }
-
-
 
 
     //查看列表(头像,三张,相册)
@@ -309,6 +308,18 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_FACE_DETECT + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_FACE_DETECT, currentTimeMillis, random, checkCode, map);
         mBaiduApi.doFaceDetect(map1).enqueue(callback);
+    }
+
+    // 百度文字审核识别
+    public void doTextVerify(Map<String, String> map, Callback<TextVerifyBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_TEXT_VERIFY + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_TEXT_VERIFY, currentTimeMillis, random, checkCode, map);
+        mBaiduApi.doTextVerify(map1).enqueue(callback);
     }
 
 }

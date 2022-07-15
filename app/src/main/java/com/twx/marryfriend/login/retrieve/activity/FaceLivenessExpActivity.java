@@ -10,6 +10,7 @@ import com.baidu.idl.face.platform.model.ImageInfo;
 import com.baidu.idl.face.platform.ui.FaceLivenessActivity;
 import com.baidu.idl.face.platform.ui.utils.IntentUtils;
 import com.twx.marryfriend.login.retrieve.widget.TimeoutDialog;
+import com.twx.marryfriend.mine.verify.face.VerifyCollectionSuccessActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,8 +113,7 @@ public class FaceLivenessExpActivity extends FaceLivenessActivity implements
 
         // 页面跳转
         IntentUtils.getInstance().setBitmap(bmpStr);
-        Intent intent = new Intent(FaceLivenessExpActivity.this,
-                CollectionSuccessActivity.class);
+        Intent intent = new Intent(FaceLivenessExpActivity.this, CollectionSuccessActivity.class);
         intent.putExtra("destroyType", "FaceLivenessExpActivity");
         startActivity(intent);
     }

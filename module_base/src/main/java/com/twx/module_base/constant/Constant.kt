@@ -253,4 +253,10 @@ object Constant {
     const val ME_VOICE_NAME = "ME_voice_name"  // 招呼语语言的文件命名
 
 
+    // --------------------------------------  动态模块  ------------------------------------
+
+
+    const val HIDE_REPORT_TIP = "hide_report_tip" // 是否展示举报方式的RelativeLayout
+
+
 }

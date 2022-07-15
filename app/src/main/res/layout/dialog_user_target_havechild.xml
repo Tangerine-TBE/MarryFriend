@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="你期望TA有孩子吗?"
+            android:text="你期望TA有孩子吗?  (可多选)"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -30,75 +30,97 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_user_target_havechild_unlimited"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="32dp"
-        android:background="@drawable/shape_bg_dialog_choose_check"
-        android:gravity="center"
-        android:paddingVertical="20dp"
-        android:text="不限"
-        android:textColor="#FF4444"
-        android:textSize="17sp" />
+        android:layout_height="300dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_user_target_havechild_unlimited"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/shape_bg_dialog_choose_check"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="不限"
+                android:textColor="#FF4444"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_target_havechild_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="没有孩子"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_target_havechild_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="有孩子且住在一起"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_target_havechild_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="有孩子偶尔会住在一起"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_target_havechild_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="有孩子但不在身边"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <TextView
-        android:id="@+id/tv_user_target_havechild_one"
+        android:id="@+id/tv_user_target_havechild_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:background="@drawable/shape_bg_common_next"
         android:gravity="center"
         android:paddingVertical="20dp"
-        android:text="没有孩子"
-        android:textColor="#101010"
+        android:text="确定"
+        android:textColor="#FFFFFF"
         android:textSize="17sp" />
-
-
-    <TextView
-        android:id="@+id/tv_user_target_havechild_two"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck"
-        android:gravity="center"
-        android:paddingVertical="20dp"
-        android:text="有孩子且住在一起"
-        android:textColor="#101010"
-        android:textSize="17sp" />
-
-
-    <TextView
-        android:id="@+id/tv_user_target_havechild_three"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck"
-        android:gravity="center"
-        android:paddingVertical="20dp"
-        android:text="有孩子偶尔会住在一起"
-        android:textColor="#101010"
-        android:textSize="17sp" />
-
-
-    <TextView
-        android:id="@+id/tv_user_target_havechild_four"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck"
-        android:gravity="center"
-        android:paddingVertical="20dp"
-        android:text="有孩子但不在身边"
-        android:textColor="#101010"
-        android:textSize="17sp" />
-
 
     <TextView
         android:id="@+id/tv_user_target_havechild_skip"

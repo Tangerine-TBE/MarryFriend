@@ -2,6 +2,7 @@ package com.twx.marryfriend.mine.verify
 
 import android.content.Intent
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import com.blankj.utilcode.util.SPStaticUtils
 import com.twx.marryfriend.R
@@ -16,17 +17,12 @@ class VerifyActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
 
-        hideName("张三丰")
-        hideName("李四")
-
-        hideId("42108119991112429x")
-
         if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
             rl_verify_verify_success.visibility = View.VISIBLE
             rl_verify_verify_non.visibility = View.GONE
 
-            tv_verify_name.text = SPStaticUtils.getString(Constant.ME_TURE_NAME, "")
-            tv_verify_id.text = SPStaticUtils.getString(Constant.ME_TURE_ID, "")
+            tv_verify_name.text = hideName(SPStaticUtils.getString(Constant.TRUE_NAME, ""))
+            tv_verify_id.text = hideId(SPStaticUtils.getString(Constant.TRUE_ID, ""))
 
         } else {
             rl_verify_verify_success.visibility = View.GONE
@@ -47,6 +43,8 @@ class VerifyActivity : MainBaseViewActivity() {
         super.initEvent()
 
         iv_verify_finish.setOnClickListener {
+            val intent = intent
+            setResult(RESULT_OK, intent)
             finish()
         }
 
@@ -57,6 +55,16 @@ class VerifyActivity : MainBaseViewActivity() {
 
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val intent = intent
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -65,17 +73,13 @@ class VerifyActivity : MainBaseViewActivity() {
                     rl_verify_verify_success.visibility = View.VISIBLE
                     rl_verify_verify_non.visibility = View.GONE
 
-                    if (data != null) {
-                        tv_verify_name.text = hideName(data.getStringExtra("name").toString())
-                        tv_verify_id.text = hideId(data.getStringExtra("id").toString())
+                    tv_verify_name.text = hideName(SPStaticUtils.getString(Constant.TRUE_NAME, ""))
+                    tv_verify_id.text = hideId(SPStaticUtils.getString(Constant.TRUE_ID, ""))
 
-                        SPStaticUtils.put(Constant.ME_TURE_NAME,
-                            hideName(data.getStringExtra("name").toString()))
-                        SPStaticUtils.put(Constant.ME_TURE_ID,
-                            hideId(data.getStringExtra("id").toString()))
-
-                    }
-
+                    SPStaticUtils.put(Constant.ME_TURE_NAME,
+                        hideName(SPStaticUtils.getString(Constant.TRUE_NAME, "")))
+                    SPStaticUtils.put(Constant.ME_TURE_ID,
+                        hideId(SPStaticUtils.getString(Constant.TRUE_ID, "")))
                 }
             }
         }

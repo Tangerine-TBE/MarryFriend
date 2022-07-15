@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_bg_mine_input"
+    android:layout_margin="5dp"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/tv_detail_target_job_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="14dp"
+        android:text="体型"
+        android:textColor="#404040"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/iv_detail_target_job_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:src="@drawable/ic_school_close" />
+
+</LinearLayout>

@@ -8,14 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.aigestudio.wheelpicker.WheelPicker
-import com.blankj.utilcode.util.ConvertUtils
-import com.blankj.utilcode.util.GsonUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
+import com.luck.picture.lib.decoration.WrapContentLinearLayoutManager
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
@@ -25,6 +27,7 @@ import com.twx.marryfriend.bean.UpdateDemandInfoBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.mine.user.target.adapter.JobAddressAdapter
 import com.twx.marryfriend.mine.user.target.adapter.TargetBaseAdapter
 import com.twx.marryfriend.mine.user.target.adapter.TargetMoreAdapter
 import com.twx.marryfriend.net.callback.IDoUpdateDemandInfoCallback
@@ -56,9 +59,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     private var baseInfoList: MutableList<String> = arrayListOf()
     private var moreInfoList: MutableList<String> = arrayListOf()
+    private var jobAddressInfoList: MutableList<String> = arrayListOf()
 
     private lateinit var baseAdapter: TargetBaseAdapter
     private lateinit var moreAdapter: TargetMoreAdapter
+
+    private lateinit var jobAddressAdapter: JobAddressAdapter
 
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
 
@@ -83,6 +89,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         baseAdapter = TargetBaseAdapter(DataProvider.targetBaseData, baseInfoList)
         moreAdapter = TargetMoreAdapter(DataProvider.targetMoreData, moreInfoList)
+        jobAddressAdapter = JobAddressAdapter(jobAddressInfoList)
 
         val baseScrollManager: LinearLayoutManager = object : LinearLayoutManager(context) {
             override fun canScrollVertically(): Boolean {
@@ -122,13 +129,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             mHeightMaxList.add(140 + i)
         }
 
-        mIncomeList.add("保密")
-        mIncomeList.add("五千及以下")
-        mIncomeList.add("五千~一万")
-        mIncomeList.add("一万~两万")
-        mIncomeList.add("两万~四万")
-        mIncomeList.add("四万~七万")
-        mIncomeList.add("七万及以上")
+        mIncomeList.add("不限")
+        mIncomeList.add("5000元")
+        mIncomeList.add("10000元")
+        mIncomeList.add("20000元")
+        mIncomeList.add("40000元")
+        mIncomeList.add("70000元")
 
         // 先判断性别
         if (SPStaticUtils.getInt(Constant.ME_SEX, 2) == 2) {
@@ -225,7 +231,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     }
 
-
     // 点击选项之后显示下一个弹窗
     private fun showNextDialog(position: Int) {
         when (position) {
@@ -234,11 +239,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_INCOME, 7) == 7) {
+                    if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7) == 7) {
                         // 月收入
                         showIncomeDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_EDU, 7) == 7) {
+                        if (SPStaticUtils.getString(Constant.TA_EDU, "") == "") {
                             // 学历
                             showEduDialog()
                         } else {
@@ -306,11 +311,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 }
             }
             1 -> {
-                if (SPStaticUtils.getInt(Constant.TA_INCOME, 7) == 7) {
+                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7) == 7) {
                     // 月收入
                     showIncomeDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_EDU, 7) == 7) {
+                    if (SPStaticUtils.getString(Constant.TA_EDU, "") == "") {
                         // 学历
                         showEduDialog()
                     } else {
@@ -373,11 +378,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 }
             }
             2 -> {
-                if (SPStaticUtils.getInt(Constant.TA_EDU, 7) == 7) {
+                if (SPStaticUtils.getString(Constant.TA_EDU, "") == "") {
                     // 学历
                     showEduDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                    if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
                         // 婚况
                         showMarryStateDialog()
                     } else {
@@ -431,7 +436,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 }
             }
             3 -> {
-                if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
                     // 婚况
                     showMarryStateDialog()
                 } else {
@@ -732,35 +737,85 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             }"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_INCOME, 7)) {
-            0 -> income = "保密"
-            1 -> income = "五千及以下"
-            2 -> income = "五千~一万"
-            3 -> income = "一万~两万"
-            4 -> income = "两万~四万"
-            5 -> income = "四万~七万"
-            6 -> income = "七万及以上"
+        when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7)) {
             7 -> income = "未填写"
+            0 -> income = "不限"
+            else -> income =
+                "${
+                    mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
+                        7)]
+                }~" + "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_EDU, 0)) {
-            0 -> edu = "不限"
-            1 -> edu = "大专以下"
-            2 -> edu = "大专"
-            3 -> edu = "本科"
-            4 -> edu = "硕士"
-            5 -> edu = "博士"
-            6 -> edu = "博士以上"
-            7 -> edu = "未填写"
+
+        val x = SPStaticUtils.getString(Constant.TA_EDU, "")
+        val list = x.split(",")
+
+        if (x == "0") {
+            edu = "不限"
+        } else {
+            edu = ""
+            if (list.contains("1")) {
+                edu += "大专以下/"
+            }
+            if (list.contains("2")) {
+                edu += "大专/"
+            }
+            if (list.contains("3")) {
+                edu += "本科/"
+            }
+            if (list.contains("4")) {
+                edu += "硕士/"
+            }
+            if (list.contains("5")) {
+                edu += "博士/"
+            }
+            if (edu != "") {
+                edu = edu.substring(0, edu.length - 1)
+            }
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4)) {
-            0 -> marryState = "不限"
-            1 -> marryState = "未婚"
-            2 -> marryState = "离异"
-            3 -> marryState = "丧偶"
-            4 -> marryState = "未填写"
+//        when (SPStaticUtils.getInt(Constant.TA_EDU, 0)) {
+//            0 -> edu = "不限"
+//            1 -> edu = "大专以下"
+//            2 -> edu = "大专"
+//            3 -> edu = "本科"
+//            4 -> edu = "硕士"
+//            5 -> edu = "博士"
+//            6 -> edu = "博士以上"
+//            7 -> edu = "未填写"
+//        }
+
+
+        val y = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
+        val listY = y.split(",")
+
+        if (y == "0") {
+            marryState = "不限"
+        } else {
+            marryState = ""
+            if (listY.contains("1")) {
+                marryState += "未婚/"
+            }
+            if (listY.contains("2")) {
+                marryState += "离异/"
+            }
+            if (listY.contains("3")) {
+                marryState += "丧偶/"
+            }
+            if (marryState != "") {
+                marryState = marryState.substring(0, marryState.length - 1)
+            }
+
         }
+
+//        when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4)) {
+//            0 -> marryState = "不限"
+//            1 -> marryState = "未婚"
+//            2 -> marryState = "离异"
+//            3 -> marryState = "丧偶"
+//            4 -> marryState = "未填写"
+//        }
 
         body = when (SPStaticUtils.getInt(Constant.TA_BODY, 10)) {
             10 -> "未填写"
@@ -770,15 +825,40 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         workPlace = when (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")) {
             "" -> "未填写"
             else -> SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
+                .substring(1, SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").length)
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5)) {
-            0 -> haveChild = "不限"
-            1 -> haveChild = "没有孩子"
-            2 -> haveChild = "有孩子且住在一起"
-            3 -> haveChild = "有孩子偶尔会住在一起"
-            4 -> haveChild = "有孩子但不在身边"
-            5 -> haveChild = "未填写"
+//        when (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5)) {
+//            0 -> haveChild = "不限"
+//            1 -> haveChild = "没有孩子"
+//            2 -> haveChild = "有孩子且住在一起"
+//            3 -> haveChild = "有孩子偶尔会住在一起"
+//            4 -> haveChild = "有孩子但不在身边"
+//            5 -> haveChild = "未填写"
+//        }
+
+        val z = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
+        val listZ = z.split(",")
+
+        if (z == "0") {
+            haveChild = "不限"
+        } else {
+            haveChild = ""
+            if (listZ.contains("1")) {
+                haveChild += "没有孩子/"
+            }
+            if (listZ.contains("2")) {
+                haveChild += "有孩子且住在一起/"
+            }
+            if (listZ.contains("3")) {
+                haveChild += "有孩子偶尔会住在一起/"
+            }
+            if (listZ.contains("4")) {
+                haveChild += "有孩子但不在身边/"
+            }
+            if (haveChild != "") {
+                haveChild = haveChild.substring(0, haveChild.length - 1)
+            }
         }
 
         when (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5)) {
@@ -849,8 +929,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     // 加载数据
     private fun initInfo() {
+
+        SPStaticUtils.put(Constant.TA_WORK_PLACE, "")
+
         baseInfoList.clear()
         moreInfoList.clear()
+        jobAddressInfoList.clear()
 
         for (i in 0.until(DataProvider.targetBaseData.size)) {
             baseInfoList.add("")
@@ -858,6 +942,19 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         for (j in 0.until(DataProvider.targetMoreData.size)) {
             moreInfoList.add("")
+        }
+
+        if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
+
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
+                .split(",") as MutableList<String>
+            x.removeAt(0)
+
+            jobAddressInfoList.clear()
+
+            for (i in 0.until(x.size)) {
+                jobAddressInfoList.add(x[i])
+            }
         }
 
     }
@@ -878,8 +975,9 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         val ageMax = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)
         val heightMin = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)
         val heightMax = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
-        val income = SPStaticUtils.getInt(Constant.TA_INCOME, 0)
-        val edu = SPStaticUtils.getInt(Constant.TA_EDU, 0)
+        val income = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
+        val incomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
+        val edu = SPStaticUtils.getString(Constant.TA_EDU, "")
         val marryState = SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 0)
         val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
         val childHave = SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 0)
@@ -994,7 +1092,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             .dismissOnBackPressed(false)
             .isDestroyOnDismiss(true)
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(EduDialog(requireContext()))
+            .asCustom(EduNewDialog(requireContext()))
             .show()
     }
 
@@ -1005,7 +1103,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             .dismissOnBackPressed(false)
             .isDestroyOnDismiss(true)
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(MarryStateDialog(requireContext()))
+            .asCustom(MarryStateNewDialog(requireContext()))
             .show()
     }
 
@@ -1038,7 +1136,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             .dismissOnBackPressed(false)
             .isDestroyOnDismiss(true)
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HaveChildDialog(requireContext()))
+            .asCustom(HaveChildNewDialog(requireContext()))
             .show()
     }
 
@@ -1357,7 +1455,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         private var isNeedJump = false // 是否需要跳转
 
-        private var mIncome = 0
+        private var mIncomeMin = 0  // 最小月收入值
+        private var mIncomeMax = 0  // 最大月收入值
 
         override fun getImplLayoutId(): Int = R.layout.dialog_user_target_income
 
@@ -1367,44 +1466,86 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             val close = findViewById<ImageView>(R.id.iv_user_target_income_close)
             val skip = findViewById<TextView>(R.id.tv_user_target_income_skip)
 
-            val wheel = findViewById<WheelPicker>(R.id.wp_user_target_income_container)
+            val wheelOne = findViewById<WheelPicker>(R.id.wp_user_target_income_container_one)
+            val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_target_income_container_two)
             val confirm = findViewById<TextView>(R.id.tv_user_target_income_confirm)
 
-            wheel.data = mIncomeList
+            wheelOne.data = mIncomeList
+            wheelTwo.data = mIncomeList
 
-            mIncome = SPStaticUtils.getInt(Constant.TA_INCOME, 0)
+            mIncomeMin = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
+            mIncomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
 
-            wheel.setSelectedItemPosition(mIncome, false)
+            wheelOne.setSelectedItemPosition(mIncomeMin, false)
+            wheelTwo.setSelectedItemPosition(mIncomeMax, false)
+
+            // 是否为循环状态
+            wheelOne.isCyclic = false
+            // 当前选中的数据项文本颜色
+            wheelOne.selectedItemTextColor = Color.parseColor("#FF4444")
+            // 数据项文本颜色
+            wheelOne.itemTextColor = Color.parseColor("#9A9A9A")
+            // 滚轮选择器数据项之间间距
+            wheelOne.itemSpace = ConvertUtils.dp2px(40F)
+            // 是否有指示器
+            wheelOne.setIndicator(true)
+            // 滚轮选择器指示器颜色，16位颜色值
+            wheelOne.indicatorColor = Color.parseColor("#FFF5F5")
+            // 滚轮选择器是否显示幕布
+            wheelOne.setCurtain(true)
+            // 滚轮选择器是否有空气感
+            wheelOne.setAtmospheric(true)
+            // 滚轮选择器是否开启卷曲效果
+            wheelOne.isCurved = true
+            // 设置滚轮选择器数据项的对齐方式
+            wheelOne.itemAlign = WheelPicker.ALIGN_CENTER
 
 
             // 是否为循环状态
-            wheel.isCyclic = false
+            wheelTwo.isCyclic = false
             // 当前选中的数据项文本颜色
-            wheel.selectedItemTextColor = Color.parseColor("#FF4444")
+            wheelTwo.selectedItemTextColor = Color.parseColor("#FF4444")
             // 数据项文本颜色
-            wheel.itemTextColor = Color.parseColor("#9A9A9A")
+            wheelTwo.itemTextColor = Color.parseColor("#9A9A9A")
             // 滚轮选择器数据项之间间距
-            wheel.itemSpace = ConvertUtils.dp2px(40F)
+            wheelTwo.itemSpace = ConvertUtils.dp2px(40F)
             // 是否有指示器
-            wheel.setIndicator(true)
+            wheelTwo.setIndicator(true)
             // 滚轮选择器指示器颜色，16位颜色值
-            wheel.indicatorColor = Color.parseColor("#FFF5F5")
+            wheelTwo.indicatorColor = Color.parseColor("#FFF5F5")
             // 滚轮选择器是否显示幕布
-            wheel.setCurtain(true)
+            wheelTwo.setCurtain(true)
             // 滚轮选择器是否有空气感
-            wheel.setAtmospheric(true)
+            wheelTwo.setAtmospheric(true)
             // 滚轮选择器是否开启卷曲效果
-            wheel.isCurved = true
+            wheelTwo.isCurved = true
             // 设置滚轮选择器数据项的对齐方式
-            wheel.itemAlign = WheelPicker.ALIGN_CENTER
+            wheelTwo.itemAlign = WheelPicker.ALIGN_CENTER
 
-            wheel.setOnItemSelectedListener { picker, data, position ->
-                mIncome = position
+            wheelOne.setOnItemSelectedListener { picker, data, position ->
+                mIncomeMin = position
+
+                if (mIncomeMin > mIncomeMax) {
+                    mIncomeMax = mIncomeMin
+                    wheelTwo.selectedItemPosition = mIncomeMax
+                }
+
+            }
+
+            wheelTwo.setOnItemSelectedListener { picker, data, position ->
+                mIncomeMax = position
+
+                if (mIncomeMax < mIncomeMin) {
+                    mIncomeMin = mIncomeMax
+                    wheelOne.selectedItemPosition = mIncomeMin
+                }
+
             }
 
             confirm.setOnClickListener {
-                ToastUtils.showShort(mIncome)
-                SPStaticUtils.put(Constant.TA_INCOME, mIncome)
+                ToastUtils.showShort(mIncomeMin)
+                SPStaticUtils.put(Constant.TA_INCOME_MIN, mIncomeMin)
+                SPStaticUtils.put(Constant.TA_INCOME_MAX, mIncomeMax)
                 isNeedJump = true
                 dismiss()
             }
@@ -1595,6 +1736,280 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     }
 
+    // 学历（多选）
+    inner class EduNewDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private lateinit var tv_unlimited: TextView
+        private lateinit var tv_one: TextView
+        private lateinit var tv_two: TextView
+        private lateinit var tv_three: TextView
+        private lateinit var tv_four: TextView
+        private lateinit var tv_five: TextView
+        private lateinit var confirm: TextView
+
+        private var chooseLimit = false
+        private var chooseOne = false
+        private var chooseTwo = false
+        private var chooseThree = false
+        private var chooseFour = false
+        private var chooseFive = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_edu
+
+        override fun onCreate() {
+            super.onCreate()
+            val close = findViewById<ImageView>(R.id.iv_user_target_edu_close)
+            val skip = findViewById<TextView>(R.id.tv_user_target_edu_skip)
+
+            tv_unlimited = findViewById<TextView>(R.id.tv_user_target_edu_unlimited)
+            tv_one = findViewById<TextView>(R.id.tv_user_target_edu_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_target_edu_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_target_edu_three)
+            tv_four = findViewById<TextView>(R.id.tv_user_target_edu_four)
+            tv_five = findViewById<TextView>(R.id.tv_user_target_edu_five)
+            confirm = findViewById<TextView>(R.id.tv_user_target_edu_confirm)
+
+            clearChoose()
+            chooseLimit = false
+            initChoose()
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            tv_unlimited.setOnClickListener {
+                if (chooseLimit) {
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+                } else {
+                    clearChoose()
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+
+                }
+                chooseLimit = !chooseLimit
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_one.setOnClickListener {
+                if (chooseOne) {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_one.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_one.setTextColor(Color.parseColor("#FF4444"))
+
+                }
+                chooseOne = !chooseOne
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_two.setOnClickListener {
+
+                if (chooseTwo) {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_two.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_two.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseTwo = !chooseTwo
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_three.setOnClickListener {
+
+                if (chooseThree) {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_three.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_three.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseThree = !chooseThree
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_four.setOnClickListener {
+                if (chooseFour) {
+                    tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_four.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_four.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseFour = !chooseFour
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_five.setOnClickListener {
+
+                if (chooseFive) {
+                    tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_five.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_five.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseFive = !chooseFive
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            confirm.setOnClickListener {
+
+                var text = ""
+
+                Log.i("guo", " limit : $chooseLimit")
+                Log.i("guo", " one : $chooseOne")
+                Log.i("guo", " two : $chooseTwo")
+                Log.i("guo", " three : $chooseThree")
+                Log.i("guo", " four : $chooseFour")
+                Log.i("guo", " five : $chooseFive")
+                if (chooseLimit) {
+                    text = "0"
+                } else {
+                    val x = arrayListOf<String>()
+                    if (chooseOne) x.add("1")
+                    if (chooseTwo) x.add("2")
+                    if (chooseThree) x.add("3")
+                    if (chooseFour) x.add("4")
+                    if (chooseFive) x.add("5")
+
+                    when (x.size) {
+                        1 -> text = "${x[0]}"
+                        2 -> text = "${x[0]},${x[1]}"
+                        3 -> text = "${x[0]},${x[1]},${x[2]}"
+                        4 -> text = "${x[0]},${x[1]},${x[2]},${x[3]}"
+                    }
+
+                }
+
+                Log.i("guo", text)
+
+                SPStaticUtils.put(Constant.TA_EDU, text)
+
+                isNeedJump = true
+                dismiss()
+
+            }
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+        }
+
+        private fun clearChoose() {
+            tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_one.setTextColor(Color.parseColor("#101010"))
+            chooseOne = false
+
+            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_two.setTextColor(Color.parseColor("#101010"))
+            chooseTwo = false
+
+            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_three.setTextColor(Color.parseColor("#101010"))
+            chooseThree = false
+
+            tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_four.setTextColor(Color.parseColor("#101010"))
+            chooseFour = false
+
+            tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_five.setTextColor(Color.parseColor("#101010"))
+            chooseFive = false
+
+        }
+
+        private fun initChoose() {
+            val x = SPStaticUtils.getString(Constant.TA_EDU, "")
+            val list = x.split(",")
+
+            if (x == "0") {
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+                chooseLimit = true
+            }
+            if (list.contains("1")) {
+                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_one.setTextColor(Color.parseColor("#FF4444"))
+                chooseOne = true
+            }
+            if (list.contains("2")) {
+                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_two.setTextColor(Color.parseColor("#FF4444"))
+                chooseTwo = true
+            }
+            if (list.contains("3")) {
+                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_three.setTextColor(Color.parseColor("#FF4444"))
+                chooseThree = true
+            }
+            if (list.contains("4")) {
+                tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_four.setTextColor(Color.parseColor("#FF4444"))
+                chooseFour = true
+            }
+            if (list.contains("5")) {
+                tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_five.setTextColor(Color.parseColor("#FF4444"))
+                chooseFive = true
+            }
+
+        }
+
+        private fun injustLimit() {
+            if (chooseOne && chooseTwo && chooseThree && chooseFour && chooseFive) {
+                clearChoose()
+                chooseLimit = true
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+            }
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(3)
+            } else {
+                updateDateUI()
+                update()
+            }
+
+        }
+
+    }
+
     // 婚况
     inner class MarryStateDialog(context: Context) : FullScreenPopupView(context) {
 
@@ -1721,7 +2136,219 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     }
 
-    //
+    // 婚况(多选)
+    inner class MarryStateNewDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private lateinit var tv_unlimited: TextView
+        private lateinit var tv_one: TextView
+        private lateinit var tv_two: TextView
+        private lateinit var tv_three: TextView
+
+        private var chooseLimit = false
+        private var chooseOne = false
+        private var chooseTwo = false
+        private var chooseThree = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_marrystate
+
+        override fun onCreate() {
+            super.onCreate()
+            val close = findViewById<ImageView>(R.id.iv_user_target_marrystate_close)
+            val skip = findViewById<TextView>(R.id.tv_user_target_marrystate_skip)
+
+            val confirm = findViewById<TextView>(R.id.tv_user_target_marrystate_confirm)
+
+            tv_unlimited = findViewById<TextView>(R.id.tv_user_target_marrystate_unlimited)
+            tv_one = findViewById<TextView>(R.id.tv_user_target_marrystate_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_target_marrystate_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_target_marrystate_three)
+
+            clearChoose()
+            initChoose()
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            tv_unlimited.setOnClickListener {
+                if (chooseLimit) {
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+                } else {
+                    clearChoose()
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+
+                }
+                chooseLimit = !chooseLimit
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_one.setOnClickListener {
+                if (chooseOne) {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_one.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_one.setTextColor(Color.parseColor("#FF4444"))
+
+                }
+                chooseOne = !chooseOne
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+
+            }
+
+            tv_two.setOnClickListener {
+
+                if (chooseTwo) {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_two.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_two.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseTwo = !chooseTwo
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+
+            }
+
+            tv_three.setOnClickListener {
+
+                if (chooseThree) {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_three.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_three.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseThree = !chooseThree
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+
+            }
+
+            confirm.setOnClickListener {
+                var text = ""
+
+                Log.i("guo", " limit : $chooseLimit")
+                Log.i("guo", " one : $chooseOne")
+                Log.i("guo", " two : $chooseTwo")
+                Log.i("guo", " three : $chooseThree")
+
+                if (chooseLimit) {
+                    text = "0"
+                } else {
+                    val x = arrayListOf<String>()
+                    if (chooseOne) x.add("1")
+                    if (chooseTwo) x.add("2")
+                    if (chooseThree) x.add("3")
+
+                    when (x.size) {
+                        1 -> text = "${x[0]}"
+                        2 -> text = "${x[0]},${x[1]}"
+                    }
+
+                }
+
+                Log.i("guo", text)
+
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, text)
+
+                isNeedJump = true
+                dismiss()
+
+            }
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+        }
+
+        private fun injustLimit() {
+            if (chooseOne && chooseTwo && chooseThree) {
+                clearChoose()
+                chooseLimit = true
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+            }
+        }
+
+        private fun initChoose() {
+
+            val x = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
+            val list = x.split(",")
+
+            if (x == "0") {
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+                chooseLimit = true
+            }
+            if (list.contains("1")) {
+                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_one.setTextColor(Color.parseColor("#FF4444"))
+                chooseOne = true
+            }
+            if (list.contains("2")) {
+                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_two.setTextColor(Color.parseColor("#FF4444"))
+                chooseTwo = true
+            }
+            if (list.contains("3")) {
+                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_three.setTextColor(Color.parseColor("#FF4444"))
+                chooseThree = true
+            }
+
+        }
+
+        private fun clearChoose() {
+            tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_one.setTextColor(Color.parseColor("#101010"))
+            chooseOne = false
+
+            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_two.setTextColor(Color.parseColor("#101010"))
+            chooseTwo = false
+
+            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_three.setTextColor(Color.parseColor("#101010"))
+            chooseThree = false
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(4)
+            } else {
+                updateDateUI()
+                update()
+            }
+
+        }
+
+    }
 
     // 体型
     inner class BodyDialog(context: Context) : FullScreenPopupView(context) {
@@ -1807,6 +2434,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         private var isNeedJump = false // 是否需要跳转
 
+        private var isConfirm = true  // 确定键此时的模式
+
         private var mCityFirstPosition = 0
         private var mCitySecondPosition = 0
 
@@ -1815,13 +2444,20 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         override fun onCreate() {
             super.onCreate()
 
-            val close = findViewById<ImageView>(R.id.iv_user_data_home_close)
-            val skip = findViewById<TextView>(R.id.tv_user_data_home_skip)
+            val close = findViewById<ImageView>(R.id.iv_user_target_jobaddress_close)
+            val skip = findViewById<TextView>(R.id.tv_user_target_jobaddress_skip)
 
+            val wheel = findViewById<LinearLayout>(R.id.ll_user_target_jobaddress_wheel)
+            val wheelOne = findViewById<WheelPicker>(R.id.wp_user_target_jobaddress_one)
+            val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_target_jobaddress_two)
+            val confirm = findViewById<TextView>(R.id.tv_user_target_jobaddress_confirm)
 
-            val wheelOne = findViewById<WheelPicker>(R.id.wp_user_data_home_one)
-            val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_data_home_two)
-            val confirm = findViewById<TextView>(R.id.tv_user_data_home_confirm)
+            val info = findViewById<RelativeLayout>(R.id.rl_user_target_jobaddress_content)
+            val content = findViewById<RecyclerView>(R.id.rv_user_target_jobaddress_content)
+            val add = findViewById<TextView>(R.id.tv_user_target_jobaddress_add)
+
+            val sum = findViewById<TextView>(R.id.tv_user_target_jobaddress_sum)
+
 
             wheelOne.data = mCityFirstList
             wheelTwo.data = mCitySecondList
@@ -1832,6 +2468,34 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             wheelOne.setSelectedItemPosition(mCityFirstPosition, false)
             getJobCitySecondList(mCityFirstPosition)
             wheelTwo.setSelectedItemPosition(mCitySecondPosition, false)
+
+            if (jobAddressInfoList.size == 0) {
+                if (SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "") != "") {
+                    jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, ""))
+                } else {
+                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") != "") {
+                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
+                    }
+                }
+            }
+
+            content.adapter = jobAddressAdapter
+            val layoutManager = GridLayoutManager(context, 3)
+            content.layoutManager = layoutManager
+
+
+            if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
+
+                val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
+                    .split(",") as MutableList<String>
+                x.removeAt(0)
+
+                jobAddressInfoList.clear()
+
+                for (i in 0.until(x.size)) {
+                    jobAddressInfoList.add(x[i])
+                }
+            }
 
             // 是否为循环状态
             wheelOne.isCyclic = false
@@ -1875,8 +2539,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             // 设置滚轮选择器数据项的对齐方式
             wheelTwo.itemAlign = WheelPicker.ALIGN_CENTER
 
-
-
             wheelOne.setOnItemSelectedListener { picker, data, position ->
                 mCityFirstPosition = position
 
@@ -1898,31 +2560,95 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
             }
 
+            jobAddressAdapter.notifyDataSetChanged()
+            sum.text = jobAddressInfoList.size.toString()
 
+//            jobAddressAdapter.setOnItemClickListener(object :
+//                JobAddressAdapter.OnItemClickListener {
+//                override fun onItemClick(v: View?, position: Int) {
+//                    ToastUtils.showShort("第${position}个数据需要进行修改")
+//                }
+//            })
+
+            jobAddressAdapter.setOnItemCloseClickListener(object :
+                JobAddressAdapter.OnItemCloseClickListener {
+                override fun onItemCloseClick(v: View?, position: Int) {
+                    ToastUtils.showShort("第${position}个数据需要删除")
+                    jobAddressInfoList.removeAt(position)
+
+                    jobAddressAdapter.notifyDataSetChanged()
+                    sum.text = jobAddressInfoList.size.toString()
+                }
+            })
+
+
+            add.setOnClickListener {
+
+                if (jobAddressInfoList.size < 5) {
+                    wheel.visibility = View.VISIBLE
+                    info.visibility = View.GONE
+
+                    isConfirm = false
+                } else {
+                    ToastUtils.showShort("最多只可选择5个期望工作地")
+                }
+            }
 
             confirm.setOnClickListener {
 
-                val workPlace =
-                    "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
+                // 两种情况，
+                // 一种是“确定” ： 将数组中的数据存储至sp中，显示下一个弹窗
+                // 一种是“添加” ： 将滚轮中的数据储存至数组中
 
-                ToastUtils.showShort(workPlace)
+                if (isConfirm) {
+                    // “确定” ： 将数组中的数据存储至sp中，显示下一个弹窗
 
-                SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
+                    var workPlace = ""
 
-                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_NAME,
-                    mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_CODE,
-                    mCityIdFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_PICK, mCityFirstPosition)
-                SPStaticUtils.put(Constant.TA_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.TA_WORK_CITY_CODE,
-                    mCityIdSecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.TA_WORK_CITY_PICK, mCitySecondPosition)
+                    for (i in 0.until(jobAddressInfoList.size)) {
+                        workPlace += ",${jobAddressInfoList[i]}"
+                    }
 
-                isNeedJump = true
-                dismiss()
+                    Log.i("guo", "liset : $workPlace")
+
+                    SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
+
+                    isNeedJump = true
+                    dismiss()
+
+                } else {
+                    // “添加” ： 将滚轮中的数据储存至数组中
+
+                    jobAddressInfoList.add(mCitySecondList[mCitySecondPosition])
+
+                    Log.i("guo", mCitySecondList[mCitySecondPosition])
+
+                    jobAddressAdapter.notifyDataSetChanged()
+                    sum.text = jobAddressInfoList.size.toString()
+
+                    wheel.visibility = View.GONE
+                    info.visibility = View.VISIBLE
+
+                    isConfirm = true
+
+                }
+
+//                val workPlace = "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
+//
+//                ToastUtils.showShort(workPlace)
+//
+//                SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
+//
+//                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
+//                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
+//                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_PICK, mCityFirstPosition)
+//                SPStaticUtils.put(Constant.TA_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
+//                SPStaticUtils.put(Constant.TA_WORK_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
+//                SPStaticUtils.put(Constant.TA_WORK_CITY_PICK, mCitySecondPosition)
+
+//                isNeedJump = true
+//                dismiss()
             }
-
 
             close.setOnClickListener {
                 isNeedJump = false
@@ -2075,6 +2801,244 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
             tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
             tv_four.setTextColor(Color.parseColor("#101010"))
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(7)
+            } else {
+                updateDateUI()
+                update()
+            }
+        }
+
+    }
+
+    // 有不有孩子(多选)
+    inner class HaveChildNewDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private lateinit var tv_unlimited: TextView
+        private lateinit var tv_one: TextView
+        private lateinit var tv_two: TextView
+        private lateinit var tv_three: TextView
+        private lateinit var tv_four: TextView
+
+
+        private var chooseLimit = false
+        private var chooseOne = false
+        private var chooseTwo = false
+        private var chooseThree = false
+        private var chooseFour = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_havechild
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val close = findViewById<ImageView>(R.id.iv_user_target_havechild_close)
+            val skip = findViewById<TextView>(R.id.tv_user_target_havechild_skip)
+
+            val confirm = findViewById<TextView>(R.id.tv_user_target_havechild_confirm)
+
+            tv_unlimited = findViewById<TextView>(R.id.tv_user_target_havechild_unlimited)
+            tv_one = findViewById<TextView>(R.id.tv_user_target_havechild_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_target_havechild_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_target_havechild_three)
+            tv_four = findViewById<TextView>(R.id.tv_user_target_havechild_four)
+
+            clearChoose()
+            initChoose()
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            tv_unlimited.setOnClickListener {
+                if (chooseLimit) {
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+                } else {
+                    clearChoose()
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseLimit = !chooseLimit
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_one.setOnClickListener {
+                if (chooseOne) {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_one.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_one.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseOne = !chooseOne
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_two.setOnClickListener {
+                if (chooseTwo) {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_two.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_two.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseTwo = !chooseTwo
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            tv_three.setOnClickListener {
+                if (chooseThree) {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_three.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_three.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseThree = !chooseThree
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+
+            }
+
+            tv_four.setOnClickListener {
+                if (chooseFour) {
+                    tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                    tv_four.setTextColor(Color.parseColor("#101010"))
+                } else {
+                    tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_four.setTextColor(Color.parseColor("#FF4444"))
+                }
+                chooseFour = !chooseFour
+                chooseLimit = false
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+                tv_unlimited.setTextColor(Color.parseColor("#101010"))
+                injustLimit()
+                isNeedJump = true
+            }
+
+            confirm.setOnClickListener {
+                var text = ""
+
+                Log.i("guo", " limit : $chooseLimit")
+                Log.i("guo", " one : $chooseOne")
+                Log.i("guo", " two : $chooseTwo")
+                Log.i("guo", " three : $chooseThree")
+                Log.i("guo", " four : $chooseFour")
+
+                if (chooseLimit) {
+                    text = "0"
+                } else {
+                    val x = arrayListOf<String>()
+                    if (chooseOne) x.add("1")
+                    if (chooseTwo) x.add("2")
+                    if (chooseThree) x.add("3")
+                    if (chooseFour) x.add("3")
+
+                    when (x.size) {
+                        1 -> text = "${x[0]}"
+                        2 -> text = "${x[0]},${x[1]}"
+                        3 -> text = "${x[0]},${x[1]},${x[2]}"
+                    }
+                }
+
+                SPStaticUtils.put(Constant.TA_HAVE_CHILD, text)
+
+                isNeedJump = true
+                dismiss()
+
+            }
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+        }
+
+        private fun injustLimit() {
+            if (chooseOne && chooseTwo && chooseThree && chooseFour) {
+                clearChoose()
+                chooseLimit = true
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+            }
+        }
+
+        private fun initChoose() {
+
+            val x = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
+            val list = x.split(",")
+
+            if (x == "0") {
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+                chooseLimit = true
+            }
+            if (list.contains("1")) {
+                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_one.setTextColor(Color.parseColor("#FF4444"))
+                chooseOne = true
+            }
+            if (list.contains("2")) {
+                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_two.setTextColor(Color.parseColor("#FF4444"))
+                chooseTwo = true
+            }
+            if (list.contains("3")) {
+                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_three.setTextColor(Color.parseColor("#FF4444"))
+                chooseThree = true
+            }
+            if (list.contains("4")) {
+                tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_four.setTextColor(Color.parseColor("#FF4444"))
+                chooseFour = true
+            }
+
+        }
+
+        private fun clearChoose() {
+
+            tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_one.setTextColor(Color.parseColor("#101010"))
+            chooseOne = false
+
+            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_two.setTextColor(Color.parseColor("#101010"))
+            chooseTwo = false
+
+            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_three.setTextColor(Color.parseColor("#101010"))
+            chooseThree = false
+
+            tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_four.setTextColor(Color.parseColor("#101010"))
+            chooseFour = false
 
         }
 

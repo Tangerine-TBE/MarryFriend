@@ -15,11 +15,7 @@ import android.widget.TextView
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
-import com.baidubce.services.bos.model.ObjectMetadata
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
@@ -42,9 +38,7 @@ import com.twx.marryfriend.bean.FaceDetectBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
-import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
 import com.twx.marryfriend.net.callback.IDoLifeFaceDetectCallback
-import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doLifeFaceDetectPresentImpl
 import com.twx.marryfriend.utils.GlideEngine
 import kotlinx.android.synthetic.main.activity_life_photo.*
@@ -52,6 +46,9 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.MalformedURLException
+import java.net.URL
 import java.util.*
 
 
@@ -91,6 +88,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     // 介绍
     private var lifeFirstPicText = ""
     private var lifeFirstBitmap: Bitmap? = null
+    private var getFirstBitmap = false
 
     // 第二张我的生活照
     private var mLifeSecondPath = ""
@@ -107,6 +105,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     // 介绍
     private var lifeSecondPicText = ""
     private var lifeSecondBitmap: Bitmap? = null
+    private var getSecondBitmap = false
 
     // 第三张我的生活照
     private var mLifeThirdPath = ""
@@ -123,6 +122,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     // 介绍
     private var lifeThirdPicText = ""
     private var lifeThirdBitmap: Bitmap? = null
+    private var getThirdBitmap = false
 
     // 图片是否上传成功
     private var isOneUpload = false
@@ -131,6 +131,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
     // 是否已经回调过
     private var isNeedCallback = false
+
+    // 哪个activity跳转而来
+    private var activityName = ""
 
     private lateinit var doFaceDetectPresent: doLifeFaceDetectPresentImpl
 
@@ -144,18 +147,20 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
         doFaceDetectPresent = doLifeFaceDetectPresentImpl.getsInstance()
         doFaceDetectPresent.registerCallback(this)
 
+        activityName = intent.getStringExtra("activity").toString()
+
         mTempLifePath =
             Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
 
-        mLifeFirstPath = externalCacheDir.toString() + File.separator + "lifeFirstPic.png"
-        mLifeSecondPath = externalCacheDir.toString() + File.separator + "lifeSecondPic.png"
-        mLifeThirdPath = externalCacheDir.toString() + File.separator + "lifeThirdPic.png"
+        mLifeFirstPath = externalCacheDir.toString() + File.separator + "live1.png"
+        mLifeSecondPath = externalCacheDir.toString() + File.separator + "live2.png"
+        mLifeThirdPath = externalCacheDir.toString() + File.separator + "live3.png"
 
         lifeFirstPic = Uri.fromFile(File(this.cacheDir, "lifeFirstPic.jpeg"))
         lifeSecondPic = Uri.fromFile(File(this.cacheDir, "lifeSecondPic.jpeg"))
         lifeThirdPic = Uri.fromFile(File(this.cacheDir, "lifeThirdPic.jpeg"))
 
-//        updateExistDate()
+        updateExistDate()
 
     }
 
@@ -169,7 +174,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
         val config: BosClientConfiguration = BosClientConfiguration()
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
-        config.endpoint = "http://androidmarryfriend.gz.bcebos.com"
+        config.endpoint = "http://adrmf.gz.bcebos.com"
 
         client = BosClient(config)
 
@@ -226,7 +231,6 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
             intent.putExtra("path", mLifeFirstPath)
             intent.putExtra("introduce", lifeFirstPicText)
             startActivityForResult(intent, 111)
-
         }
 
         iv_life_photo_pic_two_delete.setOnClickListener {
@@ -394,7 +398,14 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                 }
 
             } else {
-                ToastUtils.showShort("您还未选择生活照信息")
+
+                if (activityName == "data") {
+                    val intent = intent
+                    setResult(RESULT_OK, intent)
+                    finish()
+                } else {
+                    ToastUtils.showShort("您还未选择生活照信息")
+                }
             }
 
         }
@@ -420,7 +431,22 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
             rl_life_photo_pic_one.visibility = View.VISIBLE
             rl_life_photo_pic_more.visibility = View.VISIBLE
 
-            Glide.with(this).load(lifePhotoOne).into(iv_life_photo_pic_one)
+            Thread {
+                lifeFirstBitmap = decodeUriAsBitmapFromNet(lifePhotoOne)
+
+                lifeFirstBitmap?.let { saveBitmap(it, mLifeFirstPath) }
+
+
+
+                ThreadUtils.runOnUiThread {
+                    getFirstBitmap = true
+                    hideLoading()
+                    Glide.with(this).load(lifeFirstBitmap).into(iv_life_photo_pic_one)
+                }
+
+            }.start()
+
+
 
             isFinishLife = true
             haveFirstPic = true
@@ -431,13 +457,26 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                 iv_life_photo_pic_one_icon.visibility = View.GONE
             }
 
+        } else {
+            getFirstBitmap = true
         }
 
-        if (lifePhotoTwo != null) {
+        if (lifePhotoTwo != "") {
 
             rl_life_photo_pic_two.visibility = View.VISIBLE
 
-            Glide.with(this).load(lifePhotoTwo).into(iv_life_photo_pic_two)
+            Thread {
+                lifeSecondBitmap = decodeUriAsBitmapFromNet(lifePhotoTwo)
+
+                lifeSecondBitmap?.let { saveBitmap(it, mLifeSecondPath) }
+
+                ThreadUtils.runOnUiThread {
+                    getSecondBitmap = true
+                    hideLoading()
+                    Glide.with(this).load(lifeSecondBitmap).into(iv_life_photo_pic_two)
+                }
+
+            }.start()
 
             isFinishLife = true
             haveSecondPic = true
@@ -448,14 +487,27 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                 iv_life_photo_pic_two_icon.visibility = View.GONE
             }
 
+        } else {
+            getSecondBitmap = true
         }
 
-        if (lifePhotoThree != null) {
+        if (lifePhotoThree != "") {
 
             rl_life_photo_pic_three.visibility = View.VISIBLE
             rl_life_photo_pic_more.visibility = View.GONE
 
-            Glide.with(this).load(lifePhotoThree).into(iv_life_photo_pic_three)
+            Thread {
+                lifeThirdBitmap = decodeUriAsBitmapFromNet(lifePhotoThree)
+
+                lifeThirdBitmap?.let { saveBitmap(it, mLifeThirdPath) }
+
+                ThreadUtils.runOnUiThread {
+                    getThirdBitmap = true
+                    hideLoading()
+                    Glide.with(this).load(lifeThirdBitmap).into(iv_life_photo_pic_three)
+                }
+
+            }.start()
 
             isFinishLife = true
             haveThirdPic = true
@@ -465,8 +517,18 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                 tv_life_photo_pic_three.text = lifeThirdPicText
                 iv_life_photo_pic_three_icon.visibility = View.GONE
             }
+        } else {
+            getThirdBitmap = true
+            hideLoading()
         }
 
+    }
+
+    // 判断数据操作是否读取完成,隐藏加载弹窗
+    private fun hideLoading() {
+        if (getFirstBitmap && getSecondBitmap && getThirdBitmap) {
+            ll_life_photo_loading.visibility = View.GONE
+        }
     }
 
     // 将图片转换成Base64编码的字符串
@@ -504,6 +566,26 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
         return targetPath
     }
 
+    private fun decodeUriAsBitmapFromNet(url: String): Bitmap? {
+        var fileUrl: URL? = null
+        var bitmap: Bitmap? = null
+        try {
+            fileUrl = URL(url)
+        } catch (e: MalformedURLException) {
+            e.printStackTrace()
+        }
+        try {
+            val conn: HttpURLConnection = fileUrl?.openConnection() as HttpURLConnection
+            conn.doInput = true
+            conn.connect()
+            val `is`: InputStream = conn.inputStream
+            bitmap = BitmapFactory.decodeStream(`is`)
+            `is`.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return bitmap
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -521,8 +603,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                         lifeChoosePath = mTempLifePath
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] =
-                            "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
+                        map[Contents.ACCESS_TOKEN] = "24.13603dd5bb5800c98718b088f24c804d.2592000.1658887826.282335-26330258"
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
@@ -546,6 +627,10 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
                         isFinishLife = true
 
+                        if (lifeBitmap == null) {
+                            lifeBitmap = lifeFirstBitmap
+                        }
+
                         Glide.with(this).load(lifeBitmap).into(iv_life_photo_pic_one)
 
                         haveFirstPic = true
@@ -556,12 +641,12 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
                         lifeFirstBitmap?.let { saveBitmap(it, mLifeFirstPath) }
 
-
                         lifeFirstPicText = data.getStringExtra("introduce").toString()
                         if (lifeFirstPicText != "") {
                             tv_life_photo_pic_one.text = lifeFirstPicText
                             iv_life_photo_pic_one_icon.visibility = View.GONE
                         }
+                        lifeBitmap = null
 
                     }
                 }
@@ -571,6 +656,10 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                         rl_life_photo_pic_two.visibility = View.VISIBLE
 
                         isFinishLife = true
+
+                        if (lifeBitmap == null) {
+                            lifeBitmap = lifeSecondBitmap
+                        }
 
                         Glide.with(this).load(lifeBitmap).into(iv_life_photo_pic_two)
 
@@ -587,6 +676,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                             tv_life_photo_pic_two.text = lifeSecondPicText
                             iv_life_photo_pic_two_icon.visibility = View.GONE
                         }
+                        lifeBitmap = null
                     }
                 }
                 333 -> {
@@ -596,6 +686,10 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                         rl_life_photo_pic_more.visibility = View.GONE
 
                         isFinishLife = true
+
+                        if (lifeBitmap == null) {
+                            lifeBitmap = lifeThirdBitmap
+                        }
 
                         Glide.with(this).load(lifeBitmap).into(iv_life_photo_pic_three)
 
@@ -612,6 +706,8 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                             tv_life_photo_pic_three.text = lifeThirdPicText
                             iv_life_photo_pic_three_icon.visibility = View.GONE
                         }
+
+                        lifeBitmap = null
                     }
                 }
             }
@@ -702,11 +798,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                             lifeBitmap = ImageUtils.getBitmap(result[0].realPath)
 
                             val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                "24.2e3a38df829e258b2df637acc6bf8c1a.2592000.1656229928.282335-26330258"
+                            map[Contents.ACCESS_TOKEN] = "24.13603dd5bb5800c98718b088f24c804d.2592000.1658887826.282335-26330258"
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.IMAGE] =
-                                bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))
+                            map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))
 
                             isNeedCallback = true
                             doFaceDetectPresent.doLifeFaceDetect(map)
@@ -910,7 +1004,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     override fun onDoLifeFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
         ll_life_photo_loading.visibility = View.GONE
 
-        if (isNeedCallback){
+        if (isNeedCallback) {
             isNeedCallback = false
             if (faceDetectBean.conclusion != "合规") {
                 ToastUtils.showShort(faceDetectBean.data[0].msg)
