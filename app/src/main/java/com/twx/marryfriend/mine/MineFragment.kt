@@ -308,25 +308,27 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             }
         }
 
-        iv_mine_nick.setOnClickListener {
+//        iv_mine_nick.setOnClickListener {
+//            XPopup.Builder(context)
+//                .dismissOnTouchOutside(false)
+//                .dismissOnBackPressed(false)
+//                .isDestroyOnDismiss(true)
+//                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+//                .asCustom(NameDialog(requireContext()))
+//                .show()
+//    }
 
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(NameDialog(requireContext()))
-                .show()
-
-        }
-
-        iv_mine_avatar.setOnClickListener {
+        ll_mine_date.setOnClickListener {
             startActivity(Intent(context, UserActivity::class.java))
         }
 
-        rl_mine_user.setOnClickListener {
-            startActivity(Intent(context, UserActivity::class.java))
-        }
+//        iv_mine_avatar.setOnClickListener {
+//            startActivity(Intent(context, UserActivity::class.java))
+//        }
+//
+//        rl_mine_user.setOnClickListener {
+//            startActivity(Intent(context, UserActivity::class.java))
+//        }
 
         ll_mine_set_verify.setOnClickListener {
 
@@ -664,7 +666,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
     }
 
-    //             -----------------  弹窗  -----------------
+//             -----------------  弹窗  -----------------
 
     // 上传头像
     inner class PhotoGuideDialog(context: Context) : FullScreenPopupView(context) {

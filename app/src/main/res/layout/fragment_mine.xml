@@ -94,7 +94,8 @@
                     android:layout_width="17dp"
                     android:layout_height="17dp"
                     android:layout_marginStart="4dp"
-                    android:src="@drawable/ic_set_rename" />
+                    android:src="@drawable/ic_set_rename"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
