@@ -112,15 +112,26 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".main.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".main.MainActivity"
-            android:exported="true"></activity> <!-- 联通电信授权页 -->
+        </activity> <!-- 联通电信授权页 -->
+        <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/>
+        <activity android:name="com.twx.marryfriend.search.AccurateSearchActivity"/>
+        <activity android:name="com.twx.marryfriend.search.SearchResultActivity"/>
+        <activity android:name="com.twx.marryfriend.ilove.ILikeActivity"/>
+<!--        <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/>-->
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

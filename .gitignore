@@ -14,3 +14,7 @@
 .cxx
 local.properties
 /.idea/
+/build
+/app/build
+/faceplatform-release/build
+/faceplatform-ui/build

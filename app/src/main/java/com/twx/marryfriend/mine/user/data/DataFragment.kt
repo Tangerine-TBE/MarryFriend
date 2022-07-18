@@ -737,7 +737,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                         // 体重
                                                         showWeightDialog()
                                                     } else {
-                                                        if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10
+                                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                                10) == 10
                                                         ) {
                                                             // 体型
                                                             showBodyDialog()
@@ -1329,6 +1330,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         var birth = ""
         var height = ""
         var income = ""
+        var workPlace = ""
+        var edu = ""
+        var marryState = ""
+        var target = ""
 
         var haveChild = ""
         var wantChild = ""
@@ -1379,6 +1384,43 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             6 -> income = "七万及以上"
             7 -> income = "未填写"
         }
+
+        //     workPlace 工作区域
+        //     edu   学历
+        //     marryState  婚姻
+        //     target   恋爱目标
+
+
+        workPlace = when (SPStaticUtils.getString(Constant.ME_WORK, "")) {
+            "" -> "未填写"
+            else -> SPStaticUtils.getString(Constant.ME_WORK, "")
+        }
+
+        when (SPStaticUtils.getInt(Constant.ME_EDU, 0)) {
+            0 -> edu = "不限"
+            1 -> edu = "大专以下"
+            2 -> edu = "大专"
+            3 -> edu = "本科"
+            4 -> edu = "硕士"
+            5 -> edu = "博士"
+        }
+
+        when (SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)) {
+            0 -> target = "未填写"
+            1 -> target = "不限"
+            2 -> target = "未婚"
+            3 -> target = "离异"
+            4 -> target = "丧偶"
+        }
+
+        when (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 4)) {
+            0 -> target = "没有孩子"
+            1 -> target = "有孩子且住在一起"
+            2 -> target = "有孩子偶尔会住一起"
+            3 -> target = "有但不在身边"
+            4 -> target = "未填写"
+        }
+
 
         when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 4)) {
             0 -> haveChild = "没有孩子"
@@ -1434,6 +1476,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         baseInfoList.add(birth)
         baseInfoList.add(height)
         baseInfoList.add(income)
+        baseInfoList.add(workPlace)
+        baseInfoList.add(edu)
+        baseInfoList.add(marryState)
+        baseInfoList.add(target)
 
         moreInfoList.add(haveChild)
         moreInfoList.add(wantChild)
@@ -1478,7 +1524,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
         }
 
-        for (i in 0.until(baseInfoList.size)) {
+        for (i in 0.until(moreInfoList.size)) {
             if (moreInfoList[i] == "未填写") {
                 moreSize++
             }
@@ -3493,6 +3539,423 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
             }
+        }
+
+    }
+
+    // 工作地区
+    inner class WorkDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private var mCityFirstPosition = 0
+        private var mCitySecondPosition = 0
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_address
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<TextView>(R.id.info).text = "工作地区"
+
+            val close = findViewById<ImageView>(R.id.iv_user_target_address_close)
+            val skip = findViewById<TextView>(R.id.tv_user_target_address_skip)
+
+            val wheelOne = findViewById<WheelPicker>(R.id.wp_user_target_address_one)
+            val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_target_address_two)
+
+            val confirm = findViewById<TextView>(R.id.tv_user_target_address_confirm)
+
+            wheelOne.data = mCityFirstList
+            wheelTwo.data = mCitySecondList
+
+            mCityFirstPosition = SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_PICK, 0)
+            mCitySecondPosition = SPStaticUtils.getInt(Constant.ME_WORK_CITY_PICK, 0)
+
+            wheelOne.setSelectedItemPosition(mCityFirstPosition, false)
+            getJobCitySecondList(mCityFirstPosition)
+            wheelTwo.setSelectedItemPosition(mCitySecondPosition, false)
+
+            // 是否为循环状态
+            wheelOne.isCyclic = false
+            // 当前选中的数据项文本颜色
+            wheelOne.selectedItemTextColor = Color.parseColor("#FF4444")
+            // 数据项文本颜色
+            wheelOne.itemTextColor = Color.parseColor("#9A9A9A")
+            // 滚轮选择器数据项之间间距
+            wheelOne.itemSpace = ConvertUtils.dp2px(40F)
+            // 是否有指示器
+            wheelOne.setIndicator(true)
+            // 滚轮选择器指示器颜色，16位颜色值
+            wheelOne.indicatorColor = Color.parseColor("#FFF5F5")
+            // 滚轮选择器是否显示幕布
+            wheelOne.setCurtain(true)
+            // 滚轮选择器是否有空气感
+            wheelOne.setAtmospheric(true)
+            // 滚轮选择器是否开启卷曲效果
+            wheelOne.isCurved = true
+            // 设置滚轮选择器数据项的对齐方式
+            wheelOne.itemAlign = WheelPicker.ALIGN_CENTER
+
+            // 是否为循环状态
+            wheelTwo.isCyclic = false
+            // 当前选中的数据项文本颜色
+            wheelTwo.selectedItemTextColor = Color.parseColor("#FF4444")
+            // 数据项文本颜色
+            wheelTwo.itemTextColor = Color.parseColor("#9A9A9A")
+            // 滚轮选择器数据项之间间距
+            wheelTwo.itemSpace = ConvertUtils.dp2px(40F)
+            // 是否有指示器
+            wheelTwo.setIndicator(true)
+            // 滚轮选择器指示器颜色，16位颜色值
+            wheelTwo.indicatorColor = Color.parseColor("#FFF5F5")
+            // 滚轮选择器是否显示幕布
+            wheelTwo.setCurtain(true)
+            // 滚轮选择器是否有空气感
+            wheelTwo.setAtmospheric(true)
+            // 滚轮选择器是否开启卷曲效果
+            wheelTwo.isCurved = true
+            // 设置滚轮选择器数据项的对齐方式
+            wheelTwo.itemAlign = WheelPicker.ALIGN_CENTER
+
+
+            wheelOne.setOnItemSelectedListener { picker, data, position ->
+                mCityFirstPosition = position
+
+                getJobCitySecondList(mCityFirstPosition)
+
+                // 当二级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位 ， 不至于出现没有数据的情况
+                if (mCitySecondPosition >= mCitySecondList.size) {
+                    mCitySecondPosition = mCitySecondList.size - 1
+                }
+
+                wheelTwo.data = mCitySecondList
+
+            }
+
+            wheelTwo.setOnItemSelectedListener { picker, data, position ->
+                mCitySecondPosition = position
+
+            }
+
+            confirm.setOnClickListener {
+
+                val work =
+                    " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
+
+                ToastUtils.showShort(work)
+
+                SPStaticUtils.put(Constant.ME_WORK, work)
+
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_PICK, mCityFirstPosition)
+                SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_WORK_CITY_PICK, mCitySecondPosition)
+
+                isNeedJump = true
+                dismiss()
+            }
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(10)
+            } else {
+                updateDateUI()
+                ToastUtils.showShort("刷新界面")
+            }
+        }
+
+    }
+
+    // 学历
+    inner class EduDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private lateinit var tv_one: TextView
+        private lateinit var tv_two: TextView
+        private lateinit var tv_three: TextView
+        private lateinit var tv_four: TextView
+        private lateinit var tv_five: TextView
+
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_data_edu
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<TextView>(R.id.info).text = "学历"
+
+            val close = findViewById<ImageView>(R.id.iv_user_data_edu_close)
+            val skip = findViewById<TextView>(R.id.tv_user_data_edu_skip)
+
+            tv_one = findViewById<TextView>(R.id.tv_user_data_edu_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_data_edu_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_data_edu_three)
+            tv_four = findViewById<TextView>(R.id.tv_user_data_edu_four)
+            tv_five = findViewById<TextView>(R.id.tv_user_data_edu_five)
+
+            clearChoose()
+            initChoose()
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            tv_one.setOnClickListener {
+                clearChoose()
+                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_one.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_EDU, 1)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_two.setOnClickListener {
+                clearChoose()
+                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_two.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_EDU, 2)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_three.setOnClickListener {
+                clearChoose()
+                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_three.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_EDU, 3)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_four.setOnClickListener {
+                clearChoose()
+                tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_four.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_EDU, 4)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_five.setOnClickListener {
+                clearChoose()
+                tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_five.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_EDU, 5)
+                isNeedJump = true
+                dismiss()
+            }
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+        }
+
+        private fun initChoose() {
+            when (SPStaticUtils.getInt(Constant.ME_EDU, 0)) {
+                0 -> {
+
+                }
+                1 -> {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_one.setTextColor(Color.parseColor("#FF4444"))
+                }
+                2 -> {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_two.setTextColor(Color.parseColor("#FF4444"))
+                }
+                3 -> {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_three.setTextColor(Color.parseColor("#FF4444"))
+                }
+                4 -> {
+                    tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_four.setTextColor(Color.parseColor("#FF4444"))
+                }
+                5 -> {
+                    tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_five.setTextColor(Color.parseColor("#FF4444"))
+                }
+
+            }
+
+        }
+
+        private fun clearChoose() {
+
+            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_one.setTextColor(Color.parseColor("#101010"))
+
+            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_two.setTextColor(Color.parseColor("#101010"))
+
+            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_three.setTextColor(Color.parseColor("#101010"))
+
+            tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_four.setTextColor(Color.parseColor("#101010"))
+
+            tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_five.setTextColor(Color.parseColor("#101010"))
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(3)
+            } else {
+                updateDateUI()
+                update()
+            }
+
+        }
+
+    }
+
+    // 婚况
+    inner class MarryStateDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private lateinit var tv_unlimited: TextView
+        private lateinit var tv_one: TextView
+        private lateinit var tv_two: TextView
+        private lateinit var tv_three: TextView
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_marrystate
+
+        override fun onCreate() {
+            super.onCreate()
+            val close = findViewById<ImageView>(R.id.iv_user_target_marrystate_close)
+            val skip = findViewById<TextView>(R.id.tv_user_target_marrystate_skip)
+
+            tv_unlimited = findViewById<TextView>(R.id.tv_user_target_marrystate_unlimited)
+            tv_one = findViewById<TextView>(R.id.tv_user_target_marrystate_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_target_marrystate_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_target_marrystate_three)
+
+            clearChoose()
+            initChoose()
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            tv_unlimited.setOnClickListener {
+                clearChoose()
+                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, 0)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_one.setOnClickListener {
+                clearChoose()
+                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_one.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, 1)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_two.setOnClickListener {
+                clearChoose()
+                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_two.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, 2)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_three.setOnClickListener {
+                clearChoose()
+                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_three.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, 3)
+                isNeedJump = true
+                dismiss()
+            }
+
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+        }
+
+        private fun initChoose() {
+            when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4)) {
+                4 -> {
+                }
+                0 -> {
+                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
+                }
+                1 -> {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_one.setTextColor(Color.parseColor("#FF4444"))
+                }
+                2 -> {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_two.setTextColor(Color.parseColor("#FF4444"))
+                }
+                3 -> {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_three.setTextColor(Color.parseColor("#FF4444"))
+                }
+            }
+
+        }
+
+        private fun clearChoose() {
+            tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_unlimited.setTextColor(Color.parseColor("#101010"))
+
+            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_one.setTextColor(Color.parseColor("#101010"))
+
+            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_two.setTextColor(Color.parseColor("#101010"))
+
+            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_three.setTextColor(Color.parseColor("#101010"))
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(4)
+            } else {
+                updateDateUI()
+                update()
+            }
+
         }
 
     }

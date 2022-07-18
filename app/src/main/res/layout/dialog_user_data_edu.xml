@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="你期望Ta的学历?  (可多选)"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_user_data_edu_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_close_small" />
+
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_user_data_edu_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/shape_bg_dialog_choose_check"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="大专以下"
+                android:textColor="#FF4444"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_data_edu_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="大专"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_data_edu_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="本科"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_data_edu_four"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="硕士"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/tv_user_data_edu_five"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/shape_bg_dialog_choose_uncheck"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="博士"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/tv_user_data_edu_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_common_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="确定"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_user_data_edu_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="18dp"
+        android:text="跳过"
+        android:textColor="#9A9A9A"
+        android:textSize="17sp" />
+
+</LinearLayout>

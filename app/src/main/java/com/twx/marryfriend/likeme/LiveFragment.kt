@@ -55,6 +55,7 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
                 }
             }catch (e:Exception){
                 toast(e.message)
+                loadService.showCallback(LiveEmptyData::class.java)
             }
             loadingDialog.dismiss()
         }

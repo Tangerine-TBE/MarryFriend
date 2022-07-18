@@ -139,9 +139,14 @@ object Constant {
     const val ME_OCCUPATION_NAME = "ME_occupation_name"  // 岗位名字
     const val ME_OCCUPATION_PICK = "ME_occupation_pick"  // 岗位滚轮选择选项
 
+    const val ME_WORK = "ME_work"  // 工作区域
+
     const val ME_WORK_PROVINCE_CODE = "ME_work_province_code"  // 工作省份编码
+    const val ME_WORK_PROVINCE_NAME = "ME_work_province_name"  // 工作省份名字
+    const val ME_WORK_PROVINCE_PICK = "ME_work_province_pick"  // 工作省份滚轮选择选项
     const val ME_WORK_CITY_CODE = "ME_work_city_code"  // 工作城市编码
     const val ME_WORK_CITY_NAME = "ME_work_city_name"  // 工作城市名字
+    const val ME_WORK_CITY_PICK = "ME_work_city_pick"      // 籍贯城市滚轮选择选项
 
     const val ME_HOME = "ME_home"  // 故乡
 
