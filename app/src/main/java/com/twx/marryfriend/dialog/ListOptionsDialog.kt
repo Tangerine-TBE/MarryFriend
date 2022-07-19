@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.iterator
 import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
@@ -28,6 +29,7 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
     private val resultList by lazy {
         ArrayList<I>()
     }
+    private var preResult :List<I>?=null
     private var currentItem:I?=listData.firstOrNull()
     var maxContent=Int.MAX_VALUE
 
@@ -50,13 +52,29 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
         }
         submitBtn.setOnClickListener {
             result?.invoke(resultList)
-            dismiss()
-        }
-        skipBtn.setOnClickListener {
+            preResult=resultList.toList()
             dismiss()
         }
         closeBtn.setOnClickListener {
             dismiss()
+        }
+        setOnDismissListener {
+            preResult?.also {
+                resultList.clear()
+                resultList.addAll(it)
+            }
+            resultList.forEach {item->
+                if (chipGroup.findViewWithTag<View>(item)==null){
+                    addLabelViewItem(item)
+                }
+            }
+            chipGroup.children.toList().forEachIndexed { _, view ->
+                if (view.tag!=null){
+                    if (!resultList.contains(view.tag)){
+                        chipGroup.removeView(view)
+                    }
+                }
+            }
         }
         clickAdd.setOnClickListener { view ->
             val item=currentItem?:return@setOnClickListener
@@ -78,19 +96,28 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
                 resultList.removeAll(needRemoveView.toSet())
             }
             resultList.add(item)
-            val itemView= LayoutInflater.from(view.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip,chipGroup,false)
-            itemView.findViewById<TextView>(R.id.chipText).text="${getFirstText(item)}"
-            itemView.tag = item
-            if (chipGroup.childCount>0){
-                chipGroup.addView(itemView,chipGroup.childCount-1)
-            }else{
-                chipGroup.addView(itemView)
-            }
-            itemView.findViewById<View>(R.id.chipClose).setOnClickListener {
-                chipGroup.removeView(itemView)
-                resultList.remove(item)
-            }
+            addLabelViewItem(item)
         }
+    }
+
+    private fun addLabelViewItem(tag:I){
+        val itemView= LayoutInflater.from(this.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip,chipGroup,false)
+        itemView.findViewById<TextView>(R.id.chipText).text="${getFirstText(tag)}"
+        itemView.tag = tag
+        if (chipGroup.childCount>0){
+            chipGroup.addView(itemView,chipGroup.childCount-1)
+        }else{
+            chipGroup.addView(itemView)
+        }
+        itemView.findViewById<View>(R.id.chipClose).setOnClickListener {
+            chipGroup.removeView(itemView)
+            resultList.remove(tag)
+        }
+    }
+
+    override fun show() {
+        super.show()
+        preResult=resultList.toList()
     }
 
     private fun WheelPicker.init(){

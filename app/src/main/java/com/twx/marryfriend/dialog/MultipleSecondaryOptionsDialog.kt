@@ -9,9 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.core.view.children
 import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
-import com.google.android.material.chip.Chip
 import com.twx.marryfriend.R
 import com.xyzz.myutils.toast
 import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.*
@@ -28,6 +28,7 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
     private val resultList by lazy {
         ArrayList<Pair<T,I>>()
     }
+    private var preResult :List<Pair<T,I>>?=null
     var maxContent=Int.MAX_VALUE
     private var currentHead:Pair<T,List<I>>?=null
     private var currentItem:I?=null
@@ -57,18 +58,7 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
                 return@setOnClickListener toast(context,"最多添加${maxContent}个")
             }
             resultList.add(item)
-            val itemView=LayoutInflater.from(view.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip,chipGroup,false)
-            itemView.findViewById<TextView>(R.id.chipText).text="${getFirstText(item.first)}·${getSecondText(item.second)}"
-            itemView.tag = item
-            if (chipGroup.childCount>0){
-                chipGroup.addView(itemView,chipGroup.childCount-1)
-            }else{
-                chipGroup.addView(itemView)
-            }
-            itemView.findViewById<View>(R.id.chipClose).setOnClickListener {
-                chipGroup.removeView(itemView)
-                resultList.remove(item)
-            }
+            addLabelViewItem(item)
         }
         initListener()
         firstOption.selectedItemPosition=0
@@ -87,14 +77,50 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
         }
         submitBtn.setOnClickListener {
             result?.invoke(resultList)
+            preResult=resultList.toList()
             dismiss()
         }
-        skipBtn.setOnClickListener {
-            dismiss()
+        setOnDismissListener {
+            preResult?.also {
+                resultList.clear()
+                resultList.addAll(it)
+            }
+            resultList.forEach {item->
+                if (chipGroup.findViewWithTag<View>(item)==null){
+                    addLabelViewItem(item)
+                }
+            }
+            chipGroup.children.toList().forEachIndexed { _, view ->
+                if (view.tag!=null){
+                    if (!resultList.contains(view.tag)){
+                        chipGroup.removeView(view)
+                    }
+                }
+            }
         }
         closeBtn.setOnClickListener {
             dismiss()
         }
+    }
+
+    private fun addLabelViewItem(tag:Pair<T,I>){
+        val itemView=LayoutInflater.from(this.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip,chipGroup,false)
+        itemView.findViewById<TextView>(R.id.chipText).text="${getFirstText(tag.first)}·${getSecondText(tag.second)}"
+        itemView.tag = tag
+        if (chipGroup.childCount>0){
+            chipGroup.addView(itemView,chipGroup.childCount-1)
+        }else{
+            chipGroup.addView(itemView)
+        }
+        itemView.findViewById<View>(R.id.chipClose).setOnClickListener {
+            chipGroup.removeView(itemView)
+            resultList.remove(tag)
+        }
+    }
+
+    override fun show() {
+        super.show()
+        preResult=resultList.toList()
     }
 
     private fun getCurrentChoice():Pair<T,I>?{

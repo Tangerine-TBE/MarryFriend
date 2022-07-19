@@ -37,7 +37,7 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         holder.getView<View>(R.id.searchItemRealName).visibility=if (item.isRealName()) View.VISIBLE else View.GONE
         holder.getView<View>(R.id.searchItemVip).visibility=if (item.isVip()) View.VISIBLE else View.GONE
         holder.getView<TextView>(R.id.searchItemPhotoCount).text="${item.img_count}张照片"
-        holder.getView<TextView>(R.id.searchItemDynamicCount).text="${item.ted_count}条观点"
+        holder.getView<TextView>(R.id.searchItemDynamicCount).text="${item.ted_count?:0}条动态"
 //        holder.getView<TextView>(R.id.searchItemViewpointCount).text="${item.ted_count}条观点"
 
         val searchItemChipGroup=holder.getView<ChipGroup>(R.id.searchItemChipGroup)
@@ -60,7 +60,9 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         holder.getView<View>(R.id.searchItemChat).setOnClickListener {
             chatAction?.invoke(item)
         }
-        holder.getView<View>(R.id.searchItemLike).setOnClickListener {
+        holder.getView<View>(R.id.searchItemLike).also {
+            it.isSelected=item.isLike()
+        }.setOnClickListener {
             likeAction?.invoke(item,it)
         }
     }

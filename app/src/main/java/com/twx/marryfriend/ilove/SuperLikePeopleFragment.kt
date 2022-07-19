@@ -1,12 +1,15 @@
 package com.twx.marryfriend.ilove
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kingja.loadsir.core.LoadSir
+import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -19,7 +22,7 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
         val loadSir= LoadSir.Builder()
             .addCallback(ILikeEmptyDataCallBack())
             .build()
-        loadSir.register(superLikeRecyclerView
+        loadSir.register(superLikeRootView
         ) {
             loadData()
             iLog("重加载")
@@ -32,7 +35,7 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
         LikeAdapter(true)
     }
     private val likeViewModel by lazy {
-        ViewModelProvider(this).get(LikeViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(LikeViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,25 +45,45 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
 
         loadData()
         initListener()
+        loadService.setCallBack(ILikeEmptyDataCallBack::class.java,object : Transport{
+            override fun order(context: Context?, view: View?) {
+                view?.findViewById<TextView>(R.id.emptyDataTitle)?.text="暂时没有超喜欢的人"
+                view?.findViewById<TextView>(R.id.emptyDataDes)?.text="可以送小红花表达心意"
+            }
+        })
     }
 
     private fun loadData(){
         viewLifecycleOwner.lifecycleScope.launch {
             loadingDialog.show()
-            val data=likeViewModel.loadSuperLike(1)
-            likeAdapter.setData(data?.list?: emptyList())
-            loadingDialog.dismiss()
-            if(( data?.list?: emptyList()).isEmpty()){
-                loadService.showCallback(ILikeEmptyDataCallBack::class.java)
-            }else{
-                loadService.showSuccess()
+            try {
+                val data=likeViewModel.loadSuperLike(1)
+                likeAdapter.setData(data?.list?: emptyList())
+                if(( data?.list?: emptyList()).isEmpty()){
+                    loadService.showCallback(ILikeEmptyDataCallBack::class.java)
+                }else{
+                    loadService.showSuccess()
+                }
+                superLikeRefresh.finishRefresh(true)
+            }catch (e:Exception){
+                toast(e.message)
+                superLikeRefresh.finishRefresh(false)
             }
+            loadingDialog.dismiss()
+
         }
     }
 
     private fun initListener(){
-        likeAdapter.sendFlowerAction={
-            toast("送花")
+        superLikeRefresh.setEnableLoadMore(false)
+        superLikeRefresh.setOnRefreshListener {
+            loadData()
+        }
+        likeAdapter.chatAction={
+            toast("聊天")
+        }
+        likeViewModel.addSuperLikeChangeListener {
+            loadData()
         }
     }
 }

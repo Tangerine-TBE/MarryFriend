@@ -5,16 +5,28 @@
     android:layout_gravity="bottom"
     android:background="@drawable/shape_bg_dialog_bottom"
     android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="16dp"
+            android:text="你目前的住房情况是?"
+            android:textColor="#101010"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:layout_marginTop="20dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="你目前的住房情况是？"
-        android:textColor="#101010"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/dialog_close"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:paddingStart="21dp"
+            android:paddingEnd="21dp"
+            android:src="@mipmap/icon_close_small" />
+    </RelativeLayout>
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:orientation="vertical"
@@ -92,15 +104,5 @@
         android:paddingVertical="20dp"
         android:text="确定"
         android:textColor="#FFFFFFFF"
-        android:textSize="17sp" />
-    <TextView
-        android:id="@+id/housingSkip"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:text="跳过"
-        android:textColor="#9A9A9A"
         android:textSize="17sp" />
 </LinearLayout>

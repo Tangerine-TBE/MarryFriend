@@ -48,8 +48,6 @@
         android:layout_height="match_parent">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/cardSwipeView"
-            android:layout_marginStart="14dp"
-            android:layout_marginEnd="14dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
         <com.twx.marryfriend.recommend.widget.MutualLikeView

@@ -16,6 +16,7 @@
             android:id="@+id/searchItemHead"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:scaleType="centerCrop"
             android:layout_marginTop="33dp"
             android:layout_marginStart="14dp"
             android:src="#000"
@@ -158,7 +159,7 @@
             app:layout_constraintTop_toBottomOf="@id/searchItemText"
             android:layout_marginTop="32dp"
             app:layout_constraintHorizontal_bias="0.712802768166"
-            android:src="@mipmap/ic_search_like"
+            android:src="@drawable/selector_search_like"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

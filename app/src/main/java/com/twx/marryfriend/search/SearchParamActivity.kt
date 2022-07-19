@@ -339,30 +339,52 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             }
         }
         incomeSetValue.rangeCall={first,last->
-            salaryRange= IntRange(3+(first*(50-3)+0.5f).toInt(),3+(last*(50-3)+0.5f).toInt()).let {
-                if (it.first==3&&it.last==50){
+            salaryRange= IntRange(SearchViewModel.MIN_INCOME+(first*(SearchViewModel.MAX_INCOME-SearchViewModel.MIN_INCOME)+0.5f).toInt(),SearchViewModel.MIN_INCOME+(last*(SearchViewModel.MAX_INCOME-SearchViewModel.MIN_INCOME)+0.5f).toInt()).let {
+                if (it.first==SearchViewModel.MIN_INCOME&&it.last==SearchViewModel.MAX_INCOME){
                     null
                 }else {
                     it
                 }
             }
         }
-        listOf(
+        val marriagePair=listOf(
             unlimitedMarriage to MarriageEnum.unlimited,
             unmarriedMarriage to MarriageEnum.unmarried,
             divorceMarriage to MarriageEnum.divorce,
             widowhoodMarriage to MarriageEnum.widowhood,
-        ).forEach { pair->
+        )
+        marriagePair.forEach { pair->
             pair.first.setOnClickListener {view->
                 if (view.isSelected){
-                    marriageState.remove(pair.second)
-                    view.isSelected=false
+                    if(pair.second==MarriageEnum.unlimited){
+                        return@setOnClickListener
+                    }else {
+                        marriageState.remove(pair.second)
+                        if (marriageState.isEmpty()){
+                            marriageState.add(MarriageEnum.unlimited)
+                        }
+                    }
                 }else{
-                    marriageState.add(pair.second)
-                    view.isSelected=true
+                    if (pair.second==MarriageEnum.unlimited){
+                        marriageState.clear()
+                        marriageState.add(MarriageEnum.unlimited)
+                    }else{
+                        marriageState.add(pair.second)
+                        if (MarriageEnum.values().all {
+                                marriageState.contains(it)||it==MarriageEnum.unlimited
+                            }){
+                            marriageState.clear()
+                            marriageState.add(MarriageEnum.unlimited)
+                        }else{
+                            marriageState.remove(MarriageEnum.unlimited)
+                        }
+                    }
                 }
+                marriagePair.forEach {
+                    it.first.isSelected=marriageState.contains(it.second)
+                }
+                searchViewModel.setMarriageParameter(marriageState.toList())
             }
-            searchViewModel.setMarriageParameter(marriageState.toList())
         }
         education.setOnClickListener {
             eduDialog.show()

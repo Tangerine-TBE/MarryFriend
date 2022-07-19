@@ -46,7 +46,7 @@ class WantChildrenDialog(context: Context, val result:((List<WantChildrenEnum>)-
             result?.invoke(eduChoice.toList())
             dismiss()
         }
-        edu_close.setOnClickListener {
+        dialog_close.setOnClickListener {
             dismiss()
         }
         updateView()

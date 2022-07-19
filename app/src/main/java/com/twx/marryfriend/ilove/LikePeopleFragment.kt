@@ -1,12 +1,15 @@
 package com.twx.marryfriend.ilove
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kingja.loadsir.core.LoadSir
+import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -32,7 +35,7 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
         LikeAdapter()
     }
     private val likeViewModel by lazy {
-        ViewModelProvider(this).get(LikeViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(LikeViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,6 +45,12 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
 
         loadData()
         initListener()
+        loadService.setCallBack(ILikeEmptyDataCallBack::class.java,object : Transport {
+            override fun order(context: Context?, view: View?) {
+                view?.findViewById<TextView>(R.id.emptyDataTitle)?.text="暂时没有喜欢的人"
+                view?.findViewById<TextView>(R.id.emptyDataDes)?.text="可以到首页右滑喜欢对方"
+            }
+        })
     }
 
     private fun loadData(){
@@ -60,7 +69,18 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
 
     private fun initListener(){
         likeAdapter.sendFlowerAction={
-            toast("送花")
+            lifecycleScope.launch {
+                loadingDialog.show()
+                try {
+                    likeViewModel.superLike(it.id?:return@launch)
+                    likeViewModel.onSuperLikeChange(it)
+                    toast("送花成功")
+                }catch (e:Exception){
+                    toast(e.message)
+                }
+                loadingDialog.dismiss()
+                loadData()
+            }
         }
     }
 }

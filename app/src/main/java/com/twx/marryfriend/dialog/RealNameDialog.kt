@@ -37,7 +37,7 @@ class RealNameDialog(context: Context, val result:((RealNameEnum)->Unit)?=null):
                 dismiss()
             }
         }
-        close.setOnClickListener {
+        dialog_close.setOnClickListener {
             currentChoice=null
             dismiss()
         }

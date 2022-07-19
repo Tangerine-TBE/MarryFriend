@@ -54,6 +54,9 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
     }
 
     private fun showGuide(type:HomeCardAction){
+        if (!isShowGuide()){
+            return
+        }
         showView()
         currentType=type
         when(type){
@@ -82,7 +85,8 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
                 actionName.text="送花"
                 actionName.setTextColor(Color.parseColor("#FFFF4444"))
                 actionDes1.text="表示超级喜欢"
-                actionDes2.text="通知对方已喜欢，并在其首页置顶，\n配对率提升2倍"
+                actionDes2.text="通知对方已喜欢，并在其首页置顶，"
+                actionDes3.text="配对率提升2倍"
                 contentImg.visibility=View.GONE
                 Glide.with(this).load(R.drawable.guide_recommend_click).into(contentImg2)
             }

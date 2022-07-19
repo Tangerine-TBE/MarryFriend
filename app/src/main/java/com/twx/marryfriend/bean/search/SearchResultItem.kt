@@ -25,6 +25,12 @@ data class SearchResultItem(
     var vip_level: Int = 0,
     var work_city_str: String? = ""
 ){
+    fun isLike():Boolean=like_uid!=null
+
+    fun like(){
+        like_uid=user_id
+    }
+
     fun isRealName():Boolean{
         return identity_status==1
     }

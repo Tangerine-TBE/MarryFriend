@@ -36,7 +36,7 @@ class BuyCarDialog(context: Context, val result:((BuyCarEnum)->Unit)?=null):Dial
                 dismiss()
             }
         }
-        close.setOnClickListener {
+        dialog_close.setOnClickListener {
             currentChoice=null
             dismiss()
         }

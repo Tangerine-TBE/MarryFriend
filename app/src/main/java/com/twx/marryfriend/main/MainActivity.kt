@@ -27,8 +27,7 @@ class MainActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
 
-        initMineFragment()
-
+        initRecommendFragment()
     }
 
     override fun initLoadData() {

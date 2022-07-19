@@ -8,23 +8,23 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp">
+        android:layout_height="60dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
             android:text="你期望Ta的学历?"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />
         <ImageView
-            android:id="@+id/edu_close"
+            android:id="@+id/dialog_close"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="21dp"
+            android:paddingEnd="21dp"
+            android:paddingStart="21dp"
             android:src="@mipmap/icon_close_small" />
     </RelativeLayout>
 

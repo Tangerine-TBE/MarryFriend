@@ -8,13 +8,8 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import com.twx.marryfriend.R
-import com.twx.marryfriend.enumeration.BuyCarEnum
 import com.twx.marryfriend.enumeration.HeadPortraitEnum
-import kotlinx.android.synthetic.main.dialog_mate_selection_buy_car.*
 import kotlinx.android.synthetic.main.dialog_mate_selection_have_portrait.*
-import kotlinx.android.synthetic.main.dialog_mate_selection_have_portrait.close
-import kotlinx.android.synthetic.main.dialog_mate_selection_have_portrait.option1
-import kotlinx.android.synthetic.main.dialog_mate_selection_have_portrait.unlimited
 
 class HavePortraitDialog(context: Context, val result:((HeadPortraitEnum)->Unit)?=null):Dialog(context) {
     private var currentChoice: HeadPortraitEnum?=null
@@ -42,7 +37,7 @@ class HavePortraitDialog(context: Context, val result:((HeadPortraitEnum)->Unit)
                 dismiss()
             }
         }
-        close.setOnClickListener {
+        dialog_close.setOnClickListener {
             currentChoice=null
             dismiss()
         }

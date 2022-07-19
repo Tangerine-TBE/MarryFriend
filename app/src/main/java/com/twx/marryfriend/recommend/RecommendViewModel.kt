@@ -25,12 +25,17 @@ class RecommendViewModel():ViewModel() {
          */
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-                val jsonObject= JSONObject(response).getJSONArray("data").getJSONObject(0)
-                val idList=ArrayList<Int>()
-                jsonObject.keys().forEach {
-                    idList.add(it.toInt())
+                val data=JSONObject(response).getJSONArray("data")
+                if (data.toString().trim()=="[[]]"){
+                    coroutine.resume(emptyList())
+                }else{
+                    val jsonObject= data.getJSONObject(0)
+                    val idList=ArrayList<Int>()
+                    jsonObject.keys().forEach {
+                        idList.add(it.toInt())
+                    }
+                    coroutine.resume(idList)
                 }
-                coroutine.resume(idList)
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
@@ -80,7 +85,7 @@ class RecommendViewModel():ViewModel() {
         val map= mapOf(
             "host_uid" to UserInfo.getUserId(),
             "guest_uid" to guest_uid.toString(),
-            "previous_uid" to preDisLike.toString())
+            "feeling" to "hate")
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {

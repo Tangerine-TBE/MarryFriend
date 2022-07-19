@@ -5,6 +5,6 @@ import com.twx.marryfriend.R
 
 class ILikeEmptyDataCallBack: Callback() {
     override fun onCreateView(): Int {
-        return R.layout.item_search_empty_data
+        return R.layout.item_like_empty_data
     }
 }

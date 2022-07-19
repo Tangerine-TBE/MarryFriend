@@ -24,6 +24,9 @@ class SearchViewModel:ViewModel() {
         const val MIN_AGE=18
         const val MAX_HEIGHT=240
         const val MIN_HEIGHT=120
+
+        const val MAX_INCOME=70
+        const val MIN_INCOME=3
     }
     private val searchParameterMap by lazy {
         HashMap<String,String>().apply {
@@ -121,15 +124,34 @@ class SearchViewModel:ViewModel() {
     }
 
     fun setSalaryParameter(intRange:IntRange?){//TODO http://mindoc.aisou.club/docs/faskjfasfioasuviovifadascd/faskjfasfioasuviovifadascd-1du3hkcr10lag
-        return
         val key1="salary_range"
-        val key2="age_max"
         if (intRange==null){
             searchParameterMap.remove(key1)
-            searchParameterMap.remove(key2)
         }else{
-            searchParameterMap[key1]= intRange.first.toString()
-            searchParameterMap[key2]= intRange.last.toString()
+            /**
+             * 0保密,1 五千及以下,2 五千一万，2 一万两万，3 两万~四万 ，4 四万到七万,5 七万及以上
+             */
+            val rangeSalary= arrayOf(
+                0 to MIN_INCOME..5,
+                1 to 5..10,
+                2 to 10..20,
+                3 to 20..40,
+                4 to 40..MAX_INCOME,
+                5 to MAX_INCOME..MAX_INCOME,
+            )
+            val salaryList=ArrayList<Int>()
+            rangeSalary.forEach {
+                if (intRange.last>=it.second.first&&intRange.first<=it.second.last){
+                    if (it.first==5){
+                        if (intRange.first== MAX_INCOME){
+                            salaryList.add(it.first)
+                        }
+                    }else {
+                        salaryList.add(it.first)
+                    }
+                }
+            }
+            searchParameterMap[key1]= salaryList.toJsonString()
         }
     }
 

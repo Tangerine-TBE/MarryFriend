@@ -9,6 +9,7 @@ import android.view.View
 import android.view.WindowManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.enumeration.EduEnum
+import com.twx.marryfriend.enumeration.MarriageEnum
 import kotlinx.android.synthetic.main.dialog_mate_selection_edu.*
 
 class EduDialog(context: Context,val result:((List<EduEnum>)->Unit)?=null):Dialog(context) {
@@ -47,7 +48,7 @@ class EduDialog(context: Context,val result:((List<EduEnum>)->Unit)?=null):Dialo
             result?.invoke(eduChoice.toList())
             dismiss()
         }
-        edu_close.setOnClickListener {
+        dialog_close.setOnClickListener {
             dismiss()
         }
         updateView()
@@ -56,23 +57,29 @@ class EduDialog(context: Context,val result:((List<EduEnum>)->Unit)?=null):Dialo
     private fun choiceView(view:View){
         viewMappingEduEnum.find {
             it.first==view
-        }?.also {
+        }?.also { pair ->
             if (view.isSelected){//移除一个筛选
-                if (it.second!= EduEnum.unlimited){
-                    eduChoice.remove(it.second)
+                if (pair.second!= EduEnum.unlimited){
+                    eduChoice.remove(pair.second)
                     if (eduChoice.isEmpty()){
                         eduChoice.add(EduEnum.unlimited)
                     }
                 }
             }else{//增加一个筛选
-                if (it.second== EduEnum.unlimited) {
+                if (pair.second== EduEnum.unlimited) {
                     eduChoice.clear()
+                    eduChoice.add(EduEnum.unlimited)
                 }else{
-                    if (eduChoice.contains(EduEnum.unlimited)){
+                    eduChoice.add(pair.second)
+                    if (EduEnum.values().all {
+                            eduChoice.contains(it)||it==EduEnum.unlimited
+                        }){
+                        eduChoice.clear()
+                        eduChoice.add(EduEnum.unlimited)
+                    }else{
                         eduChoice.remove(EduEnum.unlimited)
                     }
                 }
-                eduChoice.add(it.second)
             }
             updateView()
         }

@@ -36,7 +36,7 @@ class IsVipDialog(context: Context, val result:((IsVipEnum)->Unit)?=null):Dialog
                 dismiss()
             }
         }
-        close.setOnClickListener {
+        dialog_close.setOnClickListener {
             currentChoice=null
             dismiss()
         }

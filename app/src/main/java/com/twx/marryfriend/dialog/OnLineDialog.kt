@@ -37,7 +37,7 @@ class OnLineDialog(context: Context, val result:((OnLineEnum)->Unit)?=null):Dial
                 dismiss()
             }
         }
-        close.setOnClickListener {
+        dialog_close.setOnClickListener {
             currentChoice=null
             dismiss()
         }

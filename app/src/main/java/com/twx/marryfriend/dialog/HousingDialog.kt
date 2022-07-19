@@ -44,7 +44,7 @@ class HousingDialog(context: Context, val result:((List<HousingEnum>)->Unit)?=nu
             result?.invoke(eduChoice.toList())
             dismiss()
         }
-        housingSkip.setOnClickListener {
+        dialog_close.setOnClickListener {
             dismiss()
         }
         updateView()
