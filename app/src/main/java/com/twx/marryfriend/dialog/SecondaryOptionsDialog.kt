@@ -9,7 +9,9 @@ import android.view.WindowManager
 import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
 import com.twx.marryfriend.R
+import kotlinx.android.synthetic.main.dialog_mate_selection_real_name.*
 import kotlinx.android.synthetic.main.dialog_secondary_options.*
+import kotlinx.android.synthetic.main.dialog_secondary_options.dialog_close
 
 abstract class SecondaryOptionsDialog<T,I>(context: Context, private val listData:List<Pair<T,List<I>>>, val result:((T,I)->Unit)?=null): Dialog(context) {
 
@@ -59,11 +61,8 @@ abstract class SecondaryOptionsDialog<T,I>(context: Context, private val listDat
             result?.invoke(currentHead?.first?:return@setOnClickListener dismiss(),currentItem?:return@setOnClickListener dismiss())
             dismiss()
         }
-        skipBtn.setOnClickListener {
-            dismiss()
-        }
-        closeBtn.setOnClickListener {
-            dismiss()
+        dialog_close.setOnClickListener {
+            submitBtn.performClick()
         }
     }
 

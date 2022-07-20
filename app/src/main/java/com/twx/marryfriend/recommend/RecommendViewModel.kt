@@ -104,7 +104,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun like(guest_uid: Int)=suspendCoroutine<Boolean>{coroutine->
+    suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
         val map= mapOf(
             "host_uid" to UserInfo.getUserId(),
@@ -114,7 +114,12 @@ class RecommendViewModel():ViewModel() {
             try {
                 val jsonObject=JSONObject(response)
                 if (jsonObject.getInt("code")==200) {
-                    coroutine.resume(jsonObject.getJSONArray("data").getInt(0)==2)
+                    if (jsonObject.getJSONArray("data").getInt(0)==2){
+                        mutualLikeAction?.invoke()
+                    }
+                    coroutine.resume("喜欢成功")
+                }else if(jsonObject.getString("code")=="444"){
+                    coroutine.resume(jsonObject.getString("msg"))
                 }else{
                     coroutine.resumeWithException(Exception(response))
                 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
+import com.twx.marryfriend.friend.FriendInfoActivity
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.toast
@@ -75,7 +76,7 @@ class DislikePeopleFragment:Fragment(R.layout.fragment_dis_like_people) {
             lifecycleScope.launch {
                 loadingDialog.show()
                 try {
-                    likeViewModel.superLike(it.id?:return@launch)
+                    likeViewModel.superLike(it.guest_uid)
                     likeViewModel.onSuperLikeChange(it)
                     toast("送花成功")
                 }catch (e:Exception){
@@ -84,6 +85,9 @@ class DislikePeopleFragment:Fragment(R.layout.fragment_dis_like_people) {
                 loadingDialog.dismiss()
                 loadData()
             }
+        }
+        dislikeAdapter.itemAction={
+            startActivity(FriendInfoActivity.getIntent(requireContext(),it.guest_uid))
         }
     }
 }

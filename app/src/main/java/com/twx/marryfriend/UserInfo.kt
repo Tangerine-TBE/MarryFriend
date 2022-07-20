@@ -10,7 +10,8 @@ object UserInfo {
             "default")
     }
     fun getUserVipLevel():Int{
-        return SPStaticUtils.getInt(Constant.USER_VIP_LEVEL,0)
+        /*return SPStaticUtils.getInt(Constant.USER_VIP_LEVEL,0)*/
+        return 1
     }
 
     fun isVip():Boolean{

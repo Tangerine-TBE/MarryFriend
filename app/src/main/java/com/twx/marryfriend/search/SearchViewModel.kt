@@ -165,11 +165,11 @@ class SearchViewModel:ViewModel() {
     }
 
     fun setOccupationParameter(listParameter: Pair<OccupationDataBean,OccupationBean>?){
-        val key1="occupation_num"
+        val key1="industry_num"
         if (listParameter==null){
             searchParameterMap.remove(key1)
         }else{
-            searchParameterMap[key1] = listParameter.second.id.toString()
+            searchParameterMap[key1] = listParameter.first.id.toString()
         }
     }
 

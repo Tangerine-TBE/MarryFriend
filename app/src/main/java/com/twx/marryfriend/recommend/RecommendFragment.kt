@@ -132,13 +132,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         viewLifecycleOwner.lifecycleScope.launch(){
             try {
                 val list=recommendViewModel.loadRecommendUserId()
-                val data=recommendViewModel.loadRecommendUserInfo(list)
-                if (BuildConfig.DEBUG&&data.isNotEmpty()){
-                    val listData=ArrayList(data)
-                    recommendAdapter.setData(listData)
+                val data=if (list.isEmpty()){
+                    emptyList<RecommendBean>()
                 }else{
-                    recommendAdapter.setData(data)
+                    recommendViewModel.loadRecommendUserInfo(list)
                 }
+                recommendAdapter.setData(data)
                 loadService?.showSuccess()
                 if(data.isEmpty()){
                     showView(ViewType.notContent)
@@ -227,11 +226,11 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {
-                val isMutualLike=recommendViewModel.like(item.getId())
-                if (isMutualLike){
+                val str=recommendViewModel.like(item.getId()) {
                     showView(ViewType.mutual)
                     Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
                 }
+                toast(str)
             }catch (e:Exception){
                 toast(e.message)
             }
@@ -260,6 +259,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private fun showView(type:ViewType){
         when(type){
             ViewType.content -> {
+                guideView.noticeDataChange(true)
                 cardSwipeView.visibility=View.VISIBLE
                 mutualLike.visibility=View.GONE
                 notContent.visibility=View.GONE
@@ -270,6 +270,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 notContent.visibility=View.GONE
             }
             ViewType.notContent -> {
+                guideView.noticeDataChange(false)
                 cardSwipeView.visibility=View.GONE
                 mutualLike.visibility=View.GONE
                 notContent.visibility=View.VISIBLE

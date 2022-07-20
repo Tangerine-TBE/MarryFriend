@@ -11,6 +11,7 @@ import com.xyzz.myutils.display.DateDisplayManager
 
 class LiveAdapter:RecyclerView.Adapter<BaseViewHolder>() {
     private val listData=ArrayList<LikeMeItemBean>()
+    var itemAction:((LikeMeItemBean)->Unit)?=null
 
     fun setData(list: List<LikeMeItemBean>){
         listData.clear()
@@ -37,6 +38,9 @@ class LiveAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         holder.setText(R.id.itemLovePlace,item.work_city_str?:"")
         holder.setText(R.id.itemLoveAge, item.age.toString())
         holder.setText(R.id.itemLoveOccupation,item.occupation_str?:"")
+        holder.itemView.setOnClickListener {
+            itemAction?.invoke(item)
+        }
     }
 
     override fun getItemCount(): Int {

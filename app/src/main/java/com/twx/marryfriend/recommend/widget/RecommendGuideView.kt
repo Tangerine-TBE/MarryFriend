@@ -53,6 +53,21 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
         showGuide(currentType?:return)
     }
 
+    fun noticeDataChange(haveData:Boolean){
+        if (haveData){
+            if (!isShowGuide()){
+                return
+            }
+            if (this.visibility!=View.VISIBLE){
+                this.visibility=View.VISIBLE
+            }
+        }else{
+            if (this.visibility!=View.GONE){
+                this.visibility=View.GONE
+            }
+        }
+    }
+
     private fun showGuide(type:HomeCardAction){
         if (!isShowGuide()){
             return

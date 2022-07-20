@@ -1,6 +1,7 @@
 package com.twx.marryfriend
 
 import android.app.Application
+import com.kingja.loadsir.core.LoadSir
 import com.xyzz.myutils.MyUtils
 import com.xyzz.myutils.ThreadExceptionLog
 
@@ -16,13 +17,13 @@ class AppApplication:Application() {
         application=this
         MyUtils.init(this)
 
-//        LoadSir.beginBuilder()
-//            .addCallback(ErrorCallback()) //添加各种状态页
+        LoadSir.beginBuilder()
+            .addCallback(DefEmptyDataCallBack()) //添加各种状态页
 //            .addCallback(EmptyCallback())
 //            .addCallback(LoadingCallback())
 //            .addCallback(TimeoutCallback())
 //            .addCallback(CustomCallback())
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
-//            .commit()
+            .commit()
     }
 }

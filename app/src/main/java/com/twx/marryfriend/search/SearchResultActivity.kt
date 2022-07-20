@@ -8,19 +8,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.kingja.loadsir.core.LoadService
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.R
 import com.twx.marryfriend.recommend.RecommendViewModel
-import com.twx.marryfriend.recommend.widget.LoadingCallback
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.toast
 import kotlinx.android.synthetic.main.activity_search_result.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 //https://lanhuapp.com/web/#/item/project/detailDetach?pid=0f172b45-d776-4080-a03e-618374ed56e4&image_id=f9fe8766-8e25-453c-a61c-4537300f7b45&tid=5173cb5f-00ad-4a38-b103-b616ccec0e12&project_id=0f172b45-d776-4080-a03e-618374ed56e4&fromEditor=true&type=image
 class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
@@ -64,7 +59,7 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
     private val searchResultAdapter by lazy { SearchResultAdapter() }
     private val loadService by lazy {
         val loadSir=LoadSir.Builder()
-            .addCallback(EmptyDataCallBack())
+            .addCallback(SearchEmptyDataCallBack())
             .build()
         loadSir.register(searchResultRecyclerView
         ) {
@@ -115,7 +110,7 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
                 }?:return@launch
                 searchResultAdapter.setData(result)
                 if(result.isEmpty()){
-                    loadService.showCallback(EmptyDataCallBack::class.java)
+                    loadService.showCallback(SearchEmptyDataCallBack::class.java)
                 }
             }catch (e:Exception){
                 toast(e.message?:"")

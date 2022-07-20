@@ -14,7 +14,14 @@ import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
 import com.twx.marryfriend.R
 import com.xyzz.myutils.toast
+import kotlinx.android.synthetic.main.dialog_list_options.*
 import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.*
+import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.chipGroup
+import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.clickAdd
+import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.dialog_close
+import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.firstOption
+import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.submitBtn
+import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.titleView
 
 abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val listData:List<Pair<T,List<I>>>, val result:((List<Pair<T,I>>)->Unit)?=null): Dialog(context) {
 
@@ -98,8 +105,8 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
                 }
             }
         }
-        closeBtn.setOnClickListener {
-            dismiss()
+        dialog_close.setOnClickListener {
+            submitBtn.performClick()
         }
     }
 

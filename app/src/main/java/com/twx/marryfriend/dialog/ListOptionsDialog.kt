@@ -55,8 +55,8 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
             preResult=resultList.toList()
             dismiss()
         }
-        closeBtn.setOnClickListener {
-            dismiss()
+        dialog_close.setOnClickListener {
+            submitBtn.performClick()
         }
         setOnDismissListener {
             preResult?.also {

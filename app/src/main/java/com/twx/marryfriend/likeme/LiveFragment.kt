@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.R
+import com.twx.marryfriend.friend.FriendInfoActivity
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.toast
@@ -72,6 +73,9 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
                 loveSwipeRefreshLayout.isRefreshing=false
                 loadingDialog.dismiss()
             }
+        }
+        liveAdapter.itemAction={
+            startActivity(FriendInfoActivity.getIntent(requireContext(),it.host_uid))
         }
         openVip.setOnClickListener {
             toast("开通会员")

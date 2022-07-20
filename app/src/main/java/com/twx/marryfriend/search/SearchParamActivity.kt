@@ -353,6 +353,7 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             divorceMarriage to MarriageEnum.divorce,
             widowhoodMarriage to MarriageEnum.widowhood,
         )
+        unlimitedMarriage.isSelected=true
         marriagePair.forEach { pair->
             pair.first.setOnClickListener {view->
                 if (view.isSelected){

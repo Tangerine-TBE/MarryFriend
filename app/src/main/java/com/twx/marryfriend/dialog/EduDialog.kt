@@ -49,6 +49,7 @@ class EduDialog(context: Context,val result:((List<EduEnum>)->Unit)?=null):Dialo
             dismiss()
         }
         dialog_close.setOnClickListener {
+            result?.invoke(eduChoice.toList())
             dismiss()
         }
         updateView()

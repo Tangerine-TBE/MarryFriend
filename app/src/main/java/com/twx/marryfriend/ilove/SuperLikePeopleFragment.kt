@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
+import com.twx.marryfriend.friend.FriendInfoActivity
 import com.xyzz.myutils.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.toast
@@ -84,6 +85,9 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
         }
         likeViewModel.addSuperLikeChangeListener {
             loadData()
+        }
+        likeAdapter.itemAction={
+            startActivity(FriendInfoActivity.getIntent(requireContext(),it.guest_uid))
         }
     }
 }

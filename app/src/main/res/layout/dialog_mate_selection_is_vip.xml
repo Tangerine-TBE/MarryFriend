@@ -18,14 +18,19 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
-        <ImageView
+        <TextView
             android:id="@+id/dialog_close"
+            android:text="完成"
+            android:background="@drawable/shape_bg_common_input"
+            android:gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:padding="10dp"
             android:paddingStart="21dp"
             android:paddingEnd="21dp"
-            android:src="@mipmap/icon_close_small" />
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"/>
     </RelativeLayout>
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_marginBottom="20dp"

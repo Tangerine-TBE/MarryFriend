@@ -19,9 +19,9 @@ fun Fragment.toast(text: String?){
     toast?.show()
 }
 
-fun Context.toast(text: String){
+fun Context.toast(text: String?){
     toast?.cancel()
-    toast = Toast.makeText(this, text, Toast.LENGTH_SHORT)
+    toast = Toast.makeText(this, text?:"null", Toast.LENGTH_SHORT)
     toast?.show()
 }
 

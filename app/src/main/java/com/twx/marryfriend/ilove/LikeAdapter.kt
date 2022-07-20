@@ -13,6 +13,7 @@ class LikeAdapter(private val isChat:Boolean=false):RecyclerView.Adapter<BaseVie
     private val listData = ArrayList<ILikeItemBean>()
     var chatAction:((ILikeItemBean)->Unit)?=null
     var sendFlowerAction:((ILikeItemBean)->Unit)?=null
+    var itemAction:((ILikeItemBean)->Unit)?=null
 
     fun setData(list: List<ILikeItemBean>){
         listData.clear()
@@ -43,6 +44,9 @@ class LikeAdapter(private val isChat:Boolean=false):RecyclerView.Adapter<BaseVie
         }
         iLikeChat.setOnClickListener {
             chatAction?.invoke(item)
+        }
+        holder.itemView.setOnClickListener {
+            itemAction?.invoke(item)
         }
     }
 
