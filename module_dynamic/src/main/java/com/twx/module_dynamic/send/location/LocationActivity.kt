@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
@@ -13,13 +14,18 @@ import com.twx.module_base.constant.Contents
 import com.twx.module_dynamic.R
 import com.twx.module_dynamic.bean.PlaceSearchBean
 import com.twx.module_dynamic.bean.Poi
+import com.twx.module_dynamic.bean.SearchBean
+import com.twx.module_dynamic.bean.SearchData
+import com.twx.module_dynamic.net.callback.IBaiduSearchCallback
 import com.twx.module_dynamic.net.callback.IDoPlaceSearchCallback
+import com.twx.module_dynamic.net.impl.BaiduSearchPresentImpl
 import com.twx.module_dynamic.net.impl.doPlaceSearchPresentImpl
 import com.twx.module_dynamic.send.adapter.LocationAdapter
+import com.twx.module_dynamic.send.adapter.SearchAdapter
 import kotlinx.android.synthetic.main.activity_location.*
 import java.util.*
 
-class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback {
+class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback, IBaiduSearchCallback {
 
     private var currentPaper = 1
 
@@ -32,11 +38,17 @@ class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback {
     // 当前定位坐标
     private var location = ""
 
+    // 当前城市
+    private var city = ""
+
     private var mList: MutableList<Poi> = arrayListOf()
+    private var mSearchList: MutableList<SearchData> = arrayListOf()
 
     private lateinit var adapter: LocationAdapter
+    private lateinit var searchAdapter: SearchAdapter
 
     private lateinit var doPlaceSearch: doPlaceSearchPresentImpl
+    private lateinit var mBaiduSearchPresent: BaiduSearchPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_location
 
@@ -44,15 +56,21 @@ class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback {
         super.initView()
 
         location = intent.getStringExtra("location").toString()
+        city = intent.getStringExtra("city").toString()
 
         doPlaceSearch = doPlaceSearchPresentImpl.getsInstance()
         doPlaceSearch.registerCallback(this)
 
+        mBaiduSearchPresent = BaiduSearchPresentImpl.getInstance()
+        mBaiduSearchPresent.registerCallback(this)
 
         adapter = LocationAdapter(mList)
         rv_address_search_container.layoutManager = LinearLayoutManager(this)
         rv_address_search_container.adapter = adapter
 
+        searchAdapter = SearchAdapter(mSearchList)
+        rv_address_search_container2.layoutManager = LinearLayoutManager(this)
+        rv_address_search_container2.adapter = searchAdapter
 
         rv_address_search_container.isNestedScrollingEnabled = false;
 
@@ -66,7 +84,6 @@ class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback {
                 }
             }
         })
-
     }
 
     override fun initLoadData() {
@@ -82,17 +99,64 @@ class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback {
     override fun initEvent() {
         super.initEvent()
 
+        et_search_container.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+                val query = et_search_container.text.toString().trim { it <= ' ' }
+                val map: MutableMap<String, String> = TreeMap()
+                map[Contents.QUERY] = query
+                map[Contents.REGION] = city
+                map[Contents.OUTPUT] = "json"
+                map[Contents.AK] = "48vcqnOCS39h9H7xmijcdeCy"
+                mBaiduSearchPresent.doBaiduSearch(map)
+            }
+            false
+        }
+
+        ll_address_search_none.setOnClickListener {
+            // 取出坐标，与地址
+            name = "不显示位置"
+            address = "0,0"
+
+            val intent = intent
+            intent.putExtra("name", name)
+            intent.putExtra("address", address)
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+
         adapter.setOnItemClickListener(object : LocationAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 // 取出坐标，与地址
                 name = mList[position].name
                 address = mList[position].location
 
+                Log.i("guo", address)
+
                 val intent = intent
                 intent.putExtra("name", name)
                 intent.putExtra("address", address)
                 setResult(RESULT_OK, intent)
                 finish()
+            }
+        })
+
+        searchAdapter.setOnItemClickListener(object : SearchAdapter.OnItemClickListener {
+            override fun onItemClick(v: View?, position: Int) {
+
+                // 取出坐标，与地址
+                name = mSearchList[position].name
+                address =
+                    "${mSearchList[position].location.lng},${mSearchList[position].location.lat}"
+
+                Log.i("guo", address)
+
+                val intent = intent
+                intent.putExtra("name", name)
+                intent.putExtra("address", address)
+                setResult(RESULT_OK, intent)
+                finish()
+
             }
         })
 
@@ -116,7 +180,23 @@ class LocationActivity : MainBaseViewActivity(), IDoPlaceSearchCallback {
 
     }
 
+    override fun onBaiduSearchSuccess(searchBean: SearchBean) {
+        ll_address_search_near.visibility = View.GONE
+        ll_address_search_search.visibility = View.VISIBLE
+        mSearchList.clear()
+        for (i in 0.until(searchBean.results.size)) {
+            mSearchList.add(searchBean.results[i])
+        }
+        searchAdapter.notifyDataSetChanged()
+    }
+
+    override fun onBaiduSearchError() {
+
+    }
+
     override fun onDoPlaceSearchSuccess(placeSearchBean: PlaceSearchBean) {
+        ll_address_search_near.visibility = View.VISIBLE
+        ll_address_search_search.visibility = View.GONE
         currentPaper++
         for (i in 0.until(placeSearchBean.pois.size)) {
             mList.add(placeSearchBean.pois[i])

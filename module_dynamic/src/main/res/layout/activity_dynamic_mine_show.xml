@@ -36,7 +36,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/riv_dynamic_mine_show_heard_avatar"
-            android:text="罐头香菜"
+            android:text=""
             android:textColor="#101010"
             android:textSize="17sp" />
 
@@ -83,7 +83,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="4dp"
                     android:layout_toEndOf="@+id/riv_dynamic_mine_show_avatar"
-                    android:text="罐头香菜"
+                    android:text=""
                     android:textColor="#101010"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -96,7 +96,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="4dp"
                     android:layout_toEndOf="@+id/riv_dynamic_mine_show_avatar"
-                    android:text="98年 武汉 本科研 教育/科研"
+                    android:text=""
                     android:textColor="#9A9A9A"
                     android:textSize="13sp" />
 
@@ -114,7 +114,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="疫情前的游乐场"
+                    android:text=""
                     android:textColor="#101010"
                     android:textSize="15sp" />
 
@@ -124,7 +124,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
 
                     <FrameLayout
                         android:id="@+id/fl_dynamic_mine_show_video"
@@ -176,7 +177,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
 
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/iv_dynamic_mine_show_one"
@@ -217,7 +219,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
 
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/iv_dynamic_mine_show_four"
@@ -258,7 +261,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="8dp">
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone">
 
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/iv_dynamic_mine_show_seven"
@@ -300,17 +304,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
-                    android:text="1小时前"
+                    android:layout_marginBottom="16dp"
+                    android:text=""
                     android:textColor="#9A9A9A"
                     android:textSize="13sp" />
 
                 <LinearLayout
+                    android:id="@+id/ll_dynamic_mine_show_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/shape_bg_dynamic_address">
+                    android:background="@drawable/shape_bg_dynamic_address"
+                    android:visibility="gone">
 
                     <ImageView
                         android:layout_width="15dp"
@@ -372,7 +378,6 @@
 
                 </RelativeLayout>
 
-
                 <RelativeLayout
                     android:id="@+id/rl_dynamic_mine_show_like"
                     android:layout_width="match_parent"
@@ -428,7 +433,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_toEndOf="@+id/tv_dynamic_mine_show_wait"
-                        android:text="54"
+                        android:text=""
                         android:textColor="#FF4444"
                         android:textSize="15sp" />
 
@@ -595,8 +600,8 @@
             android:id="@+id/ll_emoji_mine_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layerType="hardware"
+            android:orientation="vertical"
             android:visibility="gone">
 
             <TextView

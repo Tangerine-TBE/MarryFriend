@@ -22,6 +22,7 @@ import com.twx.module_dynamic.bean.CommentBean
 import com.twx.module_dynamic.bean.CommentOneData
 import com.twx.module_dynamic.bean.CommentOneList
 import com.twx.module_dynamic.bean.CommentTwoList
+import retrofit2.http.POST
 import java.util.*
 
 /**
@@ -29,11 +30,15 @@ import java.util.*
  * @date: 2022/7/8
  */
 class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
-    RecyclerView.Adapter<CommentOneAdapter.ViewHolder>(), View.OnClickListener {
+    RecyclerView.Adapter<CommentOneAdapter.ViewHolder>(), View.OnClickListener,
+    View.OnLongClickListener {
 
     private lateinit var mContext: Context
 
     private var mOnItemClickListener: OnItemClickListener? = null
+
+    private var mOnItemLongClickListener: OnItemLongClickListener? = null
+
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, positionOne: Int)
@@ -51,10 +56,21 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         fun onChildReplyAvatarClick(positionOne: Int, two: Int)
     }
 
+    interface OnItemLongClickListener {
+        fun onItemLongClick(v: View?, positionOne: Int)
+
+        fun onItemChildContentLongClick(v: View?, positionOne: Int)
+
+        fun onChildContentLongClick(positionOne: Int, two: Int)
+    }
+
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mOnItemClickListener = listener
     }
 
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
+        this.mOnItemLongClickListener = listener
+    }
 
     override fun onClick(v: View?) {
         if (v != null) {
@@ -62,7 +78,12 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         }
     }
 
+    override fun onLongClick(v: View?): Boolean {
+        return true
+    }
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val user: RelativeLayout = view.findViewById(R.id.rl_detail_comment_parent_user)
         val avatar: RoundedImageView = view.findViewById(R.id.iv_detail_comment_parent_avatar)
         val name: TextView = view.findViewById(R.id.tv_detail_comment_parent_name)
@@ -85,14 +106,6 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         val container: RecyclerView =
             view.findViewById(R.id.rv_detail_comment_parent_child_container)
 
-//        val itemAdapter: CommentTwoAdapter = CommentTwoAdapter()
-
-//        fun showChildComment(list: MutableList<CommentTwoList>) {
-//            itemAdapter.setChildList(list)
-//            // //填充数据
-//            container.adapter = itemAdapter
-//        }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -100,6 +113,7 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
             .inflate(R.layout.layout_comment_parent, parent, false)
         mContext = parent.context
         view.setOnClickListener(this)
+        view.setOnLongClickListener(this)
         return ViewHolder(view)
     }
 
@@ -109,7 +123,6 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         holder.container.layoutManager = LinearLayoutManager(mContext)
         var mFrontAdapter = CommentTwoAdapter(mList[position].twoList)
         holder.container.adapter = mFrontAdapter
-
 
         mFrontAdapter.setOnItemClickListener(object : CommentTwoAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, positionTwo: Int) {
@@ -130,6 +143,13 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
 
         })
 
+        mFrontAdapter.setOnItemLongClickListener(object :
+            CommentTwoAdapter.OnItemLongClickListener {
+            override fun onItemLongClick(v: View?, positionTwo: Int) {
+                mOnItemLongClickListener?.onChildContentLongClick(position, positionTwo)
+            }
+        })
+
         holder.user.setOnClickListener {
             mOnItemClickListener?.onItemAvatarClick(it, position)
         }
@@ -137,6 +157,13 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         holder.content.setOnClickListener {
             mOnItemClickListener?.onItemContentClick(it, position)
         }
+
+        holder.content.setOnLongClickListener(object : View.OnLongClickListener {
+            override fun onLongClick(v: View?): Boolean {
+                mOnItemLongClickListener?.onItemLongClick(v, position)
+                return true
+            }
+        })
 
         holder.childMore.setOnClickListener {
             mOnItemClickListener?.onItemMoreClick(it, position)
@@ -154,6 +181,12 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
             mOnItemClickListener?.onItemChildContentClick(it, position)
         }
 
+        holder.childContent.setOnLongClickListener(object : View.OnLongClickListener {
+            override fun onLongClick(v: View?): Boolean {
+                mOnItemLongClickListener?.onItemChildContentLongClick(v, position)
+                return true
+            }
+        })
 
 
         Glide.with(mContext).load(mList[position].list.img_one).into(holder.avatar)
@@ -222,7 +255,7 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
                     holder.childMore.visibility = View.GONE
                 } else {
                     holder.childMore.visibility = View.VISIBLE
-                    holder.childMore.text = "展开剩余${mList[position].total}条回复"
+                    holder.childMore.text = "展开剩余${mList[position].total - 1}条回复"
                 }
             }
         }

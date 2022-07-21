@@ -47,9 +47,10 @@ class DynamicFragment : Fragment() {
     private fun initView() {
 
         if (isAdded) {
-
-            recommendFragment = DynamicRecommendFragment().newInstance(requireContext())
-            dynamicFragment = DynamicFriendFragment().newInstance(requireContext())
+            context?.apply {
+                recommendFragment = DynamicRecommendFragment().newInstance(this)
+                dynamicFragment = DynamicFriendFragment().newInstance(this)
+            }
 
             //添加适配器
             vp_dynamic_container.adapter = object : FragmentStateAdapter(this) {

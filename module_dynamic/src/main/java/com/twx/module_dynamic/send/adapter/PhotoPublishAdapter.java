@@ -50,6 +50,7 @@ public class PhotoPublishAdapter extends BaseRecyclerViewAdapter<String> {
      */
     public void setNeedAddBtn(boolean needAddBtn) {
         isNeedAddBtn = needAddBtn;
+        notifyDataSetChanged();
     }
 
     @Override

@@ -18,8 +18,11 @@ import com.twx.module_dynamic.bean.MyTrendsListBean;
 import com.twx.module_dynamic.bean.OtherFocusBean;
 import com.twx.module_dynamic.bean.PlaceSearchBean;
 import com.twx.module_dynamic.bean.PlusFocusBean;
+import com.twx.module_dynamic.bean.SearchBean;
+import com.twx.module_dynamic.bean.TotalCountBean;
 import com.twx.module_dynamic.bean.TrendFocusBean;
 import com.twx.module_dynamic.bean.TrendSaloonBean;
+import com.twx.module_dynamic.bean.TrendTipBean;
 import com.twx.module_dynamic.bean.UploadTrendBean;
 import com.twx.module_dynamic.net.utils.ApiMapUtil;
 import com.twx.module_dynamic.net.utils.Md5Util;
@@ -37,7 +40,7 @@ import retrofit2.http.QueryMap;
 public class UserData {
 
     private final Api mApi;
-
+    private final Api mBaiduApi;
     private final Api mMapApi;
 
     private static UserData sInstance;
@@ -56,6 +59,9 @@ public class UserData {
 
         Retrofit gaoDeMapRetrofitUser = RetrofitManager.getInstance().getGaodeMapRetrofitUser();
         mMapApi = gaoDeMapRetrofitUser.create(Api.class);
+
+        Retrofit baiduRetrofit = RetrofitManager.getInstance().getBaiduRetrofitUser();
+        mBaiduApi = baiduRetrofit.create(Api.class);
 
     }
 
@@ -300,6 +306,31 @@ public class UserData {
     }
 
 
+    // 获取评论和点赞的未读次数
+    public void getTotalCount(Map<String, String> map, Callback<TotalCountBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TOTAL_COUNT + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TOTAL_COUNT, currentTimeMillis, random, checkCode, map);
+        mApi.getTotalCount(map1).enqueue(callback);
+    }
+
+    // 点赞未读列表
+    public void getTrendTips(Map<String, String> map,Integer page, Callback<TrendTipBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_TIP + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map,page,10);
+        mApi.getTrendTips(map1).enqueue(callback);
+    }
+
+
     // 高德地图-地点检索
     public void doPlaceSearch(Map<String, String> map, Callback<PlaceSearchBean> callback) {
         // 获取随机数
@@ -310,6 +341,18 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PLACE_SEARCH + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PLACE_SEARCH, currentTimeMillis, random, checkCode, map);
         mMapApi.doPlaceSearch(map1).enqueue(callback);
+    }
+
+    // 百度行政区划区域检索
+    public void doSearch(Map<String, String> map, Callback<SearchBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.BAIDU_SEARCH + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.BAIDU_SEARCH, currentTimeMillis, random, checkCode, map);
+        mBaiduApi.doSearch(map1).enqueue(callback);
     }
 
 }

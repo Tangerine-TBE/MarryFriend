@@ -24,6 +24,7 @@ class DynamicMineLikeActivity : MainBaseViewActivity(), IGetLikeListCallback {
     private var currentPaper = 1
 
     private var trendId = 0
+    private var userId = 0
 
     private var mLikeList: MutableList<LikeList> = arrayListOf()
     private var mEduData: MutableList<String> = arrayListOf()
@@ -38,6 +39,7 @@ class DynamicMineLikeActivity : MainBaseViewActivity(), IGetLikeListCallback {
         super.initView()
 
         trendId = intent.getIntExtra("trendId", 0)
+        userId = intent.getIntExtra("userId", 0)
 
         getLikeListPresent = getLikeListPresentImpl.getsInstance()
         getLikeListPresent.registerCallback(this)
@@ -75,6 +77,10 @@ class DynamicMineLikeActivity : MainBaseViewActivity(), IGetLikeListCallback {
     override fun initEvent() {
         super.initEvent()
 
+        iv_dynamic_mine_like_finish.setOnClickListener {
+            finish()
+        }
+
         sfl_dynamic_mine_like_refresh.setOnRefreshListener {
             // 刷新数据
             currentPaper = 1
@@ -93,7 +99,7 @@ class DynamicMineLikeActivity : MainBaseViewActivity(), IGetLikeListCallback {
 
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.HOST_UID] = userId.toString()
         getLikeListPresent.getLikeList(map, Page, 50)
 
     }

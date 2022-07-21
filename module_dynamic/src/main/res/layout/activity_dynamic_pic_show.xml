@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:layout_toStartOf="@+id/tv_dynamic_pic_show_like"
-                android:src="@drawable/ic_dynamic_like" />
+                android:src="@drawable/ic_dynamic_base_like" />
 
             <TextView
                 android:id="@+id/tv_dynamic_pic_show_like"

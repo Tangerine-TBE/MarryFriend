@@ -200,6 +200,11 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation project(path: ':faceplatform-release')
 
+    implementation project(path: ':faceplatform-ui')
+    implementation project(path: ':faceplatform-ui')
+    implementation project(path: ':module_dynamic')
+    implementation project(path: ':myutils')
+
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
@@ -208,12 +213,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation project(path: ':faceplatform-ui')
-    implementation project(path: ':faceplatform-ui')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    // emoji
+    implementation 'androidx.emoji:emoji:1.1.0'
 
     // 沉浸式状态栏
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'

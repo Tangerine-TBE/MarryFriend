@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.gyf.barlibrary.ImmersionBar
+
 import com.twx.module_base.R
 
 open class BaseActivity : FragmentActivity() {

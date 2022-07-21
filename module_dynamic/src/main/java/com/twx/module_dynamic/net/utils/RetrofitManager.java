@@ -42,7 +42,7 @@ public class RetrofitManager {
                 .build();
 
         mBaiduRetrofit = new Retrofit.Builder()
-                .baseUrl(Contents.BAIDU_API_URL)
+                .baseUrl(Contents.BAIDU_MAP_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getClient().build())
                 .build();

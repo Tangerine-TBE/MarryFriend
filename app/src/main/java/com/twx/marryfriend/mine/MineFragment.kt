@@ -64,6 +64,7 @@ import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
 import com.twx.marryfriend.net.impl.getPhotoListPresentImpl
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
+import com.twx.module_dynamic.mine.MyDynamicActivity
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.fragment_mine.*
@@ -330,12 +331,19 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 //            startActivity(Intent(context, UserActivity::class.java))
 //        }
 
+        ll_mine_set_dynamic.setOnClickListener {
+            val intent = Intent(context,MyDynamicActivity::class.java)
+            startActivity(intent)
+        }
+
         ll_mine_set_verify.setOnClickListener {
 
             val intent = Intent(context, VerifyActivity::class.java)
             startActivityForResult(intent, 3)
 
         }
+
+
 
         ll_mine_set_greet.setOnClickListener {
 

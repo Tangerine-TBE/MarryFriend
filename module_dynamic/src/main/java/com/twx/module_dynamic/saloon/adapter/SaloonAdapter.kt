@@ -1,7 +1,6 @@
 package com.twx.module_dynamic.saloon.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +8,9 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.TimeUtils
-import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.twx.module_dynamic.R
+import com.twx.module_dynamic.bean.LikeBean
 import com.twx.module_dynamic.bean.TrendSaloonList
 import java.util.*
 
@@ -21,7 +20,7 @@ import java.util.*
  */
 class SaloonAdapter(
     private val mList: MutableList<TrendSaloonList>,
-    private val mEduData: MutableList<String>,
+    private val mDiyList: MutableList<LikeBean>,
 ) :
     RecyclerView.Adapter<SaloonAdapter.ViewHolder>(), View.OnClickListener {
 
@@ -362,10 +361,16 @@ class SaloonAdapter(
 
             holder.llVideo.visibility = View.GONE
 
+
             when (mPicList.size) {
                 1 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.GONE
+                    holder.llThree.visibility = View.GONE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.INVISIBLE
                     holder.three.visibility = View.INVISIBLE
                     holder.four.visibility = View.GONE
@@ -376,10 +381,16 @@ class SaloonAdapter(
                     holder.nine.visibility = View.GONE
                 }
                 2 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.GONE
+                    holder.llThree.visibility = View.GONE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.INVISIBLE
                     holder.four.visibility = View.GONE
                     holder.five.visibility = View.GONE
@@ -389,12 +400,19 @@ class SaloonAdapter(
                     holder.nine.visibility = View.GONE
                 }
                 3 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.GONE
+                    holder.llThree.visibility = View.GONE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.three)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.three)
                     holder.four.visibility = View.GONE
                     holder.five.visibility = View.GONE
                     holder.six.visibility = View.GONE
@@ -403,109 +421,172 @@ class SaloonAdapter(
                     holder.nine.visibility = View.GONE
                 }
                 4 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.VISIBLE
+                    holder.llThree.visibility = View.GONE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.INVISIBLE
                     holder.four.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.four)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.four)
                     holder.five.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[3]).into(holder.five)
+                    Glide.with(mContext).load(mPicList[3]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.five)
                     holder.six.visibility = View.INVISIBLE
                     holder.seven.visibility = View.GONE
                     holder.eight.visibility = View.GONE
                     holder.nine.visibility = View.GONE
                 }
                 5 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.VISIBLE
+                    holder.llThree.visibility = View.GONE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.three)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.three)
                     holder.four.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[3]).into(holder.four)
+                    Glide.with(mContext).load(mPicList[3]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.four)
                     holder.five.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[4]).into(holder.five)
+                    Glide.with(mContext).load(mPicList[4]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.five)
                     holder.six.visibility = View.INVISIBLE
                     holder.seven.visibility = View.GONE
                     holder.eight.visibility = View.GONE
                     holder.nine.visibility = View.GONE
                 }
                 6 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.VISIBLE
+                    holder.llThree.visibility = View.GONE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.three)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.three)
                     holder.four.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[3]).into(holder.four)
+                    Glide.with(mContext).load(mPicList[3]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.four)
                     holder.five.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[4]).into(holder.five)
+                    Glide.with(mContext).load(mPicList[4]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.five)
                     holder.six.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[5]).into(holder.six)
+                    Glide.with(mContext).load(mPicList[5]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.six)
                     holder.seven.visibility = View.GONE
                     holder.eight.visibility = View.GONE
                     holder.nine.visibility = View.GONE
                 }
                 7 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.VISIBLE
+                    holder.llThree.visibility = View.VISIBLE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.three)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.three)
                     holder.four.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[3]).into(holder.four)
+                    Glide.with(mContext).load(mPicList[3]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.four)
                     holder.five.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[4]).into(holder.five)
+                    Glide.with(mContext).load(mPicList[4]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.five)
                     holder.six.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[5]).into(holder.six)
+                    Glide.with(mContext).load(mPicList[5]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.six)
                     holder.seven.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[6]).into(holder.seven)
+                    Glide.with(mContext).load(mPicList[6]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.seven)
                     holder.eight.visibility = View.INVISIBLE
                     holder.nine.visibility = View.INVISIBLE
                 }
                 8 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.VISIBLE
+                    holder.llThree.visibility = View.VISIBLE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.three)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.three)
                     holder.four.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[3]).into(holder.four)
+                    Glide.with(mContext).load(mPicList[3]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.four)
                     holder.five.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[4]).into(holder.five)
+                    Glide.with(mContext).load(mPicList[4]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.five)
                     holder.six.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[5]).into(holder.six)
+                    Glide.with(mContext).load(mPicList[5]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.six)
                     holder.seven.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[6]).into(holder.seven)
+                    Glide.with(mContext).load(mPicList[6]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.seven)
                     holder.eight.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[7]).into(holder.eight)
+                    Glide.with(mContext).load(mPicList[7]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.eight)
                     holder.nine.visibility = View.INVISIBLE
                 }
                 9 -> {
+                    holder.llOne.visibility = View.VISIBLE
+                    holder.llTwo.visibility = View.VISIBLE
+                    holder.llThree.visibility = View.VISIBLE
+
                     holder.one.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[0]).into(holder.one)
+                    Glide.with(mContext).load(mPicList[0]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.one)
                     holder.two.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[1]).into(holder.two)
+                    Glide.with(mContext).load(mPicList[1]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.two)
                     holder.three.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[2]).into(holder.three)
+                    Glide.with(mContext).load(mPicList[2]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.three)
                     holder.four.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[3]).into(holder.four)
+                    Glide.with(mContext).load(mPicList[3]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.four)
                     holder.five.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[4]).into(holder.five)
+                    Glide.with(mContext).load(mPicList[4]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.five)
                     holder.six.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[5]).into(holder.six)
+                    Glide.with(mContext).load(mPicList[5]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.six)
                     holder.seven.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[6]).into(holder.seven)
+                    Glide.with(mContext).load(mPicList[6]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.seven)
                     holder.eight.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[7]).into(holder.eight)
+                    Glide.with(mContext).load(mPicList[7]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.eight)
                     holder.nine.visibility = View.VISIBLE
-                    Glide.with(mContext).load(mPicList[8]).into(holder.nine)
+                    Glide.with(mContext).load(mPicList[8]).error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default).into(holder.nine)
                 }
             }
         } else {
@@ -522,7 +603,6 @@ class SaloonAdapter(
                 holder.llTwo.visibility = View.GONE
                 holder.llThree.visibility = View.GONE
             }
-
         }
 
         if (mList[position].position != "") {
@@ -578,10 +658,31 @@ class SaloonAdapter(
             }
         }
 
+        if (mDiyList[position].like) {
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
+        } else {
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
+        }
 
-        holder.tvLike.text = mList[position].like_count.toString()
+        if (mDiyList[position].focus) {
+            holder.focus.setImageResource(R.drawable.ic_base_chat)
+        } else {
+            holder.focus.setImageResource(R.drawable.ic_base_focus)
+        }
 
-        holder.tvComment.text = mList[position].discuss_count.toString()
+        if (mDiyList[position].likeCount != 0) {
+            holder.tvLike.text = mDiyList[position].likeCount.toString()
+        } else {
+            holder.tvLike.text = "抢首赞"
+        }
+
+
+        if (mList[position].discuss_count != 0) {
+            holder.tvComment.text = mList[position].discuss_count.toString()
+        } else {
+            holder.tvComment.text = "评论"
+        }
+
 
     }
 

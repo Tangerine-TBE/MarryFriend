@@ -13,7 +13,8 @@ import com.twx.module_dynamic.R
  * @author: Administrator
  * @date: 2022/7/13
  */
-class EmojiDetailAdapter(private val mList: MutableList<String>,
+class EmojiDetailAdapter(
+    private val mList: MutableList<String>,
 ) :
     RecyclerView.Adapter<EmojiDetailAdapter.ViewHolder>(), View.OnClickListener {
 
@@ -40,8 +41,7 @@ class EmojiDetailAdapter(private val mList: MutableList<String>,
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.layout_detail_emoji, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_detail_emoji, parent, false)
         mContext = parent.context
         view.setOnClickListener(this)
         return ViewHolder(view)
@@ -49,7 +49,7 @@ class EmojiDetailAdapter(private val mList: MutableList<String>,
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
-        holder.emoji.text =getCompatEmojiString(mList[position])
+        holder.emoji.text = getCompatEmojiString(mList[position])
     }
 
     override fun getItemCount(): Int {

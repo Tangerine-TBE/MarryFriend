@@ -93,7 +93,8 @@
         android:id="@+id/ll_detail_dynamic_other_video"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
 
         <FrameLayout
             android:id="@+id/fl_detail_dynamic_other_video"
@@ -147,7 +148,8 @@
         android:id="@+id/ll_detail_dynamic_other_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/iv_detail_dynamic_other_one"
@@ -190,7 +192,8 @@
         android:id="@+id/ll_detail_dynamic_other_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/iv_detail_dynamic_other_four"
@@ -233,7 +236,8 @@
         android:id="@+id/ll_detail_dynamic_other_three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp">
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
 
         <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/iv_detail_dynamic_other_seven"
@@ -320,7 +324,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/tv_detail_dynamic_other_like"
-            android:src="@drawable/ic_dynamic_like" />
+            android:src="@drawable/ic_dynamic_base_like" />
 
         <TextView
             android:id="@+id/tv_detail_dynamic_other_like"

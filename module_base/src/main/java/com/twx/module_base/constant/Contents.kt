@@ -110,18 +110,26 @@ object Contents {
     const val DO_CANCEL_FOCUS_OTHER = "UserCenter/cancelFocusOther"
 
 
-
     // 动态沙龙列表
     const val GET_TREND_SALOON = "TrendsNotice/trendsSaloon"
 
     // 关注的人动态列表
     const val GET_TREND_FOCUS = "TrendsNotice/focousTrends"
 
+    // 获取评论和点赞的未读次数
+    const val GET_TOTAL_COUNT = "TrendsNotice/totalCount"
+
+
+    // 点赞未读列表
+    const val GET_TREND_TIP = "TrendsNotice/dianzanUnreadList"
+
     // ------------------------------- 高德地图 -------------------------------
 
     // 高德地图-地点检索
     const val PLACE_SEARCH = "place/around"
 
+    // 百度行政区划区域检索
+    const val BAIDU_SEARCH = "v2/search"
 
 
     // ------------------------------- 常量 -------------------------------
@@ -266,12 +274,6 @@ object Contents {
     const val IMAGE_TYPE = "image_type" // 图片类型 BASE64、URL、FACE_TOKEN
 
 
-
-
-
-
-
-
     // 百度地图地点搜索
     const val KEY = "key"
     const val LOCATION = "location"
@@ -281,10 +283,18 @@ object Contents {
     const val RADIUS = "radius"
     const val SORTRULE = "sortrule"
     const val OFFSET = "offset"
-//    const val PAGE = "page"
+
+    //    const val PAGE = "page"
     const val EXTENSIONS = "extensions"
     const val SIG = "sig"
     const val CALLBACK = "callback"
 
+
+    // 百度行政区划区域检索
+    const val QUERY = "query" // 检索关键字
+    const val TAG = "tag"     // 检索分类偏好
+    const val REGION = "region"  // 检索行政区划区域
+    const val OUTPUT = "output"  // 输出格式  json或者xml
+    const val AK = "ak"          // 开发者的访问密钥
 
 }

@@ -3,6 +3,7 @@ package com.twx.module_dynamic.saloon.friend
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +34,12 @@ import java.util.*
 class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCallback,
     IDoLikeCancelCallback {
 
+    // 上次点击时间
+    private var lastClickTime = 0L
+
+    // 两次点击间隔时间（毫秒）
+    private val delayTime = 3000
+
     // 数据加载模式
     private var mode = "first"
 
@@ -46,6 +53,9 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
+
+    // 关注与点赞数据
+    private var mDiyList: MutableList<LikeBean> = arrayListOf()
 
     private var mTrendList: MutableList<TrendFocusList> = arrayListOf()
 
@@ -145,8 +155,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             override fun onItemClick(v: View?, position: Int) {
                 val intent = Intent(context, DynamicOtherShowActivity::class.java)
                 intent.putExtra("trendId", mTrendList[position].id)
-                intent.putExtra("userId", mTrendList[position].user_id)
-                intent.putExtra("sex", mTrendList[position].user_sex)
+                intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+                intent.putExtra("mode", 1)
                 startActivity(intent)
             }
         })
@@ -340,6 +350,35 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             }
         })
 
+        adapter.setOnLikeClickListener(object : SaloonFocusAdapter.OnLikeClickListener {
+            override fun onLikeClick(v: View?, position: Int) {
+
+                // 加个延时
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
+
+                    if (!mDiyList[position].like) {
+                        // 点赞
+                        mDiyList[position].like = true
+                        mDiyList[position].likeCount++
+                        doLikeClick(mTrendList[position].id, mTrendList[position].user_id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    } else {
+                        // 取消赞
+                        mDiyList[position].like = false
+                        mDiyList[position].likeCount--
+                        doLikeCancelClick(mTrendList[position].id, mTrendList[position].user_id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    }
+                    adapter.notifyDataSetChanged()
+
+                } else {
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                }
+
+            }
+        })
+
     }
 
     // 获取动态列表
@@ -354,7 +393,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     }
 
     // 动态点赞
-    private fun doLikeClick(trendId: Int, hostUid: Int, guestUid: Int) {
+    private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
@@ -363,7 +402,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     }
 
     // 取消点赞
-    private fun doLikeCancelClick(trendId: Int, hostUid: Int, guestUid: Int) {
+    private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
@@ -405,12 +444,14 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
             if (mode == "first") {
                 mTrendList.clear()
+                mDiyList.clear()
             }
 
-            mTrendList.clear()
             for (i in 0.until(trendFocusBean.data.list.size)) {
                 mTrendList.add(trendFocusBean.data.list[i])
                 mIdList.add(trendFocusBean.data.list[i].id)
+
+                mDiyList.add(LikeBean(false, false, trendFocusBean.data.list[i].like_count))
             }
 
             max = Collections.max(mIdList)

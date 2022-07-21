@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="你期望何时结婚?"
+            android:text=""
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -37,7 +37,7 @@
         android:layout_marginTop="32dp"
         android:paddingVertical="20dp"
         android:src="@drawable/ic_dialog_choose_check"
-        android:text="修改性别需要身份认证,为了防范恶意用户冒用他人信息进行征婚,确保您信息的真实性,请完成人脸认证用以核验您的性别和年龄"
+        android:text="你的性别无法进行修改"
         android:textColor="#101010"
         android:textSize="17sp" />
 

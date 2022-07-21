@@ -24,13 +24,16 @@ import java.util.*
  * @date: 2022/7/8
  */
 class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
-    RecyclerView.Adapter<CommentTwoAdapter.ViewHolder>(), View.OnClickListener {
+    RecyclerView.Adapter<CommentTwoAdapter.ViewHolder>(), View.OnClickListener,
+    View.OnLongClickListener {
 
 //    private var mList: List<CommentTwoList> = arrayListOf()
 
     private lateinit var mContext: Context
 
     private var mOnItemClickListener: OnItemClickListener? = null
+
+    private var mOnItemLongClickListener: OnItemLongClickListener? = null
 
 //    public fun setChildList(list: List<CommentTwoList>) {
 //        this.mList = list
@@ -43,14 +46,26 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
         fun onReplyClick(v: View?, position: Int)
     }
 
-    public fun setOnItemClickListener(listener: OnItemClickListener) {
+    interface OnItemLongClickListener {
+        fun onItemLongClick(v: View?, position: Int)
+    }
+
+    fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mOnItemClickListener = listener
+    }
+
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
+        this.mOnItemLongClickListener = listener
     }
 
     override fun onClick(v: View?) {
         if (v != null) {
             mOnItemClickListener?.onItemClick(v, v.tag as Int)
         }
+    }
+
+    override fun onLongClick(v: View?): Boolean {
+        return true
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -114,6 +129,13 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
         holder.content.setOnClickListener {
             mOnItemClickListener?.onReplyClick(it, position)
         }
+
+        holder.content.setOnLongClickListener(object : View.OnLongClickListener {
+            override fun onLongClick(v: View?): Boolean {
+                mOnItemLongClickListener?.onItemLongClick(v, position)
+                return true
+            }
+        })
 
     }
 

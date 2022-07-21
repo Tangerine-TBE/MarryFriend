@@ -242,7 +242,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/tv_detail_dynamic_mine_like"
-            android:src="@drawable/ic_dynamic_like" />
+            android:src="@drawable/ic_dynamic_base_like" />
 
         <TextView
             android:id="@+id/tv_detail_dynamic_mine_like"

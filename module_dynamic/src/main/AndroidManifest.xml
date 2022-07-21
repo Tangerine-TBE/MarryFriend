@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.twx.module_dynamic">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,6 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend">
         <activity
+            android:name=".saloon.tip.TipsActivity"
+            android:exported="false" />
+        <activity
             android:name=".preview.video.VideoPreviewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="false"
@@ -41,8 +45,7 @@
             android:exported="true" />
         <activity
             android:name=".saloon.SaloonActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".show.mine.DynamicMineLikeActivity"
             android:exported="false" />
@@ -55,7 +58,7 @@
             android:exported="false" />
         <activity
             android:name=".send.DynamicSendActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".mine.MyDynamicActivity"
             android:exported="true">
@@ -65,6 +68,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".utils.DynamicFileProvider"
+            android:authorities="com.twx.module_dynamic.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

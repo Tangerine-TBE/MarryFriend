@@ -17,13 +17,17 @@ import com.twx.module_dynamic.bean.MyTrendsListBean;
 import com.twx.module_dynamic.bean.OtherFocusBean;
 import com.twx.module_dynamic.bean.PlaceSearchBean;
 import com.twx.module_dynamic.bean.PlusFocusBean;
+import com.twx.module_dynamic.bean.SearchBean;
+import com.twx.module_dynamic.bean.TotalCountBean;
 import com.twx.module_dynamic.bean.TrendFocusBean;
 import com.twx.module_dynamic.bean.TrendSaloonBean;
+import com.twx.module_dynamic.bean.TrendTipBean;
 import com.twx.module_dynamic.bean.UploadTrendBean;
 
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.QueryMap;
 
@@ -116,10 +120,21 @@ public interface Api {
     Call<TrendFocusBean> getTrendFocus(@QueryMap Map<String, Object> params);
 
 
+    // 获取评论和点赞的未读次数
+    @POST("/marryfriend/TrendsNotice/totalCount")
+    Call<TotalCountBean> getTotalCount(@QueryMap Map<String, Object> params);
+
+    // 点赞未读列表
+    @POST("/marryfriend/TrendsNotice/dianzanUnreadList")
+    Call<TrendTipBean> getTrendTips(@QueryMap Map<String, Object> params);
+
     // 高德地图-地点检索
     @POST("/v3/place/around")
     Call<PlaceSearchBean> doPlaceSearch(@QueryMap Map<String, Object> params);
 
+    // 百度行政区划区域检索
+    @GET("/place/v2/search")
+    Call<SearchBean> doSearch(@QueryMap Map<String, Object> params);
 
 }
 

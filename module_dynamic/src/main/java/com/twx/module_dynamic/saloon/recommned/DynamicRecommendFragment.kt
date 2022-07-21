@@ -3,42 +3,38 @@ package com.twx.module_dynamic.saloon.recommned
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
-import com.scwang.smart.refresh.layout.api.RefreshLayout
-import com.scwang.smart.refresh.layout.listener.OnLoadMoreListener
-import com.scwang.smart.refresh.layout.listener.OnRefreshListener
+import com.twx.module_base.constant.Constant
 import com.twx.module_base.constant.Contents
 import com.twx.module_dynamic.R
-import com.twx.module_dynamic.bean.LikeCancelBean
-import com.twx.module_dynamic.bean.LikeClickBean
-import com.twx.module_dynamic.bean.TrendSaloonBean
-import com.twx.module_dynamic.bean.TrendSaloonList
-import com.twx.module_dynamic.net.callback.IDoLikeCancelCallback
-import com.twx.module_dynamic.net.callback.IDoLikeClickCallback
-import com.twx.module_dynamic.net.callback.IGetTrendSaloonCallback
-import com.twx.module_dynamic.net.impl.doLikeCancelPresentImpl
-import com.twx.module_dynamic.net.impl.doLikeClickPresentImpl
-import com.twx.module_dynamic.net.impl.getTrendSaloonPresentImpl
+import com.twx.module_dynamic.bean.*
+import com.twx.module_dynamic.net.callback.*
+import com.twx.module_dynamic.net.impl.*
 import com.twx.module_dynamic.preview.image.ImagePreviewActivity
 import com.twx.module_dynamic.preview.video.VideoPreviewActivity
 import com.twx.module_dynamic.saloon.adapter.SaloonAdapter
 import com.twx.module_dynamic.show.others.DynamicOtherShowActivity
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
-import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
-import kotlinx.android.synthetic.main.fragment_recommend.*
+import kotlinx.android.synthetic.main.fragment_dynamic_recommend.*
 import java.io.Serializable
 import java.util.*
 
 class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback {
+    IDoLikeCancelCallback, IDoPlusFocusCallback, IDoCancelFocusCallback, IGetTotalCountCallback {
+
+    // 上次点击时间
+    private var lastClickTime = 0L
+
+    // 两次点击间隔时间（毫秒）
+    private val delayTime = 3000
 
     // 数据加载模式
     private var mode = "first"
@@ -54,6 +50,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
 
+    // 关注与点赞数据
+    private var mDiyList: MutableList<LikeBean> = arrayListOf()
+
     private var mTrendList: MutableList<TrendSaloonList> = arrayListOf()
 
     private lateinit var adapter: SaloonAdapter
@@ -61,12 +60,15 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     private lateinit var getTrendSaloonPresent: getTrendSaloonPresentImpl
     private lateinit var doLikeClickPresent: doLikeClickPresentImpl
     private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
+    private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
+    private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
+    private lateinit var getTotalCountPresent: getTotalCountPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.fragment_recommend, container, false)
+        return inflater.inflate(R.layout.fragment_dynamic_recommend, container, false)
     }
 
     fun newInstance(context: Context): DynamicRecommendFragment {
@@ -94,6 +96,15 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
 
+        doPlusFocusPresent = doPlusFocusPresentImpl.getsInstance()
+        doPlusFocusPresent.registerCallback(this)
+
+        doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
+        doCancelFocusPresent.registerCallback(this)
+
+        getTotalCountPresent = getTotalCountPresentImpl.getsInstance()
+        getTotalCountPresent.registerCallback(this)
+
         val mEduData: MutableList<String> = arrayListOf()
         mEduData.add("大专以下")
         mEduData.add("大专")
@@ -102,19 +113,21 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         mEduData.add("博士")
         mEduData.add("博士以上")
 
-        adapter = SaloonAdapter(mTrendList, mEduData)
+        adapter = SaloonAdapter(mTrendList, mDiyList)
 
         rv_dynamic_recommend_container.adapter = adapter
         rv_dynamic_recommend_container.layoutManager = LinearLayoutManager(context)
 
-        srl_dynamic_recommend_refresh.setRefreshHeader(ClassicsHeader(mContext));
-        srl_dynamic_recommend_refresh.setRefreshFooter(ClassicsFooter(mContext));
+        srl_dynamic_recommend_refresh.setRefreshHeader(ClassicsHeader(requireContext()));
+        srl_dynamic_recommend_refresh.setRefreshFooter(ClassicsFooter(requireContext()));
 
     }
 
     private fun initData() {
 
         getTrendSaloon(mode, max, min)
+
+        getTotalCount()
 
     }
 
@@ -130,6 +143,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             max = 3
             min = 2
             getTrendSaloon(mode, max, min)
+            getTotalCount()
             srl_dynamic_recommend_refresh.finishRefresh(2000/*,false*/);//传入false表示刷新失败
         }
 
@@ -138,6 +152,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             mode = "down"
             getTrendSaloon(mode, max, min)
             srl_dynamic_recommend_refresh.finishLoadMore(2000/*,false*/);//传入false表示刷新失败
+        }
+
+
+        rl_dynamic_tips.setOnClickListener {
+            ToastUtils.showShort("提醒列表")
+            rl_dynamic_tips.visibility = View.GONE
         }
 
         adapter.setOnVideoClickListener(object : SaloonAdapter.OnVideoClickListener {
@@ -151,13 +171,16 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnItemClickListener(object : SaloonAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                ToastUtils.showShort("动态详情界面，显示评论")
                 val intent = Intent(context, DynamicOtherShowActivity::class.java)
                 intent.putExtra("trendId", mTrendList[position].id)
-                intent.putExtra("userId", mTrendList[position].user_id)
-                intent.putExtra("sex", mTrendList[position].user_sex)
+                intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+                val mode = if (mDiyList[position].focus) {
+                    1
+                } else {
+                    0
+                }
+                intent.putExtra("mode", mode)
                 startActivity(intent)
-
             }
         })
 
@@ -181,7 +204,16 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnCommentClickListener(object : SaloonAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
-                ToastUtils.showShort("评论，跳转到动态详情界面，显示评论")
+                val intent = Intent(context, DynamicOtherShowActivity::class.java)
+                intent.putExtra("trendId", mTrendList[position].id)
+                intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+                val mode = if (mDiyList[position].focus) {
+                    1
+                } else {
+                    0
+                }
+                intent.putExtra("mode", mode)
+                startActivity(intent)
             }
         })
 
@@ -360,6 +392,71 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             }
         })
 
+        adapter.setOnLikeClickListener(object : SaloonAdapter.OnLikeClickListener {
+            override fun onLikeClick(v: View?, position: Int) {
+
+                // 加个延时
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
+
+                    if (!mDiyList[position].like) {
+                        // 点赞
+                        mDiyList[position].like = true
+                        mDiyList[position].likeCount++
+                        doLikeClick(mTrendList[position].id,
+                            mTrendList[position].user_id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    } else {
+                        // 取消赞
+                        mDiyList[position].like = false
+                        mDiyList[position].likeCount--
+                        doLikeCancelClick(mTrendList[position].id,
+                            mTrendList[position].user_id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    }
+                    adapter.notifyDataSetChanged()
+
+                } else {
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                }
+
+            }
+        })
+
+        adapter.setOnFocusClickListener(object : SaloonAdapter.OnFocusClickListener {
+            override fun onFocusClick(v: View?, position: Int) {
+
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
+
+                    if (!mDiyList[position].focus) {
+                        // 点关注
+                        mDiyList[position].focus = true
+                        doPlusFocus(mTrendList[position].user_id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    } else {
+                        // 取消关注 ()
+//                        mDiyList[position].focus = false
+//                        doCancelFocus(mTrendList[position].user_id,
+//                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+
+                        ToastUtils.showShort("消息界面")
+                    }
+                    adapter.notifyDataSetChanged()
+
+                } else {
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                }
+
+            }
+        })
+    }
+
+    // 获取消息提醒列表
+    private fun getTotalCount() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getTotalCountPresent.getTotalCount(map)
     }
 
     // 获取动态列表
@@ -369,11 +466,13 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         map[Contents.MAX_ID] = max.toString()
         map[Contents.MIN_ID] = min.toString()
         map[Contents.SIZE] = 10.toString()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getTrendSaloonPresent.getTrendSaloon(map)
     }
 
     // 动态点赞
-    private fun doLikeClick(trendId: Int, hostUid: Int, guestUid: Int) {
+    private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
@@ -382,12 +481,28 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     // 取消点赞
-    private fun doLikeCancelClick(trendId: Int, hostUid: Int, guestUid: Int) {
+    private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeCancelPresent.doLikeCancel(map)
+    }
+
+    // 关注
+    private fun doPlusFocus(hostUid: String, guestUid: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doPlusFocusPresent.doPlusFocusOther(map)
+    }
+
+    // 取消关注
+    private fun doCancelFocus(hostUid: String, guestUid: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doCancelFocusPresent.doCancelFocusOther(map)
     }
 
     override fun onLoading() {
@@ -398,12 +513,40 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     }
 
-    override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+    override fun onGetTotalCountSuccess(totalCountBean: TotalCountBean?) {
+        if (totalCountBean != null) {
+            if (totalCountBean.code == 200) {
+                rl_dynamic_tips.visibility = View.VISIBLE
+                tv_dynamic_tips_count.text = "${totalCountBean.data}条新消息"
+            }
+        }
+    }
+
+    override fun onGetTotalCountError() {
 
     }
 
-    override fun onLikeCancelError() {
+    override fun onDoPlusFocusSuccess(plusFocusBean: PlusFocusBean?) {
+        if (plusFocusBean != null) {
+            if (plusFocusBean.code == 200) {
+                ToastUtils.showShort("关注成功")
+            }
+        }
+    }
 
+    override fun onDoPlusFocusError() {
+    }
+
+    override fun onDoCancelFocusSuccess(cancelFocusBean: CancelFocusBean?) {
+    }
+
+    override fun onDoCancelFocusError() {
+    }
+
+    override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+    }
+
+    override fun onLikeCancelError() {
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
@@ -423,11 +566,15 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
             if (mode == "first") {
                 mTrendList.clear()
+                mDiyList.clear()
             }
 
             for (i in 0.until(trendSaloonBean.data.list.size)) {
                 mTrendList.add(trendSaloonBean.data.list[i])
                 mIdList.add(trendSaloonBean.data.list[i].id)
+
+                mDiyList.add(LikeBean(false, false, trendSaloonBean.data.list[i].like_count))
+
             }
 
             max = Collections.max(mIdList)

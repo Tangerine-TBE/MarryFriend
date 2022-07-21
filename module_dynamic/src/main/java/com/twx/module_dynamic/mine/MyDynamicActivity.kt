@@ -10,6 +10,7 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.bumptech.glide.Glide
 import com.luck.picture.lib.decoration.WrapContentLinearLayoutManager
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
@@ -52,6 +53,16 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback {
 
     override fun initView() {
         super.initView()
+
+        val avatar = SPStaticUtils.getString(Constant.ME_AVATAR, "")
+
+        if (avatar != "") {
+            Glide.with(this).load(avatar).into(iv_dynamic_mine_avatar)
+        } else {
+            ToastUtils.showShort("无头像，添加默认头像图")
+        }
+
+        tv_dynamic_mine_name.text = SPStaticUtils.getString(Constant.ME_NAME)
 
         getMyTrendsListPresent = getMyTrendsListPresentImpl.getsInstance()
         getMyTrendsListPresent.registerCallback(this)
@@ -144,9 +155,15 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback {
 
         adapter.setOnItemClickListener(object : MyDynamicAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                val intent = Intent(this@MyDynamicActivity, DynamicMineShowActivity::class.java)
-                intent.putExtra("id", trendList[position].id)
-                startActivity(intent)
+
+                if (trendList[position].audit_status == 1) {
+                    val intent = Intent(this@MyDynamicActivity, DynamicMineShowActivity::class.java)
+                    intent.putExtra("id", trendList[position].id)
+                    startActivity(intent)
+                } else {
+                    ToastUtils.showShort("此动态正在审核中")
+                }
+
             }
         })
 
@@ -333,11 +350,10 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback {
 
         iv_dynamic_mine_send.setOnClickListener {
             val intent = Intent(this, DynamicSendActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, 0)
         }
 
     }
-
 
     // 初次加载我的动态列表
     private fun getFirstTrendsList() {
@@ -353,6 +369,19 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback {
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         map[Contents.TRENDS_TYPE] = trendType.toString()
         getMyTrendsListPresent.getMyTrendsList(map, currentPaper, 10)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    currentPaper = 1
+                    trendType = 0
+                    getFirstTrendsList()
+                }
+            }
+        }
     }
 
     override fun onLoading() {
