@@ -55,19 +55,39 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
                 "${value.first}k-${value.last}k"
             }
         }
-    private val marriageState=HashSet<MarriageEnum>()
+    private val marriagePair by lazy {
+        listOf(
+            unlimitedMarriage to MarriageEnum.unlimited,
+            unmarriedMarriage to MarriageEnum.unmarried,
+            divorceMarriage to MarriageEnum.divorce,
+            widowhoodMarriage to MarriageEnum.widowhood,
+        )
+    }
+    private val marriageState=ArrayList<MarriageEnum>()
+    private var marriageStateResult:List<MarriageEnum>?=null
+        set(value) {
+            field=value
+            if (value==null){
+                marriageState.clear()
+                marriageState.add(MarriageEnum.unlimited)
+            }
+            marriagePair.forEach {
+                it.first.isSelected=marriageState.contains(it.second)
+            }
+            searchViewModel.setMarriageParameter(value)
+        }
     //学历
     private var eduList:List<EduEnum>?=ArrayList<EduEnum>().apply {
         this.add(EduEnum.unlimited)
     }
         set(value) {
             field=value
+            educationText.text=value?.map { it.title }?.toTextString()?:"不限"
             searchViewModel.setEduParameter(value)
         }
     private val eduDialog by lazy {
         EduDialog(this){ list ->
             //设置选择后的结果
-            educationText.text=list.map { it.title }.toTextString()
             eduList=list
         }
     }
@@ -75,12 +95,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var housingList:List<HousingEnum>?=null
         set(value) {
             field=value
+            housingText.text=value?.map { it.title }?.toTextString()?:"不限"
             searchViewModel.setHousingParameter(value)
         }
     private val housingDialog by lazy {
         HousingDialog(this){ list ->
             //设置选择后的结果
-            housingText.text=list.map { it.title }.toTextString()
             housingList=(list)
         }
     }
@@ -88,12 +108,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var wantChildrenList:List<WantChildrenEnum>?=null
         set(value) {
             field=value
+            //设置选择后的结果
+            childrenText.text=value?.map { it.title }?.toTextString()?:"不限"
             searchViewModel.setWantChildrenParameter(value)
         }
     private val wantChildrenDialog by lazy {
         WantChildrenDialog(this){ list ->
-            //设置选择后的结果
-            childrenText.text=list.map { it.title }.toTextString()
             wantChildrenList=(list)
         }
     }
@@ -101,12 +121,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var currentBuyCar=BuyCarEnum.unlimited
         set(value) {
             field=value
+            //设置选择后的结果
+            buyCarText.text=value.title
             searchViewModel.setBuyCarParameter(value)
         }
     private val buyCarDialog by lazy {
         BuyCarDialog(this){ car ->
-            //设置选择后的结果
-            buyCarText.text=car.title
             currentBuyCar=car
         }
     }
@@ -114,12 +134,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var currentHavePortrait= HeadPortraitEnum.unlimited
         set(value) {
             field=value
+            //设置选择后的结果
+            headPortraitText.text=value.title
             searchViewModel.setHavePortraitParameter(value)
         }
     private val havePortraitDialog by lazy {
         HavePortraitDialog(this){
-            //设置选择后的结果
-            headPortraitText.text=it.title
             currentHavePortrait=it
         }
     }
@@ -127,12 +147,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var currentIsVip= IsVipEnum.unlimited
         set(value) {
             field=value
+            //设置选择后的结果
+            isVipText.text=value.title
             searchViewModel.setVipParameter(value)
         }
     private val isVipDialog by lazy {
         IsVipDialog(this){
-            //设置选择后的结果
-            isVipText.text=it.title
             currentIsVip=it
         }
     }
@@ -140,12 +160,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var currentOnLine= OnLineEnum.unlimited
         set(value) {
             field=value
+            //设置选择后的结果
+            isSignInText.text=value.title
             searchViewModel.setOnLineParameter(value)
         }
     private val onLineDialog by lazy {
         OnLineDialog(this){
-            //设置选择后的结果
-            isSignInText.text=it.title
             currentOnLine=it
         }
     }
@@ -153,12 +173,12 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private var currentRealName= RealNameEnum.unlimited
         set(value) {
             field=value
+            //设置选择后的结果
+            isRealNameText.text=value.title
             searchViewModel.setRealNameParameter(value)
         }
     private val realNameDialog by lazy {
         RealNameDialog(this){
-            //设置选择后的结果
-            isRealNameText.text=it.title
             currentRealName=it
         }
     }
@@ -318,6 +338,19 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             ageSetValue.reset()
             heightSetValue.reset()
             incomeSetValue.reset()
+            marriageStateResult=null
+            eduList=null
+            currentWorkplaceList=null
+            currentOccupation=null
+            currentNativePlaceList=null
+            housingList=null
+            currentBuyCar=BuyCarEnum.unlimited
+            wantChildrenList=null
+            currentHavePortrait= HeadPortraitEnum.unlimited
+            currentConstellationList=null
+            currentIsVip= IsVipEnum.unlimited
+            currentRealName= RealNameEnum.unlimited
+            currentOnLine= OnLineEnum.unlimited
         }
         ageSetValue.rangeCall={first,last->
             ageRange= IntRange(SearchViewModel.MIN_AGE+(first*(SearchViewModel.MAX_AGE-SearchViewModel.MIN_AGE)+0.5f).toInt(),SearchViewModel.MIN_AGE+(last*(SearchViewModel.MAX_AGE-SearchViewModel.MIN_AGE)+0.5f).toInt()).let {
@@ -347,44 +380,13 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
                 }
             }
         }
-        val marriagePair=listOf(
-            unlimitedMarriage to MarriageEnum.unlimited,
-            unmarriedMarriage to MarriageEnum.unmarried,
-            divorceMarriage to MarriageEnum.divorce,
-            widowhoodMarriage to MarriageEnum.widowhood,
-        )
         unlimitedMarriage.isSelected=true
         marriagePair.forEach { pair->
             pair.first.setOnClickListener {view->
-                if (view.isSelected){
-                    if(pair.second==MarriageEnum.unlimited){
-                        return@setOnClickListener
-                    }else {
-                        marriageState.remove(pair.second)
-                        if (marriageState.isEmpty()){
-                            marriageState.add(MarriageEnum.unlimited)
-                        }
-                    }
-                }else{
-                    if (pair.second==MarriageEnum.unlimited){
-                        marriageState.clear()
-                        marriageState.add(MarriageEnum.unlimited)
-                    }else{
-                        marriageState.add(pair.second)
-                        if (MarriageEnum.values().all {
-                                marriageState.contains(it)||it==MarriageEnum.unlimited
-                            }){
-                            marriageState.clear()
-                            marriageState.add(MarriageEnum.unlimited)
-                        }else{
-                            marriageState.remove(MarriageEnum.unlimited)
-                        }
-                    }
+                MarriageEnum.changeChoice(pair.second,marriageState,!view.isSelected)
+                marriageState.toList().also {
+                    marriageStateResult=it
                 }
-                marriagePair.forEach {
-                    it.first.isSelected=marriageState.contains(it.second)
-                }
-                searchViewModel.setMarriageParameter(marriageState.toList())
             }
         }
         education.setOnClickListener {
