@@ -22,6 +22,4 @@ rootProject.name = "MarryFriend"
 include ':app', ':faceplatform-release'
 include ':faceplatform-ui'
 
-include ':module_base'
-include ':module_dynamic'
 include ':myutils'

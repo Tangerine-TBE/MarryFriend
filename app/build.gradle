@@ -3,25 +3,11 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android-extensions'
 }
+apply plugin: 'com.android.application'
 
-if (Integer.valueOf(runModule) == 1) {
-    apply plugin: 'com.android.application'
-} else {
-    apply plugin: 'com.android.library'
-}
 
 android {
 
-    if (Integer.valueOf(runModule) != 1) {
-        sourceSets {
-            // main源集（source set）的闭包配置。
-            main {
-                //每个源集只能有一个AndroidManifest.xml清单文件，
-                //默认情况下，main源集的清单文件在src/main/ 目录中。
-                manifest.srcFile 'src/main/AndroidManifest.xml'
-            }
-        }
-    }
 
     compileSdkVersion rootProject.ext.version.compileSdkVersion
     buildToolsVersion rootProject.ext.version.buildToolsVersion
@@ -48,12 +34,9 @@ android {
     }
 
     defaultConfig {
-//        applicationId rootProject.ext.version.applicationId
 
-        if (Integer.valueOf(runModule) == 1) {
-//当为运行module时才有applicationId属性（可以做到不同module的app能在手机上共存）
-            applicationId rootProject.ext.version.applicationId
-        }
+
+        applicationId rootProject.ext.version.applicationId
 
         minSdk rootProject.ext.version.minSdkVersion
         targetSdk rootProject.ext.version.targetSdkVersion
@@ -198,7 +181,10 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation fileTree(dir: "libs", include: ["*.aar"])
     implementation fileTree(dir: "libs", include: ["*.jar"])
+
     implementation project(path: ':faceplatform-release')
+    implementation project(path: ':faceplatform-ui')
+    implementation project(path: ':myutils')
 
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -208,12 +194,12 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
-    implementation project(path: ':faceplatform-ui')
-    implementation project(path: ':faceplatform-ui')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    // emoji
+    implementation 'androidx.emoji:emoji:1.1.0'
 
     // 沉浸式状态栏
     implementation 'com.gyf.barlibrary:barlibrary:2.3.0'
@@ -229,6 +215,10 @@ dependencies {
     implementation 'com.github.getActivity:XXPermissions:13.2'
     // 圆角图片
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    // 图片展示工具
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    // 多功能的视频播放器
+    implementation "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer:8.1.5-jitpack"
 
     // retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -242,15 +232,13 @@ dependencies {
 
     implementation 'io.github.lucksiege:ucrop:v3.0.9'
 
-
     // 百度定位
     implementation 'com.baidu.lbsyun:BaiduMapSDK_Location:9.1.8'
 
-
-    implementation project(path: ':myutils')
     // 下拉刷新框架
-    api 'io.github.scwang90:refresh-layout-kernel:2.0.5'
-    api 'io.github.scwang90:refresh-header-classics:2.0.5'
-    api 'io.github.scwang90:refresh-footer-classics:2.0.5'
+    implementation 'io.github.scwang90:refresh-layout-kernel:2.0.5'
+    implementation 'io.github.scwang90:refresh-header-classics:2.0.5'
+    implementation 'io.github.scwang90:refresh-footer-classics:2.0.5'
+
 
 }

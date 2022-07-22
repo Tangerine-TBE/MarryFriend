@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="你期望Ta的学历?  (可多选)"
+            android:text="学历"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />
@@ -109,19 +109,6 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <TextView
-        android:id="@+id/tv_user_data_edu_confirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_common_next"
-        android:gravity="center"
-        android:paddingVertical="20dp"
-        android:text="确定"
-        android:textColor="#FFFFFF"
-        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/tv_user_data_edu_skip"

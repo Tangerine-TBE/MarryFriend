@@ -175,6 +175,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
 
+    private var lastBaseInfo = ""
+    private var lastMoreInfo = ""
+
+    private var xx = false
+
     private var introduceDialog: BasePopupView? = null
 
     override fun onCreateView(
@@ -309,7 +314,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mJobIdSecondList.add(SPStaticUtils.getInt("job_second_0 _id_$i", 0))
         }
 
-
         cityDate = GsonUtils.fromJson(SPStaticUtils.getString(Constant.CITY_JSON_DATE),
             CityBean::class.java)
 
@@ -383,6 +387,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     private fun initPresent() {
+
+        lastBaseInfo = getBaseInfo()
+        lastMoreInfo = getMoreInfo()
 
         updateDateUI()
 
@@ -617,12 +624,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         baseAdapter.setOnItemClickListener(object : DataBaseAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 when (position) {
-                    0 -> {
-                        showNameDialog()
-                    }
-                    1 -> {
-                        showSexDialog()
-                    }
+                    0 -> showNameDialog()
+                    1 -> showSexDialog()
                     2 -> {
                         if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
                             ToastUtils.showShort("已经实名认证, 生日无法修改")
@@ -630,12 +633,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             showBirthDialog()
                         }
                     }
-                    3 -> {
-                        showHeightDialog()
-                    }
-                    4 -> {
-                        showIncomeDialog()
-                    }
+                    3 -> showHeightDialog()
+                    4 -> showIncomeDialog()
+                    5 -> showWorkPlaceDialog()
+                    6 -> showEduDialog()
+                    7 -> showMarryStateDialog()
+                    8 -> showTargetDialog()
                 }
             }
         })
@@ -966,6 +969,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 月收入
                     showIncomeDialog()
                 } else {
+
+
                     if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
                         // 有没有孩子
                         showHaveChildDialog()
@@ -1019,6 +1024,264 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             4 -> {
+                if (SPStaticUtils.getString(Constant.ME_WORK, "") == "") {
+                    //工作地区
+                    showWorkPlaceDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_EDU, 0) == 0) {
+                        // 学历
+                        showEduDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0) == 0) {
+                            // 婚姻
+                            showMarryStateDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0) == 0) {
+                                // 恋爱目标
+                                showTargetDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                                    // 有没有孩子
+                                    showHaveChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                        // 想不想要孩子
+                                        showWantChildDialog()
+                                    } else {
+                                        if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                                "") == ""
+                                        ) {
+                                            // 职业
+                                            showJobDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                                // 购房情况
+                                                showHouseDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                                    // 购车情况
+                                                    showCarDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                            "") == ""
+                                                    ) {
+                                                        // 籍贯
+                                                        showHomeDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                                0) == 0
+                                                        ) {
+                                                            // 体重
+                                                            showWeightDialog()
+                                                        } else {
+                                                            if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                                    10) == 10
+                                                            ) {
+                                                                // 体型
+                                                                showBodyDialog()
+                                                            } else {
+                                                                updateDateUI()
+                                                                ToastUtils.showShort("刷新界面")
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            5 -> {
+                if (SPStaticUtils.getInt(Constant.ME_EDU, 0) == 0) {
+                    // 学历
+                    showEduDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0) == 0) {
+                        // 婚姻
+                        showMarryStateDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0) == 0) {
+                            // 恋爱目标
+                            showTargetDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                                // 有没有孩子
+                                showHaveChildDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                    // 想不想要孩子
+                                    showWantChildDialog()
+                                } else {
+                                    if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                            "") == ""
+                                    ) {
+                                        // 职业
+                                        showJobDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                            // 购房情况
+                                            showHouseDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                                // 购车情况
+                                                showCarDialog()
+                                            } else {
+                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                        "") == ""
+                                                ) {
+                                                    // 籍贯
+                                                    showHomeDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                            0) == 0
+                                                    ) {
+                                                        // 体重
+                                                        showWeightDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                                10) == 10
+                                                        ) {
+                                                            // 体型
+                                                            showBodyDialog()
+                                                        } else {
+                                                            updateDateUI()
+                                                            ToastUtils.showShort("刷新界面")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            6 -> {
+                if (SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0) == 0) {
+                    // 婚姻
+                    showMarryStateDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0) == 0) {
+                        // 恋爱目标
+                        showTargetDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                            // 有没有孩子
+                            showHaveChildDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                                // 想不想要孩子
+                                showWantChildDialog()
+                            } else {
+                                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                        "") == ""
+                                ) {
+                                    // 职业
+                                    showJobDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                        // 购房情况
+                                        showHouseDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                            // 购车情况
+                                            showCarDialog()
+                                        } else {
+                                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                    "") == ""
+                                            ) {
+                                                // 籍贯
+                                                showHomeDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                        0) == 0
+                                                ) {
+                                                    // 体重
+                                                    showWeightDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                            10) == 10
+                                                    ) {
+                                                        // 体型
+                                                        showBodyDialog()
+                                                    } else {
+                                                        updateDateUI()
+                                                        ToastUtils.showShort("刷新界面")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            7 -> {
+                if (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0) == 0) {
+                    // 恋爱目标
+                    showTargetDialog()
+                } else {
+                    if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
+                        // 有没有孩子
+                        showHaveChildDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
+                            // 想不想要孩子
+                            showWantChildDialog()
+                        } else {
+                            if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
+                                    "") == ""
+                            ) {
+                                // 职业
+                                showJobDialog()
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
+                                    // 购房情况
+                                    showHouseDialog()
+                                } else {
+                                    if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
+                                        // 购车情况
+                                        showCarDialog()
+                                    } else {
+                                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                "") == ""
+                                        ) {
+                                            // 籍贯
+                                            showHomeDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
+                                                    0) == 0
+                                            ) {
+                                                // 体重
+                                                showWeightDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.ME_BODY,
+                                                        10) == 10
+                                                ) {
+                                                    // 体型
+                                                    showBodyDialog()
+                                                } else {
+                                                    updateDateUI()
+                                                    ToastUtils.showShort("刷新界面")
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            8 -> {
                 if (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0) == 0) {
                     // 有没有孩子
                     showHaveChildDialog()
@@ -1070,7 +1333,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            5 -> {
+            9 -> {
                 if (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0) == 0) {
                     // 想不想要孩子
                     showWantChildDialog()
@@ -1117,7 +1380,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            6 -> {
+            10 -> {
                 if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                     // 职业
                     showJobDialog()
@@ -1157,7 +1420,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            7 -> {
+            11 -> {
                 if (SPStaticUtils.getInt(Constant.ME_HOUSE, 0) == 0) {
                     // 购房情况
                     showHouseDialog()
@@ -1192,7 +1455,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            8 -> {
+            12 -> {
                 if (SPStaticUtils.getInt(Constant.ME_CAR, 0) == 0) {
                     // 购车情况
                     showCarDialog()
@@ -1222,7 +1485,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            9 -> {
+            13 -> {
                 if (SPStaticUtils.getString(Constant.ME_HOME, "") == "") {
                     // 籍贯
                     showHomeDialog()
@@ -1245,7 +1508,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            10 -> {
+            14 -> {
                 if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                     // 体重
                     showWeightDialog()
@@ -1261,7 +1524,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
                 }
             }
-            11 -> {
+            15 -> {
                 if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                     // 体型
                     showBodyDialog()
@@ -1385,19 +1648,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             7 -> income = "未填写"
         }
 
-        //     workPlace 工作区域
-        //     edu   学历
-        //     marryState  婚姻
-        //     target   恋爱目标
-
-
         workPlace = when (SPStaticUtils.getString(Constant.ME_WORK, "")) {
             "" -> "未填写"
             else -> SPStaticUtils.getString(Constant.ME_WORK, "")
         }
 
         when (SPStaticUtils.getInt(Constant.ME_EDU, 0)) {
-            0 -> edu = "不限"
+            0 -> edu = "未填写"
             1 -> edu = "大专以下"
             2 -> edu = "大专"
             3 -> edu = "本科"
@@ -1406,21 +1663,19 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         when (SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)) {
+            0 -> marryState = "未填写"
+            1 -> marryState = "未婚"
+            2 -> marryState = "离异"
+            3 -> marryState = "丧偶"
+        }
+
+        when (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0)) {
             0 -> target = "未填写"
-            1 -> target = "不限"
-            2 -> target = "未婚"
-            3 -> target = "离异"
-            4 -> target = "丧偶"
+            1 -> target = "短期内想结婚"
+            2 -> target = "合适就结婚"
+            3 -> target = "先认真谈恋爱再说"
+            4 -> target = "没考虑清楚"
         }
-
-        when (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 4)) {
-            0 -> target = "没有孩子"
-            1 -> target = "有孩子且住在一起"
-            2 -> target = "有孩子偶尔会住一起"
-            3 -> target = "有但不在身边"
-            4 -> target = "未填写"
-        }
-
 
         when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 4)) {
             0 -> haveChild = "没有孩子"
@@ -1494,6 +1749,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         moreAdapter.notifyDataSetChanged()
 
         getDataCompletion()
+
+
+        // 更新数据
+        if (xx) {
+            Log.i("guo", "数据改变")
+            update()
+        } else {
+            xx = true
+            Log.i("guo", "数据未变，不用更新")
+        }
 
     }
 
@@ -1809,6 +2074,50 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             .show()
     }
 
+    // 工作地区
+    private fun showWorkPlaceDialog() {
+        XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(WorkPlaceDialog(requireContext()))
+            .show()
+    }
+
+    // 学历
+    private fun showEduDialog() {
+        XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(EduDialog(requireContext()))
+            .show()
+    }
+
+    // 婚况
+    private fun showMarryStateDialog() {
+        XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(MarryStateDialog(requireContext()))
+            .show()
+    }
+
+    // 恋爱目标
+    private fun showTargetDialog() {
+        XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(TargetDialog(requireContext()))
+            .show()
+    }
+
     // 有没有孩子
     private fun showHaveChildDialog() {
         XPopup.Builder(context)
@@ -2031,12 +2340,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     // 开始上传信息
     private fun update() {
 
+
+        Log.i("guo", "getMoreInfo")
         val moreInfoMap: MutableMap<String, String> = TreeMap()
         moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
         doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
 
+
+        Log.i("guo", "getBaseInfo")
         val baseInfoMap: MutableMap<String, String> = TreeMap()
         baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
@@ -2044,14 +2357,18 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
 
         // 上传头像
-        val uploadPhotoMap: MutableMap<String, String> = TreeMap()
-        uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
-        uploadPhotoMap[Contents.FILE_TYPE] = "png"
-        uploadPhotoMap[Contents.FILE_NAME] = "head.png"
-        uploadPhotoMap[Contents.CONTENT] = "0"
-        uploadPhotoMap[Contents.KIND] = 1.toString()
-        uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
+        if (mPhotoUrl != "") {
+            val uploadPhotoMap: MutableMap<String, String> = TreeMap()
+            uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
+            uploadPhotoMap[Contents.FILE_TYPE] = "png"
+            uploadPhotoMap[Contents.FILE_NAME] = "head.png"
+            uploadPhotoMap[Contents.CONTENT] = "0"
+            uploadPhotoMap[Contents.KIND] = 1.toString()
+            uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
+        } else {
+            Log.i("guo", "getBaseInfo")
+        }
 
         // 更新资料完善度
         val proportionMap: MutableMap<String, String> = TreeMap()
@@ -2182,7 +2499,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
-
     }
 
     override fun onDoUpdateGreetInfoError() {
@@ -2190,7 +2506,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateProportionSuccess(updateProportionInfoBean: UpdateProportionInfoBean?) {
-
+        lastBaseInfo = getBaseInfo()
+        lastMoreInfo = getMoreInfo()
     }
 
     override fun onDoUpdateProportionError() {
@@ -2259,7 +2576,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUploadPhotoSuccess(uploadPhotoBean: UploadPhotoBean?) {
-
+        lastBaseInfo = getBaseInfo()
+        lastMoreInfo = getMoreInfo()
     }
 
     override fun onDoUploadPhotoError() {
@@ -2267,7 +2585,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
-
+        lastBaseInfo = getBaseInfo()
+        lastMoreInfo = getMoreInfo()
     }
 
     override fun onDoUpdateMoreInfoError() {
@@ -2275,7 +2594,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
-
+        lastBaseInfo = getBaseInfo()
+        lastMoreInfo = getMoreInfo()
     }
 
     override fun onDoUpdateBaseInfoError() {
@@ -3544,7 +3864,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     // 工作地区
-    inner class WorkDialog(context: Context) : FullScreenPopupView(context) {
+    inner class WorkPlaceDialog(context: Context) : FullScreenPopupView(context) {
 
         private var isNeedJump = false // 是否需要跳转
 
@@ -3675,7 +3995,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(10)
+                showNextDialog(5)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -3724,7 +4044,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_EDU, 1)
+                SPStaticUtils.put(Constant.ME_EDU, 1)
                 isNeedJump = true
                 dismiss()
             }
@@ -3733,7 +4053,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_EDU, 2)
+                SPStaticUtils.put(Constant.ME_EDU, 2)
                 isNeedJump = true
                 dismiss()
             }
@@ -3742,7 +4062,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_EDU, 3)
+                SPStaticUtils.put(Constant.ME_EDU, 3)
                 isNeedJump = true
                 dismiss()
             }
@@ -3751,7 +4071,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_EDU, 4)
+                SPStaticUtils.put(Constant.ME_EDU, 4)
                 isNeedJump = true
                 dismiss()
             }
@@ -3760,7 +4080,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_five.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_EDU, 5)
+                SPStaticUtils.put(Constant.ME_EDU, 5)
                 isNeedJump = true
                 dismiss()
             }
@@ -3824,10 +4144,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(3)
+                showNextDialog(6)
             } else {
                 updateDateUI()
-                update()
             }
 
         }
@@ -3839,22 +4158,20 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         private var isNeedJump = false // 是否需要跳转
 
-        private lateinit var tv_unlimited: TextView
         private lateinit var tv_one: TextView
         private lateinit var tv_two: TextView
         private lateinit var tv_three: TextView
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_marrystate
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_data_marrystate
 
         override fun onCreate() {
             super.onCreate()
-            val close = findViewById<ImageView>(R.id.iv_user_target_marrystate_close)
-            val skip = findViewById<TextView>(R.id.tv_user_target_marrystate_skip)
+            val close = findViewById<ImageView>(R.id.iv_user_data_marrystate_close)
+            val skip = findViewById<TextView>(R.id.tv_user_data_marrystate_skip)
 
-            tv_unlimited = findViewById<TextView>(R.id.tv_user_target_marrystate_unlimited)
-            tv_one = findViewById<TextView>(R.id.tv_user_target_marrystate_one)
-            tv_two = findViewById<TextView>(R.id.tv_user_target_marrystate_two)
-            tv_three = findViewById<TextView>(R.id.tv_user_target_marrystate_three)
+            tv_one = findViewById<TextView>(R.id.tv_user_data_marrystate_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_data_marrystate_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_data_marrystate_three)
 
             clearChoose()
             initChoose()
@@ -3864,20 +4181,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 dismiss()
             }
 
-            tv_unlimited.setOnClickListener {
-                clearChoose()
-                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY_STATE, 0)
-                isNeedJump = true
-                dismiss()
-            }
-
             tv_one.setOnClickListener {
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY_STATE, 1)
+                SPStaticUtils.put(Constant.ME_MARRY_STATE, 1)
                 isNeedJump = true
                 dismiss()
             }
@@ -3886,7 +4194,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY_STATE, 2)
+                SPStaticUtils.put(Constant.ME_MARRY_STATE, 2)
                 isNeedJump = true
                 dismiss()
             }
@@ -3895,7 +4203,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY_STATE, 3)
+                SPStaticUtils.put(Constant.ME_MARRY_STATE, 3)
                 isNeedJump = true
                 dismiss()
             }
@@ -3909,12 +4217,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4)) {
-                4 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)) {
                 0 -> {
-                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                    tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
                 }
                 1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
@@ -3933,8 +4237,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun clearChoose() {
-            tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
-            tv_unlimited.setTextColor(Color.parseColor("#101010"))
 
             tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
             tv_one.setTextColor(Color.parseColor("#101010"))
@@ -3950,10 +4252,126 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(4)
+                showNextDialog(7)
             } else {
                 updateDateUI()
-                update()
+            }
+        }
+    }
+
+    // 恋爱目标
+    inner class TargetDialog(context: Context) : FullScreenPopupView(context) {
+
+        private var isNeedJump = false // 是否需要跳转
+
+        private lateinit var tv_one: TextView
+        private lateinit var tv_two: TextView
+        private lateinit var tv_three: TextView
+        private lateinit var tv_four: TextView
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_user_data_target
+
+        override fun onCreate() {
+            super.onCreate()
+            val close = findViewById<ImageView>(R.id.iv_user_data_target_close)
+            val skip = findViewById<TextView>(R.id.tv_user_data_target_skip)
+
+            tv_one = findViewById<TextView>(R.id.tv_user_data_target_one)
+            tv_two = findViewById<TextView>(R.id.tv_user_data_target_two)
+            tv_three = findViewById<TextView>(R.id.tv_user_data_target_three)
+            tv_four = findViewById<TextView>(R.id.tv_user_data_target_four)
+
+            clearChoose()
+            initChoose()
+
+            close.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+            tv_one.setOnClickListener {
+                clearChoose()
+                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_one.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.ME_LOVE_TARGET, 1)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_two.setOnClickListener {
+                clearChoose()
+                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_two.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.ME_LOVE_TARGET, 2)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_three.setOnClickListener {
+                clearChoose()
+                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_three.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.ME_LOVE_TARGET, 3)
+                isNeedJump = true
+                dismiss()
+            }
+
+            tv_four.setOnClickListener {
+                clearChoose()
+                tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                tv_four.setTextColor(Color.parseColor("#FF4444"))
+                SPStaticUtils.put(Constant.ME_LOVE_TARGET, 4)
+                isNeedJump = true
+                dismiss()
+            }
+
+
+            skip.setOnClickListener {
+                isNeedJump = false
+                dismiss()
+            }
+
+        }
+
+        private fun initChoose() {
+            when (SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0)) {
+                0 -> {
+                }
+                1 -> {
+                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_one.setTextColor(Color.parseColor("#FF4444"))
+                }
+                2 -> {
+                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_two.setTextColor(Color.parseColor("#FF4444"))
+                }
+                3 -> {
+                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
+                    tv_three.setTextColor(Color.parseColor("#FF4444"))
+                }
+            }
+
+        }
+
+        private fun clearChoose() {
+
+            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_one.setTextColor(Color.parseColor("#101010"))
+
+            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_two.setTextColor(Color.parseColor("#101010"))
+
+            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
+            tv_three.setTextColor(Color.parseColor("#101010"))
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isNeedJump) {
+                showNextDialog(8)
+            } else {
+                updateDateUI()
             }
 
         }
@@ -4077,7 +4495,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(5)
+                showNextDialog(9)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -4203,7 +4621,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(6)
+                showNextDialog(10)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -4335,7 +4753,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(7)
+                showNextDialog(11)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -4479,7 +4897,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(8)
+                showNextDialog(12)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -4567,7 +4985,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(9)
+                showNextDialog(13)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -4707,7 +5125,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(10)
+                showNextDialog(14)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")
@@ -4786,7 +5204,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         override fun onDismiss() {
             super.onDismiss()
             if (isNeedJump) {
-                showNextDialog(11)
+                showNextDialog(15)
             } else {
                 updateDateUI()
                 ToastUtils.showShort("刷新界面")

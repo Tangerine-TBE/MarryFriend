@@ -1,16 +1,21 @@
 package com.twx.marryfriend.main
 
 import android.content.Intent
+import android.util.Log
 import android.view.MotionEvent
+import androidx.annotation.Nullable
+import androidx.core.provider.FontRequest
+import androidx.emoji.text.EmojiCompat
+import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.likeme.LiveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.recommend.RecommendFragment
+import com.twx.marryfriend.dynamic.saloon.DynamicFragment
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,7 +32,10 @@ class MainActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
 
-        initRecommendFragment()
+        initEmojiCompat()
+
+        initMineFragment()
+
     }
 
     override fun initLoadData() {
@@ -89,7 +97,7 @@ class MainActivity : MainBaseViewActivity() {
     private fun initDynamicFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (dynamic == null) {
-            dynamic = DynamicFragment()
+            dynamic = DynamicFragment().newInstance(this)
             transaction.add(R.id.fl_main_container, dynamic!!)
         }
         hideFragment(transaction)
@@ -137,6 +145,29 @@ class MainActivity : MainBaseViewActivity() {
         }
     }
 
+    // 加载Emoji
+    private fun initEmojiCompat() {
+        val config: EmojiCompat.Config
+        // Use a downloadable font for EmojiCompat
+        val fontRequest = FontRequest(
+            "com.google.android.gms.fonts",
+            "com.google.android.gms",
+            "Noto Color Emoji Compat",
+            R.array.com_google_android_gms_fonts_certs)
+        config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
+
+        config.setReplaceAll(true)
+            .registerInitCallback(object : EmojiCompat.InitCallback() {
+                override fun onInitialized() {
+                    Log.i("guo", "EmojiCompat initialized")
+                }
+
+                override fun onFailed(@Nullable throwable: Throwable?) {
+                    Log.e("guo", "EmojiCompat initialization failed", throwable)
+                }
+            })
+        EmojiCompat.init(config)
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

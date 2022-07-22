@@ -22,6 +22,12 @@ public class RetrofitManager {
     public Retrofit getBaiduRetrofitUser() { return mBaiduRetrofit; }
     private final Retrofit mBaiduRetrofit;
 
+    public Retrofit getGaodeMapRetrofitUser() { return mGaodeMapRetrofit; }
+    private final Retrofit mGaodeMapRetrofit;
+
+    public Retrofit getBaiduMapRetrofitUser() { return mBaiduMapRetrofit; }
+    private final Retrofit mBaiduMapRetrofit;
+
 
     public static RetrofitManager getInstance() {
         if (sInstance == null) {
@@ -40,6 +46,18 @@ public class RetrofitManager {
 
         mBaiduRetrofit = new Retrofit.Builder()
                 .baseUrl(Contents.BAIDU_API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getClient().build())
+                .build();
+
+        mGaodeMapRetrofit = new Retrofit.Builder()
+                .baseUrl(Contents.GAODE_MAP_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(getClient().build())
+                .build();
+
+        mBaiduMapRetrofit = new Retrofit.Builder()
+                .baseUrl(Contents.BAIDU_MAP_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(getClient().build())
                 .build();

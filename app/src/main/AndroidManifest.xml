@@ -4,10 +4,8 @@
     package="com.twx.marryfriend">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 这个权限添加之后，比较老的手机会无法调用相机，删除之后则能调用 -->
-    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" /><!-- 解决上方问题而添加 -->
-
+    <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" /> <!-- 解决上方问题而添加 -->
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- 这是在sd卡内创建和删除文件权限 -->
@@ -26,7 +24,6 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 适配Android R包可见性 开始 -->
-
     <queries package="${applicationId}">
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -49,6 +46,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
+        <activity
+            android:name=".vip.VipActivity"
+            android:exported="false" />
         <activity
             android:name=".mine.greet.GreetEditActivity"
             android:exported="false" />
@@ -112,11 +112,11 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".main.MainActivity"
@@ -126,12 +126,51 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 联通电信授权页 -->
-        <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/>
-        <activity android:name="com.twx.marryfriend.search.AccurateSearchActivity"/>
-        <activity android:name="com.twx.marryfriend.search.SearchResultActivity"/>
-        <activity android:name="com.twx.marryfriend.ilove.ILikeActivity"/>
-        <activity android:name=".friend.FriendInfoActivity"/>
+        </activity>
+
+
+
+        <activity
+            android:name=".dynamic.saloon.tip.TipsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".dynamic.preview.video.VideoPreviewActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name=".dynamic.show.others.DynamicOtherShowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.preview.image.ImagePreviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".dynamic.show.mine.DynamicMineLikeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.show.mine.DynamicMineShowActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".dynamic.send.location.LocationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.send.DynamicSendActivity"
+            android:exported="true" />
+        <activity
+            android:name=".dynamic.mine.MyDynamicActivity"
+            android:exported="true" />
+
+
+        <!-- 联通电信授权页 -->
+        <activity android:name=".search.SearchParamActivity" />
+        <activity android:name=".search.AccurateSearchActivity" />
+        <activity android:name=".search.SearchResultActivity" />
+        <activity android:name=".ilove.ILikeActivity" />
+        <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -167,7 +206,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-
     </application>
 
 </manifest>

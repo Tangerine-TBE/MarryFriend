@@ -13,11 +13,10 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/faceplatform-release" />
             <option value="$PROJECT_DIR$/faceplatform-ui" />
-            <option value="$PROJECT_DIR$/module_base" />
-            <option value="$PROJECT_DIR$/module_dynamic" />
             <option value="$PROJECT_DIR$/myutils" />
           </set>
         </option>
+        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

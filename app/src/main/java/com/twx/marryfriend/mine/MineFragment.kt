@@ -48,7 +48,7 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
-import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
+import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
@@ -330,12 +330,19 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 //            startActivity(Intent(context, UserActivity::class.java))
 //        }
 
+        ll_mine_set_dynamic.setOnClickListener {
+            val intent = Intent(context, MyDynamicActivity::class.java)
+            startActivity(intent)
+        }
+
         ll_mine_set_verify.setOnClickListener {
 
             val intent = Intent(context, VerifyActivity::class.java)
             startActivityForResult(intent, 3)
 
         }
+
+
 
         ll_mine_set_greet.setOnClickListener {
 

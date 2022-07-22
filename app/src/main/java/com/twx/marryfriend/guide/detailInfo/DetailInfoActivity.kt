@@ -1619,7 +1619,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         // 应用上下文
         // 申请License取得的APPID
         // assets目录下License文件名
-        FaceSDKManager.getInstance().initialize(this, "huanlian-android-face-android",
+        FaceSDKManager.getInstance().initialize(this, "hunlian-android-face-android",
             "idl-license.face-android", object : IInitCallback {
                 override fun initSuccess() {
                     runOnUiThread {

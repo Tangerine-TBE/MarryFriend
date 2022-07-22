@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="14dp"
+    android:layout_marginVertical="7dp"
+    android:background="@drawable/shape_bg_base_card"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_detail_dynamic_other_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginVertical="25dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/riv_detail_dynamic_other_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+            app:riv_oval="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:layout_toEndOf="@+id/riv_detail_dynamic_other_avatar"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_detail_dynamic_other_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="罐头香菜"
+                    android:textColor="#101010"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:id="@+id/iv_detail_dynamic_other_identity"
+                    android:layout_width="64dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:src="@mipmap/icon_identify_success" />
+
+                <ImageView
+                    android:id="@+id/iv_detail_dynamic_other_vip"
+                    android:layout_width="43dp"
+                    android:layout_height="21dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="4dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_detail_dynamic_other_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="98年  武汉  本科  教育/科研"
+                android:textColor="#9A9A9A"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_detail_dynamic_other_focus"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_base_focus" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_detail_dynamic_other_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="疫情前的游乐场"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_other_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
+
+        <FrameLayout
+            android:id="@+id/fl_detail_dynamic_other_video"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/iv_detail_dynamic_other_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="8dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_base_play" />
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_other_one"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_one"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_two"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_three"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_other_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_four"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_five"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_six"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_detail_dynamic_other_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:visibility="gone">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_seven"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_eight"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <View
+            android:layout_width="6dp"
+            android:layout_height="0dp" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/iv_detail_dynamic_other_nine"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="22dp"
+        android:background="@drawable/shape_bg_dynamic_address">
+
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/ic_base_location" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_other_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="8dp"
+            android:layout_marginStart="3dp"
+            android:layout_marginEnd="16dp"
+            android:text="深圳市国人通信大厦"
+            android:textColor="#9A9A9A"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp">
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_other_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:text="1小时前"
+            android:textColor="#9A9A9A"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/iv_detail_dynamic_other_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@+id/tv_detail_dynamic_other_like"
+            android:src="@drawable/ic_dynamic_base_like" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_other_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_toStartOf="@+id/iv_detail_dynamic_other_comment"
+            android:text="0"
+            android:textColor="#717171"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/iv_detail_dynamic_other_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_toStartOf="@+id/tv_detail_dynamic_other_comment"
+            android:src="@drawable/ic_dynamic_comment" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_other_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:text="0"
+            android:textColor="#717171"
+            android:textSize="13sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>
