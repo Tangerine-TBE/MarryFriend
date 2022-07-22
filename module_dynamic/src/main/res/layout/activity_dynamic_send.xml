@@ -64,7 +64,7 @@
                 android:layout_marginTop="24dp"
                 android:background="@null"
                 android:gravity="top"
-                android:hint="用照片展示自我、分享生活、会获得更多异性的关注"
+                android:hint="分享生活,展示真实的你,晒给懂你的人"
                 android:maxLength="1000"
                 android:textColor="#404040"
                 android:textColorHint="#9A9A9A"

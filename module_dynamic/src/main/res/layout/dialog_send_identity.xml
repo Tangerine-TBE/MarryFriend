@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_base_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="实名认证"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_send_identity_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_base_dialog_close" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="45dp"
+        android:layout_marginTop="24dp"
+        android:text="为了给大家创造一个真实安全优质的交友平台,请先完成认证,认证通过后显著提高配对成功率)"
+        android:textColor="#404040"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="17dp"
+        android:src="@mipmap/icon_identity_default" />
+
+    <TextView
+        android:id="@+id/tv_dialog_send_identity_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_cancel"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="取消"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+
+    <TextView
+        android:id="@+id/tv_dialog_send_identity_jump"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="27dp"
+        android:background="@drawable/shape_base_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="前往认证"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp" />
+
+</LinearLayout>

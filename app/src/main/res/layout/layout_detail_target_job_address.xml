@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shape_bg_mine_input"
-    android:layout_margin="5dp"
-    android:paddingVertical="10dp">
+    android:layout_marginHorizontal="50dp"
+    android:layout_marginVertical="8dp"
+    android:background="@drawable/shape_bg_choose_work">
 
     <TextView
         android:id="@+id/tv_detail_target_job_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="14dp"
-        android:text="体型"
-        android:textColor="#404040"
+        android:layout_centerInParent="true"
+        android:text="深圳·南山区"
+        android:textColor="#101010"
         android:textSize="15sp" />
 
     <ImageView
         android:id="@+id/iv_detail_target_job_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="12dp"
-        android:src="@drawable/ic_school_close" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginVertical="11dp"
+        android:layout_marginEnd="16dp"
+        android:src="@mipmap/icon_work_close" />
 
-</LinearLayout>
+</RelativeLayout>

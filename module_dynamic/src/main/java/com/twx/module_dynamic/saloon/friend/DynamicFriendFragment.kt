@@ -8,9 +8,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupAnimation
+import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.module_base.constant.Constant
@@ -26,6 +31,7 @@ import com.twx.module_dynamic.net.impl.getTrendFocusPresentImpl
 import com.twx.module_dynamic.preview.image.ImagePreviewActivity
 import com.twx.module_dynamic.preview.video.VideoPreviewActivity
 import com.twx.module_dynamic.saloon.adapter.SaloonFocusAdapter
+import com.twx.module_dynamic.saloon.recommned.DynamicRecommendFragment
 import com.twx.module_dynamic.show.others.DynamicOtherShowActivity
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
 import java.io.Serializable
@@ -53,6 +59,9 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
+
+    // 点赞时选择的position
+    private var mLikePosition: Int = 0
 
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
@@ -111,8 +120,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         rv_dynamic_focus_container.adapter = adapter
         rv_dynamic_focus_container.layoutManager = LinearLayoutManager(context)
 
-        srl_dynamic_focus_refresh.setRefreshHeader(ClassicsHeader(mContext));
-        srl_dynamic_focus_refresh.setRefreshFooter(ClassicsFooter(mContext));
+        srl_dynamic_focus_refresh.setRefreshHeader(ClassicsHeader(requireContext()));
+        srl_dynamic_focus_refresh.setRefreshFooter(ClassicsFooter(requireContext()));
 
     }
 
@@ -353,29 +362,31 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         adapter.setOnLikeClickListener(object : SaloonFocusAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
 
-                // 加个延时
-                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                    lastClickTime = System.currentTimeMillis();
+                // 点赞， 此时需要验证是否上传头像
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+
+                    mLikePosition = position
 
                     if (!mDiyList[position].like) {
                         // 点赞
-                        mDiyList[position].like = true
-                        mDiyList[position].likeCount++
                         doLikeClick(mTrendList[position].id, mTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     } else {
                         // 取消赞
-                        mDiyList[position].like = false
-                        mDiyList[position].likeCount--
                         doLikeCancelClick(mTrendList[position].id, mTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
                     adapter.notifyDataSetChanged()
 
                 } else {
-                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    XPopup.Builder(context)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(AvatarDialog(requireContext()))
+                        .show()
                 }
-
             }
         })
 
@@ -395,7 +406,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     // 动态点赞
     private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_ID] = trendId.toString()
+        map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeClickPresent.doLikeClick(map)
@@ -404,7 +415,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     // 取消点赞
     private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_ID] = trendId.toString()
+        map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeCancelPresent.doLikeCancel(map)
@@ -420,7 +431,16 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
-
+        // 点赞
+        if (likeClickBean != null) {
+            if (likeClickBean.code == 200) {
+                mDiyList[mLikePosition].like = true
+                mDiyList[mLikePosition].likeCount++
+                adapter.notifyDataSetChanged()
+            } else {
+                ToastUtils.showShort(likeClickBean.msg)
+            }
+        }
     }
 
     override fun onDoLikeClickError() {
@@ -428,6 +448,17 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+        // 取消赞
+        if (likeCancelBean != null) {
+            if (likeCancelBean.code == 200) {
+                mDiyList[mLikePosition].like = false
+                mDiyList[mLikePosition].likeCount--
+                adapter.notifyDataSetChanged()
+            } else {
+                ToastUtils.showShort(likeCancelBean.msg)
+            }
+        }
+
 
     }
 
@@ -472,6 +503,32 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     override fun onGetTrendFocusError() {
         srl_dynamic_focus_refresh.finishRefresh(false)
         srl_dynamic_focus_refresh.finishLoadMore(false)
+    }
+
+    class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
+
+        override fun onCreate() {
+            super.onCreate()
+
+
+
+            findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
+                dismiss()
+                ToastUtils.showShort("跳转到资料填写界面")
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
     }
 
 }

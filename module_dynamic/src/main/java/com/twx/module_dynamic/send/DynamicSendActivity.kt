@@ -300,14 +300,15 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback {
                             BDAbstractLocationListener() {
                             override fun onReceiveLocation(location: BDLocation) {
 
-                                if (x){
+                                if (x) {
                                     val city = location.city
                                     val location = "${location.longitude},${location.latitude}"
-                                    val intent = Intent(this@DynamicSendActivity, LocationActivity::class.java)
+                                    val intent = Intent(this@DynamicSendActivity,
+                                        LocationActivity::class.java)
                                     intent.putExtra("location", location)
                                     intent.putExtra("city", city)
 
-                                    Log.i("Guo","startActivityForResult")
+                                    Log.i("Guo", "startActivityForResult")
 
                                     startActivityForResult(intent, 0)
                                     x = false
@@ -490,83 +491,111 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback {
 
         tv_send_send.setOnClickListener {
 
-            if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                lastClickTime = System.currentTimeMillis();
+            content = et_send_content.text.toString().trim { it <= ' ' }
 
-                ToastUtils.showShort("上传")
+            if (mDataList.isNotEmpty() || content != "") {
 
-                when (mDataList.size) {
-                    0 -> {
-                        trendsType = 3
-                    }
-                    1 -> {
-                        trendsType =
-                            if (com.blankj.utilcode.util.FileUtils.getFileExtension(mDataList[0]) == "mp4") {
-                                2
-                            } else {
-                                1
+                if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
+
+                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                        lastClickTime = System.currentTimeMillis();
+
+                        ToastUtils.showShort("上传")
+
+                        when (mDataList.size) {
+                            0 -> {
+                                trendsType = 3
                             }
-                    }
-                    else -> {
-                        trendsType = 1
-                    }
-                }
+                            1 -> {
+                                trendsType =
+                                    if (com.blankj.utilcode.util.FileUtils.getFileExtension(
+                                            mDataList[0]) == "mp4"
+                                    ) {
+                                        2
+                                    } else {
+                                        1
+                                    }
+                            }
+                            else -> {
+                                trendsType = 1
+                            }
+                        }
 
-                content = et_send_content.text.toString().trim { it <= ' ' }
 
-                // 还需要上传图片
+                        // 还需要上传图片
 
-                val xlist: MutableList<String> = arrayListOf()
+                        if (mDataList.isNotEmpty()) {
+                            // 根据类型上传图片或视频后在上传动态
 
-                Thread {
+                            val xlist: MutableList<String> = arrayListOf()
 
-                    Log.i("guo", mDataList.toString())
+                            Thread {
 
-                    // 分图片与视频两种不同上传方式
-                    if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
-                        // 视频
+                                Log.i("guo", mDataList.toString())
 
-                        val file = File(mDataList[0])
-                        val putObjectFromFileResponse = client.putObject("user${
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", "${TimeUtils.getNowString()}.mp4", file)
+                                // 分图片与视频两种不同上传方式
+                                if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
+                                    // 视频
 
-                        val mLifeFirstUrl = client.generatePresignedUrl("user${
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", "${TimeUtils.getNowString()}.mp4", -1).toString()
+                                    val file = File(mDataList[0])
+                                    val putObjectFromFileResponse = client.putObject("user${
+                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                    }", "${TimeUtils.getNowString()}.mp4", file)
 
-                        xlist.add(mLifeFirstUrl)
+                                    val mLifeFirstUrl = client.generatePresignedUrl("user${
+                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                    }", "${TimeUtils.getNowString()}.mp4", -1).toString()
+
+                                    xlist.add(mLifeFirstUrl)
+
+                                } else {
+                                    // 图片
+                                    for (i in 0.until(mDataList.size)) {
+
+                                        val file = File(mDataList[i])
+                                        val putObjectFromFileResponse = client.putObject("user${
+                                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                                        }", "${TimeUtils.getNowString()}.jpg", file)
+
+                                        val mLifeFirstUrl = client.generatePresignedUrl("user${
+                                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                                        }", "${TimeUtils.getNowString()}.jpg", -1).toString()
+
+                                        xlist.add(mLifeFirstUrl)
+
+                                    }
+                                }
+
+                                val x = xlist.toString().replace("[", "")
+
+                                imageUrl = x.replace("]", "")
+
+                                Log.i("guo", imageUrl)
+
+                                uploadTrend()
+
+                            }.start()
+
+                        } else {
+                            // 不需要上传图片，直接上传文字即可
+                            uploadTrend()
+                        }
 
                     } else {
-                        // 图片
-                        for (i in 0.until(mDataList.size)) {
-
-                            val file = File(mDataList[i])
-                            val putObjectFromFileResponse = client.putObject("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${TimeUtils.getNowString()}.jpg", file)
-
-                            val mLifeFirstUrl = client.generatePresignedUrl("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${TimeUtils.getNowString()}.jpg", -1).toString()
-
-                            xlist.add(mLifeFirstUrl)
-
-                        }
+                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
                     }
-
-                    val x = xlist.toString().replace("[", "")
-
-                    imageUrl = x.replace("]", "")
-
-                    Log.i("guo", imageUrl)
-
-                    uploadTrend()
-
-                }.start()
-
+                } else {
+                    // 前往认证
+                    XPopup.Builder(this@DynamicSendActivity)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(IdentityDialog(this@DynamicSendActivity))
+                        .show()
+                }
             } else {
-                ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                ToastUtils.showShort("请输入您想发布的动态内容")
             }
 
         }
@@ -959,5 +988,34 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback {
 
     }
 
+
+    inner class IdentityDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_send_identity
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<ImageView>(R.id.iv_dialog_send_identity_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_send_identity_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_send_identity_jump).setOnClickListener {
+                dismiss()
+                ToastUtils.showShort("前往实名认证界面")
+            }
+
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+    }
 
 }

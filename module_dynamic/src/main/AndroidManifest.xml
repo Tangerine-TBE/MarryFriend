@@ -44,9 +44,6 @@
             android:name=".preview.image.ImagePreviewActivity"
             android:exported="true" />
         <activity
-            android:name=".saloon.SaloonActivity"
-            android:exported="true" />
-        <activity
             android:name=".show.mine.DynamicMineLikeActivity"
             android:exported="false" />
         <activity

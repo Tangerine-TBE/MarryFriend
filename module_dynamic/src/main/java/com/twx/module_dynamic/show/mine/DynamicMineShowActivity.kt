@@ -152,13 +152,6 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         rv_emoji_mine_container.adapter = emojiAdapter
         rv_emoji_mine_container.layoutManager = GridLayoutManager(this, 8)
 
-        //设置“发送"的按钮
-        eet_emoji_mine_edit.imeOptions = EditorInfo.IME_ACTION_SEND;  //属于重要说明的第一条
-        // 设置inputType
-        eet_emoji_mine_edit.inputType = TYPE_TEXT_FLAG_MULTI_LINE;    //属于重要说明的第二条
-        eet_emoji_mine_edit.isSingleLine = false;                       //属于重要说明的第四条
-        eet_emoji_mine_edit.maxLines = 4;                              //属于重要说明的第三条，此处限制在四行以内
-
     }
 
     override fun initLoadData() {
@@ -352,6 +345,35 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         }
 
+        iv_dynamic_mine_show_send.setOnClickListener {
+
+            if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
+
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
+
+                    var content = eet_emoji_mine_edit.text.toString().trim { it <= ' ' }
+                    eet_emoji_mine_edit.setText("")
+                    KeyboardUtils.hideSoftInput(this)
+                    ll_emoji_mine_container.visibility = View.GONE
+
+                    switchSendMode(mode,
+                        trendsId,
+                        hostUid,
+                        threeId,
+                        oneLevelId,
+                        firstUid,
+                        lastUid,
+                        content)
+
+                } else {
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                }
+
+            } else {
+                ToastUtils.showShort("请输入您的评论")
+            }
+        }
 
         eet_emoji_mine_edit.viewTreeObserver.addOnGlobalLayoutListener {
             val r = Rect()
@@ -369,36 +391,6 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             x = !x
         }
 
-        eet_emoji_mine_edit.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-
-
-                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                        if (KeyboardUtils.isSoftInputVisible(this@DynamicMineShowActivity)) {
-                            x = false
-                            KeyboardUtils.hideSoftInput(this@DynamicMineShowActivity)
-                        }
-                        lastClickTime = System.currentTimeMillis();
-                        var content = eet_emoji_mine_edit.text.toString().trim { it <= ' ' }
-                        eet_emoji_mine_edit.setText("")
-                        ll_emoji_mine_container.visibility = View.GONE
-                        switchSendMode(mode,
-                            trendsId,
-                            hostUid,
-                            threeId,
-                            oneLevelId,
-                            firstUid,
-                            lastUid,
-                            content)
-                    } else {
-                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
-                    }
-                }
-                return false
-            }
-        })
-
         emojiAdapter.setOnItemClickListener(object : EmojiDetailAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 var x = eet_emoji_mine_edit.text.toString().trim { it <= ' ' }
@@ -407,7 +399,6 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                 eet_emoji_mine_edit.setSelection(x.length)
             }
         })
-
 
         iv_emoji_mine_delete.setOnClickListener {
             val keyCode = KeyEvent.KEYCODE_DEL
@@ -418,29 +409,35 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         }
 
 
-
         iv_emoji_mine_send.setOnClickListener {
 
-            if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                lastClickTime = System.currentTimeMillis();
+            if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
-                var content = eet_emoji_mine_edit.text.toString().trim { it <= ' ' }
-                eet_emoji_mine_edit.setText("")
-                KeyboardUtils.hideSoftInput(this)
-                ll_emoji_mine_container.visibility = View.GONE
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
 
-                switchSendMode(mode,
-                    trendsId,
-                    hostUid,
-                    threeId,
-                    oneLevelId,
-                    firstUid,
-                    lastUid,
-                    content)
+                    var content = eet_emoji_mine_edit.text.toString().trim { it <= ' ' }
+                    eet_emoji_mine_edit.setText("")
+                    KeyboardUtils.hideSoftInput(this)
+                    ll_emoji_mine_container.visibility = View.GONE
+
+                    switchSendMode(mode,
+                        trendsId,
+                        hostUid,
+                        threeId,
+                        oneLevelId,
+                        firstUid,
+                        lastUid,
+                        content)
+
+                } else {
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                }
 
             } else {
-                ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                ToastUtils.showShort("请输入您的评论")
             }
+
         }
 
     }
@@ -1277,117 +1274,103 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     override fun onItemLongClick(v: View?, positionOne: Int) {
         ToastUtils.showShort(positionOne)
+        // adapter
 
         if (mCommentOneList[positionOne].list.one_level_uid.toString() ==
             SPStaticUtils.getString(Constant.USER_ID, "13")
         ) {
+
             val id = mCommentOneList[positionOne].list.id
             val trendId = mCommentOneList[positionOne].list.trends_id
             val hostId = mCommentOneList[positionOne].list.host_uid
 
-            // 本人发的动态，
-            ToastUtils.showShort("删除")
-
+            ToastUtils.showShort("本人发的")
             XPopup.Builder(this)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DeleteDialog(this, id, trendId, hostId, 0))
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0, 0))
                 .show()
 
         } else {
-
-            // 其他人发的动态，
-            ToastUtils.showShort("举报")
-
+            ToastUtils.showShort("不是本人发的，无法删除")
             XPopup.Builder(this)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
+                .asCustom(DynamicMineShowActivity.ReportDialog(this))
                 .show()
-
         }
+
     }
 
     override fun onItemChildContentLongClick(v: View?, positionOne: Int) {
-        ToastUtils.showShort(positionOne)
+        ToastUtils.showShort("子评论 : $positionOne")
+        // 父评论附带的那条子评论
+        // 分情况
+        // 当除了这条没其他数据时，直接删除这个
+        // 当还有其他数据时，首先需要取出adapter 中数据的第一条数据，然后替换上面固定的数据 ，然后adapter的数据移除第一条
 
+        if (mCommentOneList[positionOne].list.two_last_uid.toString() ==
+            SPStaticUtils.getString(Constant.USER_ID, "13")
+        ) {
 
-//        if (mCommentOneList[positionOne].list.two_last_uid.toString() ==
-//            SPStaticUtils.getString(Constant.USER_ID, "13")
-//        ) {
-//            // 此处差父评论附带的第一条子评论的评论ID
-//            val id = mCommentOneList[positionOne].xxxx
-//            val trendId = mCommentOneList[positionOne].list.trends_id
-//            val hostId = mCommentOneList[positionOne].list.id
-//
-//            // 本人发的动态，
-//            ToastUtils.showShort("删除")
-//
-//            XPopup.Builder(this)
-//                .dismissOnTouchOutside(false)
-//                .dismissOnBackPressed(false)
-//                .isDestroyOnDismiss(true)
-//                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-//                .asCustom(DeleteDialog(this, id, trendId, hostId, 1))
-//                .show()
-//
-//        } else {
-//
-//            // 其他人发的动态，
-//            ToastUtils.showShort("举报")
-//
-//            XPopup.Builder(this)
-//                .dismissOnTouchOutside(false)
-//                .dismissOnBackPressed(false)
-//                .isDestroyOnDismiss(true)
-//                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-//                .asCustom(ReportDialog(this))
-//                .show()
-//
-//        }
+            val id = mCommentOneList[positionOne].list.id_two
+            val trendId = mCommentOneList[positionOne].list.trends_id
+            val hostId = mCommentOneList[positionOne].list.id
 
+            ToastUtils.showShort("本人发的")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 1, 0))
+                .show()
+
+        } else {
+            ToastUtils.showShort("不是本人发的，无法删除")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .show()
+        }
     }
 
     override fun onChildContentLongClick(positionOne: Int, two: Int) {
-        ToastUtils.showShort("$positionOne,$two")
+        ToastUtils.showShort(" $positionOne  ,  $two")
 
         if (mCommentOneList[positionOne].twoList[two].two_last_uid.toString() ==
             SPStaticUtils.getString(Constant.USER_ID, "13")
         ) {
+
+            ToastUtils.showShort("本人发的")
             val id = mCommentOneList[positionOne].twoList[two].id
             val trendId = mCommentOneList[positionOne].twoList[two].trends_id
             val hostId = mCommentOneList[positionOne].twoList[two].pid
 
-            // 本人发的动态，
-            ToastUtils.showShort("删除")
-
             XPopup.Builder(this)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DeleteDialog(this, id, trendId, hostId, 1))
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, two, 1, 1))
                 .show()
-
         } else {
-
-            // 其他人发的动态，
-            ToastUtils.showShort("举报")
-
+            ToastUtils.showShort("不是本人发的，无法删除")
             XPopup.Builder(this)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
+                .asCustom(DynamicMineShowActivity.ReportDialog(this))
                 .show()
-
         }
-
 
     }
 
@@ -1465,13 +1448,26 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     }
 
-    class DeleteDialog(context: Context, id: Int, trendsId: Int, hostId: Int, mode: Int) :
+    inner class DeleteDialog(
+        context: Context,
+        id: Int,
+        trendsId: Int,
+        hostId: Int,
+        one: Int,
+        two: Int,
+        mode: Int,
+        childMode: Int,
+    ) :
         FullScreenPopupView(context), IDoCommentOneDeleteCallback, IDoCommentTwoDeleteCallback {
 
         private val mid = id
         private val trendsId = trendsId
         private val hostId = hostId
+        private val one = one
+        private val two = two
         private val mode = mode
+        private val childMode = childMode
+
 
         private lateinit var doCommentOneDeletePresent: doCommentOneDeletePresentImpl
         private lateinit var doCommentTwoDeletePresent: doCommentTwoDeletePresentImpl
@@ -1494,9 +1490,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             }
 
             findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
-                dismiss()
                 // 删除动态
-
                 when (mode) {
                     0 -> {
                         val map: MutableMap<String, String> = TreeMap()
@@ -1508,7 +1502,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                     }
                     1 -> {
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ID] = id.toString()
+                        map[Contents.ID] = mid.toString()
                         map[Contents.TRENDS_ID] = trendsId.toString()
                         map[Contents.PARENT_ID] = hostId.toString()
                         doCommentTwoDeletePresent.doCommentTwoDelete(map)
@@ -1531,7 +1525,13 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         override fun onDoCommentOneDeleteSuccess(commentOneDeleteBean: CommentOneDeleteBean?) {
             dismiss()
-            ToastUtils.showShort("删除父动态，更新视图")
+            if (commentOneDeleteBean != null) {
+                if (commentOneDeleteBean.code == 200) {
+                    ToastUtils.showShort("删除父动态，更新视图")
+                    mCommentOneList.removeAt(one)
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
 
         override fun onDoCommentOneDeleteError() {
@@ -1540,7 +1540,64 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         override fun onDoCommentTwoDeleteSuccess(commentTwoDeleteBean: CommentTwoDeleteBean?) {
             dismiss()
-            ToastUtils.showShort("删除子动态，更新视图")
+
+            if (commentTwoDeleteBean != null) {
+                if (commentTwoDeleteBean.code == 200) {
+                    when (childMode) {
+                        0 -> {
+                            when (mCommentOneList[one].all) {
+                                1 -> {
+                                    mCommentOneList[one].all = mCommentOneList[one].all - 1
+                                    adapter.notifyDataSetChanged()
+                                }
+                                else -> {
+
+                                    // 判断当 ${mCommentOneList[positionOne].twoList} 为空时，也就是没展开数据时，对用户做出的操作不做反应
+
+                                    if (mCommentOneList[one].twoList.isNotEmpty()) {
+
+                                        // 二级评论列表id
+                                        mCommentOneList[one].list.id_two =
+                                            mCommentOneList[one].twoList[0].id
+                                        // 二级评论首条
+                                        mCommentOneList[one].list.content_two =
+                                            mCommentOneList[one].twoList[0].content
+                                        // 二级评论首条uid
+                                        mCommentOneList[one].list.two_last_uid =
+                                            mCommentOneList[one].twoList[0].two_last_uid
+                                        // 二级评论首条u昵称
+                                        mCommentOneList[one].list.nick_two =
+                                            mCommentOneList[one].twoList[0].last_nick
+                                        // 二级评论首条性别
+                                        mCommentOneList[one].list.sex_two =
+                                            mCommentOneList[one].twoList[0].last_sex
+                                        // 二级评论首条头像
+                                        mCommentOneList[one].list.image_two =
+                                            mCommentOneList[one].twoList[0].last_img_url
+                                        // 二级评论总计多少条
+                                        mCommentOneList[one].list.count_two =
+                                            mCommentOneList[one].list.count_two!! - 1
+                                        mCommentOneList[one].all = mCommentOneList[one].all - 1
+
+                                        mCommentOneList[one].twoList.removeAt(0)
+
+                                        adapter.notifyDataSetChanged()
+                                    } else {
+                                        ToastUtils.showShort("未展开，此时不提供删除功能")
+                                    }
+                                }
+                            }
+                        }
+                        1 -> {
+                            ToastUtils.showShort("删除子动态，更新视图")
+                            mCommentOneList[one].twoList.removeAt(two)
+                            mCommentOneList[one].all - 1
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+
         }
 
         override fun onDoCommentTwoDeleteError() {

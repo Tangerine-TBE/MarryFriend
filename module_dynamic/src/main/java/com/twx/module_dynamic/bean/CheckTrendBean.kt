@@ -49,4 +49,6 @@ data class CheckTrendList(
     val work_city_str: String,
     val like_count: Int?,
     val discuss_count: Int?,
+    val focous_uid: Int?,
+    val guest_uid: Int?,
 )

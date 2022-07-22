@@ -1,6 +1,7 @@
 package com.twx.module_dynamic.saloon
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.twx.module_dynamic.R
 import com.twx.module_dynamic.saloon.friend.DynamicFriendFragment
 import com.twx.module_dynamic.saloon.recommned.DynamicRecommendFragment
+import com.twx.module_dynamic.send.DynamicSendActivity
 import kotlinx.android.synthetic.main.fragment_dynamic.*
 
 class DynamicFragment : Fragment() {
@@ -80,7 +82,7 @@ class DynamicFragment : Fragment() {
         }
 
         recommendFragment.view?.findViewById<RecyclerView>(R.id.rv_dynamic_recommend_container)
-            ?.setOnClickListener{
+            ?.setOnClickListener {
                 ToastUtils.showShort("123456")
             }
 
@@ -95,6 +97,11 @@ class DynamicFragment : Fragment() {
     }
 
     private fun initEvent() {
+
+        iv_dynamic_send.setOnClickListener {
+            val intent = Intent(mContext, DynamicSendActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

@@ -6,10 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupAnimation
+import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.module_base.constant.Constant
@@ -49,6 +54,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
+
+
+    // 点赞时选择的position
+    private var mLikePosition: Int = 0
 
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
@@ -395,59 +404,44 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         adapter.setOnLikeClickListener(object : SaloonAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
 
-                // 加个延时
-                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                    lastClickTime = System.currentTimeMillis();
+                // 点赞， 此时需要验证是否上传头像
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                    mLikePosition = position
 
                     if (!mDiyList[position].like) {
                         // 点赞
-                        mDiyList[position].like = true
-                        mDiyList[position].likeCount++
                         doLikeClick(mTrendList[position].id,
                             mTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     } else {
                         // 取消赞
-                        mDiyList[position].like = false
-                        mDiyList[position].likeCount--
                         doLikeCancelClick(mTrendList[position].id,
                             mTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
-                    adapter.notifyDataSetChanged()
-
                 } else {
-                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    XPopup.Builder(context)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(AvatarDialog(requireContext()))
+                        .show()
                 }
-
             }
         })
 
         adapter.setOnFocusClickListener(object : SaloonAdapter.OnFocusClickListener {
             override fun onFocusClick(v: View?, position: Int) {
-
-                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                    lastClickTime = System.currentTimeMillis();
-
-                    if (!mDiyList[position].focus) {
-                        // 点关注
-                        mDiyList[position].focus = true
-                        doPlusFocus(mTrendList[position].user_id,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"))
-                    } else {
-                        // 取消关注 ()
-//                        mDiyList[position].focus = false
-//                        doCancelFocus(mTrendList[position].user_id,
-//                            SPStaticUtils.getString(Constant.USER_ID, "13"))
-
-                        ToastUtils.showShort("消息界面")
-                    }
-                    adapter.notifyDataSetChanged()
-
+                if (!mDiyList[position].focus) {
+                    // 点关注
+                    mDiyList[position].focus = true
+                    doPlusFocus(mTrendList[position].user_id,
+                        SPStaticUtils.getString(Constant.USER_ID, "13"))
                 } else {
-                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    ToastUtils.showShort("消息界面")
                 }
-
+                adapter.notifyDataSetChanged()
             }
         })
     }
@@ -474,16 +468,17 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
 
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_ID] = trendId.toString()
+        map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeClickPresent.doLikeClick(map)
+
     }
 
     // 取消点赞
     private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_ID] = trendId.toString()
+        map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeCancelPresent.doLikeCancel(map)
@@ -544,12 +539,34 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+        // 取消赞
+        if (likeCancelBean != null) {
+            if (likeCancelBean.code == 200) {
+                mDiyList[mLikePosition].like = false
+                mDiyList[mLikePosition].likeCount--
+                adapter.notifyDataSetChanged()
+            } else {
+                ToastUtils.showShort(likeCancelBean.msg)
+            }
+        }
+
+
     }
 
     override fun onLikeCancelError() {
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
+        // 添加赞
+        if (likeClickBean != null) {
+            if (likeClickBean.code == 200) {
+                mDiyList[mLikePosition].like = true
+                mDiyList[mLikePosition].likeCount++
+                adapter.notifyDataSetChanged()
+            } else {
+                ToastUtils.showShort(likeClickBean.msg)
+            }
+        }
 
     }
 
@@ -573,7 +590,11 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 mTrendList.add(trendSaloonBean.data.list[i])
                 mIdList.add(trendSaloonBean.data.list[i].id)
 
-                mDiyList.add(LikeBean(false, false, trendSaloonBean.data.list[i].like_count))
+                val focus = trendSaloonBean.data.list[i].focous_uid != null
+
+                val like = trendSaloonBean.data.list[i].guest_uid != null
+
+                mDiyList.add(LikeBean(focus, like, trendSaloonBean.data.list[i].like_count))
 
             }
 
@@ -594,6 +615,33 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     override fun onGetTrendSaloonError() {
         srl_dynamic_recommend_refresh.finishRefresh(false)
         srl_dynamic_recommend_refresh.finishLoadMore(false)
+    }
+
+
+    class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
+
+        override fun onCreate() {
+            super.onCreate()
+
+
+
+            findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
+                dismiss()
+                ToastUtils.showShort("跳转到资料填写界面")
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
     }
 
 }

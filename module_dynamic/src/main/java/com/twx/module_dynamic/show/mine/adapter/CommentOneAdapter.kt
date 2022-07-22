@@ -224,7 +224,12 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
                 holder.childContent.text = mList[position].list.content_two
 
 
-                holder.childTime.text = TimeUtil.getCommonTime(mList[position].list.time_two)
+                if (mList[position].list.time_two != null) {
+                    holder.childTime.text = TimeUtil.getCommonTime(mList[position].list.time_two)
+                } else {
+                    holder.childTime.visibility = View.GONE
+                }
+
 
                 holder.childMore.visibility = View.GONE
                 holder.container.visibility = View.GONE

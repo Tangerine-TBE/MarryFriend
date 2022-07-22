@@ -10,7 +10,7 @@ import java.util.*
 object TimeUtil {
 
     /** 将服务器返回的时间转化为我的动态时间（与公共动态的时间区分开）  */
-    fun getCommonTime(originalTime: String?): String {
+    fun getCommonTime(originalTime: String): String {
         var convertTime = ""
         if (TimeUtils.isToday(originalTime)) {
 

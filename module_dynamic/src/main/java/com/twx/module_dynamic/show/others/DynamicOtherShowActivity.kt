@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
@@ -33,6 +34,7 @@ import com.twx.module_dynamic.net.impl.*
 import com.twx.module_dynamic.preview.image.ImagePreviewActivity
 import com.twx.module_dynamic.preview.video.VideoPreviewActivity
 import com.twx.module_dynamic.show.mine.DynamicMineLikeActivity
+import com.twx.module_dynamic.show.mine.DynamicMineShowActivity
 import com.twx.module_dynamic.show.mine.adapter.CommentOneAdapter
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
 import kotlinx.android.synthetic.main.activity_dynamic_other_show.*
@@ -42,7 +44,8 @@ import java.util.*
 class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     IGetCommentOneCallback, IGetCommentTwoCallback, CommentOneAdapter.OnItemClickListener,
     IDoCommentOneCreateCallback, IDoCommentTwoCreateCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback, IDoPlusFocusCallback {
+    IDoLikeCancelCallback, IDoPlusFocusCallback, CommentOneAdapter.OnItemLongClickListener,
+    IDoCancelFocusCallback {
 
     private var x = true
 
@@ -50,8 +53,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     private var userId = 0
 
-    // 决定头像右边是关注还是聊天
-    private var chatMode = 0
+    // 是否关注
+    private var haveFocus = false
 
     private var mName: String = ""
 
@@ -114,6 +117,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     private lateinit var doLikeClickPresent: doLikeClickPresentImpl
     private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
     private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
+    private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_dynamic_other_show
 
@@ -122,7 +126,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         trendId = intent.getIntExtra("trendId", 0)
         userId = intent.getIntExtra("usersId", 0)
-        chatMode = intent.getIntExtra("mode", 0)
 
         doCheckTrendPresent = doCheckTrendPresentImpl.getsInstance()
         doCheckTrendPresent.registerCallback(this)
@@ -148,6 +151,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         doPlusFocusPresent = doPlusFocusPresentImpl.getsInstance()
         doPlusFocusPresent.registerCallback(this)
 
+        doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
+        doCancelFocusPresent.registerCallback(this)
+
 
         if (SPStaticUtils.getBoolean(Constant.HIDE_REPORT_TIP, false)) {
             iv_dynamic_other_show_tip.visibility = View.GONE
@@ -155,14 +161,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             iv_dynamic_other_show_tip.visibility = View.VISIBLE
         }
 
-        if (chatMode == 0) {
-            iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_focus)
-        } else {
-            iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_chat)
-        }
 
         adapter = CommentOneAdapter(mCommentOneList)
         adapter.setOnItemClickListener(this)
+        adapter.setOnItemLongClickListener(this)
 
         rv_dynamic_other_show_container.layoutManager = LinearLayoutManager(this)
         rv_dynamic_other_show_container.adapter = adapter
@@ -205,13 +207,17 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             finish()
         }
 
-        iv_dynamic_other_show_mode.setOnClickListener {
-            if (chatMode == 0) {
-                ToastUtils.showShort("关注")
-                iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_chat)
-                doPlusFocus(userId, SPStaticUtils.getString(Constant.USER_ID, "13"))
+        ll_dynamic_other_show_mode.setOnClickListener {
+            if (haveFocus) {
+                // 关注了，需要取消关注
+                ToastUtils.showShort("取消关注")
+                doCancelFocus(userId, SPStaticUtils.getString(Constant.USER_ID, "13"))
+
             } else {
-                ToastUtils.showShort("聊天")
+                // 未关注了，需要关注
+                ToastUtils.showShort("关注")
+                doPlusFocus(userId, SPStaticUtils.getString(Constant.USER_ID, "13"))
+
             }
         }
 
@@ -380,7 +386,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                 ToastUtils.showShort("点击太频繁了，请稍后再评论")
             }
 
-
         }
 
         iv_dynamic_other_show_emoji.setOnClickListener {
@@ -422,35 +427,33 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             x = !x
         }
 
-        eet_emoji_other_edit.setOnEditorActionListener(object : TextView.OnEditorActionListener {
-            override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+        iv_dynamic_other_show_send.setOnClickListener {
+            if (eet_emoji_other_edit.text.toString().trim { it <= ' ' } != "") {
 
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
+                    var content = eet_emoji_other_edit.text.toString().trim { it <= ' ' }
+                    eet_emoji_other_edit.setText("")
+                    KeyboardUtils.hideSoftInput(this)
+                    ll_emoji_other_container.visibility = View.GONE
 
-                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                        if (KeyboardUtils.isSoftInputVisible(this@DynamicOtherShowActivity)) {
-                            x = false
-                            KeyboardUtils.hideSoftInput(this@DynamicOtherShowActivity)
-                        }
-                        lastClickTime = System.currentTimeMillis();
-                        var content = eet_emoji_other_edit.text.toString().trim { it <= ' ' }
-                        eet_emoji_other_edit.setText("")
-                        ll_emoji_other_container.visibility = View.GONE
-                        switchSendMode(mode,
-                            trendsId,
-                            hostUid,
-                            threeId,
-                            oneLevelId,
-                            firstUid,
-                            lastUid,
-                            content)
-                    } else {
-                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
-                    }
+                    switchSendMode(mode,
+                        trendsId,
+                        hostUid,
+                        threeId,
+                        oneLevelId,
+                        firstUid,
+                        lastUid,
+                        content)
+
+                } else {
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
                 }
-                return false
+
+            } else {
+                ToastUtils.showShort("请输入您的评论")
             }
-        })
+        }
 
         emojiAdapter.setOnItemClickListener(object : EmojiDetailAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
@@ -624,6 +627,14 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         doPlusFocusPresent.doPlusFocusOther(map)
     }
 
+    // 取消关注
+    private fun doCancelFocus(hostUid: Int, guestUid: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doCancelFocusPresent.doCancelFocusOther(map)
+    }
+
 
     override fun onLoading() {
 
@@ -633,7 +644,42 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     }
 
+    override fun onDoCancelFocusSuccess(cancelFocusBean: CancelFocusBean?) {
+
+        if (cancelFocusBean != null) {
+            if (cancelFocusBean.code == 200) {
+                haveFocus = false
+                iv_dynamic_other_show_mode.visibility = View.VISIBLE
+                tv_dynamic_other_show_mode.visibility = View.GONE
+
+                ToastUtils.showShort("取消关注成功")
+            } else {
+                ToastUtils.showShort(cancelFocusBean.msg)
+            }
+        }
+
+
+    }
+
+    override fun onDoCancelFocusError() {
+
+    }
+
     override fun onDoPlusFocusSuccess(plusFocusBean: PlusFocusBean?) {
+
+        if (plusFocusBean != null) {
+            if (plusFocusBean.code == 200) {
+                haveFocus = true
+                iv_dynamic_other_show_mode.visibility = View.GONE
+                tv_dynamic_other_show_mode.visibility = View.VISIBLE
+
+                ToastUtils.showShort("关注成功")
+            } else {
+                ToastUtils.showShort(plusFocusBean.msg)
+            }
+        }
+
+
     }
 
     override fun onDoPlusFocusError() {
@@ -766,6 +812,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         if (checkTrendBean != null) {
             if (checkTrendBean.code == 200) {
                 if (checkTrendBean.data.list.isNotEmpty()) {
+
                     info = checkTrendBean.data.list[0]
                     val image = checkTrendBean.data.imgs
 
@@ -795,6 +842,21 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                     }
 
                     tv_dynamic_other_show_info.text = "${year}年  $city  $edu  $job"
+
+
+
+                    if (info.focous_uid != null) {
+                        haveFocus = true
+                        iv_dynamic_other_show_mode.visibility = View.GONE
+                        tv_dynamic_other_show_mode.visibility = View.VISIBLE
+
+                    } else {
+                        haveFocus = false
+                        iv_dynamic_other_show_mode.visibility = View.VISIBLE
+                        tv_dynamic_other_show_mode.visibility = View.GONE
+
+                    }
+
 
                     tv_dynamic_other_show_time.text = TimeUtil.getCommonTime(info.create_time)
 
@@ -1246,38 +1308,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     }
 
-    inner class DynamicEditDialog(context: Context) : FullScreenPopupView(context) {
-
-        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_other_edit
-
-        override fun onCreate() {
-            super.onCreate()
-
-            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_other_edit_close)
-            val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
-            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
-
-            close.setOnClickListener {
-                dismiss()
-            }
-
-            report.setOnClickListener {
-                ToastUtils.showShort("举报该动态")
-                dismiss()
-            }
-
-            cancel.setOnClickListener {
-                dismiss()
-            }
-
-        }
-
-        override fun onDismiss() {
-            super.onDismiss()
-        }
-
-    }
-
 
     override fun onItemClick(v: View?, positionOne: Int) {
 
@@ -1368,6 +1398,326 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
         ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
+    }
+
+    override fun onItemLongClick(v: View?, positionOne: Int) {
+        ToastUtils.showShort(positionOne)
+        // adapter
+
+        if (mCommentOneList[positionOne].list.one_level_uid.toString() ==
+            SPStaticUtils.getString(Constant.USER_ID, "13")
+        ) {
+
+            val id = mCommentOneList[positionOne].list.id
+            val trendId = mCommentOneList[positionOne].list.trends_id
+            val hostId = mCommentOneList[positionOne].list.host_uid
+
+            ToastUtils.showShort("本人发的")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0, 0))
+                .show()
+
+        } else {
+            ToastUtils.showShort("不是本人发的，无法删除")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .show()
+        }
+
+    }
+
+    override fun onItemChildContentLongClick(v: View?, positionOne: Int) {
+        ToastUtils.showShort("子评论 : $positionOne")
+        // 父评论附带的那条子评论
+        // 分情况
+        // 当除了这条没其他数据时，直接删除这个
+        // 当还有其他数据时，首先需要取出adapter 中数据的第一条数据，然后替换上面固定的数据 ，然后adapter的数据移除第一条
+
+        if (mCommentOneList[positionOne].list.two_last_uid.toString() ==
+            SPStaticUtils.getString(Constant.USER_ID, "13")
+        ) {
+
+            val id = mCommentOneList[positionOne].list.id_two
+            val trendId = mCommentOneList[positionOne].list.trends_id
+            val hostId = mCommentOneList[positionOne].list.id
+
+            ToastUtils.showShort("本人发的")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 1, 0))
+                .show()
+
+        } else {
+            ToastUtils.showShort("不是本人发的，无法删除")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .show()
+        }
+
+    }
+
+    override fun onChildContentLongClick(positionOne: Int, two: Int) {
+        ToastUtils.showShort(" $positionOne  ,  $two")
+
+        if (mCommentOneList[positionOne].twoList[two].two_last_uid.toString() ==
+            SPStaticUtils.getString(Constant.USER_ID, "13")
+        ) {
+
+            ToastUtils.showShort("本人发的")
+            val id = mCommentOneList[positionOne].twoList[two].id
+            val trendId = mCommentOneList[positionOne].twoList[two].trends_id
+            val hostId = mCommentOneList[positionOne].twoList[two].pid
+
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, two, 1, 1))
+                .show()
+        } else {
+            ToastUtils.showShort("不是本人发的，无法删除")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .show()
+        }
+
+    }
+
+
+    inner class DynamicEditDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_other_edit
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_other_edit_close)
+            val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
+            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
+
+            close.setOnClickListener {
+                dismiss()
+            }
+
+            report.setOnClickListener {
+                ToastUtils.showShort("举报该动态")
+                dismiss()
+            }
+
+            cancel.setOnClickListener {
+                dismiss()
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+    }
+
+    inner class DeleteDialog(
+        context: Context,
+        id: Int,
+        trendsId: Int,
+        hostId: Int,
+        one: Int,
+        two: Int,
+        mode: Int,
+        childMode: Int,
+    ) :
+        FullScreenPopupView(context), IDoCommentOneDeleteCallback, IDoCommentTwoDeleteCallback {
+
+        private val mid = id
+        private val trendsId = trendsId
+        private val hostId = hostId
+        private val one = one
+        private val two = two
+        private val mode = mode
+        private val childMode = childMode
+
+
+        private lateinit var doCommentOneDeletePresent: doCommentOneDeletePresentImpl
+        private lateinit var doCommentTwoDeletePresent: doCommentTwoDeletePresentImpl
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_tips
+
+        override fun onCreate() {
+            super.onCreate()
+
+            doCommentOneDeletePresent = doCommentOneDeletePresentImpl.getsInstance()
+            doCommentOneDeletePresent.registerCallback(this)
+
+            doCommentTwoDeletePresent = doCommentTwoDeletePresentImpl.getsInstance()
+            doCommentTwoDeletePresent.registerCallback(this)
+
+            findViewById<TextView>(R.id.tv_dialog_tip_info).text = "您确定要删除该动态吗"
+
+            findViewById<TextView>(R.id.tv_dialog_tip_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
+                // 删除动态
+                when (mode) {
+                    0 -> {
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ID] = mid.toString()
+                        map[Contents.TRENDS_ID] = trendsId.toString()
+                        map[Contents.HOST_UID] = hostId.toString()
+                        map[Contents.GUEST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+                        doCommentOneDeletePresent.doCommentOneDelete(map)
+                    }
+                    1 -> {
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ID] = mid.toString()
+                        map[Contents.TRENDS_ID] = trendsId.toString()
+                        map[Contents.PARENT_ID] = hostId.toString()
+                        doCommentTwoDeletePresent.doCommentTwoDelete(map)
+                    }
+                }
+            }
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoCommentOneDeleteSuccess(commentOneDeleteBean: CommentOneDeleteBean?) {
+            dismiss()
+            if (commentOneDeleteBean != null) {
+                if (commentOneDeleteBean.code == 200) {
+                    ToastUtils.showShort("删除父动态，更新视图")
+                    mCommentOneList.removeAt(one)
+                    adapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+        override fun onDoCommentOneDeleteError() {
+            dismiss()
+        }
+
+        override fun onDoCommentTwoDeleteSuccess(commentTwoDeleteBean: CommentTwoDeleteBean?) {
+            dismiss()
+
+            if (commentTwoDeleteBean != null) {
+                if (commentTwoDeleteBean.code == 200) {
+                    when (childMode) {
+                        0 -> {
+                            when (mCommentOneList[one].all) {
+                                1 -> {
+                                    mCommentOneList[one].all = mCommentOneList[one].all - 1
+                                    adapter.notifyDataSetChanged()
+                                }
+                                else -> {
+
+                                    // 判断当 ${mCommentOneList[positionOne].twoList} 为空时，也就是没展开数据时，对用户做出的操作不做反应
+
+                                    if (mCommentOneList[one].twoList.isNotEmpty()) {
+
+                                        // 二级评论列表id
+                                        mCommentOneList[one].list.id_two =
+                                            mCommentOneList[one].twoList[0].id
+                                        // 二级评论首条
+                                        mCommentOneList[one].list.content_two =
+                                            mCommentOneList[one].twoList[0].content
+                                        // 二级评论首条uid
+                                        mCommentOneList[one].list.two_last_uid =
+                                            mCommentOneList[one].twoList[0].two_last_uid
+                                        // 二级评论首条u昵称
+                                        mCommentOneList[one].list.nick_two =
+                                            mCommentOneList[one].twoList[0].last_nick
+                                        // 二级评论首条性别
+                                        mCommentOneList[one].list.sex_two =
+                                            mCommentOneList[one].twoList[0].last_sex
+                                        // 二级评论首条头像
+                                        mCommentOneList[one].list.image_two =
+                                            mCommentOneList[one].twoList[0].last_img_url
+                                        // 二级评论总计多少条
+                                        mCommentOneList[one].list.count_two =
+                                            mCommentOneList[one].list.count_two!! - 1
+                                        mCommentOneList[one].all = mCommentOneList[one].all - 1
+
+                                        mCommentOneList[one].twoList.removeAt(0)
+
+                                        adapter.notifyDataSetChanged()
+                                    } else {
+                                        ToastUtils.showShort("未展开，此时不提供删除功能")
+                                    }
+                                }
+                            }
+                        }
+                        1 -> {
+                            ToastUtils.showShort("删除子动态，更新视图")
+                            mCommentOneList[one].twoList.removeAt(two)
+                            mCommentOneList[one].all - 1
+                            adapter.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
+
+        }
+
+        override fun onDoCommentTwoDeleteError() {
+            dismiss()
+        }
+
+    }
+
+    class ReportDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_tips
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<TextView>(R.id.tv_dialog_tip_info).text = "您确定要举报该动态吗"
+
+            findViewById<TextView>(R.id.tv_dialog_tip_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
+                dismiss()
+                ToastUtils.showShort("举报")
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
     }
 
 }

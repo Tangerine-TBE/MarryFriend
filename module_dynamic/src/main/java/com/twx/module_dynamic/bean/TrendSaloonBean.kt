@@ -15,6 +15,7 @@ data class TrendSaloonData(
     val total: Int,
 )
 
+
 data class TrendSaloonList(
     val age: Int,
     val audit_status: Int,
@@ -42,5 +43,10 @@ data class TrendSaloonList(
     val weidu: String,
     val work_city_str: String,
     val vip_level: Int,
-    val identity_status : Int
+    val identity_status: Int,
+    val guest_uid: Int?,
+    val close_time: String,
+    val focous_uid: Int?,
 )
+
+

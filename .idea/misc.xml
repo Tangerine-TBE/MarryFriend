@@ -41,6 +41,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/select_rb_mine_pic.xml" value="0.2145" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/select_rb_recommend_pic.xml" value="0.2145" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_avatar_check.xml" value="0.273" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_choose_work.xml" value="0.2025" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_input.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_next.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_next_non.xml" value="0.209" />
@@ -229,27 +230,31 @@
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/drawable/shape_bg_button_add.xml" value="0.2895" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/drawable/shape_bg_comment.xml" value="0.219" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/drawable/shape_bg_comment_two.xml" value="0.219" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/drawable/shape_bg_dialog_cancel.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/drawable/shape_bg_dynamic_address.xml" value="0.219" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/drawable/shape_bg_local_search.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_drag.xml" value="0.21770833333333334" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_mine_like.xml" value="0.25" />
-        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_mine_show.xml" value="0.33" />
-        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_other_show.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_mine_show.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_other_show.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_pic_show.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_dynamic_send.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_image_preview.xml" value="0.22" />
-        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_location.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_location.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_my_dynamic.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_saloon.xml" value="0.2598958333333333" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_tips.xml" value="0.30104166666666665" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/activity_video_preview.xml" value="0.22135416666666666" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_dynamic_mine_edit.xml" value="0.21" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_dynamic_other_edit.xml" value="0.25729166666666664" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_like_avatar.xml" value="0.24322916666666666" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_location_info.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_send_add_choose.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_send_identity.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_send_poto_choose.xml" value="0.2765625" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/dialog_tips.xml" value="0.2515625" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/fragment_dynamic.xml" value="0.23125" />
-        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/fragment_dynamic_friend.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/fragment_dynamic_friend.xml" value="0.22" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/fragment_dynamic_recommend.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/fragment_emoji_one.xml" value="0.2635416666666667" />
         <entry key="..\:/project/MarryFriend/module_dynamic/src/main/res/layout/fragment_recommend.xml" value="0.25" />

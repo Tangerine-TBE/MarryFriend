@@ -89,13 +89,29 @@
                     android:textColor="#9A9A9A"
                     android:textSize="13sp" />
 
-                <ImageView
-                    android:id="@+id/iv_dynamic_other_show_mode"
+                <LinearLayout
+                    android:id="@+id/ll_dynamic_other_show_mode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/ic_base_focus" />
+                    android:layout_centerInParent="true">
+
+                    <ImageView
+                        android:id="@+id/iv_dynamic_other_show_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_base_focus" />
+
+                    <TextView
+                        android:id="@+id/tv_dynamic_other_show_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="已关注"
+                        android:textColor="#FF4444"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
 
             </RelativeLayout>
 
@@ -568,9 +584,10 @@
                 android:layout_marginVertical="8dp"
                 android:layout_toStartOf="@+id/iv_dynamic_other_show_like"
                 android:background="@drawable/shape_bg_comment"
-                android:hint="喜欢就评论告TA..."
+                android:hint="走心,说点好听的"
                 android:paddingHorizontal="16dp"
-                android:paddingVertical="11dp" />
+                android:paddingVertical="11dp"
+                android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/iv_dynamic_other_show_like"
@@ -585,11 +602,20 @@
                 android:id="@+id/iv_dynamic_other_show_emoji"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginVertical="8dp"
                 android:layout_marginEnd="11dp"
+                android:layout_toStartOf="@+id/iv_dynamic_other_show_send"
                 android:src="@drawable/ic_dynamic_emoji" />
+
+            <ImageView
+                android:id="@+id/iv_dynamic_other_show_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:src="@mipmap/icon_emoji_send" />
 
         </RelativeLayout>
 

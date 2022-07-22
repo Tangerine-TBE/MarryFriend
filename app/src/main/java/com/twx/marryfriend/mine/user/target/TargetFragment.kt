@@ -930,8 +930,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     // 加载数据
     private fun initInfo() {
 
-        SPStaticUtils.put(Constant.TA_WORK_PLACE, "")
-
         baseInfoList.clear()
         moreInfoList.clear()
         jobAddressInfoList.clear()
@@ -946,11 +944,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
 
-            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
-                .split(",") as MutableList<String>
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").split(",") as MutableList<String>
             x.removeAt(0)
-
-            jobAddressInfoList.clear()
 
             for (i in 0.until(x.size)) {
                 jobAddressInfoList.add(x[i])
@@ -2474,13 +2469,22 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, ""))
                 } else {
                     if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") != "") {
-                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
+                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
+                            ""))
+                    } else {
+                        wheel.visibility = View.VISIBLE
+                        info.visibility = View.GONE
+                        isConfirm = false
                     }
                 }
             }
 
+            if (jobAddressInfoList.size == 5) {
+                add.visibility = View.GONE
+            }
+
             content.adapter = jobAddressAdapter
-            val layoutManager = GridLayoutManager(context, 3)
+            val layoutManager = LinearLayoutManager(context)
             content.layoutManager = layoutManager
 
 
@@ -2575,9 +2579,18 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 override fun onItemCloseClick(v: View?, position: Int) {
                     ToastUtils.showShort("第${position}个数据需要删除")
                     jobAddressInfoList.removeAt(position)
-
                     jobAddressAdapter.notifyDataSetChanged()
                     sum.text = jobAddressInfoList.size.toString()
+
+                    if (jobAddressInfoList.size < 5) {
+                        add.visibility = View.VISIBLE
+                    }
+
+                    if (jobAddressInfoList.isEmpty()) {
+                        wheel.visibility = View.VISIBLE
+                        info.visibility = View.GONE
+                        isConfirm = false
+                    }
                 }
             })
 
@@ -2630,6 +2643,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     info.visibility = View.VISIBLE
 
                     isConfirm = true
+
+                    if (jobAddressInfoList.size == 5) {
+                        add.visibility = View.GONE
+                    }
 
                 }
 
