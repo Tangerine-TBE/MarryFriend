@@ -88,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/shape_base_dialog_bottom"
+            android:background="@drawable/shape_bg_dialog_bottom"
             android:gravity="center"
             android:paddingVertical="15dp"
             android:text="普通会员"
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
 
                 android:layout_marginBottom="8dp"
-                android:background="@drawable/shape_base_dialog_bottom"
+                android:background="@drawable/shape_bg_dialog_bottom"
                 android:gravity="center"
                 android:paddingVertical="11dp"
                 android:text="超级会员"

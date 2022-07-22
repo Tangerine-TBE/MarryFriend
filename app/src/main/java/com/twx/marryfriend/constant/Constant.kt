@@ -213,6 +213,9 @@ object Constant {
 
     const val TA_INCOME_MIN = "TA_income_min"  // 最低月收入
     const val TA_INCOME_MAX = "TA_income_max"  // 最高月收入
+
+    const val TA_INCOME = "TA_income"  // 月收入
+
     const val TA_EDU = "TA_edu"  // 学历
 
     const val TA_MARRY_STATE = "TA_marry_state"  // 婚况
@@ -258,6 +261,11 @@ object Constant {
     const val ME_VOICE_LONG = "ME_voice_long"  // 招呼语语言的长度
 
     const val ME_VOICE_NAME = "ME_voice_name"  // 招呼语语言的文件命名
+
+
+    // --------------------------------------  动态模块  ------------------------------------
+
+    const val HIDE_REPORT_TIP = "hide_report_tip" // 是否展示举报方式的RelativeLayout
 
 
 }

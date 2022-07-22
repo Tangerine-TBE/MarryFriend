@@ -15,7 +15,7 @@ import com.twx.marryfriend.likeme.LiveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.recommend.RecommendFragment
-import com.twx.module_dynamic.saloon.DynamicFragment
+import com.twx.marryfriend.dynamic.saloon.DynamicFragment
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -153,7 +153,7 @@ class MainActivity : MainBaseViewActivity() {
             "com.google.android.gms.fonts",
             "com.google.android.gms",
             "Noto Color Emoji Compat",
-            com.twx.module_dynamic.R.array.com_google_android_gms_fonts_certs)
+            R.array.com_google_android_gms_fonts_certs)
         config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
 
         config.setReplaceAll(true)

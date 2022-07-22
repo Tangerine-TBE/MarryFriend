@@ -48,7 +48,7 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
-import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
+import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
@@ -64,7 +64,6 @@ import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
 import com.twx.marryfriend.net.impl.getPhotoListPresentImpl
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
-import com.twx.module_dynamic.mine.MyDynamicActivity
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.fragment_mine.*
@@ -332,7 +331,7 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 //        }
 
         ll_mine_set_dynamic.setOnClickListener {
-            val intent = Intent(context,MyDynamicActivity::class.java)
+            val intent = Intent(context, MyDynamicActivity::class.java)
             startActivity(intent)
         }
 

@@ -9,6 +9,13 @@ object Contents {
     const val BAIDU_API_URL = "https://aip.baidubce.com"
 
 
+    //  百度地图api 所需的域名
+    const val BAIDU_MAP_URL = "https://api.map.baidu.com"
+
+    //  高德地图api 所需的域名
+    const val GAODE_MAP_URL = "https://restapi.amap.com"
+
+
     // 常用 token值
     const val SERVICE = "service" //接口名
     const val SIGNATURE = "signature" //验证码
@@ -50,6 +57,84 @@ object Contents {
     // 更新资料完善度
     const val UPDATE_PROPORTION = "LoginRegister/proportionUpdate"
 
+
+    // ------------------------------- 动态 -------------------------------
+
+    // 获取我的动态 列表
+    const val GET_MY_TREND_LIST = "UserCenter/trendsList"
+
+    // 上传我的动态 列表
+    const val DO_UPLOAD_TREND = "UserCenter/uploadTrend"
+
+    // 查看自己的某一条动态
+    const val DO_CHECK_TREND = "UserCenter/checkOne"
+
+    // 删除我的动态
+    const val DO_DELETE_TREND = "UserCenter/deleteTrend"
+
+    // 动态的点赞列表
+    const val GET_LIKE_LIST = "UserCenter/likeList"
+
+    // 给动态点击送赞
+    const val DO_LICK_CLICK = "UserCenter/likeClick"
+
+    // 给动态取消点赞
+    const val DO_LICK_CANCEL = "UserCenter/likeCancel"
+
+    // 一级评论 动态的父评论列表
+    const val GET_COMMENT_ONE = "UserCenter/discussListOne"
+
+    // 一级评论 给动态提交父评论
+    const val DO_COMMENT_ONE_CREATE = "UserCenter/discussOneCreate"
+
+    // 一级评论 删除动态的父评价
+    const val DO_COMMENT_ONE_DELETE = "UserCenter/discussOneDelete"
+
+    // 二级评论 动态的子评论列表
+    const val GET_COMMENT_TWO = "UserCenter/discussListTwo"
+
+    // 二级评论 动态的子评论增加
+    const val DO_COMMENT_TWO_CREATE = "UserCenter/discussTwoCreate"
+
+    // 二级评论 动态的子评论删除
+    const val DO_COMMENT_TWO_DELETE = "UserCenter/discussTwoDelete"
+
+    // 我关注其它人，列表
+    const val MINE_FOCUS_OTHER_LIST = "UserCenter/mineFocusOtherList"
+
+    // 其它人关注我，列表
+    const val OTHER_FOCUS_MINE_LIST = "UserCenter/otherFocusMineList"
+
+    // 点击添加关注别人
+    const val DO_PLUS_FOCUS_OTHER = "UserCenter/plusFocusOther"
+
+    // 点击取消关注别人
+    const val DO_CANCEL_FOCUS_OTHER = "UserCenter/cancelFocusOther"
+
+
+    // 动态沙龙列表
+    const val GET_TREND_SALOON = "TrendsNotice/trendsSaloon"
+
+    // 关注的人动态列表
+    const val GET_TREND_FOCUS = "TrendsNotice/focousTrends"
+
+    // 获取评论和点赞的未读次数
+    const val GET_TOTAL_COUNT = "TrendsNotice/totalCount"
+
+
+    // 点赞未读列表
+    const val GET_TREND_TIP = "TrendsNotice/dianzanUnreadList"
+
+    // ------------------------------- 高德地图 -------------------------------
+
+    // 高德地图-地点检索
+    const val PLACE_SEARCH = "place/around"
+
+    // 百度行政区划区域检索
+    const val BAIDU_SEARCH = "v2/search"
+
+
+    // ------------------------------- 常量 -------------------------------
 
     // 获取学校
     const val GET_CITY = "GetParameter/provinceCity"
@@ -145,6 +230,32 @@ object Contents {
     //    const val USER_ID = "user_id"
     const val PROPORTION = "finish_proportion"
 
+
+    // --------------------------------------  动态  --------------------------------------
+
+    const val TRENDS_TYPE = "trends_type"
+    const val PAGE = "page"
+    const val SIZE = "size"
+    const val ID = "id"
+    const val TREND_ID = "trend_id"    // 动态id
+    const val HOST_UID = "host_uid"    // 动态主人uid
+    const val TRENDS_ID = "trends_id"    // 动态id
+    const val GUEST_UID = "guest_uid"    // 浏览客人uid
+    const val PARENT_ID = "parent_id"   // 动态的父级评论id
+    const val ONE_LEVEL_UID = "one_level_uid" // 动态的父级用户id
+    const val TREND_INFO = "trend_info"
+    const val CONTENT_ONE = "content_one"  // 父评论内容
+
+    const val FIRST_UID = "first_uid"  // 前一个用户uid
+    const val LAST_UID = "last_uid"  // 现在这个用户uid
+    const val CONTENT_TWO = "content_two"  // 子评论内容
+
+    // 动态沙龙列表
+    const val UP_DOWN = "up_down"  // 首页 上页 下页 三选一
+    const val MAX_ID = "max_id"  // 当前页的最大动态id，首页为1
+    const val MIN_ID = "min_id"  // 当前页的最小动态id，首页为0
+    // const val SIZE = "size"   // 每页加载条数，默认10
+
     // ------------------------------------ 外部的api ------------------------------------
 
     // 获取 百度api所需的 Access Token
@@ -170,5 +281,40 @@ object Contents {
     const val IMAGE_TYPE = "image_type" // 图片类型 BASE64、URL、FACE_TOKEN
 
     const val TEXT = "text" // 待审核文本字符串
+
+
+
+    // 百度地图地点搜索
+    const val KEY = "key"
+    const val LOCATION = "location"
+    const val KEYWORDS = "keywords"
+    const val TYPES = "types"
+    const val CITY = "city"
+    const val RADIUS = "radius"
+    const val SORTRULE = "sortrule"
+    const val OFFSET = "offset"
+
+    //    const val PAGE = "page"
+    const val EXTENSIONS = "extensions"
+    const val SIG = "sig"
+    const val CALLBACK = "callback"
+
+
+    // 百度行政区划区域检索
+    const val QUERY = "query" // 检索关键字
+    const val TAG = "tag"     // 检索分类偏好
+    const val REGION = "region"  // 检索行政区划区域
+    const val OUTPUT = "output"  // 输出格式  json或者xml
+    const val AK = "ak"          // 开发者的访问密钥
+
+
+
+
+
+
+
+
+
+
 
 }

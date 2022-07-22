@@ -112,11 +112,11 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".main.MainActivity"
@@ -126,11 +126,51 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- 联通电信授权页 -->
+        </activity>
+
+
+
+        <activity
+            android:name=".dynamic.saloon.tip.TipsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".dynamic.preview.video.VideoPreviewActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name=".dynamic.show.others.DynamicOtherShowActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.preview.image.ImagePreviewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".dynamic.show.mine.DynamicMineLikeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.show.mine.DynamicMineShowActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".dynamic.send.location.LocationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.send.DynamicSendActivity"
+            android:exported="true" />
+        <activity
+            android:name=".dynamic.mine.MyDynamicActivity"
+            android:exported="true" />
+
+
+        <!-- 联通电信授权页 -->
         <activity android:name=".search.SearchParamActivity" />
         <activity android:name=".search.AccurateSearchActivity" />
         <activity android:name=".search.SearchResultActivity" />
-        <activity android:name=".ilove.ILikeActivity" /> <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
+        <activity android:name=".ilove.ILikeActivity" />
+        <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
