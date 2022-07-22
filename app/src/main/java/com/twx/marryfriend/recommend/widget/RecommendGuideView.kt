@@ -26,7 +26,7 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
     }
     init {
         inflate(context,R.layout.item_recommend_guide,this)
-        Glide.init(this.context, GlideBuilder().setSourceExecutor(GlideExecutor.newSourceBuilder().setThreadCount(GlideExecutor.calculateBestThreadCount()*5).build()))
+//        Glide.init(this.context, GlideBuilder().setSourceExecutor(GlideExecutor.newSourceBuilder().setThreadCount(GlideExecutor.calculateBestThreadCount()*5).build()))
     }
     private var currentType:HomeCardAction?=HomeCardAction.upSlide
 
