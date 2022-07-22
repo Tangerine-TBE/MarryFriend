@@ -42,6 +42,7 @@ class HavePortraitDialog(context: Context, val result:((HeadPortraitEnum)->Unit)
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     override fun dismiss() {

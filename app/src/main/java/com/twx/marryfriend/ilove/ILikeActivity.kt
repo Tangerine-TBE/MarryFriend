@@ -14,6 +14,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.twx.marryfriend.R
 import kotlinx.android.synthetic.main.activity_ilike.*
 
+//https://lanhuapp.com/web/#/item/project/detailDetach?pid=0f172b45-d776-4080-a03e-618374ed56e4&image_id=765fbf73-31d9-473f-870c-33178d1822c3&tid=5173cb5f-00ad-4a38-b103-b616ccec0e12&project_id=0f172b45-d776-4080-a03e-618374ed56e4&fromEditor=true&type=image
 class ILikeActivity:AppCompatActivity(R.layout.activity_ilike) {
     private val fragments by lazy {
         arrayOf(LikePeopleFragment(),DislikePeopleFragment(),SuperLikePeopleFragment())

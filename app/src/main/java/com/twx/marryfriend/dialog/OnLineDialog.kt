@@ -42,6 +42,7 @@ class OnLineDialog(context: Context, val result:((OnLineEnum)->Unit)?=null):Dial
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     override fun dismiss() {

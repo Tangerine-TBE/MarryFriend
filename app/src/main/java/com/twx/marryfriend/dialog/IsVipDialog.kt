@@ -41,6 +41,7 @@ class IsVipDialog(context: Context, val result:((IsVipEnum)->Unit)?=null):Dialog
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     override fun dismiss() {

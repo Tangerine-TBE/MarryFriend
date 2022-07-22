@@ -3,7 +3,6 @@ package com.twx.marryfriend
 import android.app.Application
 import com.kingja.loadsir.core.LoadSir
 import com.xyzz.myutils.MyUtils
-import com.xyzz.myutils.ThreadExceptionLog
 
 
 class AppApplication:Application() {

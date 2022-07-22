@@ -2,6 +2,8 @@ package com.xyzz.myutils
 
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.xyzz.myutils.show.eLog
+import com.xyzz.myutils.show.iLog
 import java.util.*
 
 object NetworkUtil {

@@ -12,9 +12,10 @@ import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.xyzz.myutils.iLog
+import com.twx.marryfriend.recommend.RecommendViewModel
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_like_people.*
 import kotlinx.coroutines.launch
 
@@ -37,6 +38,9 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
     }
     private val likeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LikeViewModel::class.java)
+    }
+    private val recommendViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(RecommendViewModel::class.java)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,11 +73,14 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
     }
 
     private fun initListener(){
+        closeTip.setOnClickListener {
+            closeView.visibility=View.GONE
+        }
         likeAdapter.sendFlowerAction={
             lifecycleScope.launch {
                 loadingDialog.show()
                 try {
-                    likeViewModel.superLike(it.guest_uid)
+                    recommendViewModel.superLike(it.guest_uid)
                     likeViewModel.onSuperLikeChange(it)
                     toast("送花成功")
                 }catch (e:Exception){

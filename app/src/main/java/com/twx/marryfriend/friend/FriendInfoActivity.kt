@@ -26,16 +26,20 @@ import com.twx.marryfriend.bean.RecommendBean
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendViewModel
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.coroutines.launch
 
 class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     companion object{
         private const val USER_ID_KEY="user_id_k"
-        fun getIntent(context: Context,userId:Int):Intent{
+        fun getIntent(context: Context,userId:Int?):Intent?{
+            if (userId==null){
+                toast(context,"id 不能为空")
+                return null
+            }
             val intent=Intent(context,FriendInfoActivity::class.java)
             intent.putExtra(USER_ID_KEY,userId)
             return intent
@@ -73,6 +77,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         super.onCreate(savedInstanceState)
         loadData()
         initListener()
+        isLikeMe.visibility=View.GONE
     }
 
     private fun loadData(){
@@ -99,7 +104,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 itemSetting.setOnClickListener {
                     toast(it.context,"TODO 设置")
                 }
-                Glide.with(this).load(item.getHomeImg()).into(recommendPhoto)
+                Glide.with(this).load(item.getHeadImg()).into(recommendPhoto)
                 itemNickname.text=item.getNickname()
                 if (item.isRealName()){
                     realNameView.visibility= View.VISIBLE
@@ -119,8 +124,36 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             //关于我
             selfIntroduction.apply {
-                aboutMe.text=(item.getAboutMeLife()+"\n\n"+item.getAboutMeWork()+"\n\n"+item.getAboutMeHobby())
-                Glide.with(aboutMePhoto).load(item.getAboutMePhoto()).into(aboutMePhoto)
+                val stringBuilder=StringBuilder()
+                if (item.getAboutMeLife().isNotBlank()){
+                    stringBuilder.append(item.getAboutMeLife()+"\n\n")
+                }
+                if (item.getAboutMeWork().isNotBlank()){
+                    stringBuilder.append(item.getAboutMeWork()+"\n\n")
+                }
+                if (item.getAboutMeHobby().isNotBlank()){
+                    stringBuilder.append(item.getAboutMeHobby())
+                }
+                stringBuilder.toString().also { text->
+                    if (text.isNullOrBlank()&&item.getAboutMePhoto().isNullOrBlank()){
+                        this.visibility=View.GONE
+                        return@apply
+                    }else{
+                        this.visibility=View.VISIBLE
+                    }
+                    if (text.isNotBlank()){
+                        aboutMe.visibility=View.VISIBLE
+                        aboutMe.text = text
+                    }else{
+                        aboutMe.visibility=View.GONE
+                    }
+                }
+                if (item.getAboutMePhoto().isNullOrBlank()){
+                    aboutMePhoto.visibility=View.GONE
+                }else{
+                    aboutMePhoto.visibility=View.VISIBLE
+                    Glide.with(aboutMePhoto).load(item.getAboutMePhoto()).into(aboutMePhoto)
+                }
             }
             //语音介绍
             voiceIntroduce.apply {
@@ -247,6 +280,11 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     realNameDes.text=(item.getRealNameNumber()?:"未认证")
                     headPorDes.text=("未认证。")
                 }
+                if (item.isHeadIdentification()){
+                    headPorDes.text=("头像是用户本人真实照片，已通过人脸对比。")
+                }else{
+                    headPorDes.text=("未认证。")
+                }
             }
             //我的动态
             myDynamic.apply {
@@ -270,12 +308,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 }
                 toMyDynamic.setOnClickListener {
                     toast(it.context,"TODO 跳到动态")
-                }
-            }
-
-            myLife.apply {
-                upLoadLife.setOnClickListener {
-                    toast(it.context,"TODO 上传生活")
                 }
             }
 

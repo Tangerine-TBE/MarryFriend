@@ -1,6 +1,7 @@
-package com.xyzz.myutils
+package com.xyzz.myutils.show
 
 import android.util.Log
+import com.xyzz.myutils.BuildConfig
 
 fun Any.dLog(text: String, tag: String = this.javaClass.simpleName){
     if (!BuildConfig.DEBUG){

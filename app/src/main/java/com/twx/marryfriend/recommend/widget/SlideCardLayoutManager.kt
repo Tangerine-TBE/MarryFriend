@@ -1,7 +1,6 @@
 package com.twx.marryfriend.recommend.widget
 
 import androidx.recyclerview.widget.RecyclerView
-import com.xyzz.myutils.iLog
 
 class SlideCardLayoutManager:RecyclerView.LayoutManager() {
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {

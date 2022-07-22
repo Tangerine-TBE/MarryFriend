@@ -1,6 +1,7 @@
 package com.twx.marryfriend.bean.search
 
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.Label
 import com.twx.marryfriend.bean.RecommendBean
 
@@ -12,7 +13,7 @@ data class SearchResultItem(
     var hometown_city_str: String? = "",
     var identity_name: String? = "",
     var identity_status: Int? = 0,
-    var image_url: String? = "",
+    private var image_url: String? = "",
     var img_count: Int? = 0,
     var introduce_self: String? = "",
     var like_uid: Int? = 0,
@@ -23,8 +24,20 @@ data class SearchResultItem(
     var user_id: Int? = 0,
     var user_sex: Int? = 0,
     var vip_level: Int = 0,
+    var img_status:Int=0,
     var work_city_str: String? = ""
 ){
+    fun getHeadImage():String?{
+        return if (isRealImage()){
+            image_url
+        }else{
+            UserInfo.getDefHeadImage(user_sex?:UserInfo.reversalSex(UserInfo.getUserSex()))
+        }
+    }
+    fun isRealImage():Boolean{
+        return img_status==1
+    }
+
     fun isLike():Boolean=like_uid!=null
 
     fun like(){

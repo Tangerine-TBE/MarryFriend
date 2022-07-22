@@ -14,7 +14,7 @@ import androidx.core.view.iterator
 import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
 import com.twx.marryfriend.R
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.dialog_list_options.*
 
 abstract class ListOptionsDialog<I>(context: Context, private val listData:List<I>, val result:((List<I>)->Unit)?=null): Dialog(context) {
@@ -55,8 +55,10 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
             preResult=resultList.toList()
             dismiss()
         }
-        dialog_close.setOnClickListener {
-            submitBtn.performClick()
+        addItem.setOnClickListener {
+            addItem()
+            contentSwitcher.showNext()
+            buttonSwitcher.showNext()
         }
         setOnDismissListener {
             preResult?.also {
@@ -76,32 +78,37 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
                 }
             }
         }
-        clickAdd.setOnClickListener { view ->
-            val item=currentItem?:return@setOnClickListener
-            if (resultList.find {
-                    item==it
-                }!=null){
-                return@setOnClickListener toast(context,"已经存在请勿重复添加")
-            }
-            if (resultList.size>=maxContent){
-                return@setOnClickListener toast(context,"最多添加${maxContent}个")
-            }
-            val needRemoveView=addItemCollectMutex(item,resultList)
-            if (needRemoveView.isNotEmpty()){
-                chipGroup.iterator().asSequence().toList().forEach {
-                    if (needRemoveView.contains(it.tag)){
-                        chipGroup.removeView(it)
-                    }
-                }
-                resultList.removeAll(needRemoveView.toSet())
-            }
-            resultList.add(item)
-            addLabelViewItem(item)
+        toAddItem.setOnClickListener { view ->
+            contentSwitcher.showNext()
+            buttonSwitcher.showNext()
         }
     }
 
+    private fun addItem(){
+        val item=currentItem?:return
+        if (resultList.find {
+                item==it
+            }!=null){
+            return toast(context,"已经存在请勿重复添加")
+        }
+        if (resultList.size>=maxContent){
+            return toast(context,"最多添加${maxContent}个")
+        }
+        val needRemoveView=addItemCollectMutex(item,resultList)
+        if (needRemoveView.isNotEmpty()){
+            chipGroup.iterator().asSequence().toList().forEach {
+                if (needRemoveView.contains(it.tag)){
+                    chipGroup.removeView(it)
+                }
+            }
+            resultList.removeAll(needRemoveView.toSet())
+        }
+        resultList.add(item)
+        addLabelViewItem(item)
+    }
+
     private fun addLabelViewItem(tag:I){
-        val itemView= LayoutInflater.from(this.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip,chipGroup,false)
+        val itemView= LayoutInflater.from(this.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip2,chipGroup,false)
         itemView.findViewById<TextView>(R.id.chipText).text="${getFirstText(tag)}"
         itemView.tag = tag
         if (chipGroup.childCount>0){
@@ -118,6 +125,12 @@ abstract class ListOptionsDialog<I>(context: Context, private val listData:List<
     override fun show() {
         super.show()
         preResult=resultList.toList()
+        if (resultList.isEmpty().xor(contentSwitcher.currentView==firstOption)){
+            contentSwitcher.showNext()
+        }
+        if (resultList.isEmpty().xor(buttonSwitcher.currentView==submitBtn)){
+            buttonSwitcher.showNext()
+        }
     }
 
     private fun WheelPicker.init(){

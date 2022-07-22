@@ -4,8 +4,11 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.one_hello.OneClickHelloBean
+import com.twx.marryfriend.bean.one_hello.OneClickHelloItemBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
+import com.xyzz.myutils.show.iLog
 import org.json.JSONArray
 import org.json.JSONObject
 import kotlin.coroutines.resume
@@ -104,19 +107,23 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
+    //marryfriend/CommendSearch/plusPutongXihuanOther
     suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
-        val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to UserInfo.getUserId(),
-            "guest_uid" to guest_uid.toString())
+            "guest_uid" to guest_uid.toString(),
+            "feeling" to "love")
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
                 if (jsonObject.getInt("code")==200) {
-                    if (jsonObject.getJSONArray("data").getInt(0)==2){
+                    val code=jsonObject.getJSONArray("data").getInt(0)
+                    if (code==2){
                         mutualLikeAction?.invoke()
                     }
+                    iLog("返回的状态code:${code},2为相互喜欢")
                     coroutine.resume("喜欢成功")
                 }else if(jsonObject.getString("code")=="444"){
                     coroutine.resume(jsonObject.getString("msg"))
@@ -144,6 +151,48 @@ class RecommendViewModel():ViewModel() {
                     coroutine.resume(Unit)
                 }else{
                     coroutine.resumeWithException(Exception(response))
+                }
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
+
+    suspend fun loadOneClickHelloUserInfo() =suspendCoroutine<OneClickHelloBean>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/everydayLuckList"
+        val map= mapOf(
+            "user_id" to UserInfo.getUserId(),
+            "user_sex" to UserInfo.getUserSex().toString())
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                iLog(response)
+                coroutine.resume(Gson().fromJson(response,OneClickHelloBean::class.java))
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
+
+    suspend fun sendHello(list: List<OneClickHelloItemBean>) =suspendCoroutine<Unit>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/oneClickHello"
+        val map= mapOf(
+            "host_uid" to UserInfo.getUserId(),
+            "host_sex" to UserInfo.getUserSex().toString(),
+            "uid_array" to list.map { it.user_id }.let { Gson().toJson(it) })
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            val jsonObject=JSONObject(response)
+            try {
+                iLog(response)
+                if (jsonObject.getInt("code")==200){
+                    coroutine.resume(Unit)
+                }else{
+                    coroutine.resumeWithException(Exception("${response}"))
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

@@ -3,6 +3,28 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/closeView"
+        android:background="#FFFFE6E6"
+        android:layout_width="match_parent"
+        android:layout_height="38dp">
+        <TextView
+            android:text="已经把你推荐给Ta们,可以送花表心意"
+            android:textColor="#FFFF4444"
+            android:textSize="13sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/closeTip"
+            android:layout_gravity="end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@mipmap/ic_close_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/likeRecyclerView"
         android:layout_width="match_parent"

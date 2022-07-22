@@ -5,8 +5,6 @@ import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.twx.marryfriend.R
-import com.twx.marryfriend.recommend.RecommendAdapter
-import com.xyzz.myutils.iLog
 import java.lang.Math.abs
 
 class SlideCardCallback : ItemTouchHelper.SimpleCallback(0,12) {

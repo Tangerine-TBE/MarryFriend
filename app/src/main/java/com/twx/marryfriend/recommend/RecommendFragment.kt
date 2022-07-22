@@ -20,13 +20,15 @@ import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.begin.BeginActivity
+import com.twx.marryfriend.dialog.OneClickHelloDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_recommend_not_content.*
@@ -63,6 +65,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        test.setOnClickListener {
+            startActivity(Intent(requireContext(),BeginActivity::class.java))
+        }
         cardSwipeView.adapter=recommendAdapter
         val cardCallback = SlideCardCallback()
         touchHelper = ItemTouchHelper(cardCallback)
@@ -105,6 +110,30 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
         Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+        if (OneClickHelloDialog.isSendHello()){
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val oneClickHelloBean=recommendViewModel.loadOneClickHelloUserInfo()
+                    val data=oneClickHelloBean.data
+                    if (!data.isNullOrEmpty()){
+                        OneClickHelloDialog(requireContext(),data) {
+                            it?:return@OneClickHelloDialog
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                loadingDialog.show()
+                                try {
+                                    recommendViewModel.sendHello(it)
+                                }catch (e:Exception){
+                                    toast(e.message)
+                                }
+                                loadingDialog.dismiss()
+                            }
+                        }.show()
+                    }
+                }catch (e:Exception){
+                    iLog("获取失败")
+                }
+            }
+        }
     }
 
     private fun guideActionCompleteHandler(action:HomeCardAction?){
@@ -246,6 +275,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             loadingDialog.show()
             try {
                 recommendViewModel.superLike(item.getId())
+                toast("送花成功")
             }catch (e:Exception){
                 toast(e.message)
             }
@@ -259,7 +289,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private fun showView(type:ViewType){
         when(type){
             ViewType.content -> {
-                guideView.noticeDataChange(true)
+                guideView.onDataChange(true)
                 cardSwipeView.visibility=View.VISIBLE
                 mutualLike.visibility=View.GONE
                 notContent.visibility=View.GONE
@@ -270,7 +300,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 notContent.visibility=View.GONE
             }
             ViewType.notContent -> {
-                guideView.noticeDataChange(false)
+                guideView.onDataChange(false)
                 cardSwipeView.visibility=View.GONE
                 mutualLike.visibility=View.GONE
                 notContent.visibility=View.VISIBLE

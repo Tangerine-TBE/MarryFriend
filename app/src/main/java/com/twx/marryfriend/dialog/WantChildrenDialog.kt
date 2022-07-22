@@ -8,12 +8,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.enumeration.HousingEnum
 import com.twx.marryfriend.enumeration.WantChildrenEnum
 import kotlinx.android.synthetic.main.dialog_mate_selection_want_children.*
 
 class WantChildrenDialog(context: Context, val result:((List<WantChildrenEnum>)->Unit)?=null):Dialog(context) {
     private val eduChoice by lazy {
-        HashSet<WantChildrenEnum>().apply {
+        ArrayList<WantChildrenEnum>().apply {
             this.add(WantChildrenEnum.unlimited)
         }
     }
@@ -50,29 +51,14 @@ class WantChildrenDialog(context: Context, val result:((List<WantChildrenEnum>)-
             confirm.performClick()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     private fun choiceView(view:View){
         viewMappingWantChildrenEnum.find {
             it.first==view
         }?.also {
-            if (view.isSelected){//移除一个筛选
-                if (it.second!= WantChildrenEnum.unlimited){
-                    eduChoice.remove(it.second)
-                    if (eduChoice.isEmpty()){
-                        eduChoice.add(WantChildrenEnum.unlimited)
-                    }
-                }
-            }else{//增加一个筛选
-                if (it.second== WantChildrenEnum.unlimited) {
-                    eduChoice.clear()
-                }else{
-                    if (eduChoice.contains(WantChildrenEnum.unlimited)){
-                        eduChoice.remove(WantChildrenEnum.unlimited)
-                    }
-                }
-                eduChoice.add(it.second)
-            }
+            WantChildrenEnum.changeChoice(it.second,eduChoice,!view.isSelected)
             updateView()
         }
     }

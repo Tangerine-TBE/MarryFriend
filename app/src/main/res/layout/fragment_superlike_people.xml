@@ -4,6 +4,28 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/closeView"
+        android:background="#FFFFE6E6"
+        android:layout_width="match_parent"
+        android:layout_height="38dp">
+        <TextView
+            android:text="可以更她们多交流聊天表达心意"
+            android:textColor="#FFFF4444"
+            android:textSize="13sp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/closeTip"
+            android:layout_gravity="end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@mipmap/ic_close_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+    </FrameLayout>
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/superLikeRefresh"
         android:layout_width="match_parent"

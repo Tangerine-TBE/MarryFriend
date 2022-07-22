@@ -11,7 +11,7 @@ data class RecommendBean(
     val more: More?=null,
     val photos: List<Photo>?=null,
     val place: Place?=null,
-    val trends: List<Trends>?=null,
+    val trends: List<Trends>?=null,//动态
     val trends_total: Int=0,
     val verify: Verify?=null,
     val vip_info: VipInfo?=null,
@@ -21,9 +21,16 @@ data class RecommendBean(
         return base?.id?:throw IllegalStateException("id为空")
     }
 
-    fun getHomeImg():String?{
+    /**
+     * 头像
+     */
+    fun getHeadImg():String?{
         return photos?.find { it.kind==1 }?.image_url
     }
+    fun isHeadIdentification():Boolean{
+        return photos?.find { it.kind==1 }?.status==1
+    }
+    
     fun getLongitude():Double?{
         return place?.jingdu?.toDoubleOrNull()
     }

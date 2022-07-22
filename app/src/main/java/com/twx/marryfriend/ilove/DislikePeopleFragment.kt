@@ -12,9 +12,9 @@ import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_dis_like_people.*
 import kotlinx.coroutines.launch
 

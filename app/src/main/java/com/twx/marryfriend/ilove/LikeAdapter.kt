@@ -5,7 +5,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ViewSwitcher
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.ilike.ILikeItemBean
 
@@ -28,7 +30,7 @@ class LikeAdapter(private val isChat:Boolean=false):RecyclerView.Adapter<BaseVie
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val item=listData[position]
-        holder.setImage(R.id.iLoveHead,item.image_url)
+        Glide.with(holder.itemView.context).load(item.image_url).placeholder(UserInfo.getReversedDefHeadImage()).into(holder.getView(R.id.iLoveHead))
         holder.setText(R.id.iLoveNickName,item.nick?:"")
         holder.setText(R.id.iLikeAge,"${item.age}岁")
         holder.setText(R.id.iLikeHeight,"${item.height}cm")

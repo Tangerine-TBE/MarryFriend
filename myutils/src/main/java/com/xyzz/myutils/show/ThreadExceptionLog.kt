@@ -1,4 +1,4 @@
-package com.xyzz.myutils
+package com.xyzz.myutils.show
 
 object ThreadExceptionLog {
     fun printUncaughtExceptionLog(){

@@ -32,22 +32,24 @@
             android:textSize="15sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
         <TextView
             android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_toEndOf="@id/text1"
             android:text="135"
             android:textColor="#FFFF4444"
-            android:textSize="15sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/text3"
-            android:layout_toEndOf="@id/text2"
-            android:text="人正在等待你的会员,"
-            android:textColor="#FF101010"
-            android:textSize="15sp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/text2"
+            android:text="人正在等待你的回应,"
+            android:textColor="#FF101010"
+            android:textSize="15sp" />
         <TextView
             android:id="@+id/text4"
             android:layout_below="@id/text1"
