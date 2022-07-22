@@ -70,7 +70,6 @@ public class UserData {
     private final Api mBaiduMapApi;
 
 
-
     private static UserData sInstance;
 
     public static UserData getInstance() {
@@ -358,7 +357,6 @@ public class UserData {
     }
 
 
-
     // 获取我的动态列表
     public void getMyTrendsList(Map<String, String> map, Integer page, Integer size, Callback<MyTrendsListBean> callback) {
         // 获取随机数
@@ -484,7 +482,7 @@ public class UserData {
 
 
     // 二级评论 动态的子评论列表
-    public void getCommentTwo(Map<String, String> map,Integer page, Integer size, Callback<CommentTwoBean> callback) {
+    public void getCommentTwo(Map<String, String> map, Integer page, Integer size, Callback<CommentTwoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
@@ -612,14 +610,14 @@ public class UserData {
     }
 
     // 点赞未读列表
-    public void getTrendTips(Map<String, String> map,Integer page, Callback<TrendTipBean> callback) {
+    public void getTrendTips(Map<String, String> map, Integer page, Callback<TrendTipBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByValue(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_TIP + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map,page,10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getTrendTips(map1).enqueue(callback);
     }
 

@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.baidubce.model.User
 import com.blankj.utilcode.util.*
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
@@ -44,7 +45,7 @@ import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.UnicodeUtils
 import java.util.*
 
-class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback{
+class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
     val AUTH_SECRET =
         "5Z/38d9XNQ5HDw9qYt6e0lvJfnFolhg3t+3deOgkQCJKwVxUYes1NHLjRNTEM9jKxzRLscIOBo/KkIxczkjgACt4EIkmqYrSSfEAvxGtYltNxSZcazVViGxVQS6RKHLWuNJA2/bg2T5QixDps8eV+Z4VqCT+09VAkE5zX4JuAS8JavAPjCRzILYkP/z1TPKxOgKJfjr3MRgloQO6VIzY/NdqMKvF3tlX7meLgivnIBpHucj4i/N3N7yYwHuLjRXbFjkTV5KNtfwfnuT5MWQi+axzGuihMX4U7QAeV3q4XPxko5zSc+X4MGji2jltoHQ7"
@@ -81,14 +82,20 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback{
     override fun initPresent() {
         super.initPresent()
 
-        if (NetworkUtils.getMobileDataEnabled()) {
-            // 一键登录
-            oneKeyLogin()
+        if (!SPStaticUtils.getBoolean(Constant.USER_IS_LOGIN, false)) {
+            if (NetworkUtils.getMobileDataEnabled()) {
+                // 一键登录
+                oneKeyLogin()
+            } else {
+                // 手机号登录
+                showPhoneLoginDialog()
+            }
         } else {
-            // 手机号登录
-            showPhoneLoginDialog()
-        }
+            // 跳过登录界面
+            val intent = Intent(this, GetInfoActivity::class.java)
+            startActivity(intent)
 
+        }
     }
 
     override fun initEvent() {
