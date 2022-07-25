@@ -7,14 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
-import com.twx.marryfriend.bean.post.OccupationBean
 import com.twx.marryfriend.bean.post.OccupationDataBean
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.*
 import com.twx.marryfriend.getCityData
 import com.twx.marryfriend.getOccupationData
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_search.*
 
 class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
@@ -183,32 +182,26 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
         }
     }
     //职业
-    private var currentOccupation:Pair<OccupationDataBean,OccupationBean>?=null
+    private var currentOccupation:OccupationDataBean?=null
     set(value) {
         field=value
         if (value==null){
             occupationText.text="不限"
         }else{
-            occupationText.text=value.first.name+" "+value.second.name
+            occupationText.text=value.name
         }
         searchViewModel.setOccupationParameter(value)
     }
     private val occupationDialog by lazy {
-        val occupationData=getOccupationData()?.data?.map {
-            Pair(it,it.child?: emptyList())
-        }
+        val occupationData=getOccupationData()?.data
         if (occupationData==null){
             return@lazy null
         }
-        object :SecondaryOptionsDialog<OccupationDataBean, OccupationBean>(this,occupationData,{ t, i->
-            currentOccupation=Pair(t,i)
+        object :SingleOptionsDialog<OccupationDataBean>(this,occupationData,{
+            currentOccupation=it
         }){
             override fun getFirstText(t: OccupationDataBean): String {
                 return t.name?:""
-            }
-
-            override fun getSecondText(i: OccupationBean): String {
-                return i.name?:""
             }
 
         }.also {

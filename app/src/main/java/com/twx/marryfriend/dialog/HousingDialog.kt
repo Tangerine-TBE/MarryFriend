@@ -13,10 +13,11 @@ import kotlinx.android.synthetic.main.dialog_mate_selection_housing.*
 
 class HousingDialog(context: Context, val result:((List<HousingEnum>)->Unit)?=null):Dialog(context) {
     private val eduChoice by lazy {
-        HashSet<HousingEnum>()
+        ArrayList<HousingEnum>()
     }
     private val viewMappingHousingEnum by lazy {
         listOf(
+            unlimited to HousingEnum.unlimited,
             withFamily to HousingEnum.withFamily,
             purchasedHouse to HousingEnum.purchasedHouse,
             rentHouse to HousingEnum.rentHouse,
@@ -49,17 +50,14 @@ class HousingDialog(context: Context, val result:((List<HousingEnum>)->Unit)?=nu
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     private fun choiceView(view:View){
         viewMappingHousingEnum.find {
             it.first==view
         }?.also {
-            if (view.isSelected){//移除一个筛选
-                eduChoice.remove(it.second)
-            }else{//增加一个筛选
-                eduChoice.add(it.second)
-            }
+            HousingEnum.changeChoice(it.second,eduChoice,!view.isSelected)
             updateView()
         }
     }

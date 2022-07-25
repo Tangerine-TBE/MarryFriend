@@ -22,85 +22,88 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/dialog_close"
-            android:text="完成"
-            android:background="@drawable/shape_bg_common_input"
-            android:gravity="center"
+            android:id="@+id/submitBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/shape_bg_common_input"
+            android:gravity="center"
             android:padding="10dp"
             android:paddingStart="21dp"
             android:paddingEnd="21dp"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"/>
+            android:text="完成" />
     </RelativeLayout>
-    
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="7dp"
-        app:chipSpacingHorizontal="4dp"
-        app:chipSpacingVertical="8dp"
+
+    <ViewSwitcher
+        android:id="@+id/contentSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
+        <LinearLayout
+            android:id="@+id/choiceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <com.aigestudio.wheelpicker.WheelPicker
+                android:id="@+id/firstOption"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:wheel_item_space="80dp"
+                app:wheel_item_text_size="17sp" />
+            <com.aigestudio.wheelpicker.WheelPicker
+                android:id="@+id/secondOption"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                app:wheel_item_space="80dp"
+                app:wheel_item_text_size="17sp" />
+        </LinearLayout>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/chipGroup"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="7dp"
+            app:chipSpacingHorizontal="4dp"
+            app:chipSpacingVertical="8dp"
+            android:paddingBottom="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </ViewSwitcher>
+    <ViewSwitcher
+        android:id="@+id/buttonSwitcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/clickAdd"
-            android:orientation="horizontal"
+        <TextView
+            android:id="@+id/toAddItem"
+            android:layout_marginBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_bg_common_next"
             android:gravity="center"
-            android:background="@drawable/shape_multiple_secondary_add_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="点击添加"
-                android:textColor="#FFFFFFFF"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <ImageView
-                android:src="@mipmap/ic_add_chip"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
-    </com.google.android.material.chip.ChipGroup>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-        <com.aigestudio.wheelpicker.WheelPicker
-            android:id="@+id/firstOption"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            app:wheel_item_space="80dp"
-            app:wheel_item_text_size="17sp" />
-        <com.aigestudio.wheelpicker.WheelPicker
-            android:id="@+id/secondOption"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            app:wheel_item_space="80dp"
-            app:wheel_item_text_size="17sp" />
-    </LinearLayout>
-    <TextView
-        android:id="@+id/submitBtn"
-        android:layout_marginBottom="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/shape_bg_common_next"
-        android:gravity="center"
-        android:paddingVertical="20dp"
-        android:text="确定"
-        android:textColor="@color/white"
-        android:textSize="17sp" />
+            android:paddingVertical="20dp"
+            android:text="添加"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+        <TextView
+            android:id="@+id/addItem"
+            android:layout_marginBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_bg_common_next"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+    </ViewSwitcher>
 </LinearLayout>

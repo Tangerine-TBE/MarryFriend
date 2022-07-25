@@ -42,6 +42,7 @@ class RealNameDialog(context: Context, val result:((RealNameEnum)->Unit)?=null):
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
     override fun dismiss() {
         super.dismiss()

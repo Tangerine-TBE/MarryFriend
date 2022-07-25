@@ -3,6 +3,7 @@ package com.xyzz.myutils
 import android.app.Application
 import android.os.Handler
 import android.os.Looper
+import com.xyzz.myutils.show.ThreadExceptionLog
 
 object MyUtils {
     lateinit var application:Application

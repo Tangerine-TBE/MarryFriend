@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.rsBlur
 
 
@@ -65,12 +65,13 @@ class BaseViewHolder(itemView:View):RecyclerView.ViewHolder(itemView) {
                 .into(it)
         }
     }
-    fun setImage(viewId: Int,photoPath:String?,isRs:Boolean=false):ImageView{
+    fun setImage(viewId: Int,photoPath:String?,isRs:Boolean=false,perDefImg:Int?=null):ImageView{
         return getView<ImageView>(viewId).also {
             if (!photoPath.isNullOrEmpty()) {
 
                 val glide=Glide.with(context)
                     .load(photoPath)
+
                     if (isRs){
                         glide.transform(object : CenterCrop(){
                             override fun transform(

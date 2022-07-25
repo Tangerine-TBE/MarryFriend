@@ -23,7 +23,7 @@
                 <!--           大图-->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/briefIntroduction"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <com.twx.marryfriend.recommend.widget.RecommendImage
@@ -31,7 +31,7 @@
                         android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:src="#f00"
                         android:foreground="@drawable/shape_recommend_frame"
                         app:layout_constraintDimensionRatio="347:428"
@@ -57,7 +57,7 @@
                             android:layout_height="16dp"/>
                         <TextView
                             android:id="@+id/distance"
-                            android:text="距离您4km·南山"
+                            android:text="距离您--km·南山"
                             android:textColor="#FFFFFFFF"
                             android:textSize="12sp"
                             android:layout_marginStart="4dp"
@@ -199,7 +199,7 @@
                 <!--关于我-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/selfIntroduction"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -232,10 +232,11 @@
                         android:layout_marginTop="30dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <ImageView
+                        <com.google.android.material.imageview.ShapeableImageView
                             android:id="@+id/aboutMePhoto"
                             android:scaleType="centerCrop"
-                            tools:visibility="visible"
+                            app:shapeAppearance="@style/roundedCornerStyle"
+                            tools:visibility="gone"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintDimensionRatio="319:148"
                             android:layout_width="match_parent"
@@ -247,7 +248,7 @@
                     android:id="@+id/voiceIntroduce"
                     android:layout_marginTop="16dp"
                     android:paddingBottom="24dp"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:background="@drawable/shape_recommend_about_me"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -342,7 +343,7 @@
                 <!--            我的相册-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myAlbum"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
@@ -390,14 +391,14 @@
                         android:layout_marginBottom="24dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <!--            我的标签-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myLabel"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_recommend_about_me"
@@ -478,7 +479,7 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myAuthentication"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_recommend_about_me"
@@ -635,104 +636,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/myLife"
-                    android:visibility="gone"
-                    android:background="@drawable/shape_recommend_about_me"
-                    android:orientation="vertical"
-                    android:paddingStart="18dp"
-                    android:paddingEnd="18dp"
-                    android:paddingTop="24dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:src="#f00"
-                                android:scaleType="centerCrop"
-                                app:shapeAppearance="@style/roundedCornerStyle"
-                                android:layout_width="match_parent"
-                                android:layout_height="220dp"/>
-                            <TextView
-                                android:text="家有萌宠"
-                                android:textColor="#FFFFFFFF"
-                                android:paddingStart="12dp"
-                                android:paddingEnd="12dp"
-                                android:paddingTop="6dp"
-                                android:paddingBottom="5dp"
-                                android:includeFontPadding="false"
-                                android:background="@drawable/shape_dynamic_label"
-                                android:textSize="13sp"
-                                android:layout_marginStart="15dp"
-                                android:layout_marginTop="9dp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                        </FrameLayout>
-                        <TextView
-                            android:text="疫情前的游乐场"
-                            android:textColor="#FF101010"
-                            android:textSize="15sp"
-                            android:layout_marginTop="11dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-                        <View
-                            android:background="#FFF2F2F2"
-                            android:layout_marginTop="20dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"/>
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/upLoadLife"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginBottom="24dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <FrameLayout
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_percent="0.8267"
-                            app:layout_constraintDimensionRatio="310:75"
-                            android:layout_width="0dp"
-                            android:layout_height="0dp">
-                            <ImageView
-                                android:src="@mipmap/ic_item_upload_life"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"/>
-                            <TextView
-                                android:text="去上传"
-                                android:textColor="#FFFF4444"
-                                android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:includeFontPadding="false"
-                                android:layout_gravity="end|center_vertical"
-                                android:layout_marginEnd="16dp"
-                                android:paddingStart="24dp"
-                                android:paddingEnd="24dp"
-                                android:paddingTop="11dp"
-                                android:paddingBottom="10dp"
-                                android:background="@drawable/shape_white_r22"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                        </FrameLayout>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.appcompat.widget.LinearLayoutCompat>
                 <View
                     android:id="@+id/richang"
-                    android:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/itemInteraction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:paddingBottom="60dp"
                     android:layout_marginTop="10dp"
                     android:orientation="vertical">
@@ -785,7 +698,7 @@
             <ImageView
                 android:id="@+id/homeLike"
                 android:alpha="0"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 tools:alpha="100"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="41dp"
@@ -796,7 +709,7 @@
                 android:id="@+id/homeDislike"
                 android:alpha="0"
                 tools:alpha="100"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 android:layout_gravity="end"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="24dp"

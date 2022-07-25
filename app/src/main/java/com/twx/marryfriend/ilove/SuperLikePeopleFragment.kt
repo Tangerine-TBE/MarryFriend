@@ -12,9 +12,9 @@ import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_superlike_people.*
 import kotlinx.coroutines.launch
 
@@ -23,7 +23,7 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
         val loadSir= LoadSir.Builder()
             .addCallback(ILikeEmptyDataCallBack())
             .build()
-        loadSir.register(superLikeRootView
+        loadSir.register(superLikeRefresh
         ) {
             loadData()
             iLog("重加载")
@@ -76,6 +76,9 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
     }
 
     private fun initListener(){
+        closeTip.setOnClickListener {
+            closeView.visibility=View.GONE
+        }
         superLikeRefresh.setEnableLoadMore(false)
         superLikeRefresh.setOnRefreshListener {
             loadData()

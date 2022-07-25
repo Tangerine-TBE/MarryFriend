@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/searchItemRealName"
+            android:id="@+id/searchItemRealInfo"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toEndOf="@id/searchItemName"
             app:layout_constraintTop_toTopOf="@id/searchItemName"
@@ -50,12 +50,26 @@
             android:paddingBottom="5dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
-            <ImageView
-                android:src="@mipmap/ic_item_real_name"
-                android:layout_width="10dp"
-                android:layout_height="10dp"/>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/searchItemRealName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:src="@mipmap/ic_item_real_name"
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"/>
+                <TextView
+                    android:text="实名"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFFFFFFF"
+                    android:textSize="11sp"
+                    android:layout_marginStart="2dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
             <TextView
-                android:text="实名·真实头像"
+                android:id="@+id/searchItemRealImage"
+                android:text="·真实头像"
                 android:includeFontPadding="false"
                 android:textColor="#FFFFFFFF"
                 android:textSize="11sp"
@@ -65,9 +79,9 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
         <ImageView
             android:id="@+id/searchItemVip"
-            app:layout_constraintStart_toEndOf="@id/searchItemRealName"
-            app:layout_constraintTop_toTopOf="@id/searchItemRealName"
-            app:layout_constraintBottom_toBottomOf="@id/searchItemRealName"
+            app:layout_constraintStart_toEndOf="@id/searchItemRealInfo"
+            app:layout_constraintTop_toTopOf="@id/searchItemRealInfo"
+            app:layout_constraintBottom_toBottomOf="@id/searchItemRealInfo"
             android:layout_marginStart="4dp"
             android:src="@mipmap/ic_item_vip"
             android:layout_width="43dp"

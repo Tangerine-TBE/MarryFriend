@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content">
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:background="#FFFFFFFF"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:paddingBottom="25dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -91,7 +91,7 @@
                         android:layout_height="30dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="18dp"
                     android:layout_marginBottom="19dp"
@@ -144,7 +144,7 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/heightTitle"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginTop="24dp"
@@ -156,7 +156,7 @@
                         android:layout_height="wrap_content"/>
                     <TextView
                         android:id="@+id/heightValue"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         android:text="175cm-185cm"
                         android:textColor="#FF0D0D0D"
                         android:textSize="15sp"
@@ -169,7 +169,7 @@
                         android:layout_height="wrap_content"/>
                     <com.twx.marryfriend.search.ChoiceRangeView
                         android:id="@+id/heightSetValue"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toBottomOf="@id/heightTitle"
                         android:layout_marginStart="14dp"
                         android:layout_marginEnd="14dp"
@@ -178,7 +178,7 @@
                         android:layout_height="30dp"/>
                     <TextView
                         android:id="@+id/incomeTitle"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toBottomOf="@id/heightSetValue"
                         app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginTop="24dp"
@@ -190,7 +190,7 @@
                         android:layout_height="wrap_content"/>
                     <TextView
                         android:id="@+id/incomeValue"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         android:text="不限"
                         android:textColor="#FF0D0D0D"
                         android:textSize="15sp"
@@ -203,7 +203,7 @@
                         android:layout_height="wrap_content"/>
                     <com.twx.marryfriend.search.ChoiceRangeView
                         android:id="@+id/incomeSetValue"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toBottomOf="@id/incomeTitle"
                         android:layout_marginStart="14dp"
                         android:layout_marginEnd="14dp"
@@ -212,7 +212,7 @@
                         android:layout_height="30dp"/>
                     <TextView
                         android:id="@+id/marriageTitle"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toBottomOf="@id/incomeSetValue"
                         app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginTop="32dp"
@@ -224,7 +224,7 @@
                         android:layout_height="wrap_content"/>
                     <TextView
                         android:text="(可多选)"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         android:layout_marginStart="8dp"
                         android:textColor="#FF9A9A9A"
                         android:textSize="13sp"
@@ -234,7 +234,7 @@
                         android:layout_height="wrap_content"/>
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/marriageState"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintTop_toBottomOf="@id/marriageTitle"
                         android:orientation="horizontal"
                         android:layout_marginStart="29dp"
@@ -294,7 +294,7 @@
                         android:orientation="vertical">
                         <FrameLayout
                             android:id="@+id/education"
-                            tools:visibility="gone"
+                            tools:visibility="visible"
                             android:layout_width="match_parent"
                             android:layout_height="62dp">
                             <LinearLayout
@@ -350,7 +350,7 @@
                             android:layout_height="0.5dp"/>
                         <FrameLayout
                             android:id="@+id/workplace"
-                            tools:visibility="gone"
+                            tools:visibility="visible"
                             android:layout_width="match_parent"
                             android:layout_height="62dp">
                             <LinearLayout

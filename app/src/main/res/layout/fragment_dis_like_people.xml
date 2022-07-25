@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="38dp">
         <TextView
-            android:text="错滑的人可以送花挽回哦！"
+            android:text="送小红花可以挽回Ta们"
             android:textColor="#FFFF4444"
             android:textSize="13sp"
             android:layout_gravity="center_vertical"

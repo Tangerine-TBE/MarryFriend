@@ -41,6 +41,7 @@ class BuyCarDialog(context: Context, val result:((BuyCarEnum)->Unit)?=null):Dial
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     override fun dismiss() {

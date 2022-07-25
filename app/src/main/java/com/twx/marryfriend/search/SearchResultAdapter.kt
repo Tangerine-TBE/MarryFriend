@@ -5,12 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.forEachIndexed
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.ChipGroup
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.search.SearchResultItem
+import com.xyzz.myutils.show.toast
 
 class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
     private val listData=ArrayList<SearchResultItem>()
@@ -33,21 +36,38 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val item=listData[position]
         holder.setText(R.id.searchItemName,item.nick?:"")
-        holder.setImage(R.id.searchItemHead,item.image_url)
+        Glide.with(holder.itemView)
+            .load(item.getHeadImage())
+            .placeholder(UserInfo.getReversedDefHeadImage())
+            .into(holder.getView(R.id.searchItemHead))
         holder.getView<View>(R.id.searchItemRealName).visibility=if (item.isRealName()) View.VISIBLE else View.GONE
+        holder.getView<View>(R.id.searchItemRealImage).visibility=if (item.isRealImage()) View.VISIBLE else View.GONE
         holder.getView<View>(R.id.searchItemVip).visibility=if (item.isVip()) View.VISIBLE else View.GONE
         holder.getView<TextView>(R.id.searchItemPhotoCount).text="${item.img_count}张照片"
         holder.getView<TextView>(R.id.searchItemDynamicCount).text="${item.ted_count?:0}条动态"
 //        holder.getView<TextView>(R.id.searchItemViewpointCount).text="${item.ted_count}条观点"
 
         val searchItemChipGroup=holder.getView<ChipGroup>(R.id.searchItemChipGroup)
-        item.getLabels().forEach {
-            val itemChipView=LayoutInflater.from(searchItemChipGroup.context).inflate(R.layout.item_search_result_chip,searchItemChipGroup,false)
-            itemChipView.findViewById<ImageView>(R.id.itemSearchChipIcon).apply {
-                Glide.with(this).load(it.icon).into(this)
+        item.getLabels().also {
+            searchItemChipGroup.forEachIndexed { index, view ->
+                if (index<it.size){
+                    view.visibility=View.VISIBLE
+                }else{
+                    view.visibility=View.GONE
+                }
             }
-            itemChipView.findViewById<TextView>(R.id.itemSearchChipLabel).text=it.label
-            searchItemChipGroup.addView(itemChipView)
+        }.forEachIndexed { index, label ->
+            val itemChipView=if (searchItemChipGroup.childCount>index){
+                searchItemChipGroup.getChildAt(index)
+            }else{
+                LayoutInflater.from(searchItemChipGroup.context).inflate(R.layout.item_search_result_chip,searchItemChipGroup,false).also {
+                    searchItemChipGroup.addView(it)
+                }
+            }
+            itemChipView.findViewById<ImageView>(R.id.itemSearchChipIcon).apply {
+                Glide.with(this).load(label.icon).into(this)
+            }
+            itemChipView.findViewById<TextView>(R.id.itemSearchChipLabel).text=label.label
         }
 
         holder.getView<TextView>(R.id.searchItemText).also {
@@ -63,7 +83,14 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         holder.getView<View>(R.id.searchItemLike).also {
             it.isSelected=item.isLike()
         }.setOnClickListener {
-            likeAction?.invoke(item,it)
+            if (it.isSelected){
+                toast(it.context,"已经喜欢过对方啦")
+            }else {
+                likeAction?.invoke(item, it)
+            }
+        }
+        holder.itemView.setOnClickListener {
+            itemAction?.invoke(item)
         }
     }
 

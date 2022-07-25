@@ -13,15 +13,8 @@ import androidx.core.view.children
 import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
 import com.twx.marryfriend.R
-import com.xyzz.myutils.toast
-import kotlinx.android.synthetic.main.dialog_list_options.*
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.*
-import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.chipGroup
-import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.clickAdd
-import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.dialog_close
-import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.firstOption
-import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.submitBtn
-import kotlinx.android.synthetic.main.dialog_multiple_secondary_options.titleView
 
 abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val listData:List<Pair<T,List<I>>>, val result:((List<Pair<T,I>>)->Unit)?=null): Dialog(context) {
 
@@ -54,25 +47,35 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
         firstOption.init()
         secondOption.init()
 
-        clickAdd.setOnClickListener { view ->
-            val item=getCurrentChoice()?:return@setOnClickListener toast(context,"异常")
-            if (resultList.find {
-                    item.first==it.first&&item.second==it.second
-                }!=null){
-                return@setOnClickListener toast(context,"已经存在请勿重复添加")
-            }
-            if (resultList.size>=maxContent){
-                return@setOnClickListener toast(context,"最多添加${maxContent}个")
-            }
-            resultList.add(item)
-            addLabelViewItem(item)
-        }
         initListener()
         firstOption.selectedItemPosition=0
         secondOption.selectedItemPosition=0
     }
 
+    private fun addItem(){
+        val item=getCurrentChoice()?:return toast(context,"异常")
+        if (resultList.find {
+                item.first==it.first&&item.second==it.second
+            }!=null){
+            return toast(context,"已经存在请勿重复添加")
+        }
+        if (resultList.size>=maxContent){
+            return toast(context,"最多添加${maxContent}个")
+        }
+        resultList.add(item)
+        addLabelViewItem(item)
+    }
+
     private fun initListener(){
+        toAddItem.setOnClickListener { view ->
+            contentSwitcher.showNext()
+            buttonSwitcher.showNext()
+        }
+        addItem.setOnClickListener {
+            addItem()
+            contentSwitcher.showNext()
+            buttonSwitcher.showNext()
+        }
         firstOption.setOnItemSelectedListener { picker, data, position ->
             currentItem=null
             secondOption.data=listData[position].second.map { getSecondText(it) }
@@ -105,13 +108,10 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
                 }
             }
         }
-        dialog_close.setOnClickListener {
-            submitBtn.performClick()
-        }
     }
 
     private fun addLabelViewItem(tag:Pair<T,I>){
-        val itemView=LayoutInflater.from(this.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip,chipGroup,false)
+        val itemView=LayoutInflater.from(this.context).inflate(R.layout.item_dailog_multiple_secondary_options_chip2,chipGroup,false)
         itemView.findViewById<TextView>(R.id.chipText).text="${getFirstText(tag.first)}·${getSecondText(tag.second)}"
         itemView.tag = tag
         if (chipGroup.childCount>0){
@@ -128,6 +128,12 @@ abstract class MultipleSecondaryOptionsDialog<T,I>(context: Context, private val
     override fun show() {
         super.show()
         preResult=resultList.toList()
+        if (resultList.isEmpty().xor(contentSwitcher.currentView==choiceView)){
+            contentSwitcher.showNext()
+        }
+        if (resultList.isEmpty().xor(buttonSwitcher.currentView==submitBtn)){
+            buttonSwitcher.showNext()
+        }
     }
 
     private fun getCurrentChoice():Pair<T,I>?{

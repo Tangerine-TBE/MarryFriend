@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_love.*
 import kotlinx.coroutines.launch
 
@@ -27,7 +27,7 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
             .build()
     }
     private val loadService by lazy {
-        loadSir.register(loveRecyclerView
+        loadSir.register(loveSwipeRefreshLayout
         ) {
             iLog("重加载")
         }
@@ -49,9 +49,10 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
             try {
                 val data=liveViewModel.loadLoveMe(pager)
                 liveAdapter.setData(data?.list?: emptyList())
-                if (data?.total!=null&& data.total !=0){
-                    loveCount.text="${data?.total}人喜欢我"
-                }else{
+
+                loveCount.text="${data?.total?:0}人喜欢我"
+                text2.text="${data?.total?:0}"
+                if (data?.list.isNullOrEmpty()){
                     loadService.showCallback(LiveEmptyData::class.java)
                 }
             }catch (e:Exception){
@@ -66,7 +67,7 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
     private fun initListener(){
         loveSwipeRefreshLayout.setOnRefreshListener {
             lifecycleScope.launch {
-                pager++
+//                pager++
                 loadingDialog.show()
                 liveViewModel.loadLoveMe(pager)
                 liveAdapter

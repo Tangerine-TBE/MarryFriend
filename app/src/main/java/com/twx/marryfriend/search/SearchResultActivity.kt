@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.R
+import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.recommend.RecommendViewModel
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_search_result.*
 import kotlinx.coroutines.launch
 
@@ -86,13 +87,14 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
                     val isMutualLike=recommendViewModel.like(item.user_id?:return@launch toast("对方id为空"))
                     view.isSelected=true
                     item.like()
+                    toast("喜欢成功")
                 }catch (e:Exception){
                     toast(e.message?:"喜欢失败")
                 }
             }
         }
         searchResultAdapter.itemAction={
-            toast("点击")
+            startActivity(FriendInfoActivity.getIntent(this,it.user_id))
         }
     }
 

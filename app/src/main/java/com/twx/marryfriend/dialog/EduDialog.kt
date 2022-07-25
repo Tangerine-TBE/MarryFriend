@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.dialog_mate_selection_edu.*
 
 class EduDialog(context: Context,val result:((List<EduEnum>)->Unit)?=null):Dialog(context) {
     private val eduChoice by lazy {
-        HashSet<EduEnum>().apply {
+        ArrayList<EduEnum>().apply {
             this.add(EduEnum.unlimited)
         }
     }
@@ -53,35 +53,14 @@ class EduDialog(context: Context,val result:((List<EduEnum>)->Unit)?=null):Dialo
             dismiss()
         }
         updateView()
+        unlimited.isSelected=true
     }
 
     private fun choiceView(view:View){
         viewMappingEduEnum.find {
             it.first==view
         }?.also { pair ->
-            if (view.isSelected){//移除一个筛选
-                if (pair.second!= EduEnum.unlimited){
-                    eduChoice.remove(pair.second)
-                    if (eduChoice.isEmpty()){
-                        eduChoice.add(EduEnum.unlimited)
-                    }
-                }
-            }else{//增加一个筛选
-                if (pair.second== EduEnum.unlimited) {
-                    eduChoice.clear()
-                    eduChoice.add(EduEnum.unlimited)
-                }else{
-                    eduChoice.add(pair.second)
-                    if (EduEnum.values().all {
-                            eduChoice.contains(it)||it==EduEnum.unlimited
-                        }){
-                        eduChoice.clear()
-                        eduChoice.add(EduEnum.unlimited)
-                    }else{
-                        eduChoice.remove(EduEnum.unlimited)
-                    }
-                }
-            }
+            EduEnum.changeChoice(pair.second,eduChoice,!view.isSelected)
             updateView()
         }
     }

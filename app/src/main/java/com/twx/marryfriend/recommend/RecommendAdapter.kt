@@ -14,6 +14,7 @@ import androidx.core.view.children
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
+import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.twx.marryfriend.R
@@ -22,8 +23,8 @@ import com.twx.marryfriend.bean.RecommendBean
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
-import com.xyzz.myutils.iLog
-import com.xyzz.myutils.toast
+import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 
@@ -86,11 +87,13 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         val item=listData[position]
         //简介模块
         holder.getView<View>(R.id.briefIntroduction).apply {
-            val distance=holder.getView<TextView>(R.id.distance)
-            holder.getView<View>(R.id.distanceView).setOnClickListener {
+            val taLongitude=item.getLongitude()
+            val taLatitude=item.getLatitude()
+            val distanceView=holder.getView<View>(R.id.distanceView)
+            if (taLatitude!=null&&taLatitude!=0.0&&taLongitude!=null&&taLongitude!=0.0){
+                distanceView.visibility=View.VISIBLE
+                val distance=holder.getView<TextView>(R.id.distance)
                 if(ContextCompat.checkSelfPermission(holder.itemView.context,Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-                    val taLongitude=item.getLongitude()
-                    val taLatitude=item.getLatitude()
                     val myLongitude= myLongitude
                     val myLatitude=myLatitude
                     if (taLatitude!=null&&taLongitude!=null&&myLongitude!=null&&myLatitude!=null){
@@ -103,15 +106,17 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     }
                 }else{
                     distance.text = "点击查看与TA的距离"
-                    distance.setOnClickListener {
+                    distanceView.setOnClickListener {
                         openLocationPermissionAction?.invoke()
                     }
                 }
+            }else{
+                distanceView.visibility=View.GONE
             }
             holder.getView<View>(R.id.itemSetting).setOnClickListener {
                 toast(it.context,"TODO 设置")
             }
-            holder.setImage(R.id.recommendPhoto,item.getHomeImg())
+            holder.setImage(R.id.recommendPhoto,item.getHeadImg())
             holder.setText(R.id.itemNickname,item.getNickname())
             if (item.isRealName()){
                 holder.getView<View>(R.id.realNameView).visibility=View.VISIBLE
@@ -131,12 +136,44 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         }
         //关于我
         holder.getView<View>(R.id.selfIntroduction).apply {
-            holder.setText(R.id.aboutMe,item.getAboutMeLife()+"\n\n"+item.getAboutMeWork()+"\n\n"+item.getAboutMeHobby())
-            holder.setImage(R.id.aboutMePhoto,item.getAboutMePhoto())
+            val stringBuilder=StringBuilder()
+            if (item.getAboutMeLife().isNotBlank()){
+                stringBuilder.append(item.getAboutMeLife()+"\n\n")
+            }
+            if (item.getAboutMeWork().isNotBlank()){
+                stringBuilder.append(item.getAboutMeWork()+"\n\n")
+            }
+            if (item.getAboutMeHobby().isNotBlank()){
+                stringBuilder.append(item.getAboutMeHobby())
+            }
+            stringBuilder.toString().also { text->
+                if (text.isNullOrBlank()&&item.getAboutMePhoto().isNullOrBlank()){
+                    this.visibility=View.GONE
+                    return@apply
+                }else{
+                    this.visibility=View.VISIBLE
+                }
+                holder.getView<TextView>(R.id.aboutMe).also {
+                    if (text.isNotBlank()){
+                        it.visibility=View.VISIBLE
+                        it.text = text
+                    }else{
+                        it.visibility=View.GONE
+                    }
+                }
+            }
+            holder.getView<ImageView>(R.id.aboutMePhoto).also {
+                if (item.getAboutMePhoto().isNullOrBlank()){
+                    it.visibility=View.GONE
+                }else{
+                    it.visibility=View.VISIBLE
+                    holder.setImage(R.id.aboutMePhoto,item.getAboutMePhoto())
+                }
+            }
         }
         //语音介绍
         holder.getView<View>(R.id.voiceIntroduce).apply {
-            if (item.getVoiceUrl()!=null){
+            if (!item.getVoiceUrl().isNullOrBlank()){
                 this.visibility=View.VISIBLE
                 holder.setText(R.id.voiceDuration,item.getVoiceDurationStr())
                 val firstViewSwitcher=holder.getView<ViewSwitcher>(R.id.firstViewSwitcher)
@@ -258,9 +295,12 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         holder.getView<View>(R.id.myAuthentication).apply {
             if (item.isRealName()){
                 holder.setText(R.id.realNameDes,item.getRealNameNumber()?:"")
-                holder.setText(R.id.headPorDes,"头像是用户本人真实照片，已通过人脸对比。")
             }else{
                 holder.setText(R.id.realNameDes,item.getRealNameNumber()?:"未认证")
+            }
+            if (item.isHeadIdentification()){
+                holder.setText(R.id.headPorDes,"头像是用户本人真实照片，已通过人脸对比。")
+            }else{
                 holder.setText(R.id.headPorDes,"未认证。")
             }
         }
@@ -286,12 +326,6 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
             }
             holder.getView<View>(R.id.toMyDynamic).setOnClickListener {
                 toast(it.context,"TODO 跳到动态")
-            }
-        }
-
-        holder.getView<View>(R.id.myLife).apply {
-            holder.getView<View>(R.id.upLoadLife).setOnClickListener {
-                toast(it.context,"TODO 上传生活")
             }
         }
 

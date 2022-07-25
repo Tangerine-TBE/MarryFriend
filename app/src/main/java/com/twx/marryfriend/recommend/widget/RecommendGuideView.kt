@@ -8,6 +8,8 @@ import android.view.View
 import android.widget.FrameLayout
 import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.GlideBuilder
+import com.bumptech.glide.load.engine.executor.GlideExecutor
 import com.twx.marryfriend.R
 import com.twx.marryfriend.enumeration.HomeCardAction
 import kotlinx.android.synthetic.main.item_recommend_guide.view.*
@@ -24,6 +26,7 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
     }
     init {
         inflate(context,R.layout.item_recommend_guide,this)
+//        Glide.init(this.context, GlideBuilder().setSourceExecutor(GlideExecutor.newSourceBuilder().setThreadCount(GlideExecutor.calculateBestThreadCount()*5).build()))
     }
     private var currentType:HomeCardAction?=HomeCardAction.upSlide
 
@@ -53,7 +56,7 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
         showGuide(currentType?:return)
     }
 
-    fun noticeDataChange(haveData:Boolean){
+    fun onDataChange(haveData:Boolean){
         if (haveData){
             if (!isShowGuide()){
                 return
@@ -80,21 +83,21 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
                 actionName.setTextColor(Color.parseColor("#FFFF40CC"))
                 actionDes1.text="可以查看更多资料"
                 actionDes2.text="更多了解这位嘉宾"
-                Glide.with(this).load(R.drawable.guide_recommend_top).into(contentImg)
+                Glide.with(this).load(R.drawable.guide_recommend_top).placeholder(R.drawable.guide_recommend_top).into(contentImg)
             }
             HomeCardAction.leftSlide -> {
                 actionName.text="左滑"
                 actionName.setTextColor(Color.parseColor("#FF5840FF"))
                 actionDes1.text="表示对TA不感兴趣"
                 actionDes2.text="并且切换到下一位嘉宾"
-                Glide.with(this).load(R.drawable.guide_recommend_left).into(contentImg)
+                Glide.with(this).load(R.drawable.guide_recommend_left).placeholder(R.drawable.guide_recommend_left).into(contentImg)
             }
             HomeCardAction.rightSlide -> {
                 actionName.text="右滑"
                 actionName.setTextColor(Color.parseColor("#FF5840FF"))
                 actionDes1.text="可以喜欢TA"
                 actionDes2.text="遇到心仪的就不要错过啦"
-                Glide.with(this).load(R.drawable.guide_recommend_right).into(contentImg)
+                Glide.with(this).load(R.drawable.guide_recommend_right).placeholder(R.drawable.guide_recommend_right).into(contentImg)
             }
             HomeCardAction.clickFlower -> {
                 actionName.text="送花"
@@ -103,7 +106,7 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
                 actionDes2.text="通知对方已喜欢，并在其首页置顶，"
                 actionDes3.text="配对率提升2倍"
                 contentImg.visibility=View.GONE
-                Glide.with(this).load(R.drawable.guide_recommend_click).into(contentImg2)
+                Glide.with(this).load(R.drawable.guide_recommend_click).placeholder(R.drawable.guide_recommend_click).into(contentImg2)
             }
         }
     }

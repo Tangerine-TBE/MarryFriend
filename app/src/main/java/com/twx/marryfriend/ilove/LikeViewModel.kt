@@ -8,7 +8,7 @@ import com.twx.marryfriend.bean.ilike.ILikeData
 import com.twx.marryfriend.bean.ilike.ILikeItemBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
-import com.xyzz.myutils.iLog
+import com.xyzz.myutils.show.iLog
 import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
