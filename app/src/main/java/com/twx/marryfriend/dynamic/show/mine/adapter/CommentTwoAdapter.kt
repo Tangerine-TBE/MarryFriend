@@ -84,7 +84,6 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
         view.setOnClickListener(this)
         return ViewHolder(view)
 
-
         //动态设置ImageView的宽高，根据自己每行item数量计算
         //dm.widthPixels-dip2px(20)即屏幕宽度-左右10dp+10dp=20dp再转换为px的宽度，最后/3得到每个item的宽高
 
@@ -93,7 +92,8 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
 
-        Glide.with(mContext).load(mList[position].last_img_url).into(holder.avatar)
+        Glide.with(mContext).load(mList[position].last_img_url).error(R.drawable.ic_pic_default)
+            .placeholder(R.drawable.ic_pic_default).into(holder.avatar)
 
 
         if (mList[position].first_nick != "") {

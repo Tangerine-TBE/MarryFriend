@@ -191,10 +191,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -207,10 +204,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -223,10 +217,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -246,10 +237,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                     imageIndex = 2
                 }
 
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -269,10 +257,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                     imageIndex = 3
                 }
 
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -285,10 +270,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -301,10 +283,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -317,10 +296,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 
@@ -333,10 +309,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 for (i in 0.until(images.size)) {
                     images[i] = images[i].replace(" ", "")
                 }
-                val intent = Intent(this@MyDynamicActivity, ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
             }
         })
 

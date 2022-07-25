@@ -1,11 +1,15 @@
 package com.twx.marryfriend.dynamic.preview.image
 
+import android.content.Context
+import android.content.Intent
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.dynamic.preview.image.adapter.ImagePreviewAdapter
+import com.twx.marryfriend.friend.FriendInfoActivity
 import kotlinx.android.synthetic.main.activity_image_preview.*
+import java.io.Serializable
 import java.util.*
 
 class ImagePreviewActivity : MainBaseViewActivity() {
@@ -15,6 +19,18 @@ class ImagePreviewActivity : MainBaseViewActivity() {
     private var index = 0
 
     private lateinit var adapter: ImagePreviewAdapter
+
+
+    companion object {
+        private const val LIST = "imageList"
+        private const val INDEX = "imageIndex"
+        fun getIntent(context: Context, list: MutableList<String>, index: Int): Intent {
+            val intent = Intent(context, ImagePreviewActivity::class.java)
+            intent.putExtra(LIST, list as Serializable)
+            intent.putExtra(INDEX, index)
+            return intent
+        }
+    }
 
     override fun getLayoutView(): Int = R.layout.activity_image_preview
 

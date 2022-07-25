@@ -26,6 +26,7 @@ import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneCreateBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneDeleteBean;
+import com.twx.marryfriend.bean.dynamic.CommentTipBean;
 import com.twx.marryfriend.bean.dynamic.CommentTwoBean;
 import com.twx.marryfriend.bean.dynamic.CommentTwoCreateBean;
 import com.twx.marryfriend.bean.dynamic.CommentTwoDeleteBean;
@@ -33,6 +34,7 @@ import com.twx.marryfriend.bean.dynamic.DeleteTrendBean;
 import com.twx.marryfriend.bean.dynamic.LikeCancelBean;
 import com.twx.marryfriend.bean.dynamic.LikeClickBean;
 import com.twx.marryfriend.bean.dynamic.LikeListBean;
+import com.twx.marryfriend.bean.dynamic.LikeTipBean;
 import com.twx.marryfriend.bean.dynamic.MyFocusBean;
 import com.twx.marryfriend.bean.dynamic.MyTrendsListBean;
 import com.twx.marryfriend.bean.dynamic.OtherFocusBean;
@@ -241,7 +243,11 @@ public interface Api {
 
     // 点赞未读列表
     @POST("/marryfriend/TrendsNotice/dianzanUnreadList")
-    Call<TrendTipBean> getTrendTips(@QueryMap Map<String, Object> params);
+    Call<LikeTipBean> getTrendTips(@QueryMap Map<String, Object> params);
+
+    // 评论未读列表
+    @POST("/marryfriend/TrendsNotice/discussUnreadList")
+    Call<CommentTipBean> getCommentTips(@QueryMap Map<String, Object> params);
 
     // 高德地图-地点检索
     @POST("/v3/place/around")

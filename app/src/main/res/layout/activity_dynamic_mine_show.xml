@@ -74,6 +74,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_centerVertical="true"
+                    android:scaleType="centerCrop"
                     app:riv_oval="true" />
 
                 <TextView
