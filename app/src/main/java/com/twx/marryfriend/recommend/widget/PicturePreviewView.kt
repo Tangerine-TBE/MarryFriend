@@ -40,7 +40,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 list.add(0,videoList.first())
                 previewView5.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
                     if (index<list.size) {
-                        Glide.with(t).load(list[index]).into(t)
+                        Glide.with(t).load(list[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
                     }else{
                         return@forEachIndexed
                     }
@@ -49,7 +49,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
             imageList.size==1->{
                 addView(previewView1)
                 findViewById<ImageView>(R.id.picture1).also {
-                    Glide.with(it).load(imageList[0]).into(it)
+                    Glide.with(it).load(imageList[0]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
             }
             imageList.size<=3->{
@@ -57,7 +57,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 findViewById<Group>(R.id.img456Group).visibility= View.GONE
                 previewView6.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
                     if (index<imageList.size) {
-                        Glide.with(t).load(imageList[index]).into(t)
+                        Glide.with(t).load(imageList[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
                     }else{
                         return@forEachIndexed
                     }
@@ -67,23 +67,23 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 addView(previewView6)
                 findViewById<Group>(R.id.img456Group).visibility= View.VISIBLE
                 findViewById<ImageView>(R.id.picture1).also {
-                    Glide.with(it).load(imageList[0]).into(it)
+                    Glide.with(it).load(imageList[0]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
                 findViewById<ImageView>(R.id.picture2).also {
-                    Glide.with(it).load(imageList[1]).into(it)
+                    Glide.with(it).load(imageList[1]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
                 findViewById<ImageView>(R.id.picture4).also {
-                    Glide.with(it).load(imageList[2]).into(it)
+                    Glide.with(it).load(imageList[2]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
                 findViewById<ImageView>(R.id.picture5).also {
-                    Glide.with(it).load(imageList[3]).into(it)
+                    Glide.with(it).load(imageList[3]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
             }
             imageList.size>4->{
                 addView(previewView6)
                 findViewById<Group>(R.id.img456Group).visibility= View.VISIBLE
                 previewView6.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
-                    Glide.with(t).load(imageList[index]).into(t)
+                    Glide.with(t).load(imageList[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
                 }
             }
         }

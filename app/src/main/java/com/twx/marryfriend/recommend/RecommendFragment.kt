@@ -1,6 +1,7 @@
 package com.twx.marryfriend.recommend
 
 import android.Manifest
+import android.animation.Animator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,7 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
@@ -219,11 +222,73 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             guideView.guideComplete(HomeCardAction.clickFlower)
             superLike(it)
         }
-        recommendAdapter.likeAction={
-            like(it)
+        recommendAdapter.likeAction={item,view->
+            like(item)
+//            recommendAdapter.removeAt(0)
+            view
+                .animate()
+                ?.alpha(0f)
+                ?.rotation(10f)
+                ?.translationX(view.width /-2f)
+                ?.setDuration(500)
+                ?.setListener(object : Animator.AnimatorListener{
+                    override fun onAnimationStart(animation: Animator?) {
+                        
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        view.apply {
+                            this.alpha=1f
+                            this.rotation=0f
+                            this.translationX=0f
+                        }
+                        recommendAdapter.removeAt(0)
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {
+                        
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator?) {
+                        
+                    }
+
+                })
+                ?.start()
         }
-        recommendAdapter.disLikeAction={
-            disLike(it)
+        recommendAdapter.disLikeAction={item,view->
+            disLike(item)
+//            recommendAdapter.removeAt(0)
+            view
+                .animate()
+                ?.alpha(0f)
+                ?.rotation(-10f)
+                ?.translationX(view.width /2f)
+                ?.setDuration(500)
+                ?.setListener(object : Animator.AnimatorListener{
+                    override fun onAnimationStart(animation: Animator?) {
+
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        view.apply {
+                            this.alpha=1f
+                            this.rotation=0f
+                            this.translationX=0f
+                        }
+                        recommendAdapter.removeAt(0)
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {
+
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator?) {
+
+                    }
+
+                })
+                ?.start()
         }
         sendMsg.setOnClickListener {
             toast("给她发消息")
@@ -231,6 +296,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         closeMutual.setOnClickListener {
             showView(ViewType.content)
         }
+        LocationUtils.frontBackstageLiveData(this)
     }
 
     /**

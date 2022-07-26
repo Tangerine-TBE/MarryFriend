@@ -17,10 +17,12 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.RecommendBean
 import com.twx.marryfriend.enumeration.HomeCardAction
+import com.twx.marryfriend.recommend.widget.LifeView
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.show.iLog
@@ -49,8 +51,8 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
     private val mainScope by lazy { MainScope() }
     private val listData=ArrayList<RecommendBean>()
     var openLocationPermissionAction:(()->Unit)?=null
-    var disLikeAction:((RecommendBean)->Unit)?=null
-    var likeAction:((RecommendBean)->Unit)?=null
+    var disLikeAction:((RecommendBean,View)->Unit)?=null
+    var likeAction:((RecommendBean,View)->Unit)?=null
     var superLikeAction:((RecommendBean)->Unit)?=null
     var myLongitude:Double?=null
     var myLatitude:Double?=null
@@ -64,6 +66,11 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
     fun setData(list: List<RecommendBean>){
         listData.clear()
         listData.addAll(list)
+        if (BuildConfig.DEBUG){
+            for (i in 0 until 10){
+                listData.add(RecommendBean())
+            }
+        }
         notifyDataSetChanged()
     }
 
@@ -167,7 +174,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     it.visibility=View.GONE
                 }else{
                     it.visibility=View.VISIBLE
-                    holder.setImage(R.id.aboutMePhoto,item.getAboutMePhoto())
+                    Glide.with(it).load(item.getAboutMePhoto()).placeholder(R.drawable.ic_big_default_pic).into(it)
                 }
             }
         }
@@ -293,15 +300,22 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         }
 //我的认证
         holder.getView<View>(R.id.myAuthentication).apply {
+            holder.getView<View>(R.id.idCardInfo).isSelected=
             if (item.isRealName()){
                 holder.setText(R.id.realNameDes,item.getRealNameNumber()?:"")
+                true
             }else{
                 holder.setText(R.id.realNameDes,item.getRealNameNumber()?:"未认证")
+                false
             }
+            holder.getView<View>(R.id.headPorInfo).isSelected=
             if (item.isHeadIdentification()){
                 holder.setText(R.id.headPorDes,"头像是用户本人真实照片，已通过人脸对比。")
+                true
             }else{
+                holder.setText(R.id.headPorTitle,"未认证")
                 holder.setText(R.id.headPorDes,"未认证。")
+                false
             }
         }
         //我的动态
@@ -328,6 +342,19 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                 toast(it.context,"TODO 跳到动态")
             }
         }
+        //生活
+        holder.getView<LifeView>(R.id.life_view).apply {
+            item.getAlbumPhoto().also {
+                if (it.isEmpty()){
+                    this.visibility=View.GONE
+                }else{
+                    this.visibility=View.VISIBLE
+                    this.setImageData(it.map {
+                        LifeView.LifeImage(it,"标题","暂时没有生活照接口")
+                    })
+                }
+            }
+        }
 
         //发出动作，喜欢、不喜欢、送花
         holder.getView<View>(R.id.sendAction).apply {
@@ -335,20 +362,20 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                 superLikeAction?.invoke(item)
             }
             holder.getView<View>(R.id.care2).setOnClickListener {
-                likeAction?.invoke(item)
+                likeAction?.invoke(item,holder.itemView)
             }
             holder.getView<View>(R.id.dislike2).setOnClickListener {
-                disLikeAction?.invoke(item)
+                disLikeAction?.invoke(item,holder.itemView)
             }
 
             holder.getView<View>(R.id.sendFlowers).setOnClickListener {
                 superLikeAction?.invoke(item)
             }
             holder.getView<View>(R.id.care).setOnClickListener {
-                likeAction?.invoke(item)
+                likeAction?.invoke(item,holder.itemView)
             }
             holder.getView<View>(R.id.dislike).setOnClickListener {
-                disLikeAction?.invoke(item)
+                disLikeAction?.invoke(item,holder.itemView)
             }
         }
 

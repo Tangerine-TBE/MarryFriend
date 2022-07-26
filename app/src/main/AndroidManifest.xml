@@ -206,6 +206,9 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
+
+
+        <activity android:name=".friend.FriendInfoActivity"/>
     </application>
 
 </manifest>

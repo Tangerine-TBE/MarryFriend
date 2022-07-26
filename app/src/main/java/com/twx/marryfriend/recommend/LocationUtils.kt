@@ -8,14 +8,24 @@ import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
 import com.baidu.location.LocationClientOption
+import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.constant.Contents
+import com.xyzz.myutils.LifecycleCallbacks
 import com.xyzz.myutils.MyUtils
+import com.xyzz.myutils.NetworkUtil
+import com.xyzz.myutils.SPUtil
+import com.xyzz.myutils.show.iLog
+import java.text.NumberFormat
 import kotlin.math.*
 
 object LocationUtils {
+    private const val PRE_UP_TIME="pre_up_time"
+    private var isFirst=true
+
     private val context by lazy {
         MyUtils.application
     }
-    data class MyLocation(val longitude:Double,val latitude:Double)
+    data class MyLocation constructor(val longitude:Double,val latitude:Double,val address:String)
     private val locationLiveData by lazy {
         MutableLiveData<MyLocation>()
     }
@@ -24,13 +34,42 @@ object LocationUtils {
         locationLiveData.observe(owner,observer)
     }
 
+    fun frontBackstageLiveData(owner: LifecycleOwner){
+        LifecycleCallbacks.instance.frontBackstageLiveData.observe(owner){
+            if (isFirst||it==true){
+                upLocation()
+                isFirst=false
+            }
+        }
+    }
+    private fun upLocation(){
+        val myLocation= locationLiveData.value
+        if (myLocation!=null){
+            val preTime=SPUtil.instance.getLong(PRE_UP_TIME,0L)
+            if (preTime+6*60*60*1000L<System.currentTimeMillis()){
+                val numberFormat=NumberFormat.getNumberInstance()
+                numberFormat.maximumFractionDigits=5
+                NetworkUtil.sendPostSecret("${Contents.USER_URL}/marryfriend/LoginRegister/positionUp",
+                    mapOf("user_id" to UserInfo.getUserId(),
+                        "jingdu" to numberFormat.format(myLocation.longitude),
+                        "weidu" to numberFormat.format(myLocation.latitude),
+                        "address" to myLocation.address),{
+                        iLog(it,"上传位置")
+                        SPUtil.instance.putLong(PRE_UP_TIME,System.currentTimeMillis())
+                    },{
+                        iLog(it,"上传位置")
+                    })
+            }
+        }
+    }
+
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     fun startLocation(){
         val mLocationClient = LocationClient(context)
         mLocationClient.registerLocationListener(object :
             BDAbstractLocationListener() {
             override fun onReceiveLocation(location: BDLocation) {
-                locationLiveData.value=MyLocation(location.longitude,location.latitude)
+                locationLiveData.value=MyLocation(location.longitude,location.latitude,location.addrStr)
             }
         })
         val option = LocationClientOption()

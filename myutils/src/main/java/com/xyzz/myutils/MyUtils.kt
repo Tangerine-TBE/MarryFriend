@@ -10,6 +10,7 @@ object MyUtils {
         private set
     fun init(application: Application){
         this.application=application
+        application.registerActivityLifecycleCallbacks(LifecycleCallbacks.instance)
         Handler(Looper.getMainLooper()).post {
             ThreadExceptionLog.printUncaughtExceptionLog()
         }

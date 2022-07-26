@@ -26,6 +26,7 @@ import com.twx.marryfriend.bean.RecommendBean
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendViewModel
+import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
@@ -152,7 +153,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     aboutMePhoto.visibility=View.GONE
                 }else{
                     aboutMePhoto.visibility=View.VISIBLE
-                    Glide.with(aboutMePhoto).load(item.getAboutMePhoto()).into(aboutMePhoto)
+                    Glide.with(aboutMePhoto).load(item.getAboutMePhoto()).placeholder(R.drawable.ic_big_default_pic).into(aboutMePhoto)
                 }
             }
             //语音介绍
@@ -273,17 +274,21 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
 //我的认证
             myAuthentication.apply {
+                idCardInfo.isSelected=
                 if (item.isRealName()){
                     realNameDes.text=(item.getRealNameNumber()?:"")
-                    headPorDes.text=("头像是用户本人真实照片，已通过人脸对比。")
+                    true
                 }else{
                     realNameDes.text=(item.getRealNameNumber()?:"未认证")
-                    headPorDes.text=("未认证。")
+                    false
                 }
+                headPorInfo.isSelected=
                 if (item.isHeadIdentification()){
                     headPorDes.text=("头像是用户本人真实照片，已通过人脸对比。")
+                    true
                 }else{
                     headPorDes.text=("未认证。")
+                    false
                 }
             }
             //我的动态
@@ -310,7 +315,19 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     toast(it.context,"TODO 跳到动态")
                 }
             }
-
+            //生活
+            life_view.apply {
+                item.getAlbumPhoto().also {
+                    if (it.isEmpty()){
+                        this.visibility=View.GONE
+                    }else{
+                        this.visibility=View.VISIBLE
+                        this.setImageData(it.map {
+                            LifeView.LifeImage(it,"标题","暂时没有生活照接口")
+                        })
+                    }
+                }
+            }
             nestedScrollView.apply {
                 var oldScroll=0
                 var scrollDY=0
