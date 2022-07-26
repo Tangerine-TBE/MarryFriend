@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.twx.marryfriend">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 这个权限添加之后，比较老的手机会无法调用相机，删除之后则能调用 -->
     <uses-permission android:name="android.permission.START_ACTIVITIES_FROM_BACKGROUND" /> <!-- 解决上方问题而添加 -->
@@ -208,9 +209,6 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-
-
-        <activity android:name=".friend.FriendInfoActivity"/>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.twx.marryfriend.friend
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -356,6 +357,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private fun initListener(){
         //简介模块
         briefIntroduction.apply {
