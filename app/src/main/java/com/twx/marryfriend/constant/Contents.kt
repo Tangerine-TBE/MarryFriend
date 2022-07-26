@@ -125,6 +125,9 @@ object Contents {
     // 点赞未读列表
     const val GET_TREND_TIP = "TrendsNotice/dianzanUnreadList"
 
+
+    const val GET_COMMENT_TIP = "TrendsNotice/discussUnreadList"
+
     // ------------------------------- 高德地图 -------------------------------
 
     // 高德地图-地点检索

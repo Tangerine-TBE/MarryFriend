@@ -1,6 +1,7 @@
 package com.twx.marryfriend.net.impl.dynamic;
 
 
+import com.twx.marryfriend.bean.dynamic.LikeTipBean;
 import com.twx.marryfriend.bean.dynamic.TrendTipBean;
 import com.twx.marryfriend.net.callback.dynamic.IGetTrendTipsCallback;
 import com.twx.marryfriend.net.module.UserData;
@@ -40,12 +41,12 @@ public class getTrendTipsPresentImpl implements IGetTrendTipsPresent {
     @Override
     public void getTrendTips(Map<String, String> info,Integer page) {
         handlerLoading();
-        mUserData.getTrendTips(info,page, new Callback<TrendTipBean>() {
+        mUserData.getTrendTips(info,page, new Callback<LikeTipBean>() {
 
-            private TrendTipBean mBody;
+            private LikeTipBean mBody;
 
             @Override
-            public void onResponse(Call<TrendTipBean> call, Response<TrendTipBean> response) {
+            public void onResponse(Call<LikeTipBean> call, Response<LikeTipBean> response) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mBody = response.body();
                     if (mBody != null) {
@@ -57,7 +58,7 @@ public class getTrendTipsPresentImpl implements IGetTrendTipsPresent {
             }
 
             @Override
-            public void onFailure(Call<TrendTipBean> call, Throwable t) {
+            public void onFailure(Call<LikeTipBean> call, Throwable t) {
                 for (IGetTrendTipsCallback callback : mCallback) {
                     callback.onGetTrendTipsError();
                 }

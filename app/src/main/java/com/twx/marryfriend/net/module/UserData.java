@@ -28,6 +28,7 @@ import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneCreateBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneDeleteBean;
+import com.twx.marryfriend.bean.dynamic.CommentTipBean;
 import com.twx.marryfriend.bean.dynamic.CommentTwoBean;
 import com.twx.marryfriend.bean.dynamic.CommentTwoCreateBean;
 import com.twx.marryfriend.bean.dynamic.CommentTwoDeleteBean;
@@ -35,6 +36,7 @@ import com.twx.marryfriend.bean.dynamic.DeleteTrendBean;
 import com.twx.marryfriend.bean.dynamic.LikeCancelBean;
 import com.twx.marryfriend.bean.dynamic.LikeClickBean;
 import com.twx.marryfriend.bean.dynamic.LikeListBean;
+import com.twx.marryfriend.bean.dynamic.LikeTipBean;
 import com.twx.marryfriend.bean.dynamic.MyFocusBean;
 import com.twx.marryfriend.bean.dynamic.MyTrendsListBean;
 import com.twx.marryfriend.bean.dynamic.OtherFocusBean;
@@ -610,7 +612,7 @@ public class UserData {
     }
 
     // 点赞未读列表
-    public void getTrendTips(Map<String, String> map, Integer page, Callback<TrendTipBean> callback) {
+    public void getTrendTips(Map<String, String> map, Integer page, Callback<LikeTipBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
@@ -619,6 +621,18 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_TIP + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getTrendTips(map1).enqueue(callback);
+    }
+
+    // 评论未读列表
+    public void getCommentTips(Map<String, String> map, Integer page, Callback<CommentTipBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_TIP + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TIP, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getCommentTips(map1).enqueue(callback);
     }
 
 

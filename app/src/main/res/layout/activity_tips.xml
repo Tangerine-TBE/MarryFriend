@@ -7,40 +7,34 @@
     android:orientation="vertical"
     tools:context="com.twx.marryfriend.dynamic.saloon.tip.TipsActivity">
 
-    <RelativeLayout
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tb_dynamic_tips_indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp">
+        android:paddingTop="44dp"
+        app:tabIndicatorColor="#FF4444"
+        app:tabIndicatorFullWidth="false"
+        app:tabMaxWidth="180dp"
+        app:tabMinWidth="120dp"
+        app:tabRippleColor="@android:color/transparent"
+        app:tabSelectedTextColor="#101010"
+        app:tabTextColor="#9A9A9A">
 
-        <ImageView
-            android:id="@+id/rv_tip_finish"
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="13dp"
-            android:src="@drawable/ic_base_back" />
+            android:text="评论" />
 
-        <TextView
+        <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="动态相关消息"
-            android:textColor="#101010"
-            android:textSize="17sp" />
+            android:text="点赞" />
 
-    </RelativeLayout>
+    </com.google.android.material.tabs.TabLayout>
 
-    <LinearLayout
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_dynamic_tips_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#F5F5F5">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_tip_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp" />
-
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -129,7 +129,6 @@
         </activity>
 
 
-
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"
             android:exported="false" />
@@ -164,6 +163,9 @@
             android:name=".dynamic.mine.MyDynamicActivity"
             android:exported="true" />
 
+        <activity
+            android:name=".friend.FriendInfoActivity"
+            android:exported="true" />
 
         <!-- 联通电信授权页 -->
         <activity android:name=".search.SearchParamActivity" />

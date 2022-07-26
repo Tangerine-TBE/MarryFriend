@@ -22,9 +22,10 @@ import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
-import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonAdapter
+import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
+import com.twx.marryfriend.friend.FriendInfoActivity
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.fragment_dynamic_recommend.*
 import java.io.Serializable
@@ -99,22 +100,28 @@ class DynamicRecommendFragment : Fragment(),
 
     private fun initView() {
 
-        getTrendSaloonPresent = com.twx.marryfriend.net.impl.dynamic.getTrendSaloonPresentImpl.getsInstance()
+        getTrendSaloonPresent =
+            com.twx.marryfriend.net.impl.dynamic.getTrendSaloonPresentImpl.getsInstance()
         getTrendSaloonPresent.registerCallback(this)
 
-        doLikeClickPresent = com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
+        doLikeClickPresent =
+            com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
         doLikeClickPresent.registerCallback(this)
 
-        doLikeCancelPresent = com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
+        doLikeCancelPresent =
+            com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
 
-        doPlusFocusPresent = com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl.getsInstance()
+        doPlusFocusPresent =
+            com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl.getsInstance()
         doPlusFocusPresent.registerCallback(this)
 
-        doCancelFocusPresent = com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl.getsInstance()
+        doCancelFocusPresent =
+            com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl.getsInstance()
         doCancelFocusPresent.registerCallback(this)
 
-        getTotalCountPresent = com.twx.marryfriend.net.impl.dynamic.getTotalCountPresentImpl.getsInstance()
+        getTotalCountPresent =
+            com.twx.marryfriend.net.impl.dynamic.getTotalCountPresentImpl.getsInstance()
         getTotalCountPresent.registerCallback(this)
 
         val mEduData: MutableList<String> = arrayListOf()
@@ -170,11 +177,15 @@ class DynamicRecommendFragment : Fragment(),
         rl_dynamic_tips.setOnClickListener {
             ToastUtils.showShort("提醒列表")
             rl_dynamic_tips.visibility = View.GONE
+            val intent = Intent(context, TipsActivity::class.java)
+            startActivity(intent)
+
         }
 
         adapter.setOnVideoClickListener(object : SaloonAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
-                val intent = Intent(mContext, com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity::class.java)
+                val intent = Intent(mContext,
+                    com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity::class.java)
                 intent.putExtra("videoUrl", mTrendList[position].video_url)
                 intent.putExtra("name", mTrendList[position].nick)
                 startActivity(intent)
@@ -199,6 +210,9 @@ class DynamicRecommendFragment : Fragment(),
         adapter.setOnAvatarClickListener(object : SaloonAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
                 ToastUtils.showShort("头像,进入资料详情界面")
+
+                startActivity(FriendInfoActivity.getIntent(requireContext(),mTrendList[position].user_id.toInt()))
+
             }
         })
 
@@ -240,10 +254,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -258,10 +269,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -276,10 +284,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -300,10 +305,7 @@ class DynamicRecommendFragment : Fragment(),
                     imageIndex = 2
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -325,10 +327,7 @@ class DynamicRecommendFragment : Fragment(),
                     imageIndex = 3
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -343,10 +342,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -361,10 +357,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -379,10 +372,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -397,10 +387,7 @@ class DynamicRecommendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 

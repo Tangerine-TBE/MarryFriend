@@ -185,8 +185,11 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
             }
         })
 
-
-        Glide.with(mContext).load(mList[position].list.img_one).into(holder.avatar)
+        Glide.with(mContext)
+            .load(mList[position].list.img_one)
+            .error(R.drawable.ic_pic_default)
+            .placeholder(R.drawable.ic_pic_default)
+            .into(holder.avatar)
 
         holder.name.text = mList[position].list.nick_one
 
@@ -209,7 +212,9 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
 
                 holder.child.visibility = View.VISIBLE
 
-                Glide.with(mContext).load(mList[position].list.image_two).into(holder.childAvatar)
+                Glide.with(mContext).load(mList[position].list.image_two)
+                    .error(R.drawable.ic_pic_default)
+                    .placeholder(R.drawable.ic_pic_default).into(holder.childAvatar)
                 holder.childName.text = mList[position].list.nick_two
 
                 if (mList[position].list.sex_two == 1) {
@@ -240,7 +245,9 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
 
                 holder.child.visibility = View.VISIBLE
 
-                Glide.with(mContext).load(mList[position].list.image_two).into(holder.childAvatar)
+                Glide.with(mContext).load(mList[position].list.image_two)
+                    .error(R.drawable.ic_pic_default)
+                    .placeholder(R.drawable.ic_pic_default).into(holder.childAvatar)
                 holder.childName.text = mList[position].list.nick_two
 
                 if (mList[position].list.sex_two == 1) {
@@ -262,6 +269,9 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
             }
         }
 
+        if (mList[position].total - 1 == 0) {
+            holder.childMore.visibility = View.GONE
+        }
 
     }
 

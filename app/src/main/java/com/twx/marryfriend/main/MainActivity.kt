@@ -15,7 +15,7 @@ import com.twx.marryfriend.likeme.LiveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.recommend.RecommendFragment
-import com.twx.marryfriend.dynamic.saloon.DynamicFragment
+import com.twx.marryfriend.dynamic.DynamicFragment
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 

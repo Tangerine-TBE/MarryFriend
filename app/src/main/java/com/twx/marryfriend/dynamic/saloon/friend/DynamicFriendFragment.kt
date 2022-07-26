@@ -31,6 +31,7 @@ import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
+import com.twx.marryfriend.friend.FriendInfoActivity
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
 import java.io.Serializable
 import java.util.*
@@ -173,6 +174,9 @@ class DynamicFriendFragment : Fragment(),
         adapter.setOnAvatarClickListener(object : SaloonFocusAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
                 ToastUtils.showShort("头像,进入资料详情界面")
+
+                startActivity(FriendInfoActivity.getIntent(requireContext(),mTrendList[position].user_id.toInt()))
+
             }
         })
 
@@ -206,10 +210,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -224,10 +225,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -242,10 +240,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -260,10 +255,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -278,10 +270,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -296,10 +285,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -314,10 +300,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
             }
         })
 
@@ -332,10 +315,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
 
             }
         })
@@ -351,10 +331,7 @@ class DynamicFriendFragment : Fragment(),
                     images[i] = images[i].replace(" ", "")
                 }
 
-                val intent = Intent(context, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                intent.putExtra("imageList", images as Serializable)
-                intent.putExtra("imageIndex", imageIndex)
-                startActivity(intent)
+                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
 
             }
         })

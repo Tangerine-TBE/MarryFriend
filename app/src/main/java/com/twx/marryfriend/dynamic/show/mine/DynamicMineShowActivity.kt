@@ -20,8 +20,11 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
+import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
@@ -31,8 +34,8 @@ import java.util.*
 class DynamicMineShowActivity : MainBaseViewActivity(),
     com.twx.marryfriend.net.callback.dynamic.IDoCheckTrendCallback,
     com.twx.marryfriend.net.callback.dynamic.IGetCommentOneCallback,
-    com.twx.marryfriend.net.callback.dynamic.IGetCommentTwoCallback, CommentOneAdapter.OnItemClickListener,
-    CommentOneAdapter.OnItemLongClickListener,
+    com.twx.marryfriend.net.callback.dynamic.IGetCommentTwoCallback,
+    CommentOneAdapter.OnItemClickListener, CommentOneAdapter.OnItemLongClickListener,
     com.twx.marryfriend.net.callback.dynamic.IDoCommentOneCreateCallback,
     com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoCreateCallback {
 
@@ -111,19 +114,24 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         super.initView()
         id = intent.getIntExtra("id", 0);
 
-        doCheckTrendPresent = com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl.getsInstance()
+        doCheckTrendPresent =
+            com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl.getsInstance()
         doCheckTrendPresent.registerCallback(this)
 
-        getCommentOnePresent = com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl.getsInstance()
+        getCommentOnePresent =
+            com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl.getsInstance()
         getCommentOnePresent.registerCallback(this)
 
-        doCommentOneCreatePresent = com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl.getsInstance()
+        doCommentOneCreatePresent =
+            com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl.getsInstance()
         doCommentOneCreatePresent.registerCallback(this)
 
-        getCommentTwoPresent = com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl.getsInstance()
+        getCommentTwoPresent =
+            com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl.getsInstance()
         getCommentTwoPresent.registerCallback(this)
 
-        doCommentTwoCreatePresent = com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl.getsInstance()
+        doCommentTwoCreatePresent =
+            com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl.getsInstance()
         doCommentTwoCreatePresent.registerCallback(this)
 
 
@@ -190,10 +198,15 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
                 .show()
         }
 
+        riv_dynamic_mine_show_avatar.setOnClickListener {
+            startActivity(FriendInfoActivity.getIntent(this,
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+        }
+
         fl_dynamic_mine_show_video.setOnClickListener {
             // 播放视频
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity::class.java)
+            val intent = Intent(this, VideoPreviewActivity::class.java)
             intent.putExtra("videoUrl", mVideoUrl)
             intent.putExtra("name", mName)
             startActivity(intent)
@@ -203,28 +216,19 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         iv_dynamic_mine_show_one.setOnClickListener {
             imageIndex = 0
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_two.setOnClickListener {
             imageIndex = 1
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_three.setOnClickListener {
             imageIndex = 2
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_four.setOnClickListener {
@@ -235,10 +239,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
                 imageIndex = 2
             }
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_five.setOnClickListener {
@@ -249,46 +250,31 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
                 imageIndex = 3
             }
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_six.setOnClickListener {
             imageIndex = 5
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_seven.setOnClickListener {
             imageIndex = 6
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_eight.setOnClickListener {
             imageIndex = 7
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_nine.setOnClickListener {
             imageIndex = 8
 
-            val intent = Intent(this, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-            intent.putExtra("imageList", mPicList as Serializable)
-            intent.putExtra("imageIndex", imageIndex)
-            startActivity(intent)
+            startActivity(ImagePreviewActivity.getIntent(this, mPicList, imageIndex))
         }
 
         iv_dynamic_mine_show_tip_hide.setOnClickListener {
@@ -505,12 +491,16 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
     // 给动态提交父评论
     private fun doCommentOne(trendsId: Int, hostId: Int, GuestId: Int, content: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendsId.toString()
-        map[Contents.HOST_UID] = hostId.toString()
-        map[Contents.GUEST_UID] = GuestId.toString()
-        map[Contents.CONTENT_ONE] = content
-        doCommentOneCreatePresent.doCommentOneCreate(map)
+
+//        val map: MutableMap<String, String> = TreeMap()
+//        map[Contents.TRENDS_ID] = trendsId.toString()
+//        map[Contents.HOST_UID] = hostId.toString()
+//        map[Contents.GUEST_UID] = GuestId.toString()
+//        map[Contents.CONTENT_ONE] = content
+//        doCommentOneCreatePresent.doCommentOneCreate(map)
+
+        ToastUtils.showShort("不能回复自己")
+
     }
 
     // 获取二级子评论
@@ -591,6 +581,9 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
             when (commentOneCreateBean.code) {
                 200 -> {
+
+                    // 这里不能重新加载数据，需要本地添加数据进去
+
                     ToastUtils.showShort("重新加载数据")
                     mCommentOneList[mItem].all += 1
                     mCommentOneList[mItem].total += 1
@@ -1383,7 +1376,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         override fun onCreate() {
             super.onCreate()
 
-            doDeleteTrendPresent = com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl.getsInstance()
+            doDeleteTrendPresent =
+                com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl.getsInstance()
             doDeleteTrendPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
@@ -1475,10 +1469,12 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         override fun onCreate() {
             super.onCreate()
 
-            doCommentOneDeletePresent = com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl.getsInstance()
+            doCommentOneDeletePresent =
+                com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl.getsInstance()
             doCommentOneDeletePresent.registerCallback(this)
 
-            doCommentTwoDeletePresent = com.twx.marryfriend.net.impl.dynamic.doCommentTwoDeletePresentImpl.getsInstance()
+            doCommentTwoDeletePresent =
+                com.twx.marryfriend.net.impl.dynamic.doCommentTwoDeletePresentImpl.getsInstance()
             doCommentTwoDeletePresent.registerCallback(this)
 
             findViewById<TextView>(R.id.tv_dialog_tip_info).text = "您确定要删除该动态吗"

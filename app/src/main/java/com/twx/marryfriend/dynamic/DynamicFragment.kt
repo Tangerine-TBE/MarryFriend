@@ -1,4 +1,4 @@
-package com.twx.marryfriend.dynamic.saloon
+package com.twx.marryfriend.dynamic
 
 import android.content.Context
 import android.content.Intent
