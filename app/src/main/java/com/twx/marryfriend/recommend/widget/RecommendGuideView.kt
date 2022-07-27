@@ -28,6 +28,7 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
         inflate(context,R.layout.item_recommend_guide,this)
 //        Glide.init(this.context, GlideBuilder().setSourceExecutor(GlideExecutor.newSourceBuilder().setThreadCount(GlideExecutor.calculateBestThreadCount()*5).build()))
     }
+    private var haveData:Boolean=true
     private var currentType:HomeCardAction?=HomeCardAction.upSlide
 
     fun guideComplete(type:HomeCardAction){
@@ -57,6 +58,7 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
     }
 
     fun onDataChange(haveData:Boolean){
+        this.haveData=haveData
         if (haveData){
             if (!isShowGuide()){
                 return
@@ -73,6 +75,12 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
 
     private fun showGuide(type:HomeCardAction){
         if (!isShowGuide()){
+            return
+        }
+        if (!haveData){
+            if (this.visibility!=View.GONE){
+                this.visibility=View.GONE
+            }
             return
         }
         showView()

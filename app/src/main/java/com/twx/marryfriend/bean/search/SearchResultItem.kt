@@ -3,7 +3,7 @@ package com.twx.marryfriend.bean.search
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.Label
-import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.recommend.RecommendBean
 
 data class SearchResultItem(
     var age: Int? = 0,
@@ -63,7 +63,7 @@ data class SearchResultItem(
      */
     fun getCurrentResidence(): Label?{
 //        return findIndustry(base?.work_city_num?.toIntOrNull()?:0)
-        return (work_city_str?.let { "现居${it}" })?.toLabel(R.mipmap.ic_label_residence)
+        return (work_city_str)?.toLabel(R.mipmap.ic_label_residence)
     }
 
     fun getHeight(): Label?{

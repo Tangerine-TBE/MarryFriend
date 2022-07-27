@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.one_hello.OneClickHelloItemBean
 import com.xyzz.myutils.show.toast
@@ -75,7 +77,10 @@ class OneClickHelloDialog(context: Context,private val data:List<OneClickHelloIt
 
         override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
             val item=data[position]
-            holder.setImage(R.id.one_click_img,item.image_url)
+//            holder.setImage(R.id.one_click_img,item.image_url)
+            holder.getView<ImageView>(R.id.one_click_img).also {
+                Glide.with(it).load(item.image_url).placeholder(UserInfo.getReversedDefHelloHeadImage()).into(it)
+            }
             holder.setText(R.id.one_click_name,item.nick?:"")
             holder.itemView.isSelected=choiceData.contains(item)
             holder.itemView.setOnClickListener {

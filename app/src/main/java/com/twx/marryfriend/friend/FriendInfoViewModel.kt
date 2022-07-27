@@ -3,7 +3,7 @@ package com.twx.marryfriend.friend
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
 import org.json.JSONObject
@@ -22,7 +22,7 @@ class FriendInfoViewModel:ViewModel() {
             try {
                 val jsonObject=JSONObject(response)
                 val dataString=jsonObject.getJSONObject("data").toString()
-                val info=Gson().fromJson(dataString,RecommendBean::class.java)
+                val info=Gson().fromJson(dataString, RecommendBean::class.java)
                 coroutine.resume(info)
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

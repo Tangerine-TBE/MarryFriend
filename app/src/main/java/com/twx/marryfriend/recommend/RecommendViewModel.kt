@@ -3,11 +3,12 @@ package com.twx.marryfriend.recommend
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloItemBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
+import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import org.json.JSONArray
 import org.json.JSONObject
@@ -47,7 +48,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun loadRecommendUserInfo(idArray: List<Int>)=suspendCoroutine<List<RecommendBean>>{coroutine->
+    suspend fun loadRecommendUserInfo(idArray: List<Int>)=suspendCoroutine<List<RecommendBean>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachFive"
         val map= mapOf(
             "user_id" to UserInfo.getUserId(),
@@ -76,6 +77,7 @@ class RecommendViewModel():ViewModel() {
                 }
                 coroutine.resume(recommendData)
             }catch (e:Exception){
+                eLog(e.stackTraceToString())
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
         },{
@@ -107,7 +109,6 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    //marryfriend/CommendSearch/plusPutongXihuanOther
     suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
@@ -126,6 +127,37 @@ class RecommendViewModel():ViewModel() {
                     iLog("返回的状态code:${code},2为相互喜欢")
                     coroutine.resume("喜欢成功")
                 }else if(jsonObject.getString("code")=="444"){
+                    coroutine.resume(jsonObject.getString("msg"))
+                }else{
+                    coroutine.resumeWithException(Exception(response))
+                }
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
+
+    suspend fun otherLike(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
+        val map= mapOf(
+            "host_uid" to UserInfo.getUserId(),
+            "guest_uid" to guest_uid.toString())
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val jsonObject=JSONObject(response)
+                if (jsonObject.getInt("code")==200) {
+                    val code=jsonObject.getJSONArray("data").getInt(0)
+                    if (code==2){
+                        mutualLikeAction?.invoke()
+                    }
+                    iLog("返回的状态code:${code},2为相互喜欢")
+                    coroutine.resume("喜欢成功")
+                }else if(jsonObject.getString("code")=="444"){
+                    coroutine.resume(jsonObject.getString("msg"))
+                }else if(jsonObject.getInt("code")==484){
                     coroutine.resume(jsonObject.getString("msg"))
                 }else{
                     coroutine.resumeWithException(Exception(response))

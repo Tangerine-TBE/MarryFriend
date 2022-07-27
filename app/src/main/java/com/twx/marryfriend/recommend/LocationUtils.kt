@@ -69,7 +69,7 @@ object LocationUtils {
         mLocationClient.registerLocationListener(object :
             BDAbstractLocationListener() {
             override fun onReceiveLocation(location: BDLocation) {
-                locationLiveData.value=MyLocation(location.longitude,location.latitude,location.addrStr)
+                locationLiveData.value=MyLocation(location.longitude,location.latitude,location.addrStr?:"")
             }
         })
         val option = LocationClientOption()

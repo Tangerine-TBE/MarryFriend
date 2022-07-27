@@ -1,10 +1,8 @@
 package com.twx.marryfriend
 
 import android.app.Application
-import com.bumptech.glide.Glide
-import com.bumptech.glide.GlideBuilder
-import com.bumptech.glide.load.engine.executor.GlideExecutor
 import com.kingja.loadsir.core.LoadSir
+import com.message.ImUserManager
 import com.xyzz.myutils.MyUtils
 
 
@@ -27,8 +25,9 @@ class AppApplication:Application() {
 //            .addCallback(CustomCallback())
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
             .commit()
-        Glide.init(this, GlideBuilder().setSourceExecutor(
-            GlideExecutor.newSourceBuilder().setThreadCount(
-                GlideExecutor.calculateBestThreadCount()*5).build()))
+//        Glide.init(this, GlideBuilder().setSourceExecutor(
+//            GlideExecutor.newSourceBuilder().setThreadCount(
+//                GlideExecutor.calculateBestThreadCount()*5).build()))
+        ImUserManager.init(this)
     }
 }

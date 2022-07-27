@@ -1,6 +1,7 @@
-package com.twx.marryfriend.bean
+package com.twx.marryfriend.bean.recommend
 
 import com.twx.marryfriend.R
+import com.twx.marryfriend.bean.*
 import java.lang.IllegalStateException
 import java.text.NumberFormat
 
@@ -15,23 +16,31 @@ data class RecommendBean(
     val trends_total: Int=0,
     val verify: Verify?=null,
     val vip_info: VipInfo?=null,
-    val zhaohu: Zhaohu?=null
+    val zhaohu: Zhaohu?=null,
+    val headface:List<HeadfaceBean>?=null
 ){
     fun getId():Int{
         return base?.id?:throw IllegalStateException("id为空")
     }
 
+    fun isLike():Boolean{
+        return base?.like_uid!=null
+    }
+    fun isSuperLike():Boolean{
+        return base?.super_uid!=null
+    }
     /**
      * 头像
      */
     fun getHeadImg():String?{
-        return photos?.find { it.kind==1 }?.image_url
+        return headface?.firstOrNull()?.image_url
     }
     fun isHeadIdentification():Boolean{
-        return photos?.find { it.kind==1 }?.status==1
+        return headface?.firstOrNull()?.real_status==1
     }
     
     fun getLongitude():Double?{
+//        trends?.get(0)?.jingdu
         return place?.jingdu?.toDoubleOrNull()
     }
     fun getLatitude():Double?{
@@ -77,11 +86,11 @@ data class RecommendBean(
     fun getAboutMePhoto():String?{
         return photos?.find { it.kind==2 }?.image_url
     }
-    fun getAlbumPhoto():List<String>{
-        return photos?.filter { it.kind == 3 }?.mapNotNull { it.image_url }?.toList()?: emptyList()
+    fun getLifePhoto():List<Photo>{
+        return photos?.filter { it.kind == 3 }?: emptyList()
     }
 
-    fun getUserSex():Sex{
+    fun getUserSex(): Sex {
         return Sex.toSex(base?.user_sex)
     }
 
@@ -90,7 +99,7 @@ data class RecommendBean(
     }
 
     fun getVoiceDurationStr():String{
-        val duration=zhaohu?.voice_long?.toIntOrNull()?:0
+        val duration=((zhaohu?.voice_long?.toIntOrNull()?:0)+500)/1000
         val numberFormat=NumberFormat.getNumberInstance().also {
             it.minimumIntegerDigits=2
         }
@@ -255,7 +264,7 @@ data class RecommendBean(
                 else->{
                     null
                 }
-            }?.toLabel(R.mipmap.ic_label_hometown)
+            }?.toLabel(R.mipmap.ic_label_head)
         }
         fun getSalary_range(salary_range:Int?): Label?{
             return when(salary_range){
@@ -405,14 +414,14 @@ data class RecommendBean(
      */
     fun getCurrentResidence(): Label?{
 //        return findIndustry(base?.work_city_num?.toIntOrNull()?:0)
-        return (base?.work_province_str?.let { "现居${it}" })?.toLabel(R.mipmap.ic_label_residence)
+        return "${base?.work_province_str}${base?.work_city_str}".toLabel(R.mipmap.ic_label_residence)?.also { it.label="${it.label}工作" }
     }
 
     fun getHeight(): Label?{
         return ((base?.height?:return null).toString()+"cm").toLabel(R.mipmap.ic_label_height)
     }
     fun getHometown(): Label?{
-        return base?.hometown_city_str?.toLabel(R.mipmap.ic_label_hometown)
+        return "${base?.hometown_province_str?:""}${base?.hometown_city_str?:""}".toLabel(R.mipmap.ic_label_hometown)?.also { it.label="${it.label}人" }
     }
 
     fun getHeightDemand(): Label?{
@@ -434,32 +443,8 @@ data class RecommendBean(
         }
     }
 
-    fun getBaseLabel():List<Label>{
-        val list=ArrayList<Label>()
-        getIndustry_str(base?.industry_str)?.also {
-            list.add(it)
-        }
-        getHometown()?.also {
-            list.add(it)
-        }
-        getCurrentResidence()?.also {
-            list.add(it)
-        }
-        getHeight()?.also {
-            list.add(it)
-        }
-        getEducationStr(base?.education)?.also {
-            list.add(it)
-        }
-        getMarry_hadStr(base?.marry_had)?.also {
-            list.add(it)
-        }
-        return list
-//        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
-    }
-
     fun getDemandWork_place_str(): Label?{
-        return ("现居"+(demand?.work_place_str?:return null)).toLabel(R.mipmap.ic_label_residence)
+        return "${demand?.work_place_str}".toLabel(R.mipmap.ic_label_residence)?.also { it.label="${it.label}工作" }
     }
 
     fun getDemandLabel():List<Label>{
@@ -507,9 +492,9 @@ data class RecommendBean(
         getDrink_wine(demand?.drink_wine)?.also {
             list.add(it)
         }
-        getIs_headface(demand?.is_headface)?.also {
-            list.add(it)
-        }
+//        getIs_headface(demand?.is_headface)?.also {
+//            list.add(it)
+//        }
         getIndustry_str(demand?.industry_str)?.also {
             list.add(it)
         }
@@ -527,5 +512,32 @@ data class RecommendBean(
         }
 
         return list
+    }
+
+    fun getBaseLabel():List<Label>{
+        val list=ArrayList<Label>()
+        getIndustry_str(base?.industry_str)?.also {
+            list.add(it)
+        }
+        getHometown()?.also {
+            list.add(it)
+        }
+        getCurrentResidence()?.also {
+            list.add(it)
+        }
+        getHeight()?.also {
+            list.add(it)
+        }
+        getSalary_range(base?.salary_range)?.also {
+            list.add(it)
+        }
+        getEducationStr(base?.education)?.also {
+            list.add(it)
+        }
+        getMarry_hadStr(base?.marry_had)?.also {
+            list.add(it)
+        }
+        return list
+//        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
     }
 }

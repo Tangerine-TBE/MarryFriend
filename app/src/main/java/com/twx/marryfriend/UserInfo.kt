@@ -5,9 +5,9 @@ import com.twx.marryfriend.constant.Constant
 
 object UserInfo {
     fun getUserId():String{
-        if(BuildConfig.DEBUG){
-            return "16"//3,4,6,11,16//
-        }
+//        if(BuildConfig.DEBUG){
+//            return "11"//3,4,6,11,16//
+//        }
         return SPStaticUtils.getString(
             Constant.USER_ID,
             "default")
@@ -30,7 +30,7 @@ object UserInfo {
      * 2：女
      */
     fun getUserSex():Int{
-        return SPStaticUtils.getInt(Constant.ME_SEX, 0)
+        return SPStaticUtils.getInt(Constant.ME_SEX, 2)
     }
 
     fun reversalSex(sex:Int):Int{
@@ -43,6 +43,15 @@ object UserInfo {
             R.mipmap.icon_mine_male_default
         }else{
             R.mipmap.icon_mine_female_default
+        }
+    }
+
+    fun getReversedDefHelloHeadImage():Int{
+        val sex= reversalSex(getUserSex())
+        return if (sex==1){
+            R.mipmap.ic_def_hello_male
+        }else{
+            R.mipmap.ic_def_hello_female
         }
     }
 

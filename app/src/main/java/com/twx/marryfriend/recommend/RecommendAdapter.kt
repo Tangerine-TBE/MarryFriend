@@ -17,10 +17,10 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.twx.marryfriend.BuildConfig
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
-import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
@@ -51,12 +51,12 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
     private val mainScope by lazy { MainScope() }
     private val listData=ArrayList<RecommendBean>()
     var openLocationPermissionAction:(()->Unit)?=null
-    var disLikeAction:((RecommendBean,View)->Unit)?=null
-    var likeAction:((RecommendBean,View)->Unit)?=null
+    var disLikeAction:((RecommendBean, View)->Unit)?=null
+    var likeAction:((RecommendBean, View)->Unit)?=null
     var superLikeAction:((RecommendBean)->Unit)?=null
     var myLongitude:Double?=null
     var myLatitude:Double?=null
-    private var currentPlayVoiceItem:RecommendBean?=null
+    private var currentPlayVoiceItem: RecommendBean?=null
     var itemAction:((HomeCardAction?)->Unit)?=null
 
     fun getData():List<RecommendBean>{
@@ -66,15 +66,15 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
     fun setData(list: List<RecommendBean>){
         listData.clear()
         listData.addAll(list)
-        if (BuildConfig.DEBUG){
-            for (i in 0 until 10){
-                listData.add(RecommendBean())
-            }
-        }
+//        if (BuildConfig.DEBUG){
+//            for (i in 0 until 10){
+//                listData.add(RecommendBean())
+//            }
+//        }
         notifyDataSetChanged()
     }
 
-    fun removeAt(index:Int):RecommendBean{
+    fun removeAt(index:Int): RecommendBean {
         val e=listData.removeAt(index)
         if (e==currentPlayVoiceItem){
             stopVoice()
@@ -139,7 +139,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
             holder.setText(R.id.occupation,item.getOccupation())
             holder.setText(R.id.education,item.getSchoolName())
             holder.setText(R.id.dynamicCount,item.getDynamicCount().toString()+"条动态")//上面的
-            holder.setText(R.id.albumPhotoCount,item.getAlbumPhoto().size.toString()+"张照片")
+            holder.setText(R.id.albumPhotoCount,item.getLifePhoto().size.toString()+"张照片")
         }
         //关于我
         holder.getView<View>(R.id.selfIntroduction).apply {
@@ -225,8 +225,9 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                                         firstViewSwitcher.visibility=View.GONE
                                     }
                                     useFirstPushVoice()
-                                    //TODO 去上传语音界面
-                                    toast(holder.itemView.context,"去上传语音界面")
+                                    IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
+                                        holder.itemView.context.startActivity(it)
+                                    }
                                 }
                             }
                         },{
@@ -234,9 +235,10 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                         })
                     }
                 }
-                holder.getView<View>(R.id.uploadVoice).setOnClickListener {
-                    //TODO
-                    toast(it.context,"TODO 说点什么来开启你们的对话吧！")
+                holder.getView<View>(R.id.uploadVoice).setOnClickListener {view->
+                    IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
+                        view.context.startActivity(it)
+                    }
                 }
             }else{
                 this.visibility=View.GONE
@@ -244,7 +246,9 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         }
         //我的相册
         holder.getView<View>(R.id.myAlbum).apply {
-            item.getAlbumPhoto().also {
+            this.visibility=View.GONE
+            return@apply
+            /*item.getAlbumPhoto().also {
                 if (it.isEmpty()){
                     this.visibility=View.GONE
                 }else{
@@ -254,8 +258,8 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                 }
             }
             holder.getView<View>(R.id.myAlbumSeeMore).setOnClickListener {
-                toast(it.context,"TODO 查看相册")
-            }
+                IntentManager.getPhotoPreviewIntent(it.context)
+            }*/
         }
         //我的标签
         holder.getView<View>(R.id.myLabel).apply {
@@ -338,19 +342,21 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     }
                 }
             }
-            holder.getView<View>(R.id.toMyDynamic).setOnClickListener {
-                toast(it.context,"TODO 跳到动态")
+            holder.getView<View>(R.id.toMyDynamic).setOnClickListener {view->
+                IntentManager.getDynamicIntent(view.context)?.also {
+                    view.context.startActivity(it)
+                }
             }
         }
         //生活
         holder.getView<LifeView>(R.id.life_view).apply {
-            item.getAlbumPhoto().also {
+            item.getLifePhoto().also {
                 if (it.isEmpty()){
                     this.visibility=View.GONE
                 }else{
                     this.visibility=View.VISIBLE
                     this.setImageData(it.map {
-                        LifeView.LifeImage(it,"标题","暂时没有生活照接口")
+                        LifeView.LifeImage(it.image_url?:"",it.file_name?:"",it.content?:"")
                     })
                 }
             }
@@ -418,7 +424,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         }
     }
 
-    private fun playVoice(item:RecommendBean, onPlay:()->Unit, onCompletion:()->Unit, onError:(String)->Unit){
+    private fun playVoice(item: RecommendBean, onPlay:()->Unit, onCompletion:()->Unit, onError:(String)->Unit){
         val path=item.getVoiceUrl()
         if (path==null){
             onError.invoke("语音url为空")

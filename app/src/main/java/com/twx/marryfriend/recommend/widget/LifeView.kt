@@ -15,6 +15,7 @@ import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.net.utils.BuildConfig.DEBUG
@@ -28,6 +29,11 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
 
     init {
         inflate(context,R.layout.item_recommend_life_view,this)
+        upLife.setOnClickListener { view ->
+            IntentManager.getUpLifeIntent(view.context).also {
+                view.context.startActivity(it?:return@setOnClickListener)
+            }
+        }
     }
 
     fun setImageData(imageList: List<LifeImage>){
@@ -39,7 +45,7 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
         life_count.setText("${imageList.size}张生活照")
         this.imageList.clear()
         this.imageList.addAll(imageList)
-        for (i in 0 until 5){
+        for (i in 0 until 3){
             if (i>=imageList.size){
                 for (j in i until life_images_recycler_view.childCount){
                     life_images_recycler_view.get(i).visibility=View.GONE

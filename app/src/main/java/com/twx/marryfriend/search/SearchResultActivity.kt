@@ -84,7 +84,7 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         searchResultAdapter.likeAction={item,view->
             lifecycleScope.launch {
                 try {
-                    val isMutualLike=recommendViewModel.like(item.user_id?:return@launch toast("对方id为空"))
+                    val isMutualLike=recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空"))
                     view.isSelected=true
                     item.like()
                     toast("喜欢成功")

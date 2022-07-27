@@ -22,14 +22,16 @@ import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.DefEmptyDataCallBack
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
-import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
+import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.coroutines.launch
@@ -73,12 +75,11 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             .setCancelable(false)
             .setMessage("请稍后...")
     }
-    private var userItem:RecommendBean?=null
+    private var userItem: RecommendBean?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadData()
-        initListener()
         isLikeMe.visibility=View.GONE
     }
 
@@ -101,6 +102,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 loadService.showSuccess()
             }
             userItem=item
+            initListener()
             //简介模块
             briefIntroduction.apply {
                 itemSetting.setOnClickListener {
@@ -122,7 +124,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 occupation.text=(item.getOccupation())
                 education.text=(item.getSchoolName())
                 dynamicCount.text=(item.getDynamicCount().toString()+"条动态")//上面的
-                albumPhotoCount.text=(item.getAlbumPhoto().size.toString()+"张照片")
+                albumPhotoCount.text=(item.getLifePhoto().size.toString()+"张照片")
             }
             //关于我
             selfIntroduction.apply {
@@ -159,7 +161,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             //语音介绍
             voiceIntroduce.apply {
-                if (item.getVoiceUrl()!=null){
+                if (!item.getVoiceUrl().isNullOrBlank()){
                     this.visibility= View.VISIBLE
                     voiceDuration.text=(item.getVoiceDurationStr())
                     if (/*RecommendAdapter.isFirstListenerVoice()*/false){
@@ -189,29 +191,15 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                                     it.selectDrawable(0)
                                     it.stop()
                                 }
-
-                                /*if (RecommendAdapter.isFirstPushVoice()){
-                                    firstViewSwitcher.visibility= View.VISIBLE
-                                    if (firstViewSwitcher.currentView!=firstAddVoice){
-                                        firstViewSwitcher.showNext()
-                                    }
-                                    firstAddVoice.setOnClickListener {
-                                        if (firstViewSwitcher.visibility!= View.GONE){
-                                            firstViewSwitcher.visibility= View.GONE
-                                        }
-                                        RecommendAdapter.useFirstPushVoice()
-                                        //TODO 去上传语音界面
-                                        toast(holder.itemView.context,"去上传语音界面")
-                                    }
-                                }*/
                             },{
                                 //出错了
                             })
                         }
                     }
                     uploadVoice.setOnClickListener {
-                        //TODO
-                        toast(it.context,"TODO 说点什么来开启你们的对话吧！")
+                        IntentManager.getUpVoiceIntent(it.context)?.also {
+                            startActivity(it)
+                        }
                     }
                 }else{
                     this.visibility= View.GONE
@@ -219,18 +207,19 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             //我的相册
             myAlbum.apply {
-                item.getAlbumPhoto().also {
-                    if (it.isEmpty()){
-                        this.visibility= View.GONE
-                    }else{
-                        this.visibility= View.VISIBLE
-                        photoCount.text=(it.size.toString()+"张照片")
-                        myAlbumPreview.setImageData(it)
-                    }
-                }
-                myAlbumSeeMore.setOnClickListener {
-                    toast(it.context,"TODO 查看相册")
-                }
+                this.visibility=View.GONE
+//                item.getLifePhoto().also {
+//                    if (it.isEmpty()){
+//                        this.visibility= View.GONE
+//                    }else{
+//                        this.visibility= View.VISIBLE
+//                        photoCount.text=(it.size.toString()+"张照片")
+//                        myAlbumPreview.setImageData(it)
+//                    }
+//                }
+//                myAlbumSeeMore.setOnClickListener {
+//                    IntentManager.getPhotoPreviewIntent(it.context,)
+//                }
             }
             //我的标签
             myLabel.apply {
@@ -312,19 +301,21 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                         }
                     }
                 }
-                toMyDynamic.setOnClickListener {
-                    toast(it.context,"TODO 跳到动态")
+                toMyDynamic.setOnClickListener {view->
+                    IntentManager.getDynamicIntent(view.context)?.also {
+                        startActivity(it)
+                    }
                 }
             }
             //生活
             life_view.apply {
-                item.getAlbumPhoto().also {
+                item.getLifePhoto().also {
                     if (it.isEmpty()){
                         this.visibility=View.GONE
                     }else{
                         this.visibility=View.VISIBLE
                         this.setImageData(it.map {
-                            LifeView.LifeImage(it,"标题","暂时没有生活照接口")
+                            LifeView.LifeImage(it.image_url?:"",it.file_name?:"",it.content?:"")
                         })
                     }
                 }
@@ -365,12 +356,15 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 val taLongitude=userItem?.getLongitude()
                 val taLatitude=userItem?.getLatitude()
                 if (taLatitude!=null&&taLongitude!=null){
+                    distanceView.visibility=View.VISIBLE
                     distance.text=try {
                         val distance= LocationUtils.getDistance(taLatitude,taLongitude,it.latitude,it.longitude)+0.5f
                         "距离您${distance.toInt()}米"
                     }catch (e:Throwable){
                         e.message
                     }
+                }else{
+                    distanceView.visibility=View.GONE
                 }
             }
             if(ContextCompat.checkSelfPermission(this@FriendInfoActivity,
@@ -404,11 +398,27 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
 
         //发出动作，喜欢、不喜欢、送花
         sendAction.apply {
+            care.isSelected=(userItem?.isLike()?:false)
+            care2.isSelected=(userItem?.isLike()?:false)
             sendFlowers.setOnClickListener {
                 superLike(userItem?:return@setOnClickListener)
             }
             care.setOnClickListener {
-                like(userItem?:return@setOnClickListener)
+                if (it.isSelected){
+                    toast("已经喜欢过了")
+                    return@setOnClickListener
+                }
+                loadingDialog.show()
+                lifecycleScope.launch (){
+                    try {
+                        toast(recommendViewModel.otherLike(userId?:return@launch toast("id 为空")))
+                        care.isSelected=true
+                        care2.isSelected=true
+                    }catch (e:Exception){
+                        toast(e.message)
+                    }
+                    loadingDialog.dismiss()
+                }
             }
             dislike.setOnClickListener {
                 disLike(userItem?:return@setOnClickListener)
@@ -429,12 +439,13 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     /**
      * 左滑、不喜欢
      */
-    private fun disLike(item:RecommendBean){
+    private fun disLike(item: RecommendBean){
         lifecycleScope.launch (){
             loadingDialog.show()
             try {
-                recommendViewModel.disLike(item.getId())
+                recommendViewModel.disLike(userId?:return@launch toast("id 为空"))
             }catch (e:Exception){
+                eLog(e.stackTraceToString())
                 toast(e.message)
             }
             loadingDialog.dismiss()
@@ -444,16 +455,8 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     /**
      * 右滑、喜欢
      */
-    private fun like(item: RecommendBean){
-        loadingDialog.show()
-        lifecycleScope.launch (){
-            try {
-                recommendViewModel.like(item.getId())
-            }catch (e:Exception){
-                toast(e.message)
-            }
-            loadingDialog.dismiss()
-        }
+    private fun like() {
+
     }
 
     /**
@@ -463,7 +466,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         lifecycleScope.launch (){
             loadingDialog.show()
             try {
-                recommendViewModel.superLike(item.getId())
+                recommendViewModel.superLike(userId?:return@launch toast("id 为空"))
             }catch (e:Exception){
                 toast(e.message)
             }

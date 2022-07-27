@@ -11,18 +11,17 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.BuildConfig
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.bean.RecommendBean
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.dialog.OneClickHelloDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
@@ -97,11 +96,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         if (ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED){
             LocationUtils.startLocation()
         }
+        //监听位置变化
         LocationUtils.observeLocation(this){
             recommendAdapter.myLatitude=it.latitude
             recommendAdapter.myLongitude=it.longitude
             recommendAdapter.notifyDataSetChanged()
         }
+        //是否展示引导
         if (!RecommendGuideView.isShowGuide()){
             touchHelper?.attachToRecyclerView(cardSwipeView)
         }else{
@@ -113,6 +114,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
         Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+        //一键打招呼
         if (OneClickHelloDialog.isSendHello()){
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
@@ -187,6 +189,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun initListener(){
+        upLife.setOnClickListener {
+            startActivity(IntentManager.getUpLifeIntent(requireContext())?:return@setOnClickListener)
+        }
         recommendSetting.setOnClickListener {
             startActivity(Intent(requireContext(),ILikeActivity::class.java))
         }
@@ -223,8 +228,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             superLike(it)
         }
         recommendAdapter.likeAction={item,view->
-            like(item)
-//            recommendAdapter.removeAt(0)
             view
                 .animate()
                 ?.alpha(0f)
@@ -243,6 +246,11 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                             this.translationX=0f
                         }
                         recommendAdapter.removeAt(0)
+                        iLog("喜欢")
+                        like(item)
+                        if (recommendAdapter.getData().isEmpty()){
+                            showView(ViewType.notContent)
+                        }
                     }
 
                     override fun onAnimationCancel(animation: Animator?) {
@@ -257,8 +265,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 ?.start()
         }
         recommendAdapter.disLikeAction={item,view->
-            disLike(item)
-//            recommendAdapter.removeAt(0)
             view
                 .animate()
                 ?.alpha(0f)
@@ -277,6 +283,11 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                             this.translationX=0f
                         }
                         recommendAdapter.removeAt(0)
+                        iLog("不喜欢")
+                        disLike(item)
+                        if (recommendAdapter.getData().isEmpty()){
+                            showView(ViewType.notContent)
+                        }
                     }
 
                     override fun onAnimationCancel(animation: Animator?) {
@@ -302,7 +313,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     /**
      * 左滑、不喜欢
      */
-    private fun disLike(item:RecommendBean){
+    private fun disLike(item: RecommendBean){
+        if (BuildConfig.DEBUG){
+            return
+        }
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
             try {
@@ -318,6 +332,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 右滑、喜欢
      */
     private fun like(item: RecommendBean){
+        if (BuildConfig.DEBUG){
+            return
+        }
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {

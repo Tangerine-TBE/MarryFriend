@@ -1,6 +1,6 @@
 package com.twx.marryfriend.bean
 
-data class Label(val icon:Int, val label: String){
+data class Label(val icon:Int, var label: String){
     companion object{
         fun String.toLabel(icon: Int): Label?{
             return if (this.isBlank()) {

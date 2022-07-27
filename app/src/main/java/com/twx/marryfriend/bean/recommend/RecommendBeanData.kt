@@ -1,24 +1,36 @@
-package com.twx.marryfriend.bean
+package com.twx.marryfriend.bean.recommend
 
 enum class Sex{
     male,female,unknown;
     companion object{
-        fun toSex(sexCode:Int?):Sex{
+        fun toSex(sexCode:Int?): Sex {
             return when(sexCode){
                 1->{
-                    Sex.male
+                    male
                 }
                 2->{
-                    Sex.female
+                    female
                 }
                 else->{
-                    Sex.unknown
+                    unknown
                 }
             }
         }
     }
 }
-
+data class HeadfaceBean(
+    var content: String? = "",
+    var create_time: String? = "",
+    var file_name: String? = "",
+    var file_type: String? = "",
+    var id: Int? = 0,
+    var image_height: String? = "",
+    var image_url: String? = "",
+    var image_width: String? = "",
+    var real_status: Int? = 0,
+    var status: Int? = 0,
+    var user_id: Int? = 0
+)
 data class Base(
     val age: Int?=null,
     val birthday: String?=null,
@@ -52,7 +64,10 @@ data class Base(
     val work_index: String?=null,
     val work_province_num: String?=null,
     val work_province_str: String?=null
-)
+){
+    var like_uid:Int?=null
+    var super_uid:Int?=null
+}
 data class Demand(
     val age_max: Int?=null,
     val age_min: Int?=null,
