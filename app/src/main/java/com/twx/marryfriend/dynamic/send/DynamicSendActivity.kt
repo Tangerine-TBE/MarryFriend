@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -43,17 +45,19 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
+import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.send.adapter.OnNineGridViewListener
 import com.twx.marryfriend.dynamic.send.adapter.PhotoPublishAdapter
 import com.twx.marryfriend.dynamic.send.location.LocationActivity
 import com.twx.marryfriend.dynamic.send.utils.ItemTouchHelperCallback
+import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.utils.DynamicFileProvider
 import com.twx.marryfriend.utils.GlideEngine
+import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
 import java.io.File
-import java.io.Serializable
 import java.util.*
 
 class DynamicSendActivity : MainBaseViewActivity(),
@@ -118,7 +122,8 @@ class DynamicSendActivity : MainBaseViewActivity(),
     override fun initView() {
         super.initView()
 
-        doUploadTrendPresent = com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl.getsInstance()
+        doUploadTrendPresent =
+            com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl.getsInstance()
         doUploadTrendPresent.registerCallback(this)
 
         mAdapter = PhotoPublishAdapter(this)
@@ -167,6 +172,23 @@ class DynamicSendActivity : MainBaseViewActivity(),
         iv_dynamic_send_finish.setOnClickListener {
             finish()
         }
+
+        et_send_content.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s != null) {
+                    tv_send_num.text = "${s.length}/3000"
+                }
+            }
+
+        })
 
         mAdapter.setOnNineGridViewListener(object : OnNineGridViewListener {
             override fun onAddPic(addCount: Int) {
@@ -217,17 +239,14 @@ class DynamicSendActivity : MainBaseViewActivity(),
             override fun onClickPic(data: String?, position: Int) {
 
                 if (FileUtils.getFileExtension(data) != "mp4") {
-                    val intent = Intent(this@DynamicSendActivity, com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity::class.java)
-                    intent.putExtra("imageList", mDataList as Serializable)
-                    intent.putExtra("imageIndex", position)
-                    startActivity(intent)
+                    startActivity(ImagePreviewActivity.getIntent(this@DynamicSendActivity,
+                        mDataList,
+                        position))
                 } else {
-                    val intent = Intent(this@DynamicSendActivity, com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity::class.java)
-                    intent.putExtra("videoUrl", mDataList[0])
-                    intent.putExtra("name", FileUtils.getFileNameNoExtension(mDataList[0]))
-                    startActivity(intent)
+                    startActivity(VideoPreviewActivity.getIntent(this@DynamicSendActivity,
+                        mDataList[0],
+                        FileUtils.getFileNameNoExtension(mDataList[0])))
                 }
-
             }
 
             override fun onLongClickPic(
@@ -517,7 +536,6 @@ class DynamicSendActivity : MainBaseViewActivity(),
                             }
                         }
 
-
                         // 还需要上传图片
 
                         if (mDataList.isNotEmpty()) {
@@ -533,31 +551,38 @@ class DynamicSendActivity : MainBaseViewActivity(),
                                 if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
                                     // 视频
 
+                                    val name = TimeUtils.getNowMills()
+
                                     val file = File(mDataList[0])
                                     val putObjectFromFileResponse = client.putObject("user${
                                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }", "${TimeUtils.getNowString()}.mp4", file)
+                                    }", "${name}.mp4", file)
 
                                     val mLifeFirstUrl = client.generatePresignedUrl("user${
                                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }", "${TimeUtils.getNowString()}.mp4", -1).toString()
+                                    }", "${name}.mp4", -1).toString()
 
                                     xlist.add(mLifeFirstUrl)
 
                                 } else {
+
                                     // 图片
                                     for (i in 0.until(mDataList.size)) {
+
+                                        val name = TimeUtils.getNowMills()
 
                                         val file = File(mDataList[i])
                                         val putObjectFromFileResponse = client.putObject("user${
                                             SPStaticUtils.getString(Constant.USER_ID, "default")
-                                        }", "${TimeUtils.getNowString()}.jpg", file)
+                                        }", "${name}.jpg", file)
 
-                                        val mLifeFirstUrl = client.generatePresignedUrl("user${
+
+                                        xlist.add(client.generatePresignedUrl("user${
                                             SPStaticUtils.getString(Constant.USER_ID, "default")
-                                        }", "${TimeUtils.getNowString()}.jpg", -1).toString()
+                                        }", "${name}.jpg", -1).toString())
 
-                                        xlist.add(mLifeFirstUrl)
+                                        Log.i("guo", " $i : ${xlist}")
+
 
                                     }
                                 }
@@ -566,7 +591,7 @@ class DynamicSendActivity : MainBaseViewActivity(),
 
                                 imageUrl = x.replace("]", "")
 
-                                Log.i("guo", imageUrl)
+                                Log.i("guo", "imageUrl : $imageUrl")
 
                                 uploadTrend()
 
@@ -632,13 +657,13 @@ class DynamicSendActivity : MainBaseViewActivity(),
 
     private fun uploadTrend() {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_INFO] = getUploadTrendInfo()
-        doUploadTrendPresent.doUploadTrend(map)
-
         ThreadUtils.runOnUiThread {
             ll_send_loading.visibility = View.VISIBLE
         }
+
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.TREND_INFO] = getUploadTrendInfo()
+        doUploadTrendPresent.doUploadTrend(map)
 
     }
 
@@ -654,8 +679,8 @@ class DynamicSendActivity : MainBaseViewActivity(),
                     "\"video_url\":    \"$videoUrl\"," +         // 视频地址
                     "\"video_cover\":  \"$videoCover\"," +       // 视频封面
                     "\"label\":        \"$label\"," +            // 储备字段，暂时不用
-                    "\"jingdu\":         $jingdu," +             // 经度
-                    "\"weidu\":          $weidu," +              // 纬度
+                    "\"jingdu\":       \"$jingdu\"," +             // 经度
+                    "\"weidu\":        \"$weidu\"," +              // 纬度
                     "\"position\":     \"$position\"}"           // 定位
 
 
@@ -733,17 +758,22 @@ class DynamicSendActivity : MainBaseViewActivity(),
 
     }
 
-    override fun onDoUploadTrendSuccess(uploadTrendBean: UploadTrendBean) {
-        if (uploadTrendBean.code == 200) {
-            // 返回上一页
-            // 更新视图
+    override fun onDoUploadTrendSuccess(uploadTrendBean: UploadTrendBean?) {
 
-            ll_send_loading.visibility = View.GONE
+        ll_send_loading.visibility = View.GONE
 
-            val intent = intent
-            setResult(RESULT_OK, intent)
-            finish()
+        if (uploadTrendBean != null) {
+            if (uploadTrendBean.code == 200) {
+                // 返回上一页
+                // 更新视图
 
+                val intent = intent
+                setResult(RESULT_OK, intent)
+                finish()
+
+            } else {
+                ToastUtils.showShort(uploadTrendBean.msg)
+            }
         }
 
     }
@@ -1003,8 +1033,9 @@ class DynamicSendActivity : MainBaseViewActivity(),
             findViewById<TextView>(R.id.tv_dialog_send_identity_jump).setOnClickListener {
                 dismiss()
                 ToastUtils.showShort("前往实名认证界面")
+                val intent = Intent(this@DynamicSendActivity, VerifyActivity::class.java)
+                startActivity(intent)
             }
-
 
         }
 

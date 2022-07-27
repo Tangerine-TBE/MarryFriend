@@ -55,12 +55,18 @@ class MyDynamicActivity : MainBaseViewActivity(),
     override fun initView() {
         super.initView()
 
-        val avatar = SPStaticUtils.getString(Constant.ME_AVATAR, "")
-
-        if (avatar != "") {
-            Glide.with(this).load(avatar).into(iv_dynamic_mine_avatar)
+        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+            Glide.with(this)
+                .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                .error(R.mipmap.icon_mine_male_default)
+                .placeholder(R.mipmap.icon_mine_male_default)
+                .into(iv_dynamic_mine_avatar)
         } else {
-            ToastUtils.showShort("无头像，添加默认头像图")
+            Glide.with(this)
+                .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                .error(R.mipmap.icon_mine_female_default)
+                .placeholder(R.mipmap.icon_mine_female_default)
+                .into(iv_dynamic_mine_avatar)
         }
 
         tv_dynamic_mine_name.text = SPStaticUtils.getString(Constant.ME_NAME)
@@ -80,7 +86,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
         initEmojiCompat()
 
     }
-
 
     private fun initEmojiCompat() {
         val config: EmojiCompat.Config
@@ -117,6 +122,10 @@ class MyDynamicActivity : MainBaseViewActivity(),
     override fun initEvent() {
         super.initEvent()
 
+        iv_dynamic_mine_finish.setOnClickListener {
+            finish()
+        }
+
         ll_dynamic_mine_all.setOnClickListener {
             currentPaper = 1
             trendType = 0
@@ -150,6 +159,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
         }
 
         srl_dynamic_mine_refresh.setOnLoadMoreListener {
+
+            Log.i("guo", "currentPaper : $currentPaper")
+
             getMoreTrendsList(currentPaper)
             srl_dynamic_mine_refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
         }
@@ -164,7 +176,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 } else {
                     ToastUtils.showShort("此动态正在审核中")
                 }
-
             }
         })
 
@@ -189,9 +200,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -202,9 +217,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -215,9 +234,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -228,7 +251,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 // 图片展示问题，需要调整一下imageIndex
@@ -237,7 +262,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
                     imageIndex = 2
                 }
 
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -248,7 +275,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 // 图片展示问题，需要调整一下imageIndex
@@ -257,7 +286,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
                     imageIndex = 3
                 }
 
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -268,9 +299,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -281,9 +316,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -294,9 +333,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
@@ -307,18 +350,21 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 val images: MutableList<String> =
                     trendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
-                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity, images, imageIndex))
+                startActivity(ImagePreviewActivity.getIntent(this@MyDynamicActivity,
+                    images,
+                    imageIndex))
             }
         })
 
         adapter.setOnVideoClickListener(object : MyDynamicAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
-                val intent = Intent(this@MyDynamicActivity, VideoPreviewActivity::class.java)
-                intent.putExtra("videoUrl", trendList[position].video_url)
-                intent.putExtra("name", "")
-                startActivity(intent)
+                startActivity(VideoPreviewActivity.getIntent(this@MyDynamicActivity,
+                    trendList[position].video_url,
+                    ""))
             }
         })
 

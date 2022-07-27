@@ -67,6 +67,8 @@ class UserActivity : MainBaseViewActivity() {
         super.initEvent()
 
         iv_user_finish.setOnClickListener {
+            val intent = intent
+            setResult(RESULT_OK, intent)
             finish()
         }
 

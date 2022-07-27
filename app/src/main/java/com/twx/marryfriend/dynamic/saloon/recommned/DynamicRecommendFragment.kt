@@ -26,6 +26,7 @@ import com.twx.marryfriend.dynamic.saloon.adapter.SaloonAdapter
 import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.mine.user.UserActivity
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.fragment_dynamic_recommend.*
 import java.io.Serializable
@@ -251,7 +252,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -266,7 +269,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -281,7 +286,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -296,7 +303,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 // 图片展示问题，需要调整一下imageIndex
@@ -318,7 +327,10 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
+
                 }
 
                 // 图片展示问题，需要调整一下imageIndex
@@ -339,7 +351,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -354,7 +368,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -369,7 +385,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -384,7 +402,9 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")){
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
                 startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
@@ -608,7 +628,7 @@ class DynamicRecommendFragment : Fragment(),
     }
 
 
-    class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+    inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {
 
         override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
 
@@ -624,6 +644,7 @@ class DynamicRecommendFragment : Fragment(),
             findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
                 dismiss()
                 ToastUtils.showShort("跳转到资料填写界面")
+                startActivity(Intent(context, UserActivity::class.java))
             }
 
         }

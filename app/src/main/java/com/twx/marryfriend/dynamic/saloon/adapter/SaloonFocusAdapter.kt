@@ -194,6 +194,7 @@ class SaloonFocusAdapter(
         val text: TextView = view.findViewById(R.id.tv_detail_dynamic_other_text)
 
 
+        val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_other_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_other_location)
         val time: TextView = view.findViewById(R.id.tv_detail_dynamic_other_time)
 
@@ -359,7 +360,9 @@ class SaloonFocusAdapter(
                 mList[position].image_url.split(",") as MutableList<String>
 
             for (i in 0.until(mPicList.size)) {
-                mPicList[i] = mPicList[i].replace(" ", "")
+                if (mPicList[i].contains(" ")) {
+                    mPicList[i] = mPicList[i].replace(" ", "")
+                }
             }
 
             holder.llVideo.visibility = View.GONE
@@ -613,7 +616,7 @@ class SaloonFocusAdapter(
         if (mList[position].position != "") {
             holder.location.text = mList[position].position
         } else {
-            holder.location.visibility = View.GONE
+            holder.local.visibility = View.GONE
         }
 
         val timeSECSpan = TimeUtils.getTimeSpan(TimeUtils.getNowString(),

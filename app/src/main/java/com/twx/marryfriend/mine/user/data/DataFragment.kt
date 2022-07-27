@@ -60,15 +60,7 @@ import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_detail_info.*
-import kotlinx.android.synthetic.main.activity_life_photo.*
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.fragment_data.*
-import kotlinx.android.synthetic.main.fragment_mine.*
-import kotlinx.android.synthetic.main.fragment_target.*
-import kotlinx.android.synthetic.main.layout_guide_step_edu.*
-import kotlinx.android.synthetic.main.layout_guide_step_life.*
-import kotlinx.android.synthetic.main.layout_guide_step_photo.*
 import java.io.*
 import java.util.*
 
@@ -231,8 +223,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         initTimeData()
 
-        SPStaticUtils.put(Constant.ME_SEX, 1)
-
         initInfo()
 
         baseAdapter = DataBaseAdapter(DataProvider.dataBaseData, baseInfoList)
@@ -392,6 +382,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         lastMoreInfo = getMoreInfo()
 
         updateDateUI()
+
+        xx = false
 
         val config: BosClientConfiguration = BosClientConfiguration()
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
@@ -2021,7 +2013,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //            .asCustom(SexDialog(requireContext()))
 //            .show()
 
-        if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, true)) {
+        if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
             XPopup.Builder(context)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
@@ -2478,6 +2470,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val voiceName = SPStaticUtils.getString(Constant.ME_VOICE_NAME, "")
         val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
 
+        Log.i("guo", "voice_long : $voiceLong")
+
         val greetInfo =
             " {\"user_sex\":                    $sex, " +
                     "\"voice_url\":           \"$voiceUrl\"," +
@@ -2516,7 +2510,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
 
-        ll_user_data_loading.visibility = View.GONE
+        if (ll_user_data_loading!= null){
+            ll_user_data_loading.visibility = View.GONE
+        }
+
 
         if (faceDetectBean.conclusion == "合规") {
 
@@ -2525,7 +2522,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             Log.i("guo", photoBitmap.toString())
 
             iv_user_data_avatar.setImageBitmap(photoBitmap)
-
 
             FileUtils.delete(mPhotoPath)
 
@@ -3493,9 +3489,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             super.onCreate()
 
             val close = findViewById<ImageView>(R.id.iv_user_data_sex_verify_non_close)
-            val skip = findViewById<TextView>(R.id.tv_user_data_sex_skip)
+            val skip = findViewById<TextView>(R.id.tv_user_data_sex_verify_non_skip)
 
-            confirm = findViewById<TextView>(R.id.tv_user_data_sex_one)
+            confirm = findViewById<TextView>(R.id.tv_user_data_sex_verify_non_confirm)
 
             close.setOnClickListener {
                 isNeedJump = false

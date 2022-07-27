@@ -1,12 +1,16 @@
 package com.twx.marryfriend.dynamic.preview.video
 
+import android.content.Context
+import android.content.Intent
 import android.view.View
 import com.blankj.utilcode.util.ToastUtils
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import kotlinx.android.synthetic.main.activity_video_preview.*
+import java.io.Serializable
 
 class VideoPreviewActivity : MainBaseViewActivity() {
 
@@ -14,6 +18,17 @@ class VideoPreviewActivity : MainBaseViewActivity() {
     private var name = ""
 
     private lateinit var orientationUtils: OrientationUtils
+
+    companion object {
+        private const val URL = "videoUrl"
+        private const val NAME = "name"
+        fun getIntent(context: Context, url: String, name: String): Intent {
+            val intent = Intent(context, VideoPreviewActivity::class.java)
+            intent.putExtra(URL, url)
+            intent.putExtra(NAME, name)
+            return intent
+        }
+    }
 
     override fun getLayoutView(): Int = R.layout.activity_video_preview
 

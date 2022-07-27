@@ -55,7 +55,8 @@ class LocationActivity : MainBaseViewActivity(),
         doPlaceSearch = com.twx.marryfriend.net.impl.dynamic.doPlaceSearchPresentImpl.getsInstance()
         doPlaceSearch.registerCallback(this)
 
-        mBaiduSearchPresent = com.twx.marryfriend.net.impl.dynamic.BaiduSearchPresentImpl.getInstance()
+        mBaiduSearchPresent =
+            com.twx.marryfriend.net.impl.dynamic.BaiduSearchPresentImpl.getInstance()
         mBaiduSearchPresent.registerCallback(this)
 
         adapter = LocationAdapter(mList)
@@ -92,6 +93,10 @@ class LocationActivity : MainBaseViewActivity(),
 
     override fun initEvent() {
         super.initEvent()
+
+        iv_address_search_finish.setOnClickListener {
+            finish()
+        }
 
         et_search_container.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {

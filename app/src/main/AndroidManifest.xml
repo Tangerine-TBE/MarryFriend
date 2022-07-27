@@ -48,6 +48,9 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".coin.CoinActivity"
+            android:exported="false" />
+        <activity
             android:name=".vip.VipActivity"
             android:exported="false" />
         <activity
@@ -129,19 +132,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"
             android:exported="false" />
-
         <activity
             android:name=".dynamic.preview.video.VideoPreviewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:exported="false"
             android:screenOrientation="portrait" />
-
-
         <activity
             android:name=".dynamic.show.others.DynamicOtherShowActivity"
             android:exported="false" />
@@ -164,17 +162,13 @@
         <activity
             android:name=".dynamic.mine.MyDynamicActivity"
             android:exported="true" />
-
         <activity
             android:name=".friend.FriendInfoActivity"
-            android:exported="true" />
-
-        <!-- 联通电信授权页 -->
+            android:exported="true" /> <!-- 联通电信授权页 -->
         <activity android:name=".search.SearchParamActivity" />
         <activity android:name=".search.AccurateSearchActivity" />
         <activity android:name=".search.SearchResultActivity" />
-        <activity android:name=".ilove.ILikeActivity" />
-        <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
+        <activity android:name=".ilove.ILikeActivity" /> <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

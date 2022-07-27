@@ -21,11 +21,13 @@ import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.dynamic.saloon.friend.DynamicFriendFragment
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.dynamic.show.mine.DynamicMineLikeActivity
 import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
@@ -361,38 +363,52 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         iv_dynamic_other_show_like.setOnClickListener {
             ToastUtils.showShort("添加一下点赞")
 
-            // 加个延时
-            if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                lastClickTime = System.currentTimeMillis();
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
 
-                if (!isLike) {
-                    // 点赞
-                    isLike = true
+                // 加个延时
+                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                    lastClickTime = System.currentTimeMillis();
 
-                    if (info.like_count == null) {
-                        tv_dynamic_other_show_like.text = 1.toString()
+                    if (!isLike) {
+                        // 点赞
+                        isLike = true
+
+                        if (info.like_count == null) {
+                            tv_dynamic_other_show_like.text = 1.toString()
+                        } else {
+                            tv_dynamic_other_show_like.text = (info.like_count!! + 1).toString()
+                        }
+                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like)
+                        doLikeClick(trendId,
+                            userId,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+
                     } else {
-                        tv_dynamic_other_show_like.text = (info.like_count!! + 1).toString()
+                        // 取消赞
+                        isLike = false
+                        if (info.like_count == null) {
+                            tv_dynamic_other_show_like.text = 0.toString()
+                        } else {
+                            tv_dynamic_other_show_like.text = (info.like_count!!).toString()
+                        }
+                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_base_like)
+                        doLikeCancelClick(trendId, userId,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
-                    iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like)
-                    doLikeClick(trendId, userId, SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    adapter.notifyDataSetChanged()
 
                 } else {
-                    // 取消赞
-                    isLike = false
-                    if (info.like_count == null) {
-                        tv_dynamic_other_show_like.text = 0.toString()
-                    } else {
-                        tv_dynamic_other_show_like.text = (info.like_count!!).toString()
-                    }
-                    iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_base_like)
-                    doLikeCancelClick(trendId, userId,
-                        SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
                 }
-                adapter.notifyDataSetChanged()
 
             } else {
-                ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                XPopup.Builder(this)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(AvatarDialog(this))
+                    .show()
             }
 
         }
@@ -430,7 +446,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
         }
 
-
         eet_emoji_other_edit.viewTreeObserver.addOnGlobalLayoutListener {
             val r = Rect()
             eet_emoji_other_edit.getWindowVisibleDisplayFrame(r)
@@ -448,33 +463,47 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         }
 
         iv_dynamic_other_show_send.setOnClickListener {
+
+            // 判断是否有头像
+
             if (eet_emoji_other_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                    lastClickTime = System.currentTimeMillis();
-                    var content = eet_emoji_other_edit.text.toString().trim { it <= ' ' }
-                    eet_emoji_other_edit.setText("")
-                    KeyboardUtils.hideSoftInput(this)
-                    ll_emoji_other_container.visibility = View.GONE
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
 
-                    this.content = content
+                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                        lastClickTime = System.currentTimeMillis();
+                        var content = eet_emoji_other_edit.text.toString().trim { it <= ' ' }
+                        eet_emoji_other_edit.setText("")
+                        KeyboardUtils.hideSoftInput(this)
+                        ll_emoji_other_container.visibility = View.GONE
 
-                    switchSendMode(mode,
-                        trendsId,
-                        hostUid,
-                        threeId,
-                        oneLevelId,
-                        firstUid,
-                        lastUid,
-                        content)
+                        this.content = content
 
+                        switchSendMode(mode,
+                            trendsId,
+                            hostUid,
+                            threeId,
+                            oneLevelId,
+                            firstUid,
+                            lastUid,
+                            content)
+
+                    } else {
+                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    }
                 } else {
-                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    XPopup.Builder(this)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(AvatarDialog(this))
+                        .show()
                 }
-
             } else {
                 ToastUtils.showShort("请输入您的评论")
             }
+
         }
 
         emojiAdapter.setOnItemClickListener(object : EmojiDetailAdapter.OnItemClickListener {
@@ -498,30 +527,45 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         iv_emoji_other_send.setOnClickListener {
 
-            if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                lastClickTime = System.currentTimeMillis();
+            if (eet_emoji_other_edit.text.toString().trim { it <= ' ' } != "") {
 
-                var content = eet_emoji_other_edit.text.toString().trim { it <= ' ' }
-                eet_emoji_other_edit.setText("")
-                KeyboardUtils.hideSoftInput(this)
-                ll_emoji_other_container.visibility = View.GONE
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
 
-                this.content = content
+                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                        lastClickTime = System.currentTimeMillis();
 
-                switchSendMode(mode,
-                    trendsId,
-                    hostUid,
-                    threeId,
-                    oneLevelId,
-                    firstUid,
-                    lastUid,
-                    content)
+                        var content = eet_emoji_other_edit.text.toString().trim { it <= ' ' }
+                        eet_emoji_other_edit.setText("")
+                        KeyboardUtils.hideSoftInput(this)
+                        ll_emoji_other_container.visibility = View.GONE
 
+                        this.content = content
+
+                        switchSendMode(mode,
+                            trendsId,
+                            hostUid,
+                            threeId,
+                            oneLevelId,
+                            firstUid,
+                            lastUid,
+                            content)
+
+                    } else {
+                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    }
+                } else {
+                    XPopup.Builder(this)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(AvatarDialog(this))
+                        .show()
+                }
             } else {
-                ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                ToastUtils.showShort("请输入您的评论")
             }
         }
-
 
     }
 
@@ -730,7 +774,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             mCommentOneList[mItem].twoList.add(commentTwoBean.data.list[i])
         }
 
-        mCommentOneList[mItem].total = mCommentOneList[mItem].total - commentTwoBean.data.list.size
+        mCommentOneList[mItem].total =
+            mCommentOneList[mItem].total - commentTwoBean.data.list.size
 
         if (mPageList[mItem] == 1) {
             mCommentOneList[mItem].twoList.removeAt(0)
@@ -817,7 +862,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                             mCommentOneList[mItem].list.content_two = content
                             mCommentOneList[mItem].list.count_two = 1
-                            mCommentOneList[mItem].list.id_two = commentTwoCreateBean.data.one_id
+                            mCommentOneList[mItem].list.id_two =
+                                commentTwoCreateBean.data.one_id
                             mCommentOneList[mItem].list.image_two =
                                 SPStaticUtils.getString(Constant.ME_AVATAR, "")
                             mCommentOneList[mItem].list.nick_two =
@@ -1045,7 +1091,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                             mPicList = info.image_url.split(",") as MutableList<String>
                             for (i in 0.until(mPicList.size)) {
-                                mPicList[i] = mPicList[i].replace(" ", "")
+                                if (mPicList[i].contains(" ")) {
+                                    mPicList[i] = mPicList[i].replace(" ", "")
+                                }
                             }
 
                             when (mPicList.size) {
@@ -1457,7 +1505,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onItemAvatarClick(v: View?, positionOne: Int) {
         // 父评论点击头像
-        ToastUtils.showShort("点击父评论头像 ： $positionOne ")
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].list.one_level_uid))
     }
 
     override fun onItemContentClick(v: View?, positionOne: Int) {
@@ -1488,7 +1537,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onItemChildAvatarClick(v: View?, positionOne: Int) {
-        ToastUtils.showShort(" 子评论头像点击 ${positionOne}/000")
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].list.two_last_uid))
     }
 
     override fun onItemChildContentClick(v: View?, positionOne: Int) {
@@ -1525,6 +1575,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun onChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].twoList[two].two_last_uid))
     }
 
     override fun onChildReplyClick(positionOne: Int, two: Int) {
@@ -1559,6 +1611,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
         ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].twoList[two].two_first_uid))
     }
 
     override fun onItemLongClick(v: View?, positionOne: Int) {
@@ -1618,7 +1672,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             val hostId = mCommentOneList[positionOne].list.id
 
             ToastUtils.showShort("本人发的")
-
 
             twoPosition = 0
 
@@ -1767,7 +1820,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         map[Contents.ID] = mid.toString()
                         map[Contents.TRENDS_ID] = trendsId.toString()
                         map[Contents.HOST_UID] = hostId.toString()
-                        map[Contents.GUEST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+                        map[Contents.GUEST_UID] =
+                            SPStaticUtils.getString(Constant.USER_ID, "13")
                         doCommentOneDeletePresent.doCommentOneDelete(map)
                     }
                     1 -> {
@@ -1899,6 +1953,31 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
                 dismiss()
                 ToastUtils.showShort("举报")
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+    }
+
+    inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
+                dismiss()
+                ToastUtils.showShort("跳转到资料填写界面")
+                startActivity(Intent(context, UserActivity::class.java))
             }
 
         }

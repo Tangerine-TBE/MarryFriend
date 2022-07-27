@@ -32,6 +32,7 @@ import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.mine.user.UserActivity
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
 import java.io.Serializable
 import java.util.*
@@ -98,13 +99,16 @@ class DynamicFriendFragment : Fragment(),
 
     private fun initView() {
 
-        getTrendFocusPresent = com.twx.marryfriend.net.impl.dynamic.getTrendFocusPresentImpl.getsInstance()
+        getTrendFocusPresent =
+            com.twx.marryfriend.net.impl.dynamic.getTrendFocusPresentImpl.getsInstance()
         getTrendFocusPresent.registerCallback(this)
 
-        doLikeClickPresent = com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
+        doLikeClickPresent =
+            com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
         doLikeClickPresent.registerCallback(this)
 
-        doLikeCancelPresent = com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
+        doLikeCancelPresent =
+            com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
 
 
@@ -154,10 +158,10 @@ class DynamicFriendFragment : Fragment(),
 
         adapter.setOnVideoClickListener(object : SaloonFocusAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
-                val intent = Intent(mContext, com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity::class.java)
-                intent.putExtra("videoUrl", mTrendList[position].video_url)
-                intent.putExtra("name", mTrendList[position].nick)
-                startActivity(intent)
+
+                startActivity(VideoPreviewActivity.getIntent(mContext,
+                    mTrendList[position].video_url,
+                    mTrendList[position].nick))
             }
         })
 
@@ -175,7 +179,8 @@ class DynamicFriendFragment : Fragment(),
             override fun onAvatarClick(v: View?, position: Int) {
                 ToastUtils.showShort("头像,进入资料详情界面")
 
-                startActivity(FriendInfoActivity.getIntent(requireContext(),mTrendList[position].user_id.toInt()))
+                startActivity(FriendInfoActivity.getIntent(requireContext(),
+                    mTrendList[position].user_id.toInt()))
 
             }
         })
@@ -207,10 +212,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -222,10 +233,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -237,10 +254,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -252,10 +275,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -267,10 +296,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -282,10 +317,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -297,10 +338,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -312,10 +359,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
 
             }
         })
@@ -328,10 +381,16 @@ class DynamicFriendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    images[i] = images[i].replace(" ", "")
+                    if (images[i].contains(" ")) {
+                        images[i] = images[i].replace(" ", "")
+                    }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
 
             }
         })
@@ -482,7 +541,7 @@ class DynamicFriendFragment : Fragment(),
         srl_dynamic_focus_refresh.finishLoadMore(false)
     }
 
-    class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+    inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {
 
         override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
 
@@ -498,6 +557,7 @@ class DynamicFriendFragment : Fragment(),
             findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
                 dismiss()
                 ToastUtils.showShort("跳转到资料填写界面")
+                startActivity(Intent(context, UserActivity::class.java))
             }
 
         }

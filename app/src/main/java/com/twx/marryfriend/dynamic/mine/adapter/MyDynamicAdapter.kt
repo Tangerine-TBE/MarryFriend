@@ -1,6 +1,7 @@
 package com.twx.marryfriend.dynamic.mine.adapter
 
 import android.content.Context
+import android.text.TextWatcher
 import android.text.format.DateFormat.getDateFormat
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.MyTrendsList
+import com.twx.marryfriend.utils.TimeUtil
 import java.util.*
 
 
@@ -167,6 +169,7 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
         val text: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_text)
 
+        val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_mine_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_location)
         val time: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_time)
 
@@ -282,7 +285,9 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
                 mList[position].image_url.split(",") as MutableList<String>
 
             for (i in 0.until(mPicList.size)) {
-                mPicList[i] = mPicList[i].replace(" ", "")
+                if (mPicList[i].contains(" ")) {
+                    mPicList[i] = mPicList[i].replace(" ", "")
+                }
             }
 
             holder.llVideo.visibility = View.GONE
@@ -536,64 +541,14 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
         if (mList[position].position != "") {
             holder.location.text = mList[position].position
         } else {
-            holder.location.visibility = View.GONE
+            holder.local.visibility = View.GONE
         }
 
         TimeUtils.getValueByCalendarField(mList[position].create_time, Calendar.HOUR)
 
-        if (TimeUtils.isToday(mList[position].create_time)) {
-            holder.time.text = "${
-                TimeUtils.getValueByCalendarField(mList[position].create_time, Calendar.HOUR_OF_DAY)
-            }: " +
-                    "${
-                        TimeUtils.getValueByCalendarField(mList[position].create_time,
-                            Calendar.MINUTE)
-                    }"
-        } else {
+        holder.time.text = TimeUtil.getCommonTime(mList[position].create_time)
 
-            val day =
-                TimeUtils.getValueByCalendarField(mList[position].create_time, Calendar.DAY_OF_YEAR)
-            val nowDay =
-                TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(), Calendar.DAY_OF_YEAR)
 
-            if (day - nowDay == -1) {
-                // 是昨天
-                holder.time.text = "昨天" +
-                        "${
-                            TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                Calendar.HOUR_OF_DAY)
-                        }: " +
-                        "${
-                            TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                Calendar.MINUTE)
-                        }"
-
-            } else {
-                holder.time.text =
-                    "${
-                        TimeUtils.getValueByCalendarField(mList[position].create_time,
-                            Calendar.YEAR)
-                    }年" +
-                            "${
-                                TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                    Calendar.MONTH)
-                            }月" +
-                            "${
-                                TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                    Calendar.DAY_OF_MONTH)
-                            }日" +
-                            "${
-                                TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                    Calendar.HOUR_OF_DAY)
-                            }: " +
-                            "${
-                                TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                    Calendar.MINUTE)
-                            }"
-
-            }
-
-        }
 
         holder.tvLike.text = mList[position].like_count.toString()
         holder.tvComment.text = mList[position].discuss_count.toString()

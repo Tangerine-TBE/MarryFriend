@@ -45,6 +45,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.coin.CoinActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
@@ -64,6 +65,7 @@ import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
 import com.twx.marryfriend.net.impl.getPhotoListPresentImpl
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
+import com.twx.marryfriend.vip.VipActivity
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.fragment_mine.*
@@ -186,19 +188,6 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
         audioRecorder = AudioRecorder.getInstance()
         mediaPlayer = MediaPlayer()
 
-//        val banBean: BanBean = GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-//
-//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-//
-//        val y = String(x)
-//        var yy = "{\"data\":$y}"
-//        var aa =
-//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-//
-//        for (i in 0.until(aa.data.size)) {
-//            banTextList.add(aa.data[i])
-//        }
-
     }
 
     private fun initPresent() {
@@ -308,27 +297,10 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             }
         }
 
-//        iv_mine_nick.setOnClickListener {
-//            XPopup.Builder(context)
-//                .dismissOnTouchOutside(false)
-//                .dismissOnBackPressed(false)
-//                .isDestroyOnDismiss(true)
-//                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-//                .asCustom(NameDialog(requireContext()))
-//                .show()
-//    }
 
         ll_mine_date.setOnClickListener {
-            startActivity(Intent(context, UserActivity::class.java))
+            startActivityForResult(Intent(context, UserActivity::class.java), 0)
         }
-
-//        iv_mine_avatar.setOnClickListener {
-//            startActivity(Intent(context, UserActivity::class.java))
-//        }
-//
-//        rl_mine_user.setOnClickListener {
-//            startActivity(Intent(context, UserActivity::class.java))
-//        }
 
         ll_mine_set_dynamic.setOnClickListener {
             val intent = Intent(context, MyDynamicActivity::class.java)
@@ -336,13 +308,22 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
         }
 
         ll_mine_set_verify.setOnClickListener {
-
             val intent = Intent(context, VerifyActivity::class.java)
             startActivityForResult(intent, 3)
-
         }
 
+        ll_mine_set_vip.setOnClickListener {
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0) })
+        }
 
+        ll_mine_set_svip.setOnClickListener {
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1) })
+        }
+
+        ll_mine_set_coin.setOnClickListener {
+            val intent = Intent(context, CoinActivity::class.java)
+            startActivity(intent)
+        }
 
         ll_mine_set_greet.setOnClickListener {
 
@@ -547,6 +528,23 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
         if (resultCode == FragmentActivity.RESULT_OK) {
             when (requestCode) {
+                // 更新审核头像
+                0 -> {
+
+                    if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                        Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                            .into(iv_mine_avatar)
+                        tv_mine_avatar_check.visibility = View.VISIBLE
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                            Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
+                                .into(iv_mine_avatar)
+                        } else {
+                            Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
+                                .into(iv_mine_avatar)
+                        }
+                    }
+                }
                 // 上传生活照
                 1 -> {
                     getDialogOrder()

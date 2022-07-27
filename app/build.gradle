@@ -241,5 +241,7 @@ dependencies {
     implementation 'io.github.scwang90:refresh-header-classics:2.0.5'
     implementation 'io.github.scwang90:refresh-footer-classics:2.0.5'
 
+    // 轮播控件
+    implementation 'io.github.zguop:pager2Banner:1.0.5'
 
 }

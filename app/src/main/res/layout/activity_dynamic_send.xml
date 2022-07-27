@@ -65,7 +65,7 @@
                 android:background="@null"
                 android:gravity="top"
                 android:hint="分享生活,展示真实的你,晒给懂你的人"
-                android:maxLength="1000"
+                android:maxLength="3000"
                 android:textColor="#404040"
                 android:textColorHint="#9A9A9A"
                 android:textSize="15sp" />
@@ -77,10 +77,11 @@
                 android:layout_marginTop="8dp">
 
                 <TextView
+                    android:id="@+id/tv_send_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="0/1000"
+                    android:text="0/3000"
                     android:textColor="#9A9A9A"
                     android:textSize="13sp" />
 
@@ -294,7 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="正在加载中..."
+                android:text="正在发布动态..."
                 android:textColor="#0F0F0F"
                 android:textSize="18sp" />
 
