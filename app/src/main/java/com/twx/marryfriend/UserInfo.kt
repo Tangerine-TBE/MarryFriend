@@ -5,9 +5,9 @@ import com.twx.marryfriend.constant.Constant
 
 object UserInfo {
     fun getUserId():String{
-//        if(BuildConfig.DEBUG){
-//            return "11"//3,4,6,11,16//
-//        }
+        if(BuildConfig.DEBUG){
+            return "3"//3,4,6,11,16//
+        }
         return SPStaticUtils.getString(
             Constant.USER_ID,
             "default")
@@ -31,6 +31,10 @@ object UserInfo {
      */
     fun getUserSex():Int{
         return SPStaticUtils.getInt(Constant.ME_SEX, 2)
+    }
+
+    fun isSexMail(c:Int?):Boolean{
+        return c==1
     }
 
     fun reversalSex(sex:Int):Int{

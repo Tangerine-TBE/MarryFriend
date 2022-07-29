@@ -24,9 +24,11 @@ import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.DefEmptyDataCallBack
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
+import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
@@ -34,6 +36,7 @@ import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_friend_info.*
+import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.coroutines.launch
 
 class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
@@ -81,6 +84,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         super.onCreate(savedInstanceState)
         loadData()
         isLikeMe.visibility=View.GONE
+        Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
     }
 
     private fun loadData(){
@@ -355,7 +359,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             LocationUtils.observeLocation(this@FriendInfoActivity){
                 val taLongitude=userItem?.getLongitude()
                 val taLatitude=userItem?.getLatitude()
-                if (taLatitude!=null&&taLongitude!=null){
+                if (taLatitude!=null&&taLongitude!=null&&it!=null){
                     distanceView.visibility=View.VISIBLE
                     distance.text=try {
                         val distance= LocationUtils.getDistance(taLatitude,taLongitude,it.latitude,it.longitude)+0.5f
@@ -408,17 +412,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     toast("已经喜欢过了")
                     return@setOnClickListener
                 }
-                loadingDialog.show()
-                lifecycleScope.launch (){
-                    try {
-                        toast(recommendViewModel.otherLike(userId?:return@launch toast("id 为空")))
-                        care.isSelected=true
-                        care2.isSelected=true
-                    }catch (e:Exception){
-                        toast(e.message)
-                    }
-                    loadingDialog.dismiss()
-                }
+                like()
             }
             dislike.setOnClickListener {
                 disLike(userItem?:return@setOnClickListener)
@@ -432,6 +426,14 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             dislike2.setOnClickListener {
                 dislike.performClick()
+            }
+        }
+        sendMsg.setOnClickListener {
+            toast("给她发消息")
+        }
+        closeMutual.setOnClickListener {
+            if (friendViewSwitcher.currentView==mutualLike){
+                friendViewSwitcher.showNext()
             }
         }
     }
@@ -456,8 +458,25 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
      * 右滑、喜欢
      */
     private fun like() {
-
+        loadingDialog.show()
+        lifecycleScope.launch (){
+            try {
+                toast(recommendViewModel.otherLike(userId?:return@launch toast("id 为空")){
+                    if (friendViewSwitcher.currentView!=mutualLike){
+                        friendViewSwitcher.showNext()
+                        Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
+                    }
+                })
+                care.isSelected=true
+                care2.isSelected=true
+            }catch (e:Exception){
+                toast(e.message)
+            }
+            loadingDialog.dismiss()
+        }
     }
+
+
 
     /**
      * 超级喜欢、送花

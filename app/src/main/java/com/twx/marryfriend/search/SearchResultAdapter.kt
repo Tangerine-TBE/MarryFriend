@@ -49,6 +49,11 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
 
         val searchItemChipGroup=holder.getView<ChipGroup>(R.id.searchItemChipGroup)
         item.getLabels().also {
+            if(it.isEmpty()){
+                searchItemChipGroup.visibility=View.GONE
+            }else{
+                searchItemChipGroup.visibility=View.VISIBLE
+            }
             searchItemChipGroup.forEachIndexed { index, view ->
                 if (index<it.size){
                     view.visibility=View.VISIBLE

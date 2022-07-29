@@ -11,6 +11,7 @@ import com.hyphenate.EMError
 import com.hyphenate.chat.BuildConfig
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
+import com.message.conversations.ImMessageManager
 import com.xyzz.myutils.show.iLog
 
 //https://docs-im.easemob.com/im/android/basics/message
@@ -35,55 +36,9 @@ object ImUserManager {
         EMClient.getInstance().setDebugMode(BuildConfig.DEBUG)
     }
 
-    fun createAccount(username:String,pwd:String){//注册用户名会自动转为小写字母，所以建议用户名均以小写注册。
-        EMClient.getInstance().createAccount(username, pwd)//同步方法
-    }
-
-    fun login(userName:String,password:String){
-        EMClient.getInstance().login(userName, password, object : EMCallBack {
-            //回调
-            override fun onSuccess() {
-                EMClient.getInstance().groupManager().loadAllGroups()
-                EMClient.getInstance().chatManager().loadAllConversations()
-                ImMessageManager.startMessageListener()
-                iLog( "登录聊天服务器成功！")
-            }
-
-            override fun onProgress(progress: Int, status: String) {}
-
-            override fun onError(code: Int, message: String) {
-                //SERVER_SERVING_DISABLED(305)
-                when(code){
-                    200->{
-                        iLog("用户已经登录,code:${code},msg:${message}")
-                    }
-                    305->{
-                        iLog("用户被封禁,code:${code},msg:${message}")
-                    }
-                    else->{
-                        iLog("登录失败,code:${code},msg:${message}")
-                    }
-                }
-            }
-        })
-    }
-
-    fun logout(){
-        EMClient.getInstance().logout(true, object : EMCallBack {
-            override fun onSuccess() {
-                
-            }
-
-            override fun onProgress(progress: Int, status: String) {
-                
-            }
-
-            override fun onError(code: Int, message: String) {
-                
-            }
-        })
-    }
-
+    /**
+     * 监听用户连接状态
+     */
     private val connectionListener by lazy {
         object : EMConnectionListener{
             override fun onConnected() {
@@ -114,8 +69,86 @@ object ImUserManager {
 
         }
     }
+
+    fun createOrLogin(username: String,pwd: String="123456"){
+        iLog("当前登录的用户${EMClient.getInstance().currentUser}")
+        if (EMClient.getInstance().currentUser==username){
+            iLog("当前用户已登录")
+            onLoginSuccess()
+            return
+        }else{
+            logout()
+        }
+        iLog("用户:${username},正在登录")
+        try {
+            createAccount(username,pwd)
+        }catch (e:Exception){
+            iLog(e.message)
+        }
+        login(username,pwd)
+    }
+
+    fun createAccount(username:String,pwd:String){//注册用户名会自动转为小写字母，所以建议用户名均以小写注册。
+        EMClient.getInstance().createAccount(username, pwd)//同步方法
+    }
+
+    fun login(userName:String,password:String){
+        EMClient.getInstance().login(userName, password, object : EMCallBack {
+            //回调
+            override fun onSuccess() {
+                onLoginSuccess()
+                iLog( "登录聊天服务器成功！")
+            }
+
+            override fun onProgress(progress: Int, status: String) {}
+
+            override fun onError(code: Int, message: String) {
+                //SERVER_SERVING_DISABLED(305)
+                when(code){
+                    200->{
+                        onLoginSuccess()
+                        iLog("用户已经登录,code:${code},msg:${message}")
+                    }
+                    305->{
+                        iLog("用户被封禁,code:${code},msg:${message}")
+                    }
+                    else->{
+                        iLog("登录失败,code:${code},msg:${message}")
+                    }
+                }
+            }
+        })
+    }
+
+    fun logout(){
+        iLog("退出当前账户")
+        EMClient.getInstance().logout(true, object : EMCallBack {
+            override fun onSuccess() {
+                iLog("退出当前账户成功")
+            }
+
+            override fun onProgress(progress: Int, status: String) {
+                iLog("退出当前账户进度,${progress}")
+            }
+
+            override fun onError(code: Int, message: String) {
+                iLog("退出当前账户失败")
+            }
+        })
+    }
+
+    /**
+     * 开始监听用户连接状态
+     */
     fun connectionListener(){
+        EMClient.getInstance().removeConnectionListener(connectionListener)
         EMClient.getInstance().addConnectionListener(connectionListener)
+    }
+
+    private fun onLoginSuccess(){
+        EMClient.getInstance().groupManager().loadAllGroups()
+        EMClient.getInstance().chatManager().loadAllConversations()
+        ImMessageManager.startMessageListener()
     }
 
     private fun Context.getAppName(pID: Int): String? {

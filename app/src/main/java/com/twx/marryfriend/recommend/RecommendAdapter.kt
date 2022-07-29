@@ -97,7 +97,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
             val taLongitude=item.getLongitude()
             val taLatitude=item.getLatitude()
             val distanceView=holder.getView<View>(R.id.distanceView)
-            if (taLatitude!=null&&taLatitude!=0.0&&taLongitude!=null&&taLongitude!=0.0){
+            if (taLongitude!=null&&taLatitude!=0.0&&myLongitude!=null&&myLatitude!=0.0){
                 distanceView.visibility=View.VISIBLE
                 val distance=holder.getView<TextView>(R.id.distance)
                 if(ContextCompat.checkSelfPermission(holder.itemView.context,Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){

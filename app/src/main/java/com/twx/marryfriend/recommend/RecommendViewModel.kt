@@ -6,6 +6,7 @@ import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloItemBean
+import com.twx.marryfriend.bean.recommend.LastDynamicBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.eLog
@@ -76,6 +77,24 @@ class RecommendViewModel():ViewModel() {
                     }
                 }
                 coroutine.resume(recommendData)
+            }catch (e:Exception){
+                eLog(e.stackTraceToString())
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
+
+    suspend fun loadLaseDynamic()=suspendCoroutine<LastDynamicBean>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/newestTrends"
+        val map= mapOf(
+            "user_id" to UserInfo.getUserId(),
+            "user_level" to UserInfo.getUserVipLevel().toString())
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                coroutine.resume(Gson().fromJson(response,LastDynamicBean::class.java))
             }catch (e:Exception){
                 eLog(e.stackTraceToString())
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

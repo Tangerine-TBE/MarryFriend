@@ -30,6 +30,7 @@ import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
+import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
@@ -98,6 +99,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
         //监听位置变化
         LocationUtils.observeLocation(this){
+            it?:return@observeLocation
             recommendAdapter.myLatitude=it.latitude
             recommendAdapter.myLongitude=it.longitude
             recommendAdapter.notifyDataSetChanged()
@@ -175,15 +177,29 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 loadService?.showSuccess()
                 if(data.isEmpty()){
                     showView(ViewType.notContent)
+                }else{
+                    showView(ViewType.content)
                 }
                 swipeRefreshLayout.isRefreshing=false
             }catch (e:Exception){
+                eLog(e.stackTraceToString())
                 swipeRefreshLayout.isRefreshing=false
                 showView(ViewType.notContent)
                 toast(e.message)
                 if (BuildConfig.DEBUG) {
                     loadService?.showSuccess()
                 }
+            }
+            try {
+                val lastDynamic=recommendViewModel.loadLaseDynamic()
+                Glide.with(lastDynamicImage).load(lastDynamic.data?.image_url).placeholder(R.mipmap.ic_launcher).into(lastDynamicImage)
+                lastDynamicTitle.text=lastDynamic.data?.label
+                lastDynamicDes.text=lastDynamic.data?.text_content
+                lastDynamicView.setOnClickListener {
+                    IntentManager.getDynamicIntent(requireContext())
+                }
+            }catch (e:Exception){
+                eLog(e.stackTraceToString())
             }
         }
     }
@@ -232,7 +248,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 .animate()
                 ?.alpha(0f)
                 ?.rotation(10f)
-                ?.translationX(view.width /-2f)
+                ?.translationX(view.width /2f)
                 ?.setDuration(500)
                 ?.setListener(object : Animator.AnimatorListener{
                     override fun onAnimationStart(animation: Animator?) {
@@ -269,7 +285,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 .animate()
                 ?.alpha(0f)
                 ?.rotation(-10f)
-                ?.translationX(view.width /2f)
+                ?.translationX(view.width /-2f)
                 ?.setDuration(500)
                 ?.setListener(object : Animator.AnimatorListener{
                     override fun onAnimationStart(animation: Animator?) {

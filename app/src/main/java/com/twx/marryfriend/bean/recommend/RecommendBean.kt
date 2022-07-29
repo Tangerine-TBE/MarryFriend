@@ -1,7 +1,9 @@
 package com.twx.marryfriend.bean.recommend
 
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.enumeration.ConstellationEnum
 import java.lang.IllegalStateException
 import java.text.NumberFormat
 
@@ -278,7 +280,7 @@ data class RecommendBean(
                     "五千一万"
                 }
                 3->{
-                    "一万两万"
+                    "一万~两万"
                 }
                 4->{
                     "两万~四万"
@@ -407,6 +409,118 @@ data class RecommendBean(
         fun getIndustry_str(industry_str:String?): Label?{
             return industry_str?.toLabel(R.mipmap.ic_label_work)
         }
+        fun getIs_drinking(is_drinking:Int?): Label?{
+            return when(is_drinking){
+                0->{
+                    null//"不限"
+                }
+                1->{
+                    "经常喝酒"
+                }
+                2->{
+                    "偶尔喝酒"
+                }
+                3->{
+                    "完全不喝酒"
+                }
+                4->{
+                    "社交场合会喝"
+                }
+                else->{
+                    null
+                }
+            }?.toLabel(R.mipmap.ic_label_drink)
+        }
+
+        fun getNationality(nationality:Int?): Label?{
+            return listOf<Pair<Int,String?>>(
+                0 to null,
+                1 to "汉族",
+                2 to "壮族",
+                3 to "回族",
+                4 to "满族",
+                5 to "维吾尔族",
+                6 to "苗族",
+                7 to "彝族",
+                8 to "土家族",
+                9 to "藏族",
+                10 to "蒙古族",
+                11 to "侗族",
+                12 to "布依族",
+                13 to "瑶族",
+                14 to "白族",
+                15 to "朝鲜族",
+                16 to "哈尼族",
+                17 to "黎族",
+                18 to "哈萨克族",
+                19 to "傣族",
+                20 to "畲族",
+                21 to "傈僳族",
+                22 to "东乡族",
+                23 to "仡佬族",
+                24 to "拉祜族",
+                25 to "佤族",
+                26 to "水族",
+                27 to "纳西族",
+                28 to "羌族",
+                29 to "土族",
+                30 to "仫佬族",
+                31 to "锡伯族",
+                32 to "柯尔克孜族",
+                33 to "景颇族",
+                34 to "达斡尔族",
+                35 to "撒拉族",
+                36 to "布朗族",
+                37 to "毛南族",
+                38 to "塔吉克族",
+                39 to "普米族",
+                40 to "阿昌族",
+                41 to "怒族",
+                42 to "鄂温克族",
+                43 to "京族",
+                44 to "基诺族",
+                45 to "德昂族",
+                46 to "保安族",
+                47 to "俄罗斯族",
+                48 to "裕固族",
+                49 to "乌孜别克族",
+                50 to "门巴族",
+                51 to "鄂伦春族",
+                52 to "独龙族",
+                53 to "赫哲族",
+                54 to "高山族",
+                55 to "珞巴族",
+                56 to "塔塔尔族"
+                ).find {
+                    nationality==it.first
+            }?.second?.toLabel(R.mipmap.ic_label_nation)
+        }
+
+        fun getLove_target(target_show:Int?,love_target:Int?): Label?{
+            if (target_show==2){
+                return null
+            }
+            return when(love_target){
+                0->{
+                    null//"不限"
+                }
+                1->{
+                    "短期内想结婚"
+                }
+                2->{
+                    "先认真恋爱,合适就考虑结婚"
+                }
+                3->{
+                    "先认真恋爱,后期再说"
+                }
+                4->{
+                    "没考虑清楚,视情况而定"
+                }
+                else->{
+                    null
+                }
+            }?.toLabel(R.mipmap.ic_label_love)
+        }
     }
 
     /**
@@ -492,9 +606,9 @@ data class RecommendBean(
         getDrink_wine(demand?.drink_wine)?.also {
             list.add(it)
         }
-//        getIs_headface(demand?.is_headface)?.also {
-//            list.add(it)
-//        }
+        getIs_headface(demand?.is_headface)?.also {
+            list.add(it)
+        }
         getIndustry_str(demand?.industry_str)?.also {
             list.add(it)
         }
@@ -535,6 +649,52 @@ data class RecommendBean(
             list.add(it)
         }
         getMarry_hadStr(base?.marry_had)?.also {
+            list.add(it)
+        }
+        more?.weight?.let {
+            if (it==0){
+                null
+            }else{
+                it.toString()+"kg"
+            }
+        }?.toLabel(R.mipmap.ic_label_weight)?.also {
+            list.add(it)
+        }
+        if (UserInfo.isSexMail(base?.user_sex)){
+            getFigure_nan(more?.figure_nan?.toIntOrNull())
+        }else{
+            getFigure_nan(more?.figure_nv)
+        }?.also {
+            list.add(it)
+        }
+        ConstellationEnum.findConstellation(more?.constellation?.toIntOrNull())?.title?.toLabel(R.mipmap.ic_label_constellation)?.also {
+            list.add(it)
+        }
+        getLove_target(more?.target_show,more?.love_target)?.also {
+            list.add(it)
+        }
+        getNationality(more?.nationality?.toIntOrNull())?.also {
+            list.add(it)
+        }
+        getBuy_car(more?.buy_car)?.also {
+            list.add(it)
+        }
+        getBuy_house(more?.buy_house)?.also {
+            list.add(it)
+        }
+        getIs_smoking(more?.is_smoking)?.also {
+            list.add(it)
+        }
+        getIs_drinking(more?.is_drinking)?.also {
+            list.add(it)
+        }
+        getChild_hadStr(more?.child_had)?.also {
+            list.add(it)
+        }
+        getWant_childStr(more?.want_child)?.also {
+            list.add(it)
+        }
+        getMarry_time(more?.marry_time)?.also {
             list.add(it)
         }
         return list

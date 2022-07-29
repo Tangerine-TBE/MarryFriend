@@ -27,10 +27,10 @@ object LocationUtils {
     }
     data class MyLocation constructor(val longitude:Double,val latitude:Double,val address:String)
     private val locationLiveData by lazy {
-        MutableLiveData<MyLocation>()
+        MutableLiveData<MyLocation?>()
     }
 
-    fun observeLocation(owner: LifecycleOwner,observer:(MyLocation)->Unit){
+    fun observeLocation(owner: LifecycleOwner,observer:(MyLocation?)->Unit){
         locationLiveData.observe(owner,observer)
     }
 
@@ -69,6 +69,10 @@ object LocationUtils {
         mLocationClient.registerLocationListener(object :
             BDAbstractLocationListener() {
             override fun onReceiveLocation(location: BDLocation) {
+                if (location.addrStr==null){
+                    locationLiveData.value=null
+                    return
+                }
                 locationLiveData.value=MyLocation(location.longitude,location.latitude,location.addrStr?:"")
             }
         })
