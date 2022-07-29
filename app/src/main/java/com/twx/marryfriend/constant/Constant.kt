@@ -268,4 +268,23 @@ object Constant {
     const val HIDE_REPORT_TIP = "hide_report_tip" // 是否展示举报方式的RelativeLayout
 
 
+    // --------------------------------------  设置模块  ------------------------------------
+
+    const val HIDE_STATE = "hide_state" // 是否隐藏在线状态
+
+    const val HIDE_VIP = "hide_vip"  // 是否隐藏会员标识
+
+    const val DATA_REVIEW_TIP = "data_review_tip"          // 资料审核通知(头像,声音,实名认证,动态相册,生活照)
+    const val TA_LIKE_NOW_TIP = "ta_like_now_tip"          // TA刚刚喜欢了你
+    const val TA_COMMENT_TIP = "ta_comment_tip"            // TA评论了你的动态
+    const val TA_DIANZAN_TIP = "ta_dianzan_tip"            // TA点赞了你的动态
+    const val TA_LOOK_NOW_TIP = "ta_look_now_tip"          // TA刚看了你的资料
+    const val LIKE_TA_ONLINE_TIP = "like_ta_online_tip"    // 你喜欢的TA上线了
+    const val LIKE_ALL_ONLINE_TIP = "like_all_online_tip"  // 和你相互喜欢的Ta上线了
+
+    const val LIKE_ALL_TIP = "like_all_tip"                // 互相喜欢(相互喜欢配对成功后提醒)
+    const val MESSAGE_TIP = "message_tip"                  // 聊天消息
+    const val GREET_TIP = "greet_tip"                      // 打招呼(收到超级喜欢、超级消息提醒)
+
+
 }

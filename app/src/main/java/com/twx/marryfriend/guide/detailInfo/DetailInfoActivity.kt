@@ -1881,7 +1881,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         val map: MutableMap<String, String> = TreeMap()
                         map[Contents.ACCESS_TOKEN] =
-                            "24.ddcbe8945673632ce50ebb351d396dc3.2592000.1658890180.282335-26330258"
+                            "24.9fe4abb91bf6d38d39e221f39f3585a1.2592000.1661683108.282335-26330258"
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
@@ -2469,9 +2469,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         } else {
 
-
             if (faceDetectBean.conclusion != "合规") {
+
                 ToastUtils.showShort(faceDetectBean.data[0].msg)
+
             } else {
 
                 // 判断是否是拍照 还是 相册选择
@@ -3680,7 +3681,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             val map: MutableMap<String, String> = TreeMap()
                             map[Contents.ACCESS_TOKEN] =
-                                "24.ddcbe8945673632ce50ebb351d396dc3.2592000.1658890180.282335-26330258"
+                                "24.9fe4abb91bf6d38d39e221f39f3585a1.2592000.1661683108.282335-26330258"
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                             map[Contents.IMAGE] =
                                 bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))

@@ -21,6 +21,7 @@ import com.twx.marryfriend.bean.UpdateProportionInfoBean;
 import com.twx.marryfriend.bean.UpdateVerifyInfoBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
+import com.twx.marryfriend.bean.ViewHeadfaceBean;
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean;
 import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
@@ -98,15 +99,17 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/uploadPhoto")
     Call<UploadPhotoBean> doUploadPhoto(@QueryMap Map<String, Object> params);
 
+    // 查看头像
+    @POST("/marryfriend/LoginRegister/viewHeadface")
+    Call<ViewHeadfaceBean> doViewHeadface(@QueryMap Map<String, Object> params);
+
     // 更新资料完善度
     @POST("/marryfriend/LoginRegister/proportionUpdate")
     Call<UpdateProportionInfoBean> doUpdateProportion(@QueryMap Map<String, Object> params);
 
-
     // 获取省市县
     @POST("/marryfriend/GetParameter/provinceCity")
     Call<CityBean> getCity(@QueryMap Map<String, Object> params);
-
 
     // 获取学校
     @POST("/marryfriend/GetParameter/manySchool")

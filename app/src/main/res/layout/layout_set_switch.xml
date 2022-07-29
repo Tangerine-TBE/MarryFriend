@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv_detail_set_switch_icon"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_centerVertical="true"
+        android:layout_marginVertical="13dp"
+        android:layout_marginStart="18dp"
+        android:src="@drawable/ic_set_search" />
+
+    <TextView
+        android:id="@+id/tv_detail_set_switch_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="2dp"
+        android:layout_toStartOf="@+id/sw_detail_set_switch"
+        android:layout_toEndOf="@+id/iv_detail_set_switch_icon"
+        android:text="搜索"
+        android:textColor="#404040"
+        android:textSize="15sp" />
+
+    <Switch
+        android:id="@+id/sw_detail_set_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="24dp"
+        android:checked="false"
+        android:thumb="@drawable/selector_switch_thumb"
+        android:track="@drawable/selector_switch_trace" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/iv_detail_set_switch_icon"
+        android:layout_marginHorizontal="14dp"
+        android:background="#F2F2F2" />
+
+</RelativeLayout>

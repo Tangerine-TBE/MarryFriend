@@ -28,6 +28,8 @@ import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.net.callback.dynamic.IDoCommentOneDeleteCallback
+import com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoDeleteCallback
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
@@ -1637,7 +1639,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
                     .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0))
+                     .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0))
                     .show()
             } else {
                 ToastUtils.showShort("此条数据刚添加，暂时无法删除")
@@ -1687,7 +1689,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 ToastUtils.showShort("此条数据刚添加，暂时无法删除")
             }
 
-
         } else {
             ToastUtils.showShort("不是本人发的，无法删除")
             XPopup.Builder(this)
@@ -1715,7 +1716,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             val hostId = mCommentOneList[positionOne].list.id
 
             twoPosition = two
-
 
             if (id != 0) {
                 XPopup.Builder(this)
@@ -1784,8 +1784,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         private val childMode: Int,
     ) :
         FullScreenPopupView(context),
-        com.twx.marryfriend.net.callback.dynamic.IDoCommentOneDeleteCallback,
-        com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoDeleteCallback {
+        IDoCommentOneDeleteCallback,
+        IDoCommentTwoDeleteCallback {
 
 
         private lateinit var doCommentOneDeletePresent: com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl
@@ -1853,8 +1853,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             if (commentOneDeleteBean != null) {
                 if (commentOneDeleteBean.code == 200) {
                     ToastUtils.showShort("删除父动态，更新视图")
-                    mCommentOneList.removeAt(one)
-                    adapter.notifyDataSetChanged()
+                    if (mCommentOneList.size > one ){
+                        mCommentOneList.removeAt(one)
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }

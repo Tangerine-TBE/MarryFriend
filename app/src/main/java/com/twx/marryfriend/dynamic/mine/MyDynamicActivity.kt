@@ -1,8 +1,11 @@
 package com.twx.marryfriend.dynamic.mine
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
@@ -12,12 +15,14 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.luck.picture.lib.decoration.WrapContentLinearLayoutManager
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupAnimation
+import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.dynamic.MyTrendsList
-import com.twx.marryfriend.bean.dynamic.MyTrendsListBean
+import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.mine.adapter.MyDynamicAdapter
@@ -27,6 +32,7 @@ import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.send.DynamicSendActivity
 import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
+import com.twx.marryfriend.net.callback.dynamic.IDoDeleteTrendCallback
 import kotlinx.android.synthetic.main.activity_my_dynamic.*
 import java.io.Serializable
 import java.util.*
@@ -168,7 +174,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         adapter.setOnItemClickListener(object : MyDynamicAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-
                 if (trendList[position].audit_status == 1) {
                     val intent = Intent(this@MyDynamicActivity, DynamicMineShowActivity::class.java)
                     intent.putExtra("id", trendList[position].id)
@@ -176,6 +181,16 @@ class MyDynamicActivity : MainBaseViewActivity(),
                 } else {
                     ToastUtils.showShort("此动态正在审核中")
                 }
+            }
+
+            override fun onItemMoreClick(v: View?, position: Int) {
+                XPopup.Builder(this@MyDynamicActivity)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(DynamicEditDialog(this@MyDynamicActivity, position))
+                    .show()
             }
         })
 
@@ -475,6 +490,90 @@ class MyDynamicActivity : MainBaseViewActivity(),
     override fun onGetMyTrendsListCodeError() {
         srl_dynamic_mine_refresh.finishRefresh(false)
         srl_dynamic_mine_refresh.finishLoadMore(false)
+    }
+
+    inner class DynamicEditDialog(context: Context, val position: Int) :
+        FullScreenPopupView(context),
+        IDoDeleteTrendCallback {
+
+
+        private lateinit var doDeleteTrendPresent: com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
+
+        // 是否删除动态，弹窗消失时结束
+        private var isFinish = false
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_mine_edit
+
+        override fun onCreate() {
+            super.onCreate()
+
+            doDeleteTrendPresent =
+                com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl.getsInstance()
+            doDeleteTrendPresent.registerCallback(this)
+
+            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
+            val delete = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_delete)
+            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_cancel)
+
+            close.setOnClickListener {
+                dismiss()
+            }
+
+            delete.setOnClickListener {
+                ToastUtils.showShort("删除动态,百度云图片还未添加删除功能，待添加")
+
+                isFinish = true
+                dismiss()
+
+//                val map: MutableMap<String, String> = TreeMap()
+//                map[Contents.ID] = SPStaticUtils.getString(Constant.USER_ID)
+//                map[Contents.USER_ID] = id.toString()
+//                doDeleteTrendPresent.doDeleteTrend(map)
+
+            }
+
+            cancel.setOnClickListener {
+                dismiss()
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+            if (isFinish) {
+
+                trendList.removeAt(position)
+                adapter.notifyDataSetChanged()
+
+                ToastUtils.showShort("此处需要删除这个数据(暂时是本地删除)")
+            }
+        }
+
+        override fun onLoading() {
+
+        }
+
+        override fun onError() {
+
+        }
+
+        override fun onDoDeleteTrendSuccess(deleteTrendBean: DeleteTrendBean) {
+
+            if (deleteTrendBean.code == 200) {
+                ToastUtils.showShort("动态删除完成")
+                isFinish = true
+                dismiss()
+            } else {
+                ToastUtils.showShort(deleteTrendBean.msg)
+            }
+
+
+        }
+
+        override fun onDoDeleteTrendError() {
+
+        }
+
     }
 
 }

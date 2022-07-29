@@ -57,6 +57,7 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, position: Int)
+        fun onItemMoreClick(v: View?, position: Int)
     }
 
     interface OnLikeClickListener {
@@ -186,6 +187,8 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
         // 点击事件
 
+        val more: ImageView = view.findViewById(R.id.iv_detail_dynamic_mine_more)
+
         val one: ImageView = view.findViewById(R.id.iv_detail_dynamic_mine_one)
         val two: ImageView = view.findViewById(R.id.iv_detail_dynamic_mine_two)
         val three: ImageView = view.findViewById(R.id.iv_detail_dynamic_mine_three)
@@ -215,6 +218,10 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
         holder.itemView.tag = position
 
         initPic(holder, position)
+
+        holder.more.setOnClickListener {
+            mOnItemClickListener?.onItemMoreClick(it, position)
+        }
 
         holder.ivLike.setOnClickListener {
             mOnLikeClickListener?.onLikeClick(it, position)

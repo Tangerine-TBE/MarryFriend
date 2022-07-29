@@ -1202,7 +1202,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
         ToastUtils.showShort("点击父评论头像 ： $positionOne ")
 
-        startActivity(FriendInfoActivity.getIntent(this,mCommentOneList[positionOne].list.one_level_uid))
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].list.one_level_uid))
 
     }
 
@@ -1240,7 +1241,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onItemChildAvatarClick(v: View?, positionOne: Int) {
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/000")
 
-        startActivity(FriendInfoActivity.getIntent(this, mCommentOneList[positionOne].list.two_last_uid))
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].list.two_last_uid))
 
     }
 
@@ -1569,8 +1571,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
             if (commentOneDeleteBean != null) {
                 if (commentOneDeleteBean.code == 200) {
                     ToastUtils.showShort("删除父动态，更新视图")
-                    mCommentOneList.removeAt(one)
-                    adapter.notifyDataSetChanged()
+                    if (mCommentOneList.size > one) {
+                        mCommentOneList.removeAt(one)
+                        adapter.notifyDataSetChanged()
+                    }
                 }
             }
         }

@@ -261,7 +261,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                                         // 工作地区
                                         showJobDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                        if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                                             // 有没有孩子
                                             showHaveChildDialog()
                                         } else {
@@ -319,7 +319,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                         // 学历
                         showEduDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                        if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
                             // 婚况
                             showMarryStateDialog()
                         } else {
@@ -333,7 +333,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                                     // 工作地区
                                     showJobDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                                         // 有没有孩子
                                         showHaveChildDialog()
                                     } else {
@@ -394,7 +394,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                                 // 工作地区
                                 showJobDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                                if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                                     // 有没有孩子
                                     showHaveChildDialog()
                                 } else {
@@ -448,7 +448,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                             // 工作地区
                             showJobDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                            if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                                 // 有没有孩子
                                 showHaveChildDialog()
                             } else {
@@ -497,7 +497,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                         // 工作地区
                         showJobDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                        if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                             // 有没有孩子
                             showHaveChildDialog()
                         } else {
@@ -537,7 +537,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     // 工作地区
                     showJobDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                         // 有没有孩子
                         showHaveChildDialog()
                     } else {
@@ -572,7 +572,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 }
             }
             6 -> {
-                if (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5) == 5) {
+                if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
                     // 有没有孩子
                     showHaveChildDialog()
                 } else {
@@ -775,17 +775,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             }
         }
 
-//        when (SPStaticUtils.getInt(Constant.TA_EDU, 0)) {
-//            0 -> edu = "不限"
-//            1 -> edu = "大专以下"
-//            2 -> edu = "大专"
-//            3 -> edu = "本科"
-//            4 -> edu = "硕士"
-//            5 -> edu = "博士"
-//            6 -> edu = "博士以上"
-//            7 -> edu = "未填写"
-//        }
-
 
         val y = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
         val listY = y.split(",")
@@ -809,14 +798,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         }
 
-//        when (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4)) {
-//            0 -> marryState = "不限"
-//            1 -> marryState = "未婚"
-//            2 -> marryState = "离异"
-//            3 -> marryState = "丧偶"
-//            4 -> marryState = "未填写"
-//        }
-
         body = when (SPStaticUtils.getInt(Constant.TA_BODY, 10)) {
             10 -> "未填写"
             else -> mBodyList[SPStaticUtils.getInt(Constant.TA_BODY, 10)]
@@ -828,14 +809,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 .substring(1, SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").length)
         }
 
-//        when (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5)) {
-//            0 -> haveChild = "不限"
-//            1 -> haveChild = "没有孩子"
-//            2 -> haveChild = "有孩子且住在一起"
-//            3 -> haveChild = "有孩子偶尔会住在一起"
-//            4 -> haveChild = "有孩子但不在身边"
-//            5 -> haveChild = "未填写"
-//        }
 
         val z = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
         val listZ = z.split(",")
@@ -925,6 +898,13 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         baseAdapter.notifyDataSetChanged()
         moreAdapter.notifyDataSetChanged()
 
+
+
+            update()
+            Log.i("guo","updata")
+
+
+
     }
 
     // 加载数据
@@ -944,7 +924,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
 
-            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").split(",") as MutableList<String>
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
+                .split(",") as MutableList<String>
             x.removeAt(0)
 
             for (i in 0.until(x.size)) {
@@ -955,10 +936,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     }
 
     private fun update() {
-//        val demandInfoMap: MutableMap<String, String> = TreeMap()
-//        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-//        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
-//        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
     }
 
@@ -973,9 +954,9 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         val income = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
         val incomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
         val edu = SPStaticUtils.getString(Constant.TA_EDU, "")
-        val marryState = SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 0)
+        val marryState = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
         val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
-        val childHave = SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 0)
+        val childHave = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
         val childWant = SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 0)
         val smoke = SPStaticUtils.getInt(Constant.TA_SMOKE, 0)
         val drink = SPStaticUtils.getInt(Constant.TA_DRINK, 0)
@@ -996,7 +977,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     "\"figure_nv\":     $body," +
                     "\"salary_range\":  $income," +
                     "\"education\":     $edu," +
-                    "\"marry_status\":  $marryState," +
+                    "\"marry_status\":  \"$marryState\"," +
                     "\"child_had\":     $childHave," +
                     "\"want_child\":    $childWant," +
                     "\"is_smoking\":    $smoke," +
@@ -2690,148 +2671,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
     }
 
-    // 有不有孩子
-    inner class HaveChildDialog(context: Context) : FullScreenPopupView(context) {
-
-        private var isNeedJump = false // 是否需要跳转
-
-        private lateinit var tv_unlimited: TextView
-        private lateinit var tv_one: TextView
-        private lateinit var tv_two: TextView
-        private lateinit var tv_three: TextView
-        private lateinit var tv_four: TextView
-
-        override fun getImplLayoutId(): Int = R.layout.dialog_user_target_havechild
-
-        override fun onCreate() {
-            super.onCreate()
-
-            val close = findViewById<ImageView>(R.id.iv_user_target_havechild_close)
-            val skip = findViewById<TextView>(R.id.tv_user_target_havechild_skip)
-
-            tv_unlimited = findViewById<TextView>(R.id.tv_user_target_havechild_unlimited)
-            tv_one = findViewById<TextView>(R.id.tv_user_target_havechild_one)
-            tv_two = findViewById<TextView>(R.id.tv_user_target_havechild_two)
-            tv_three = findViewById<TextView>(R.id.tv_user_target_havechild_three)
-            tv_four = findViewById<TextView>(R.id.tv_user_target_havechild_four)
-
-            clearChoose()
-            initChoose()
-
-            close.setOnClickListener {
-                isNeedJump = false
-                dismiss()
-            }
-
-            tv_unlimited.setOnClickListener {
-                clearChoose()
-                tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_HAVE_CHILD, 0)
-                isNeedJump = true
-                dismiss()
-            }
-
-            tv_one.setOnClickListener {
-                clearChoose()
-                tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_HAVE_CHILD, 1)
-                isNeedJump = true
-                dismiss()
-            }
-
-            tv_two.setOnClickListener {
-                clearChoose()
-                tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_HAVE_CHILD, 2)
-                isNeedJump = true
-                dismiss()
-            }
-
-            tv_three.setOnClickListener {
-                clearChoose()
-                tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_HAVE_CHILD, 3)
-                isNeedJump = true
-                dismiss()
-            }
-
-            tv_four.setOnClickListener {
-                clearChoose()
-                tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_HAVE_CHILD, 4)
-                isNeedJump = true
-                dismiss()
-            }
-
-            skip.setOnClickListener {
-                isNeedJump = false
-                dismiss()
-            }
-
-        }
-
-        private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 5)) {
-                5 -> {
-                }
-                0 -> {
-                    tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                    tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
-                }
-                1 -> {
-                    tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                    tv_one.setTextColor(Color.parseColor("#FF4444"))
-                }
-                2 -> {
-                    tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                    tv_two.setTextColor(Color.parseColor("#FF4444"))
-                }
-                3 -> {
-                    tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                    tv_three.setTextColor(Color.parseColor("#FF4444"))
-                }
-                4 -> {
-                    tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
-                    tv_four.setTextColor(Color.parseColor("#FF4444"))
-                }
-            }
-        }
-
-        private fun clearChoose() {
-
-            tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
-            tv_unlimited.setTextColor(Color.parseColor("#101010"))
-
-            tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
-            tv_one.setTextColor(Color.parseColor("#101010"))
-
-            tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
-            tv_two.setTextColor(Color.parseColor("#101010"))
-
-            tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
-            tv_three.setTextColor(Color.parseColor("#101010"))
-
-            tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_uncheck)
-            tv_four.setTextColor(Color.parseColor("#101010"))
-
-        }
-
-        override fun onDismiss() {
-            super.onDismiss()
-            if (isNeedJump) {
-                showNextDialog(7)
-            } else {
-                updateDateUI()
-                update()
-            }
-        }
-
-    }
 
     // 有不有孩子(多选)
     inner class HaveChildNewDialog(context: Context) : FullScreenPopupView(context) {
@@ -3752,7 +3591,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     }
 
     override fun onDoUpdateDemandInfoError() {
-
     }
 
 }

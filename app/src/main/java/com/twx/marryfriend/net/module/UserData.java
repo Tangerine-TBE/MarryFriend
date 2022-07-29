@@ -23,6 +23,7 @@ import com.twx.marryfriend.bean.UpdateProportionInfoBean;
 import com.twx.marryfriend.bean.UpdateVerifyInfoBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
+import com.twx.marryfriend.bean.ViewHeadfaceBean;
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean;
 import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
@@ -217,6 +218,19 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPLOAD_PHOTO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPLOAD_PHOTO, currentTimeMillis, random, checkCode, map);
         mApi.doUploadPhoto(map1).enqueue(callback);
+    }
+
+
+    // 查看头像
+    public void doViewHeadface(Map<String, String> map, Callback<ViewHeadfaceBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.VIEW_HEADFACE + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.VIEW_HEADFACE, currentTimeMillis, random, checkCode, map);
+        mApi.doViewHeadface(map1).enqueue(callback);
     }
 
     // 更新资料完善度

@@ -8,15 +8,30 @@
     android:background="@drawable/shape_bg_base_card"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tv_detail_dynamic_mine_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:text="疫情前的游乐场"
-        android:textColor="#101010"
-        android:textSize="15sp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_mine_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="疫情前的游乐场"
+            android:textColor="#101010"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/iv_detail_dynamic_mine_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_dynamic_more" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/ll_detail_dynamic_mine_video"

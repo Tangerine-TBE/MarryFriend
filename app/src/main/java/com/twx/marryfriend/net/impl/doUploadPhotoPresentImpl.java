@@ -44,7 +44,7 @@ public class doUploadPhotoPresentImpl implements IDoUploadPhotoPresent {
     @Override
     public void doUploadPhoto(Map<String, String> info) {
         handlerLoading();
-        mUserData.doUploadPhoto(info ,new Callback<UploadPhotoBean>() {
+        mUserData.doUploadPhoto(info, new Callback<UploadPhotoBean>() {
 
             private UploadPhotoBean mBody;
 

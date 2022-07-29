@@ -54,6 +54,9 @@ object Contents {
     //图片上传(头像,三张,相册)
     const val UPLOAD_PHOTO = "LoginRegister/uploadPhoto"
 
+    //查看头像
+    const val VIEW_HEADFACE = "LoginRegister/viewHeadface"
+
     // 更新资料完善度
     const val UPDATE_PROPORTION = "LoginRegister/proportionUpdate"
 

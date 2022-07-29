@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:text="开启隐身"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_dialog_safe_stealth_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_base_dialog_close" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="40dp"
+        android:text="资料不公开后,你的资料将不会被别人看到,也不会获得推荐.你依然可以使用动态,发布动态功能."
+        android:textColor="#9A9A9A"
+        android:textSize="15sp" />
+
+
+    <com.aigestudio.wheelpicker.WheelPicker
+        android:id="@+id/wp_dialog_safe_stealth_container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        app:wheel_item_space="80dp"
+        app:wheel_item_text_size="17sp" />
+
+    <EditText
+        android:id="@+id/et_dialog_safe_stealth_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/shape_bg_common_input"
+        android:hint="把隐私原因告诉我们吧~"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="20dp"
+        android:textColor="#101010"
+        android:textColorHint="#9A9A9A"
+        android:textSize="15sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tv_dialog_safe_stealth_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/shape_bg_common_input"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="取消"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_dialog_safe_stealth_open"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginBottom="27dp"
+        android:background="@drawable/shape_base_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="开启"
+        android:textColor="#FFFFFF"
+        android:textSize="17sp" />
+
+</LinearLayout>

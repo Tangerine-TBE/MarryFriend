@@ -36,7 +36,6 @@ android {
 
     defaultConfig {
 
-
         applicationId rootProject.ext.version.applicationId
 
         minSdk rootProject.ext.version.minSdkVersion

@@ -603,7 +603,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                         lifeChoosePath = mTempLifePath
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = "24.13603dd5bb5800c98718b088f24c804d.2592000.1658887826.282335-26330258"
+                        map[Contents.ACCESS_TOKEN] = "24.9fe4abb91bf6d38d39e221f39f3585a1.2592000.1661683108.282335-26330258"
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
@@ -798,7 +798,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                             lifeBitmap = ImageUtils.getBitmap(result[0].realPath)
 
                             val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] = "24.13603dd5bb5800c98718b088f24c804d.2592000.1658887826.282335-26330258"
+                            map[Contents.ACCESS_TOKEN] = "24.9fe4abb91bf6d38d39e221f39f3585a1.2592000.1661683108.282335-26330258"
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                             map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))
 
