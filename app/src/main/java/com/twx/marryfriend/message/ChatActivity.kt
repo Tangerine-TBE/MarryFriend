@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.blankj.utilcode.util.KeyboardUtils
 import com.twx.marryfriend.R
 
 class ChatActivity:AppCompatActivity(R.layout.activity_chat) {
@@ -21,6 +22,7 @@ class ChatActivity:AppCompatActivity(R.layout.activity_chat) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        KeyboardUtils.fixAndroidBug5497(this)
 
     }
 }

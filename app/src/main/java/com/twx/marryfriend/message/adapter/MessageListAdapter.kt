@@ -1,4 +1,4 @@
-package com.twx.marryfriend.message
+package com.twx.marryfriend.message.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -38,9 +38,9 @@ class MessageListAdapter: RecyclerView.Adapter<BaseDataBindingViewHolder>() {
         parent: ViewGroup,
         viewType: Int
     ): BaseDataBindingViewHolder {
-        val view=if (viewType==TYPE_CHAT){
+        val view=if (viewType== TYPE_CHAT){
             ConversationItemView(parent)
-        }else if (viewType==TYPE_ASSISTANT){
+        }else if (viewType== TYPE_ASSISTANT){
             TipConversationItemView(parent)
         }else{
             ConversationItemView(parent)

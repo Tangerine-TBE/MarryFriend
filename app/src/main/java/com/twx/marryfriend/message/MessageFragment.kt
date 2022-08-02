@@ -12,6 +12,7 @@ import com.message.conversations.ImMessageManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.databinding.FragmentMessageBinding
+import com.twx.marryfriend.message.adapter.MessageListAdapter
 import com.twx.marryfriend.message.model.ConversationsModel
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
