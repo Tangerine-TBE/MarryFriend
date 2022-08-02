@@ -27,10 +27,12 @@ import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
-class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
+class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewHolder>(){
     companion object{
         private const val IS_FIRST_LISTENER_VOICE_KEY="first_listener_voice"
         private const val IS_FIRST_PUSH_VOICE="first_push_voice"
@@ -209,6 +211,10 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     if (view.isSelected){
                         view.isSelected=false
                         pauseVoice(item)
+                        (playAnim.drawable as? AnimationDrawable)?.also {
+                            it.selectDrawable(0)
+                            it.stop()
+                        }
                     }else{
                         playVoice(item,{
                             //playAnim
@@ -220,7 +226,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                                 it.selectDrawable(0)
                                 it.stop()
                             }
-
+                            view.isSelected=false
                             if (isFirstPushVoice()){
                                 firstViewSwitcher.visibility=View.VISIBLE
                                 if (firstViewSwitcher.currentView!=firstAddVoice){
@@ -231,19 +237,24 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                                         firstViewSwitcher.visibility=View.GONE
                                     }
                                     useFirstPushVoice()
-                                    IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
-                                        holder.itemView.context.startActivity(it)
+                                    scope.launch {
+                                        IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
+                                            holder.itemView.context.startActivity(it)
+                                        }
                                     }
                                 }
                             }
                         },{
+                            view.isSelected=false
                             //出错了
                         })
                     }
                 }
                 holder.getView<View>(R.id.uploadVoice).setOnClickListener {view->
-                    IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
-                        view.context.startActivity(it)
+                    scope.launch {
+                        IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
+                            view.context.startActivity(it)
+                        }
                     }
                 }
             }else{
@@ -356,7 +367,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                 }
             }
             holder.getView<View>(R.id.toMyDynamic).setOnClickListener {view->
-                IntentManager.getDynamicIntent(view.context)?.also {
+                IntentManager.getDynamicIntent(view.context,item.getId(),item.getUserSex().code,item.getNickname(),item.getHeadImg())?.also {
                     view.context.startActivity(it)
                 }
             }

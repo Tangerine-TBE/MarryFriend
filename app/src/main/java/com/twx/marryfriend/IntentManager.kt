@@ -2,10 +2,24 @@ package com.twx.marryfriend
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.baidu.location.BDAbstractLocationListener
+import com.baidu.location.BDLocation
+import com.baidu.location.LocationClient
+import com.baidu.location.LocationClientOption
+import com.blankj.utilcode.util.ToastUtils
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
+import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.dynamic.send.location.LocationActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.xyzz.myutils.show.toast
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 object IntentManager {
     fun getPhotoPreviewIntent(context: Context, list: List<String>, index:Int):Intent{
@@ -15,9 +29,8 @@ object IntentManager {
     /**
      *
      */
-    fun getDynamicIntent(context: Context):Intent?{
-        toast(context,"TODO 跳到动态")
-        return null
+    fun getDynamicIntent(context: Context,userId:Int?,sex:Int,nickname:String,avatar:String?):Intent{
+        return OtherDynamicActivity.getIntent(context,nickname,sex,avatar?:"",userId.toString())
     }
 
     /**
@@ -32,8 +45,21 @@ object IntentManager {
     /**
      *上传语音
      */
-    fun getUpVoiceIntent(context: Context):Intent?{
-        val intent=Intent(context, UserActivity::class.java)
-        return intent
+    suspend fun getUpVoiceIntent(context: Context)= suspendCoroutine<Intent?>{
+        XXPermissions.with(context)
+            .permission(Permission.RECORD_AUDIO)
+            .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+            .request(object : OnPermissionCallback {
+                override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                    val intent=Intent(context, VoiceActivity::class.java)
+                    it.resume(intent)
+                }
+
+                override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                    super.onDenied(permissions, never)
+                    toast(context,"请授予应用相应权限")
+                    it.resume(null)
+                }
+            })
     }
 }

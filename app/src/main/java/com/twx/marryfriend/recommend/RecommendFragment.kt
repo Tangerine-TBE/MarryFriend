@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private val recommendAdapter by lazy {
-        RecommendAdapter()
+        RecommendAdapter(lifecycleScope)
     }
     private val loadSir by lazy {
         LoadSir.Builder()
@@ -204,7 +204,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 lastDynamicTitle.text=lastDynamic.data?.label
                 lastDynamicDes.text=lastDynamic.data?.text_content
                 lastDynamicView.setOnClickListener {
-                    IntentManager.getDynamicIntent(requireContext())
+                    toast("最后一条动态")
                 }
             }catch (e:Exception){
                 eLog(e.stackTraceToString())

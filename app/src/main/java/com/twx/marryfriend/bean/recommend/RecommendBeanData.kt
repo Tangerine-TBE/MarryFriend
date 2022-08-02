@@ -1,7 +1,7 @@
 package com.twx.marryfriend.bean.recommend
 
-enum class Sex{
-    male,female,unknown;
+enum class Sex(val code:Int){
+    male(1),female(2),unknown(0);
     companion object{
         fun toSex(sexCode:Int?): Sex {
             return when(sexCode){

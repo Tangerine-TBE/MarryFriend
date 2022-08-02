@@ -176,25 +176,33 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                         if (view.isSelected){
                             view.isSelected=false
                             pauseVoice(item)
+                            (playAnim.drawable as? AnimationDrawable)?.also {
+                                it.selectDrawable(0)
+                                it.stop()
+                            }
                         }else{
                             playVoice(item,{
                                 //playAnim
                                 (playAnim.drawable as? AnimationDrawable)?.start()
                                 view.isSelected=true
                             },{
+                                view.isSelected=false
                                 //播放完成
                                 (playAnim.drawable as? AnimationDrawable)?.also {
                                     it.selectDrawable(0)
                                     it.stop()
                                 }
                             },{
+                                view.isSelected=false
                                 //出错了
                             })
                         }
                     }
                     uploadVoice.setOnClickListener {
-                        IntentManager.getUpVoiceIntent(it.context)?.also {
-                            startActivity(it)
+                        lifecycleScope.launch {
+                            IntentManager.getUpVoiceIntent(it.context)?.also {
+                                startActivity(it)
+                            }
                         }
                     }
                 }else{
@@ -298,7 +306,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     }
                 }
                 toMyDynamic.setOnClickListener {view->
-                    IntentManager.getDynamicIntent(view.context)?.also {
+                    IntentManager.getDynamicIntent(view.context,item.getId(),item.getUserSex().code,item.getNickname(),item.getHeadImg())?.also {
                         startActivity(it)
                     }
                 }
@@ -347,11 +355,12 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     @SuppressLint("MissingPermission")
     private fun initListener(){
         //简介模块
+        distanceView.visibility=View.GONE
         briefIntroduction.apply {
             LocationUtils.observeLocation(this@FriendInfoActivity){
                 val taLongitude=userItem?.getLongitude()
                 val taLatitude=userItem?.getLatitude()
-                if (taLatitude!=null&&taLongitude!=null&&it!=null){
+                if (taLatitude!=null&&taLongitude!=null&&it!=null&&it.latitude!=0.0){
                     distanceView.visibility=View.VISIBLE
                     distance.text=try {
                         val distance= LocationUtils.getDistance(taLatitude,taLongitude,it.latitude,it.longitude)+0.5f
