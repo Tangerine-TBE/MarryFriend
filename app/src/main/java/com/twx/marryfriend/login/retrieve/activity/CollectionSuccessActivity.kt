@@ -144,8 +144,6 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
         updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
-        Log.i("guo", "avatar update : ${SPStaticUtils.getString(Constant.ME_AVATAR)}")
-
         val uploadPhotoMap: MutableMap<String, String> = TreeMap()
         uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         uploadPhotoMap[Contents.IMAGE_URL] = SPStaticUtils.getString(Constant.ME_AVATAR)
@@ -260,9 +258,9 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         val income = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
         val incomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
         val edu = SPStaticUtils.getString(Constant.TA_EDU, "")
-        val marryState = SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 0)
+        val marryState = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
         val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
-        val childHave = SPStaticUtils.getInt(Constant.TA_HAVE_CHILD, 0)
+        val childHave = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
         val childWant = SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 0)
         val smoke = SPStaticUtils.getInt(Constant.TA_SMOKE, 0)
         val drink = SPStaticUtils.getInt(Constant.TA_DRINK, 0)
@@ -283,7 +281,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
                     "\"figure_nv\":     $body," +
                     "\"salary_range\":  $income," +
                     "\"education\":     $edu," +
-                    "\"marry_status\":  $marryState," +
+                    "\"marry_status\":  \"$marryState\"," +
                     "\"child_had\":     $childHave," +
                     "\"want_child\":    $childWant," +
                     "\"is_smoking\":    $smoke," +

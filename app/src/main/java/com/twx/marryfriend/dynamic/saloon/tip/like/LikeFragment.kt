@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
@@ -17,6 +18,8 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.saloon.tip.comment.CommentFragment
 import com.twx.marryfriend.dynamic.saloon.tip.comment.CommentTipAdapter
+import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
+import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetTrendTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getTrendTipsPresentImpl
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
@@ -98,6 +101,28 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
             sfl_dynamic_tip_like_refresh.finishLoadMore(2000);//传入false表示刷新失败
         }
 
+        adapter.setOnItemClickListener(object : LikeTipAdapter.OnItemClickListener {
+            override fun onItemClick(v: View?, position: Int) {
+
+                if (mList[position].user_id == SPStaticUtils.getString(Constant.USER_ID, "13")) {
+                    ToastUtils.showShort("本人的动态")
+                    startActivity(context?.let {
+                        DynamicMineShowActivity.getIntent(
+                            it,
+                            mList[position].id)
+                    })
+                } else {
+                    ToastUtils.showShort("他人的动态")
+                    startActivity(context?.let {
+                        DynamicOtherShowActivity.getIntent(
+                            it,
+                            mList[position].id,
+                            mList[position].user_id.toInt())
+                    })
+                }
+            }
+        })
+
     }
 
     private fun getLikeData(page: Int) {
@@ -131,14 +156,20 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
             }
         }
 
-        sfl_dynamic_tip_like_refresh.finishRefresh(true)
-        sfl_dynamic_tip_like_refresh.finishLoadMore(true)
+        if (sfl_dynamic_tip_like_refresh != null){
+            sfl_dynamic_tip_like_refresh.finishRefresh(true)
+            sfl_dynamic_tip_like_refresh.finishLoadMore(true)
+        }
 
     }
 
     override fun onGetTrendTipsError() {
-        sfl_dynamic_tip_like_refresh.finishRefresh(false)
-        sfl_dynamic_tip_like_refresh.finishLoadMore(false)
+
+        if (sfl_dynamic_tip_like_refresh != null){
+            sfl_dynamic_tip_like_refresh.finishRefresh(false)
+            sfl_dynamic_tip_like_refresh.finishLoadMore(false)
+        }
+
     }
 
 }

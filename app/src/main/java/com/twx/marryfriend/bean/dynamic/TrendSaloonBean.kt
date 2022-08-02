@@ -46,7 +46,7 @@ data class TrendSaloonList(
     val identity_status: Int,
     val guest_uid: Int?,
     val close_time: String,
-    val focous_uid: Int?,
+    val focus_uid: Int?,
 )
 
 

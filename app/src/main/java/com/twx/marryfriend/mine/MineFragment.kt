@@ -50,19 +50,16 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
+import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
-import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
-import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
-import com.twx.marryfriend.net.callback.IDoUpdateGreetInfoCallback
-import com.twx.marryfriend.net.callback.IGetPhotoListCallback
-import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
-import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
-import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
-import com.twx.marryfriend.net.impl.getPhotoListPresentImpl
+import com.twx.marryfriend.mine.voice.VoiceActivity
+import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.set.SetActivity
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.twx.marryfriend.vip.VipActivity
@@ -73,8 +70,8 @@ import kotlinx.android.synthetic.main.layout_guide_step_name.*
 import java.io.*
 import java.util.*
 
-class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
-    IDoUpdateGreetInfoCallback {
+class MineFragment : Fragment(), IDoFaceDetectCallback,
+    IDoUpdateGreetInfoCallback, IDoViewHeadFaceCallback {
 
     // 头像暂存bitmap
     private var mBitmap: Bitmap? = null
@@ -113,9 +110,9 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
     private lateinit var client: BosClient
 
-    private lateinit var getPhotoListPresent: getPhotoListPresentImpl
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
+    private lateinit var doViewHeadFacePresent: doViewHeadFacePresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -162,14 +159,14 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
         mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "head.png"
 
-        getPhotoListPresent = getPhotoListPresentImpl.getsInstance()
-        getPhotoListPresent.registerCallback(this)
-
         doFaceDetectPresent = doFaceDetectPresentImpl.getsInstance()
         doFaceDetectPresent.registerCallback(this)
 
         doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
         doUpdateGreetPresent.registerCallback(this)
+
+        doViewHeadFacePresent = doViewHeadFacePresentImpl.getsInstance()
+        doViewHeadFacePresent.registerCallback(this)
 
         getAvatar()
 
@@ -325,6 +322,11 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             startActivity(intent)
         }
 
+        ll_mine_set_set.setOnClickListener {
+            val intent = Intent(context, SetActivity::class.java)
+            startActivity(intent)
+        }
+
         ll_mine_set_greet.setOnClickListener {
 
             val intent = Intent(context, GreetInfoActivity::class.java)
@@ -386,9 +388,8 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
 
     private fun getAvatar() {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = "3"
-        map[Contents.KIND] = "1"
-        getPhotoListPresent.getPhotoList(map)
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        doViewHeadFacePresent.doViewHeadFace(map)
     }
 
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
@@ -530,20 +531,23 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
             when (requestCode) {
                 // 更新审核头像
                 0 -> {
+//                    if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+//                        Glide.with(requireContext())
+//                            .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+//                            .into(iv_mine_avatar)
+//                        tv_mine_avatar_check.visibility = View.VISIBLE
+//                    } else {
+//                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+//                            Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
+//                                .into(iv_mine_avatar)
+//                        } else {
+//                            Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
+//                                .into(iv_mine_avatar)
+//                        }
+//                    }
 
-                    if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
-                        Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                            .into(iv_mine_avatar)
-                        tv_mine_avatar_check.visibility = View.VISIBLE
-                    } else {
-                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                            Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
-                                .into(iv_mine_avatar)
-                        } else {
-                            Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
-                                .into(iv_mine_avatar)
-                        }
-                    }
+                    getAvatar()
+
                 }
                 // 上传生活照
                 1 -> {
@@ -573,6 +577,102 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
     }
 
     override fun onError() {
+
+    }
+
+    override fun onDoViewHeadFaceSuccess(viewHeadfaceBean: ViewHeadfaceBean?) {
+
+        if (viewHeadfaceBean != null) {
+            if (viewHeadfaceBean.code == 200) {
+                when (viewHeadfaceBean.data.size) {
+                    0 -> {
+                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                            Glide.with(requireContext())
+                                .load(R.mipmap.icon_mine_male_default)
+                                .into(iv_mine_avatar)
+                        } else {
+                            Glide.with(requireContext())
+                                .load(R.mipmap.icon_mine_female_default)
+                                .into(iv_mine_avatar)
+                        }
+                    }
+                    1 -> {
+
+                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                            Glide.with(requireContext())
+                                .load(viewHeadfaceBean.data[0].image_url)
+                                .error(R.mipmap.icon_mine_male_default)
+                                .placeholder(R.mipmap.icon_mine_male_default)
+                                .into(iv_mine_avatar)
+                        } else {
+                            Glide.with(requireContext())
+                                .load(viewHeadfaceBean.data[0].image_url)
+                                .error(R.mipmap.icon_mine_female_default)
+                                .placeholder(R.mipmap.icon_mine_female_default)
+                                .into(iv_mine_avatar)
+                        }
+
+                        if (viewHeadfaceBean.data[0].status == 0) {
+                            tv_mine_avatar_check.visibility = View.VISIBLE
+                        } else {
+                            tv_mine_avatar_check.visibility = View.GONE
+                        }
+
+                    }
+                    2 -> {
+
+
+                        if (viewHeadfaceBean.data[0].status == 0 && viewHeadfaceBean.data[1].status == 0) {
+
+                            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                Glide.with(requireContext())
+                                    .load(viewHeadfaceBean.data[0].image_url)
+                                    .error(R.mipmap.icon_mine_male_default)
+                                    .placeholder(R.mipmap.icon_mine_male_default)
+                                    .into(iv_mine_avatar)
+                            } else {
+                                Glide.with(requireContext())
+                                    .load(viewHeadfaceBean.data[0].image_url)
+                                    .error(R.mipmap.icon_mine_female_default)
+                                    .placeholder(R.mipmap.icon_mine_female_default)
+                                    .into(iv_mine_avatar)
+                            }
+
+                            tv_mine_avatar_check.visibility = View.VISIBLE
+
+                        } else {
+
+                            for (i in 0.until(2)) {
+                                if (viewHeadfaceBean.data[i].status == 1) {
+
+                                    if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                        Glide.with(requireContext())
+                                            .load(viewHeadfaceBean.data[i].image_url)
+                                            .error(R.mipmap.icon_mine_male_default)
+                                            .placeholder(R.mipmap.icon_mine_male_default)
+                                            .into(iv_mine_avatar)
+                                    } else {
+                                        Glide.with(requireContext())
+                                            .load(viewHeadfaceBean.data[i].image_url)
+                                            .error(R.mipmap.icon_mine_female_default)
+                                            .placeholder(R.mipmap.icon_mine_female_default)
+                                            .into(iv_mine_avatar)
+                                    }
+
+                                    tv_mine_avatar_check.visibility = View.GONE
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    override fun onDoViewHeadFaceError() {
 
     }
 
@@ -636,38 +736,6 @@ class MineFragment : Fragment(), IGetPhotoListCallback, IDoFaceDetectCallback,
     override fun onDoFaceDetectError() {
 
         ll_mine_loading.visibility = View.GONE
-
-    }
-
-    override fun onGetPhotoListSuccess(photoListBean: PhotoListBean) {
-
-//        Glide.with(requireContext()).load(photoListBean.data[1].image_url).into(iv_mine_avatar)
-
-        for (i in 0.until(photoListBean.data.size)) {
-            if (photoListBean.data[i].image_url == SPStaticUtils.getString(Constant.ME_AVATAR, "")
-            ) {
-                when (photoListBean.data[i].status) {
-                    0 -> {
-                        // 审核中
-                        tv_mine_avatar_check.visibility == View.VISIBLE
-                    }
-                    1 -> {
-                        // 通过
-                        tv_mine_avatar_check.visibility == View.GONE
-                    }
-                    2 -> {
-                        // 拒绝
-                        ToastUtils.showShort("您的头像已违规，请重新更换头像")
-                        iv_mine_avatar.setImageResource(R.mipmap.icon_mine_male_default)
-                        SPStaticUtils.put(Constant.ME_AVATAR, "")
-                        getDialogOrder()
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onGetPhotoListError() {
 
     }
 

@@ -93,4 +93,54 @@ object DataProvider {
         ItemBean("随心畅聊", R.mipmap.icon_super_13),
     )
 
+    val FirstSetData = arrayListOf(
+        ItemBean("搜索", R.drawable.ic_set_search),
+    )
+
+    val SecondSetData = arrayListOf(
+        ItemBean("消息通知", R.drawable.ic_set_message),
+        ItemBean("帮助反馈", R.drawable.ic_set_feedback),
+        ItemBean("账户与安全", R.drawable.ic_set_safe),
+        ItemBean("恢复购买", R.drawable.ic_set_buy),
+    )
+
+    val ThirdSetData = arrayListOf(
+        ItemBean("关于佳偶婚恋交友", R.drawable.ic_set_about),
+        ItemBean("黑名单", R.drawable.ic_set_blacklist),
+        ItemBean("好评", R.drawable.ic_set_praise),
+    )
+
+
+    val FeedbackTopData = arrayListOf(
+        ItemBean("推荐滑卡问题", 0),
+        ItemBean("聊天相关问题", 0),
+        ItemBean("约会相关问题", 0),
+        ItemBean("资料相关问题", 0),
+        ItemBean("其他问题反馈", 0),
+    )
+
+    val FeedbackBottomData = arrayListOf(
+        ItemBean("怎么获得更多得曝光与喜欢？", 0),
+        ItemBean("我滑过的人还会再出现吗？", 0),
+        ItemBean("不小心左滑了喜欢的人，还能反悔吗？", 0),
+        ItemBean("为什么我喜欢了对方，但还不可以和ta聊天？", 0),
+        ItemBean("不想和对方聊天了，怎么解除配对关系？", 0),
+        ItemBean("对方有骚扰/营销/违法等行为，怎么举报？", 0),
+        ItemBean("约好了时间，但临时有事不能赴约了怎么办？", 0),
+        ItemBean("约会过程中突然中断视频或断网了怎么办？", 0),
+        ItemBean("为什么约会迟到了直接显示约会失败？", 0),
+        ItemBean("约会超过15分钟还想继续聊天怎么办？", 0),
+        ItemBean("为什么头像/图片过不了审核？", 0),
+        ItemBean("昵称/职业/公司/自我介绍文字过不了审核？", 0),
+        ItemBean("实名认证能修改和取消吗？", 0),
+        ItemBean("如何取消自动续费？", 0),
+        ItemBean("我在使用中遇到了问题，该如何联系客服？", 0),
+    )
+
+
+
+
+
+
+
 }

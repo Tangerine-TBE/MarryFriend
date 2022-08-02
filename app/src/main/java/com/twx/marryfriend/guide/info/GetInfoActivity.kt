@@ -17,19 +17,14 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.guide.detailInfo.DetailInfoActivity
 import com.twx.marryfriend.main.MainActivity
-import com.twx.marryfriend.net.callback.IGetAccessTokenCallback
-import com.twx.marryfriend.net.callback.IGetCityCallback
-import com.twx.marryfriend.net.callback.IGetIndustryCallback
-import com.twx.marryfriend.net.callback.IGetJobCallback
-import com.twx.marryfriend.net.impl.getAccessTokenPresentImpl
-import com.twx.marryfriend.net.impl.getCityPresentImpl
-import com.twx.marryfriend.net.impl.getIndustryPresentImpl
-import com.twx.marryfriend.net.impl.getJobPresentImpl
+import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.impl.*
 import java.util.*
 
 
 class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCallback,
-    IGetJobCallback, IGetAccessTokenCallback {
+    IGetJobCallback, IGetAccessTokenCallback, IGetIdAccessTokenCallback,
+    IGetLifeAccessTokenCallback {
 
     // 是否加载城市
     private var isLoadCity = false
@@ -46,6 +41,8 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     private lateinit var getJobPresent: getJobPresentImpl
 
     private lateinit var getAccessTokenPresent: getAccessTokenPresentImpl
+    private lateinit var getIdAccessTokenPresent: getIdAccessTokenPresentImpl
+    private lateinit var getLifeAccessTokenPresent: getLifeAccessTokenPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_get_info
 
@@ -64,12 +61,21 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         getAccessTokenPresent = getAccessTokenPresentImpl.getsInstance()
         getAccessTokenPresent.registerCallback(this)
 
+        getIdAccessTokenPresent = getIdAccessTokenPresentImpl.getsInstance()
+        getIdAccessTokenPresent.registerCallback(this)
+
+        getLifeAccessTokenPresent = getLifeAccessTokenPresentImpl.getsInstance()
+        getLifeAccessTokenPresent.registerCallback(this)
+
     }
 
     override fun initLoadData() {
         super.initLoadData()
 
+        // 获取百度
         getAccessToken()
+        getIdAccessToken()
+        getLifeAccessToken()
 
     }
 
@@ -98,7 +104,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         }
     }
 
-    // 获取  accessToken
+    // 获取 头像 审核的 accessToken
     private fun getAccessToken() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.GRANT_TYPE] = "client_credentials"
@@ -106,6 +112,25 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         map[Contents.CLIENT_SECRET] = "GQcKzFuA87uEQZhIDnlcxTpkjT2oLxdX"
         getAccessTokenPresent.getAccessToken(map)
 
+    }
+
+    // 获取身份证号与姓名匹配的    accessToken
+    private fun getIdAccessToken() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.GRANT_TYPE] = "client_credentials"
+        map[Contents.CLIENT_ID] = "YLnCFKMcNiSBGxETIg4DeMht"
+        map[Contents.CLIENT_SECRET] = "ufkmEoIT4Oto1CP3oEFeKOSlU5OXtL8v"
+        getIdAccessTokenPresent.getAccessToken(map)
+
+    }
+
+    // 获取 生活照 审核的 accessToken
+    private fun getLifeAccessToken() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.GRANT_TYPE] = "client_credentials"
+        map[Contents.CLIENT_ID] = "DfWMKUNlOSZzGIa6XzHKvTlZ"
+        map[Contents.CLIENT_SECRET] = "F23G5Q3b0mWw2q5pyy6dyq4HEXSpdizu"
+        getLifeAccessTokenPresent.getAccessToken(map)
     }
 
     private fun isCompleteLoading() {
@@ -146,8 +171,30 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     }
 
-    override fun onGetAccessTokenSuccess(accessTokenBean: AccessTokenBean) {
-        SPStaticUtils.put(Constant.ACCESS_TOKEN,accessTokenBean.access_token)
+    override fun onGetLifeAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
+        if (accessTokenBean != null) {
+            SPStaticUtils.put(Constant.LIFE_ACCESS_TOKEN, accessTokenBean.access_token)
+        }
+    }
+
+    override fun onGetLifeAccessTokenFail() {
+
+    }
+
+    override fun onGetIdAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
+        if (accessTokenBean != null) {
+            SPStaticUtils.put(Constant.ID_ACCESS_TOKEN, accessTokenBean.access_token)
+        }
+    }
+
+    override fun onGetIdAccessTokenFail() {
+
+    }
+
+    override fun onGetAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
+        if (accessTokenBean != null) {
+            SPStaticUtils.put(Constant.ACCESS_TOKEN, accessTokenBean.access_token)
+        }
     }
 
     override fun onGetAccessTokenFail() {
@@ -269,7 +316,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     override fun onGetCityCodeError() {
 
-        Log.i("guo","error")
+        Log.i("guo", "error")
 
     }
 

@@ -2517,9 +2517,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         if (faceDetectBean.conclusion == "合规") {
 
-            iv_user_data_avatar.setImageDrawable(null)
-
-            Log.i("guo", photoBitmap.toString())
+            if (iv_user_data_avatar!= null){
+                iv_user_data_avatar.setImageDrawable(null)
+            }
 
             iv_user_data_avatar.setImageBitmap(photoBitmap)
 

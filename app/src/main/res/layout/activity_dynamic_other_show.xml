@@ -544,15 +544,27 @@
 
                     </LinearLayout>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rv_dynamic_other_show_container"
+                    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                        android:id="@+id/sfl_dynamic_other_show_refresh"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="64dp"
-                        android:divider="@null"
-                        android:listSelector="@android:color/transparent"
-                        android:scrollbars="none" />
+                        android:layout_marginBottom="64dp">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_dynamic_other_show_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="10dp"
+                            android:divider="@null"
+                            android:listSelector="@android:color/transparent"
+                            android:scrollbars="none" />
+
+                        <com.scwang.smart.refresh.footer.ClassicsFooter
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
 
                 </LinearLayout>
 

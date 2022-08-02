@@ -103,7 +103,8 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
                 if (RegexUtils.isIDCard18Exact(identityCode)) {
                     val map: MutableMap<String, String> = TreeMap()
 
-                    map[Contents.ACCESS_TOKEN] = "24.f4e44a2c0b880596d8478a8505e6df57.2592000.1659079496.282335-26278103"
+                    map[Contents.ACCESS_TOKEN] =
+                        SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
                     map[Contents.CONTENT_TYPE] = "application/json"
                     map[Contents.ID_CARD_NUMBER] = identityCode
                     map[Contents.NAME] = name
@@ -255,7 +256,7 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     override fun onDoIdentityVerifySuccess(identityVerifyBean: IdentityVerifyBean) {
 
-        if (state == "VerifyInputActivity"){
+        if (state == "VerifyInputActivity") {
             ll_verify_input_loading.visibility = View.GONE
 
             SPStaticUtils.put(Constant.TRUE_NAME, name)

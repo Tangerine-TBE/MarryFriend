@@ -48,6 +48,30 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".mine.voice.VoiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.other.OtherDynamicActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.feedback.CommonQuestionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.logoff.LogoffActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.feedback.FeedbackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.message.MessageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.safe.SafeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.SetActivity"
+            android:exported="false" />
+        <activity
             android:name=".coin.CoinActivity"
             android:exported="false" />
         <activity
@@ -90,9 +114,6 @@
             android:name=".login.retrieve.RetrieveActivity"
             android:exported="false" />
         <activity
-            android:name=".guide.testActivity"
-            android:exported="false" />
-        <activity
             android:name=".guide.info.GetInfoActivity"
             android:exported="false" />
         <activity
@@ -124,8 +145,8 @@
         </activity>
         <activity
             android:name=".main.MainActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
