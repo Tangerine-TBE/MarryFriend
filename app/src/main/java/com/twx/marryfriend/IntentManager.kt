@@ -3,6 +3,7 @@ package com.twx.marryfriend
 import android.content.Context
 import android.content.Intent
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.xyzz.myutils.show.toast
 
@@ -23,7 +24,8 @@ object IntentManager {
      *
      */
     fun getUpLifeIntent(context: Context):Intent?{
-        val intent=Intent(context, UserActivity::class.java)
+        val intent=Intent(context, LifePhotoActivity::class.java)
+        intent.putExtra("activity", "data")
         return intent
     }
 

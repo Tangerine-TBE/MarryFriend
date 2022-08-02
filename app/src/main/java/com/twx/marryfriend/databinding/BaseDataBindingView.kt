@@ -2,8 +2,6 @@ package com.twx.marryfriend.databinding
 
 import android.view.View
 
-interface BaseDataBindingView<D> {
+interface BaseDataBindingView {
     fun getRootView():View
-
-    fun setData(data: D?)
 }

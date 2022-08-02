@@ -12,6 +12,7 @@ import com.hyphenate.chat.BuildConfig
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
 import com.message.conversations.ImMessageManager
+import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 
 //https://docs-im.easemob.com/im/android/basics/message
@@ -53,7 +54,11 @@ object ImUserManager {
                     }
                     EMError.USER_LOGIN_ANOTHER_DEVICE -> {
                         iLog("异地登录")
-                        logout()
+                        logout({
+
+                        },{code, message ->
+
+                        })
                     }
                     EMError.SERVER_SERVICE_RESTRICTED -> {
 
@@ -72,32 +77,46 @@ object ImUserManager {
 
     fun createOrLogin(username: String,pwd: String="123456"){
         iLog("当前登录的用户${EMClient.getInstance().currentUser}")
-        if (EMClient.getInstance().currentUser==username){
-            iLog("当前用户已登录")
-            onLoginSuccess()
-            return
+        if (!EMClient.getInstance().currentUser.isNullOrBlank()){
+            if (EMClient.getInstance().currentUser==username){
+                iLog("当前用户已登录，重新登录刷新信息")
+//                onLoginSuccess()
+                login(username,pwd)
+                return
+            }else{
+                logout({
+                    try {
+                        createAccount(username,pwd)
+                    }catch (e:Exception){
+                        eLog(e.stackTraceToString())
+                    }
+                    login(username,pwd)
+                },{code, message ->
+
+                })
+            }
         }else{
-            logout()
+            try {
+                createAccount(username,pwd)
+            }catch (e:Exception){
+                eLog(e.stackTraceToString())
+            }
+            login(username,pwd)
         }
-        iLog("用户:${username},正在登录")
-        try {
-            createAccount(username,pwd)
-        }catch (e:Exception){
-            iLog(e.message)
-        }
-        login(username,pwd)
     }
 
     fun createAccount(username:String,pwd:String){//注册用户名会自动转为小写字母，所以建议用户名均以小写注册。
         EMClient.getInstance().createAccount(username, pwd)//同步方法
+        iLog("注册成功")
     }
 
     fun login(userName:String,password:String){
+        iLog("用户:${userName},正在登录")
         EMClient.getInstance().login(userName, password, object : EMCallBack {
             //回调
             override fun onSuccess() {
-                onLoginSuccess()
                 iLog( "登录聊天服务器成功！")
+                onLoginSuccess()
             }
 
             override fun onProgress(progress: Int, status: String) {}
@@ -106,11 +125,21 @@ object ImUserManager {
                 //SERVER_SERVING_DISABLED(305)
                 when(code){
                     200->{
-                        onLoginSuccess()
                         iLog("用户已经登录,code:${code},msg:${message}")
+                        onLoginSuccess()
                     }
                     305->{
                         iLog("用户被封禁,code:${code},msg:${message}")
+                    }
+                    204->{
+                        iLog("登录失败,code:${code},msg:${message}")
+                        iLog("用户不存在,重新注册")
+                        try {
+                            createAccount(userName,password)
+                            login(userName, password)
+                        }catch (e:Exception){
+                            eLog(e.stackTraceToString())
+                        }
                     }
                     else->{
                         iLog("登录失败,code:${code},msg:${message}")
@@ -120,11 +149,12 @@ object ImUserManager {
         })
     }
 
-    fun logout(){
+    fun logout(success:()->Unit,fail:(code: Int, message: String)->Unit){
         iLog("退出当前账户")
         EMClient.getInstance().logout(true, object : EMCallBack {
             override fun onSuccess() {
                 iLog("退出当前账户成功")
+                success.invoke()
             }
 
             override fun onProgress(progress: Int, status: String) {
@@ -132,7 +162,8 @@ object ImUserManager {
             }
 
             override fun onError(code: Int, message: String) {
-                iLog("退出当前账户失败")
+                iLog("退出当前账户失败,code:${code},message:${message}")
+                fail.invoke(code, message)
             }
         })
     }

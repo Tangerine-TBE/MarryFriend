@@ -47,6 +47,7 @@ object ImMessageManager {
         conversations.keys.forEach {
             val conversation=conversations[it]
             ConversationsBean(it).apply {
+                conversationsBeanList.add(this)
                 this.unReaderCount=conversation?.unreadMsgCount?:0
                 val lastMsg=conversation?.lastMessage?:return@apply
                 this.lastTime= lastMsg.msgTime
@@ -101,7 +102,6 @@ object ImMessageManager {
                     }
                 }
             }
-//            conversation?.type//会话类型，单聊、群聊、聊天室、客服会话
         }
         return conversationsBeanList
     }

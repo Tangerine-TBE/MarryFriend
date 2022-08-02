@@ -52,12 +52,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             return intent
         }
     }
-    private val loadService by lazy {
-        LoadSir.getDefault()
-            .register(contentView){
-            loadData()
-        }
-    }
     private val userId by lazy {
         val id=intent?.getIntExtra(USER_ID_KEY,-1)?:-1
         if (id!=-1){
@@ -99,11 +93,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             loadingDialog.dismiss()
             if (item==null){
-                loadService.showCallback(DefEmptyDataCallBack::class.java)
                 return@launch
             }else{
                 myActionBar.setTitle(item.getNickname())
-                loadService.showSuccess()
             }
             userItem=item
             initListener()

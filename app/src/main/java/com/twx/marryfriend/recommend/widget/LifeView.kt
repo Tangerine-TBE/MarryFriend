@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,13 +40,18 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
     fun setImageData(imageList: List<LifeImage>){
         if (imageList.isEmpty()){
             life_images_recycler_view.visibility=View.GONE
+            life_images_recycler_view.forEach {
+                if (it is ImageView){
+                    it.setImageBitmap(null)
+                }
+            }
         }else{
             life_images_recycler_view.visibility=View.VISIBLE
         }
         life_count.setText("${imageList.size}张生活照")
         this.imageList.clear()
         this.imageList.addAll(imageList)
-        for (i in 0 until 3){
+        for (i in 0 until 5){
             if (i>=imageList.size){
                 for (j in i until life_images_recycler_view.childCount){
                     life_images_recycler_view.get(i).visibility=View.GONE

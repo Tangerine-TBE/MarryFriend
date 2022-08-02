@@ -4,13 +4,9 @@
     <data>
         <import type="com.twx.marryfriend.message.model.ConversationsItemModel"/>
         <import type="android.view.View"/>
-<!--        <import type="com.twx.marryfriend.message.views.ConversationItemView"/>-->
         <variable
             name="conversationsItemModel"
             type="com.twx.marryfriend.message.model.ConversationsItemModel" />
-<!--        <variable-->
-<!--            name="conversationItemView"-->
-<!--            type="com.twx.marryfriend.message.views.ConversationItemView" />-->
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -87,63 +83,16 @@
             android:visibility="@{conversationsItemModel.isVip? View.VISIBLE:View.GONE}"
             android:layout_width="20dp"
             android:layout_height="20dp"/>
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <TextView
             app:layout_constraintStart_toStartOf="@id/messageUserNickname"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/messageUserNickname"
-            android:layout_marginTop="6dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="@{conversationsItemModel.location}"
-                tools:text="深圳"
-                android:textColor="#FF717171"
-                android:textSize="15dp"
-                android:includeFontPadding="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <View
-                android:background="#FFDCDCDC"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_width="0.5dp"
-                android:layout_height="11dp"/>
-            <TextView
-                android:text="@{conversationsItemModel.ageShow}"
-                tools:text="24岁"
-                android:textColor="#FF717171"
-                android:textSize="15dp"
-                android:includeFontPadding="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <View
-                android:background="#FFDCDCDC"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_width="0.5dp"
-                android:layout_height="11dp"/>
-            <TextView
-                android:text="幼师"
-                android:textColor="#FF717171"
-                android:textSize="15dp"
-                android:includeFontPadding="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <View
-                android:background="#FFDCDCDC"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_width="0.5dp"
-                android:layout_height="11dp"/>
-            <TextView
-                android:text="大专"
-                android:textColor="#FF717171"
-                android:textSize="15dp"
-                android:includeFontPadding="false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </androidx.appcompat.widget.LinearLayoutCompat>
+            android:layout_marginTop="8dp"
+            android:includeFontPadding="false"
+            android:text="@{conversationsItemModel.lastMassage}"
+            tools:text="她应该在盼望你的回应吧"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/messageTimeText"
             app:layout_constraintTop_toTopOf="@id/messageUserNickname"

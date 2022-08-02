@@ -1,4 +1,4 @@
-package com.twx.marryfriend.message
+package com.twx.marryfriend.message.model
 
 import androidx.databinding.BaseObservable
 

@@ -49,4 +49,8 @@ class SlideCardLayoutManager:RecyclerView.LayoutManager() {
             }
         }
     }
+
+    override fun canScrollVertically(): Boolean {
+        return false
+    }
 }

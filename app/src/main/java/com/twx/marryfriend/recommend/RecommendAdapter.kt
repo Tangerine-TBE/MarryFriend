@@ -80,6 +80,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
             stopVoice()
         }
         notifyItemRemoved(index)
+        notifyItemChanged(0)
         return e
     }
 
@@ -170,6 +171,11 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                 }
             }
             holder.getView<ImageView>(R.id.aboutMePhoto).also {
+                if (position!=0){
+                    it.setImageBitmap(null)
+                }else{
+
+                }
                 if (item.getAboutMePhoto().isNullOrBlank()){
                     it.visibility=View.GONE
                 }else{
@@ -248,6 +254,9 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         holder.getView<View>(R.id.myAlbum).apply {
             this.visibility=View.GONE
             return@apply
+//            it.optimize(position){
+//
+//            }
             /*item.getAlbumPhoto().also {
                 if (it.isEmpty()){
                     this.visibility=View.GONE
@@ -335,10 +344,14 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
                     val video=dynamic.video_url?.let {
                         it.split(",")
                     }
-                    if (imageList.isNullOrEmpty()){
-                        holder.getView<View>(R.id.myDynamic).visibility=View.GONE
-                    }else {
-                        holder.getView<PicturePreviewView>(R.id.dynamicPreview).setImageData(imageList,video)
+                    if (position!=0){
+                        holder.getView<PicturePreviewView>(R.id.dynamicPreview).clearImage()
+                    }else{
+                        if (imageList.isNullOrEmpty()){
+                            holder.getView<View>(R.id.myDynamic).visibility=View.GONE
+                        }else {
+                            holder.getView<PicturePreviewView>(R.id.dynamicPreview).setImageData(imageList,video)
+                        }
                     }
                 }
             }
@@ -351,13 +364,17 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         //生活
         holder.getView<LifeView>(R.id.life_view).apply {
             item.getLifePhoto().also {
-                if (it.isEmpty()){
-                    this.visibility=View.GONE
+                if(position!=0){
+                    this.setImageData(emptyList())
                 }else{
-                    this.visibility=View.VISIBLE
-                    this.setImageData(it.map {
-                        LifeView.LifeImage(it.image_url?:"",it.file_name?:"",it.content?:"")
-                    })
+                    if (it.isEmpty()){
+                        this.visibility=View.GONE
+                    }else{
+                        this.visibility=View.VISIBLE
+                        this.setImageData(it.map {
+                            LifeView.LifeImage(it.image_url?:"",it.file_name?:"",it.content?:"")
+                        })
+                    }
                 }
             }
         }
@@ -386,6 +403,7 @@ class RecommendAdapter() :RecyclerView.Adapter<BaseViewHolder>(){
         }
 
         holder.getView<MyNestedScrollView>(R.id.nestedScrollView).apply {
+            this.scrollTo(0,0)
             val itemInteraction=holder.getView<View>(R.id.itemInteraction)
             val itemInteraction2=holder.getView<View>(R.id.itemInteraction2)
 

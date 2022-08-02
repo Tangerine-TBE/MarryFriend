@@ -24,6 +24,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
     private val previewView5 by lazy {
         LayoutInflater.from(context).inflate(R.layout.item_picture_preview_5_item,this,false) as ViewGroup
     }
+    private val preImageViews by lazy { ArrayList<ImageView>() }
 
     init {
         if(DEBUG){
@@ -32,6 +33,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
     }
 
     fun setImageData(imageList: List<String>,videoList:List<String>?=null){
+        clearImage()
         removeAllViews()
         when{
             !videoList.isNullOrEmpty()&&imageList.size>=4->{
@@ -40,6 +42,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 list.add(0,videoList.first())
                 previewView5.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
                     if (index<list.size) {
+                        preImageViews.add(t)
                         Glide.with(t).load(list[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
                     }else{
                         return@forEachIndexed
@@ -49,6 +52,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
             imageList.size==1->{
                 addView(previewView1)
                 findViewById<ImageView>(R.id.picture1).also {
+                    preImageViews.add(it)
                     Glide.with(it).load(imageList[0]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
             }
@@ -57,6 +61,7 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 findViewById<Group>(R.id.img456Group).visibility= View.GONE
                 previewView6.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
                     if (index<imageList.size) {
+                        preImageViews.add(t)
                         Glide.with(t).load(imageList[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
                     }else{
                         return@forEachIndexed
@@ -67,15 +72,19 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 addView(previewView6)
                 findViewById<Group>(R.id.img456Group).visibility= View.VISIBLE
                 findViewById<ImageView>(R.id.picture1).also {
+                    preImageViews.add(it)
                     Glide.with(it).load(imageList[0]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
                 findViewById<ImageView>(R.id.picture2).also {
+                    preImageViews.add(it)
                     Glide.with(it).load(imageList[1]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
                 findViewById<ImageView>(R.id.picture4).also {
+                    preImageViews.add(it)
                     Glide.with(it).load(imageList[2]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
                 findViewById<ImageView>(R.id.picture5).also {
+                    preImageViews.add(it)
                     Glide.with(it).load(imageList[3]).placeholder(R.drawable.ic_small_default_pic).into(it)
                 }
             }
@@ -83,13 +92,17 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 addView(previewView6)
                 findViewById<Group>(R.id.img456Group).visibility= View.VISIBLE
                 previewView6.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
+                    preImageViews.add(t)
                     Glide.with(t).load(imageList[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
                 }
             }
         }
     }
 
-    fun setDynamicData(){
-
+    fun clearImage(){
+        preImageViews.forEach {
+            it.setImageBitmap(null)
+        }
+        preImageViews.clear()
     }
 }

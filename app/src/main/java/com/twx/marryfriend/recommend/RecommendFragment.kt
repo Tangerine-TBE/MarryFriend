@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
@@ -28,9 +29,9 @@ import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
-import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
+import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
@@ -90,6 +91,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }
         cardSwipeView.layoutManager= SlideCardLayoutManager()
+        cardSwipeView.apply {
+            this.itemAnimator?.addDuration = 0
+            this.itemAnimator?.changeDuration = 0
+            this.itemAnimator?.moveDuration = 0
+            this.itemAnimator?.removeDuration = 0
+            (this.itemAnimator as? SimpleItemAnimator)?.setSupportsChangeAnimations(false)
+        }
 //        touchHelper.attachToRecyclerView(cardSwipeView)
         CardConfig.initConfig(context)
         loadData()
@@ -330,9 +338,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 左滑、不喜欢
      */
     private fun disLike(item: RecommendBean){
-        if (BuildConfig.DEBUG){
-            return
-        }
+//        if (BuildConfig.DEBUG){
+//            return
+//        }
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
             try {
@@ -348,9 +356,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 右滑、喜欢
      */
     private fun like(item: RecommendBean){
-        if (BuildConfig.DEBUG){
-            return
-        }
+//        if (BuildConfig.DEBUG){
+//            return
+//        }
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {

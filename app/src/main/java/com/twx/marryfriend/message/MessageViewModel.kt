@@ -5,16 +5,17 @@ import androidx.lifecycle.viewModelScope
 import com.message.conversations.ImMessageManager
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.iLog
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.random.Random
 
 class MessageViewModel:ViewModel() {
-    suspend fun getAllConversations()=suspendCoroutine<List<ConversationsItemModel>>{continuation->
+    suspend fun getAllConversations()=suspendCoroutine<List<ConversationsItemModel>>{ continuation->
         viewModelScope.launch {
             ImMessageManager.getAllConversations().map {
                 ConversationsItemModel(it.userId,it.conversationType)
@@ -22,11 +23,12 @@ class MessageViewModel:ViewModel() {
                         this.unReaderCount=it.unReaderCount
                         this.lastTime=it.lastTime
                         this.lastMassage=it.lastMassage
+                        this.msgType=it.conversationType
 //                        val userInfo=getUserInfo()
                         this.userImage
-                        this.nickname
-                        this.isRealName
-                        this.age
+                        this.nickname="这是昵称${Random.nextInt()}"
+                        this.isRealName=Random.nextBoolean()
+                        this.age=Random.nextInt()
                         this.occupation
                         this.education
                     }
