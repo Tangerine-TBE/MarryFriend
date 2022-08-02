@@ -1025,8 +1025,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 //                        }
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] =
-                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = hobbyText
                         isCompleteHobby = true
@@ -1093,8 +1092,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (RegexUtils.isIDCard18Exact(identityCode)) {
                             val map: MutableMap<String, String> = TreeMap()
 
-                            map[Contents.ACCESS_TOKEN] =
-                                "24.2dad8b163be9d558404bde4557fe8ad2.2592000.1658889671.282335-26278103"
+                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
                             map[Contents.CONTENT_TYPE] = "application/json"
                             map[Contents.ID_CARD_NUMBER] = identityCode
                             map[Contents.NAME] = name
@@ -1880,8 +1878,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         lifeChoosePath = mTempLifePath
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] =
-                            "24.9fe4abb91bf6d38d39e221f39f3585a1.2592000.1661683108.282335-26330258"
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
@@ -3680,8 +3677,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             lifeBitmap = ImageUtils.getBitmap(result[0].realPath)
 
                             val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                "24.9fe4abb91bf6d38d39e221f39f3585a1.2592000.1661683108.282335-26330258"
+                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                             map[Contents.IMAGE] =
                                 bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))

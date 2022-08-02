@@ -34,7 +34,7 @@ class MainActivity : MainBaseViewActivity() {
 
         initEmojiCompat()
 
-        initMineFragment()
+        initRecommendFragment()
 
     }
 

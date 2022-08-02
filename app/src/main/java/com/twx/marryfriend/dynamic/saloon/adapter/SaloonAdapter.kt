@@ -327,6 +327,12 @@ class SaloonAdapter(
                 .into(holder.identity)
         }
 
+        if (mList[position].focus_uid != null) {
+
+        } else {
+
+        }
+
         val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
             Calendar.YEAR) - mList[position].age).toString().substring(2, 4)
 
@@ -684,7 +690,6 @@ class SaloonAdapter(
         } else {
             holder.tvComment.text = "评论"
         }
-
 
     }
 

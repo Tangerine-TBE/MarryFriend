@@ -48,6 +48,12 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".mine.voice.VoiceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".dynamic.other.OtherDynamicActivity"
+            android:exported="false" />
+        <activity
             android:name=".set.feedback.CommonQuestionActivity"
             android:exported="false" />
         <activity
@@ -108,9 +114,6 @@
             android:name=".login.retrieve.RetrieveActivity"
             android:exported="false" />
         <activity
-            android:name=".guide.testActivity"
-            android:exported="false" />
-        <activity
             android:name=".guide.info.GetInfoActivity"
             android:exported="false" />
         <activity
@@ -134,23 +137,21 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".main.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
 
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
             <!--            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".main.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"

@@ -63,9 +63,21 @@ class LikeTipAdapter(private val mList: MutableList<LikeTipList>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
 
-//        Glide.with(mContext)
-//            .load(mList[position].headface)
-//            .into( holder.avatar)
+
+        if (mList[position].user_sex == 1) {
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.mipmap.icon_mine_male_default)
+                .placeholder(R.mipmap.icon_mine_male_default)
+                .into(holder.avatar)
+        } else {
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.mipmap.icon_mine_female_default)
+                .placeholder(R.mipmap.icon_mine_female_default)
+                .into(holder.avatar)
+        }
+
 
         holder.nick.text = mList[position].nick
 
@@ -75,14 +87,18 @@ class LikeTipAdapter(private val mList: MutableList<LikeTipList>) :
                 holder.image.visibility = View.VISIBLE
                 holder.video.visibility = View.GONE
                 holder.text.visibility = View.GONE
-                Glide.with(mContext).load(mList[position].image_url).into(holder.image)
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .into(holder.image)
             }
             2 -> {
                 // 视频动态
                 holder.image.visibility = View.GONE
                 holder.video.visibility = View.VISIBLE
                 holder.text.visibility = View.GONE
-                Glide.with(mContext).load(mList[position].video_url).into(holder.videoPic)
+                Glide.with(mContext)
+                    .load(mList[position].video_url)
+                    .into(holder.videoPic)
             }
             3 -> {
                 // 纯文字动态

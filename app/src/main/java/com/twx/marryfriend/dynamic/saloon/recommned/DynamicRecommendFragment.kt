@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.bumptech.glide.Glide
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
@@ -212,7 +213,8 @@ class DynamicRecommendFragment : Fragment(),
             override fun onAvatarClick(v: View?, position: Int) {
                 ToastUtils.showShort("头像,进入资料详情界面")
 
-                startActivity(FriendInfoActivity.getIntent(requireContext(),mTrendList[position].user_id.toInt()))
+                startActivity(FriendInfoActivity.getIntent(requireContext(),
+                    mTrendList[position].user_id.toInt()))
 
             }
         })
@@ -252,12 +254,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -269,12 +275,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -286,12 +296,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -303,7 +317,7 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
@@ -314,7 +328,11 @@ class DynamicRecommendFragment : Fragment(),
                     imageIndex = 2
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -327,7 +345,7 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
 
@@ -339,7 +357,11 @@ class DynamicRecommendFragment : Fragment(),
                     imageIndex = 3
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -351,12 +373,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -368,12 +394,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -385,12 +415,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -402,12 +436,16 @@ class DynamicRecommendFragment : Fragment(),
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
                 for (i in 0.until(images.size)) {
-                    if (images[i].contains(" ")){
+                    if (images[i].contains(" ")) {
                         images[i] = images[i].replace(" ", "")
                     }
                 }
 
-                startActivity(context?.let { ImagePreviewActivity.getIntent(it, images, imageIndex) })
+                startActivity(context?.let {
+                    ImagePreviewActivity.getIntent(it,
+                        images,
+                        imageIndex)
+                })
             }
         })
 
@@ -420,6 +458,7 @@ class DynamicRecommendFragment : Fragment(),
 
                     if (!mDiyList[position].like) {
                         // 点赞
+                        Glide.with(requireContext()).load(R.mipmap.dolike).into(v as ImageView)
                         doLikeClick(mTrendList[position].id,
                             mTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
@@ -446,8 +485,8 @@ class DynamicRecommendFragment : Fragment(),
                 if (!mDiyList[position].focus) {
                     // 点关注
                     mDiyList[position].focus = true
-                    doPlusFocus(mTrendList[position].user_id,
-                        SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"),
+                        mTrendList[position].user_id)
                 } else {
                     ToastUtils.showShort("消息界面")
                 }
@@ -535,6 +574,7 @@ class DynamicRecommendFragment : Fragment(),
         if (plusFocusBean != null) {
             if (plusFocusBean.code == 200) {
                 ToastUtils.showShort("关注成功")
+
             }
         }
     }
@@ -560,7 +600,6 @@ class DynamicRecommendFragment : Fragment(),
             }
         }
 
-
     }
 
     override fun onLikeCancelError() {
@@ -570,6 +609,7 @@ class DynamicRecommendFragment : Fragment(),
         // 添加赞
         if (likeClickBean != null) {
             if (likeClickBean.code == 200) {
+
                 mDiyList[mLikePosition].like = true
                 mDiyList[mLikePosition].likeCount++
                 adapter.notifyDataSetChanged()
@@ -600,7 +640,7 @@ class DynamicRecommendFragment : Fragment(),
                 mTrendList.add(trendSaloonBean.data.list[i])
                 mIdList.add(trendSaloonBean.data.list[i].id)
 
-                val focus = trendSaloonBean.data.list[i].focous_uid != null
+                val focus = trendSaloonBean.data.list[i].focus_uid != null
 
                 val like = trendSaloonBean.data.list[i].guest_uid != null
 
@@ -634,8 +674,6 @@ class DynamicRecommendFragment : Fragment(),
 
         override fun onCreate() {
             super.onCreate()
-
-
 
             findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
                 dismiss()

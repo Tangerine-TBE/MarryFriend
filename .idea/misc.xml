@@ -134,6 +134,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_message.xml" value="0.2875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_my_dynamic.xml" value="0.26614583333333336" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_other_dynamic.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_retrieve.xml" value="0.25104166666666666" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_safe.xml" value="0.2875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_school_search.xml" value="0.25" />
@@ -145,6 +146,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_verify.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_verify_input.xml" value="0.26145833333333335" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_vip.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_voice.xml" value="0.2557291666666667" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/custom_port_dialog_action_bar.xml" value="0.27760416666666665" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_dynamic_mine_edit.xml" value="0.15260416666666668" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_dynamic_other_edit.xml" value="0.15260416666666668" />
@@ -179,7 +181,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_set_hobby.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_set_ideal.xml" value="0.27447916666666666" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_set_introduce.xml" value="0.2526041666666667" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_set_voice.xml" value="0.630407911001236" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_set_voice.xml" value="0.22" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_time_out.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_tips.xml" value="0.15260416666666668" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_user_data_birth.xml" value="0.190625" />
@@ -242,7 +244,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_detail_target_job_address.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_like.xml" value="0.21875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_mine.xml" value="0.22" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_other.xml" value="0.22" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_other.xml" value="0.9" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_tip_like.xml" value="0.23177083333333334" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_tips.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_feedback.xml" value="0.23958333333333334" />

@@ -50,11 +50,13 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
+import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
+import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.set.SetActivity

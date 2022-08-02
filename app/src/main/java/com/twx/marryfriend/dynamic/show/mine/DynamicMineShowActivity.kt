@@ -41,6 +41,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     com.twx.marryfriend.net.callback.dynamic.IDoCommentOneCreateCallback,
     com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoCreateCallback {
 
+    private var currentPaper = 1
+
     private var x = true
 
     // 大图展示时进入时应该展示点击的那张图片
@@ -99,16 +101,25 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     // 是否需要更新父评论
     private var needUpdateParent = false
 
-
     private lateinit var doCheckTrendPresent: com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl
     private lateinit var getCommentOnePresent: com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl
     private lateinit var doCommentOneCreatePresent: com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl
     private lateinit var getCommentTwoPresent: com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl
     private lateinit var doCommentTwoCreatePresent: com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl
 
-
     private lateinit var adapter: CommentOneAdapter
 
+    companion object {
+
+        private val ID = "id"
+
+        fun getIntent(context: Context, id: Int): Intent {
+            val intent = Intent(context, DynamicMineShowActivity::class.java)
+            intent.putExtra(ID, id)
+            return intent
+        }
+
+    }
 
     override fun getLayoutView(): Int = R.layout.activity_dynamic_mine_show
 
@@ -172,7 +183,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         eduList.add("")
 
         getTrendsList()
-        getCommentOne()
+        getCommentOne(currentPaper)
 
         KeyboardUtils.fixAndroidBug5497(this)
         KeyboardUtils.clickBlankArea2HideSoftInput()
@@ -518,25 +529,16 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     }
 
     // 获取一级父评论
-    private fun getCommentOne() {
+    private fun getCommentOne(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = 6.toString()
         map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getCommentOnePresent.getCommentOne(map)
+        getCommentOnePresent.getCommentOne(map, page, 10)
     }
 
     // 给动态提交父评论
     private fun doCommentOne(trendsId: Int, hostId: Int, GuestId: Int, content: String) {
-
-//        val map: MutableMap<String, String> = TreeMap()
-//        map[Contents.TRENDS_ID] = trendsId.toString()
-//        map[Contents.HOST_UID] = hostId.toString()
-//        map[Contents.GUEST_UID] = GuestId.toString()
-//        map[Contents.CONTENT_ONE] = content
-//        doCommentOneCreatePresent.doCommentOneCreate(map)
-
         ToastUtils.showShort("不能回复自己")
-
     }
 
     // 获取二级子评论
@@ -589,7 +591,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 //
 //                    adapter.notifyDataSetChanged()
 
-                    getCommentOne()
+//                    getCommentOne(currentPaper)
 
                     mode = 0
                     trendsId = info.id

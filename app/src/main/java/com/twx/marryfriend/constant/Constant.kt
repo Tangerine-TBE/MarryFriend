@@ -34,8 +34,14 @@ object Constant {
 
     // --------------------- 百度信息 ----------------------
 
-    // 百度API access_token
+    // 百度API access_token  (头像审核)
     const val ACCESS_TOKEN = "access_token"
+
+    // 百度API access_token  (生活照审核)
+    const val LIFE_ACCESS_TOKEN = "life_access_token"
+
+    // 百度API access_token  (身份证id 与姓名)
+    const val ID_ACCESS_TOKEN = "id_access_token"
 
     // --------------------- 基础信息 ----------------------
 

@@ -7,6 +7,8 @@
     android:orientation="vertical"
     tools:context="com.twx.marryfriend.dynamic.saloon.tip.TipsActivity">
 
+
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tb_dynamic_tips_indicator"
         android:layout_width="match_parent"

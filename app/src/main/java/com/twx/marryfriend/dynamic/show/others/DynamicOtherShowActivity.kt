@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.*
@@ -32,6 +34,7 @@ import com.twx.marryfriend.net.callback.dynamic.IDoCommentOneDeleteCallback
 import com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoDeleteCallback
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.emoji.EmojiUtils
+import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
 import kotlinx.android.synthetic.main.activity_dynamic_other_show.*
 import java.io.Serializable
@@ -50,6 +53,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     com.twx.marryfriend.net.callback.dynamic.IDoPlusFocusCallback,
     CommentOneAdapter.OnItemLongClickListener,
     com.twx.marryfriend.net.callback.dynamic.IDoCancelFocusCallback {
+
+    private var currentPaper = 1
 
     private var x = true
 
@@ -143,6 +148,20 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     private lateinit var doPlusFocusPresent: com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl
     private lateinit var doCancelFocusPresent: com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl
 
+    companion object {
+
+        private val TREND_ID = "trendId"
+        private val USER_ID = "usersId"
+
+        fun getIntent(context: Context, trendId: Int, userId: Int): Intent {
+            val intent = Intent(context, DynamicOtherShowActivity::class.java)
+            intent.putExtra(TREND_ID, trendId)
+            intent.putExtra(USER_ID, userId)
+            return intent
+        }
+
+    }
+
     override fun getLayoutView(): Int = R.layout.activity_dynamic_other_show
 
     override fun initView() {
@@ -194,7 +213,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             iv_dynamic_other_show_tip.visibility = View.VISIBLE
         }
 
-
         adapter = CommentOneAdapter(mCommentOneList)
         adapter.setOnItemClickListener(this)
         adapter.setOnItemLongClickListener(this)
@@ -207,6 +225,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         rv_emoji_other_container.adapter = emojiAdapter
         rv_emoji_other_container.layoutManager = GridLayoutManager(this, 8)
+
+        sfl_dynamic_other_show_refresh.setRefreshFooter(ClassicsFooter(this))
 
     }
 
@@ -222,7 +242,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         eduList.add("")
 
         getTrendsList()
-        getCommentOne()
+        getCommentOne(currentPaper)
 
         KeyboardUtils.fixAndroidBug5497(this)
         KeyboardUtils.clickBlankArea2HideSoftInput()
@@ -357,6 +377,12 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             startActivity(intent)
         }
 
+
+        sfl_dynamic_other_show_refresh.setOnLoadMoreListener {
+            getCommentOne(currentPaper)
+            sfl_dynamic_other_show_refresh.finishLoadMore(2000);//传入false表示刷新失败
+        }
+
         // 避免触发下层界面点击事件
         ll_dynamic_other_show_bottom.setOnClickListener {
 
@@ -375,12 +401,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         // 点赞
                         isLike = true
 
-                        if (info.like_count == null) {
-                            tv_dynamic_other_show_like.text = 1.toString()
-                        } else {
-                            tv_dynamic_other_show_like.text = (info.like_count!! + 1).toString()
-                        }
-                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like)
                         doLikeClick(trendId,
                             userId,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
@@ -388,12 +408,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     } else {
                         // 取消赞
                         isLike = false
-                        if (info.like_count == null) {
-                            tv_dynamic_other_show_like.text = 0.toString()
-                        } else {
-                            tv_dynamic_other_show_like.text = (info.like_count!!).toString()
-                        }
-                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_base_like)
+
                         doLikeCancelClick(trendId, userId,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
@@ -438,15 +453,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
         }
 
-        eet_emoji_other_edit.setOnClickListener {
-
-            ToastUtils.showShort("恢复到添加父评论模式")
-
-            mode = 0
-            trendsId = trendId
-            hostUid = userId
-            threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
-        }
 
         eet_emoji_other_edit.viewTreeObserver.addOnGlobalLayoutListener {
             val r = Rect()
@@ -569,6 +575,26 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
         }
 
+
+        KeyboardUtils.registerSoftInputChangedListener(this,object :KeyboardUtils.OnSoftInputChangedListener{
+            override fun onSoftInputChanged(height: Int) {
+                if (height == 0){
+
+                    ToastUtils.showShort("恢复到添加父评论模式")
+
+                    eet_emoji_other_edit.hint = "走心,说点好听的"
+
+                    mode = 0
+                    trendsId = trendId
+                    hostUid = userId
+                    threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+
+                }
+            }
+
+        })
+
+
     }
 
 
@@ -622,11 +648,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     // 获取一级父评论
-    private fun getCommentOne() {
+    private fun getCommentOne(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = userId.toString()
-        getCommentOnePresent.getCommentOne(map)
+        getCommentOnePresent.getCommentOne(map,page,10)
     }
 
     // 给动态提交父评论
@@ -674,7 +700,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     private fun doLikeClick(trendId: Int, hostUid: Int, guestUid: String) {
 
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_ID] = trendId.toString()
+        map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeClickPresent.doLikeClick(map)
@@ -683,7 +709,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     // 取消点赞
     private fun doLikeCancelClick(trendId: Int, hostUid: Int, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_ID] = trendId.toString()
+        map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
         doLikeCancelPresent.doLikeCancel(map)
@@ -756,12 +782,26 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
+
+        if (info.like_count == null) {
+            tv_dynamic_other_show_like.text = 1.toString()
+        } else {
+            tv_dynamic_other_show_like.text = (info.like_count!! + 1).toString()
+        }
+        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like)
+
     }
 
     override fun onDoLikeClickError() {
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+        if (info.like_count == null) {
+            tv_dynamic_other_show_like.text = 0.toString()
+        } else {
+            tv_dynamic_other_show_like.text = (info.like_count!!).toString()
+        }
+        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_base_like)
     }
 
     override fun onLikeCancelError() {
@@ -802,6 +842,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         for (i in 0.until(commentOneBean.data.list.size)) {
 
+            if (currentPaper == 1) {
+                mCommentOneList.clear()
+            }
+            currentPaper++
+
             if (commentOneBean.data.list[i].count_two !== null) {
                 mCommentOneList.add(CommentBean(commentOneBean.data.list[i],
                     arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
@@ -816,14 +861,14 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             mPageList.add(1)
         }
 
-
-        Log.i("guo", "mCommentOneList : ${mCommentOneList}")
-
         adapter.notifyDataSetChanged()
+
+        sfl_dynamic_other_show_refresh.finishLoadMore(true)
+
     }
 
     override fun onGetCommentOneCodeError() {
-
+        sfl_dynamic_other_show_refresh.finishLoadMore(true)
     }
 
     override fun onDoCommentTwoCreateSuccess(commentTwoCreateBean: CommentTwoCreateBean?) {
@@ -1033,8 +1078,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                     tv_dynamic_other_show_info.text = "${year}年  $city  $edu  $job"
 
-
-
                     if (info.focous_uid != null) {
                         haveFocus = true
                         iv_dynamic_other_show_mode.visibility = View.GONE
@@ -1047,8 +1090,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                     }
 
-
                     tv_dynamic_other_show_time.text = TimeUtil.getCommonTime(info.create_time)
+
+                    if (info.guest_uid != null) {
+                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom_check)
+                    } else {
+                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom)
+                    }
 
                     if (info.position != "") {
                         ll_dynamic_other_show_location.visibility = View.VISIBLE
@@ -1056,7 +1104,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     } else {
                         ll_dynamic_other_show_location.visibility = View.GONE
                     }
-
 
                     if (info.discuss_count == null) {
                         tv_dynamic_other_show_comment.text = 0.toString()
@@ -1488,16 +1535,17 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                                 .into(iv_dynamic_other_show_like3)
                         }
                     }
+
                 }
 
             } else {
                 ToastUtils.showShort("网络请求错误")
             }
         }
+
     }
 
     override fun onDoCheckTrendError() {
-
     }
 
 
@@ -1518,6 +1566,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         mItem = positionOne
 
         // edittext 获取焦点 模式切换成父评论
+
+        eet_emoji_other_edit.hint = "回复${mCommentOneList[positionOne].list.nick_one}"
+
         eet_emoji_other_edit.isFocusable = true
         eet_emoji_other_edit.isFocusableInTouchMode = true
         eet_emoji_other_edit.requestFocus()
@@ -1553,6 +1604,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         childSex = mCommentOneList[positionOne].list.sex_two
 
         // edittext 获取焦点 模式切换成父评论
+
+        eet_emoji_other_edit.hint = "回复${mCommentOneList[positionOne].list.nick_two}"
+
         eet_emoji_other_edit.isFocusable = true
         eet_emoji_other_edit.isFocusableInTouchMode = true
         eet_emoji_other_edit.requestFocus()
@@ -1595,6 +1649,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
 
         // edittext 获取焦点 模式切换成父评论
+
+        eet_emoji_other_edit.hint = "回复${mCommentOneList[positionOne].twoList[two].last_nick}"
 
         eet_emoji_other_edit.isFocusable = true
         eet_emoji_other_edit.isFocusableInTouchMode = true
@@ -1639,7 +1695,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     .dismissOnBackPressed(false)
                     .isDestroyOnDismiss(true)
                     .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                     .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0))
+                    .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0))
                     .show()
             } else {
                 ToastUtils.showShort("此条数据刚添加，暂时无法删除")
@@ -1853,7 +1909,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             if (commentOneDeleteBean != null) {
                 if (commentOneDeleteBean.code == 200) {
                     ToastUtils.showShort("删除父动态，更新视图")
-                    if (mCommentOneList.size > one ){
+                    if (mCommentOneList.size > one) {
                         mCommentOneList.removeAt(one)
                         adapter.notifyDataSetChanged()
                     }
