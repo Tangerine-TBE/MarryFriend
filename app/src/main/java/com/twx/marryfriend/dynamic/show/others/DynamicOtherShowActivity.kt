@@ -374,6 +374,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             val intent = Intent(this, DynamicMineLikeActivity::class.java)
             intent.putExtra("trendId", trendId)
             intent.putExtra("userId", userId)
+
+            Log.i("guo", "xxxxx------trendId :$trendId")
+            Log.i("guo", "xxxxx------userId :$userId")
+
             startActivity(intent)
         }
 
@@ -576,23 +580,24 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         }
 
 
-        KeyboardUtils.registerSoftInputChangedListener(this,object :KeyboardUtils.OnSoftInputChangedListener{
-            override fun onSoftInputChanged(height: Int) {
-                if (height == 0){
+        KeyboardUtils.registerSoftInputChangedListener(this,
+            object : KeyboardUtils.OnSoftInputChangedListener {
+                override fun onSoftInputChanged(height: Int) {
+                    if (height == 0) {
 
-                    ToastUtils.showShort("恢复到添加父评论模式")
+                        ToastUtils.showShort("恢复到添加父评论模式")
 
-                    eet_emoji_other_edit.hint = "走心,说点好听的"
+                        eet_emoji_other_edit.hint = "走心,说点好听的"
 
-                    mode = 0
-                    trendsId = trendId
-                    hostUid = userId
-                    threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+                        mode = 0
+                        trendsId = trendId
+                        hostUid = userId
+                        threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
 
+                    }
                 }
-            }
 
-        })
+            })
 
 
     }
@@ -652,7 +657,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = userId.toString()
-        getCommentOnePresent.getCommentOne(map,page,10)
+        getCommentOnePresent.getCommentOne(map, page, 10)
     }
 
     // 给动态提交父评论

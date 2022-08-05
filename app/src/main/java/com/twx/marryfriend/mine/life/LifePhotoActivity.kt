@@ -34,12 +34,18 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.DeletePhotoBean
 import com.twx.marryfriend.bean.FaceDetectBean
+import com.twx.marryfriend.bean.UploadPhotoBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
+import com.twx.marryfriend.net.callback.IDoDeletePhotoCallback
 import com.twx.marryfriend.net.callback.IDoLifeFaceDetectCallback
+import com.twx.marryfriend.net.callback.IDoUploadPhotoCallback
+import com.twx.marryfriend.net.impl.doDeletePhotoPresentImpl
 import com.twx.marryfriend.net.impl.doLifeFaceDetectPresentImpl
+import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
 import com.twx.marryfriend.utils.GlideEngine
 import kotlinx.android.synthetic.main.activity_life_photo.*
 import java.io.ByteArrayOutputStream
@@ -52,17 +58,13 @@ import java.net.URL
 import java.util.*
 
 
-class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
-
+class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
     // 选择器中选中的图片路径
     private var lifeChoosePath: String = ""
 
     // 生活照暂存的bitmap
     private var lifeBitmap: Bitmap? = null
-
-    // 是否完成生活照选择
-    private var isFinishLife = false
 
     // 选择的删除键是第几个删除
     private var lifeDeleteMode = "one"
@@ -73,22 +75,25 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     // 临时图片文件路径
     private var mTempLifePath = ""
 
+
     // 第一张我的生活照
     private var mLifeFirstPath = ""
 
     // 第一张我的生活照上传百度云的url
     private var mLifeFirstUrl = ""
 
+    // 第一张我的生活照Id
+    private var mLifeFirstId = ""
+
+    // 第一张我的生活照介绍
+    private var mLifeFirstText = ""
+
+    // 第一张我的生活照审核状态
+    private var mLifeFirstState = ""
+
     // 是否存在
     private var haveFirstPic = false
 
-    // 存储地址
-    private var lifeFirstPic: Uri? = null
-
-    // 介绍
-    private var lifeFirstPicText = ""
-    private var lifeFirstBitmap: Bitmap? = null
-    private var getFirstBitmap = false
 
     // 第二张我的生活照
     private var mLifeSecondPath = ""
@@ -96,16 +101,18 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     // 第二张我的生活照上传百度云的url
     private var mLifeSecondUrl = ""
 
+    // 第二张我的生活照Id
+    private var mLifeSecondId = ""
+
+    // 第二张我的生活照介绍
+    private var mLifeSecondText = ""
+
+    // 第二张我的生活照审核状态
+    private var mLifeSecondState = ""
+
     // 是否存在
     private var haveSecondPic = false
 
-    // 存储地址
-    private var lifeSecondPic: Uri? = null
-
-    // 介绍
-    private var lifeSecondPicText = ""
-    private var lifeSecondBitmap: Bitmap? = null
-    private var getSecondBitmap = false
 
     // 第三张我的生活照
     private var mLifeThirdPath = ""
@@ -113,52 +120,32 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     // 第三张我的生活照上传百度云的url
     private var mLifeThirdUrl = ""
 
+    // 第三张我的生活照Id
+    private var mLifeThirdId = ""
+
+    // 第三张我的生活照介绍
+    private var mLifeThirdText = ""
+
+    // 第三张我的生活照审核状态
+    private var mLifeThirdState = ""
+
     // 是否存在
     private var haveThirdPic = false
 
-    // 存储地址
-    private var lifeThirdPic: Uri? = null
 
-    // 介绍
-    private var lifeThirdPicText = ""
-    private var lifeThirdBitmap: Bitmap? = null
-    private var getThirdBitmap = false
+    private lateinit var doDeletePhotoPresent: doDeletePhotoPresentImpl
 
-    // 图片是否上传成功
-    private var isOneUpload = false
-    private var isTwoUpload = false
-    private var isThreeUpload = false
-
-    // 是否已经回调过
-    private var isNeedCallback = false
-
-    // 哪个activity跳转而来
-    private var activityName = ""
-
-    private lateinit var doFaceDetectPresent: doLifeFaceDetectPresentImpl
-
-    private lateinit var client: BosClient
 
     override fun getLayoutView(): Int = R.layout.activity_life_photo
 
     override fun initView() {
         super.initView()
 
-        doFaceDetectPresent = doLifeFaceDetectPresentImpl.getsInstance()
-        doFaceDetectPresent.registerCallback(this)
-
-        activityName = intent.getStringExtra("activity").toString()
+        doDeletePhotoPresent = doDeletePhotoPresentImpl.getsInstance()
+        doDeletePhotoPresent.registerCallback(this)
 
         mTempLifePath =
             Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
-
-        mLifeFirstPath = externalCacheDir.toString() + File.separator + "live1.png"
-        mLifeSecondPath = externalCacheDir.toString() + File.separator + "live2.png"
-        mLifeThirdPath = externalCacheDir.toString() + File.separator + "live3.png"
-
-        lifeFirstPic = Uri.fromFile(File(this.cacheDir, "lifeFirstPic.jpeg"))
-        lifeSecondPic = Uri.fromFile(File(this.cacheDir, "lifeSecondPic.jpeg"))
-        lifeThirdPic = Uri.fromFile(File(this.cacheDir, "lifeThirdPic.jpeg"))
 
         updateExistDate()
 
@@ -171,20 +158,17 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
     override fun initPresent() {
         super.initPresent()
 
-        val config: BosClientConfiguration = BosClientConfiguration()
-        config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
-            "1b430f2517d0460ebdbecfd910c572f8")
-        config.endpoint = "http://adrmf.gz.bcebos.com"
-
-        client = BosClient(config)
-
     }
 
     override fun initEvent() {
         super.initEvent()
 
         iv_life_photo_finish.setOnClickListener {
+
+            val intent = intent
+            setResult(RESULT_OK, intent)
             finish()
+
         }
 
         ll_life_photo_default.setOnClickListener {
@@ -229,7 +213,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
             intent.putExtra("path", mLifeFirstPath)
-            intent.putExtra("introduce", lifeFirstPicText)
+            intent.putExtra("introduce", mLifeFirstText)
             startActivityForResult(intent, 111)
         }
 
@@ -253,7 +237,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
             intent.putExtra("path", mLifeSecondPath)
-            intent.putExtra("introduce", lifeSecondPicText)
+            intent.putExtra("introduce", mLifeSecondText)
             startActivityForResult(intent, 222)
 
         }
@@ -277,153 +261,41 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
             intent.putExtra("path", mLifeThirdPath)
-            intent.putExtra("introduce", lifeThirdPicText)
+            intent.putExtra("introduce", mLifeThirdText)
             startActivityForResult(intent, 333)
-
-        }
-
-        tv_life_photo_next.setOnClickListener {
-
-            if (isFinishLife) {
-
-                // 上传生活照
-                Thread {
-                    val file = File(mLifeFirstPath)
-
-                    val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
-                    }", FileUtils.getFileName(mLifeFirstPath), file)
-
-                    mLifeFirstUrl = client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(mLifeFirstPath), -1).toString()
-
-                    Log.i("guo", "mLifeFirstUrl :$mLifeFirstUrl")
-
-                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, mLifeFirstUrl)
-                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, lifeFirstPicText)
-
-                    isOneUpload = true
-
-                    if (isOneUpload && isTwoUpload && isThreeUpload) {
-                        val intent = intent
-                        setResult(RESULT_OK, intent)
-                        finish()
-
-                    }
-                }.start()
-
-                if (haveSecondPic) {
-                    Thread {
-                        val file = File(mLifeSecondPath)
-                        val putObjectFromFileResponse =
-                            client.putObject("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }",
-                                FileUtils.getFileName(mLifeSecondPath), file)
-
-                        mLifeSecondUrl = client.generatePresignedUrl("user${
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", FileUtils.getFileName(mLifeSecondPath), -1).toString()
-
-                        Log.i("guo", "mLifeSecondUrl :$mLifeSecondUrl")
-
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, lifeSecondPicText)
-
-
-
-                        isTwoUpload = true
-
-                        if (isOneUpload && isTwoUpload && isThreeUpload) {
-                            val intent = intent
-                            setResult(RESULT_OK, intent)
-                            finish()
-                        }
-
-
-                    }.start()
-                } else {
-                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
-                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
-                    isTwoUpload = true
-
-                    if (isOneUpload && isTwoUpload && isThreeUpload) {
-                        val intent = intent
-                        setResult(RESULT_OK, intent)
-                        finish()
-                    }
-                }
-
-                if (haveThirdPic) {
-                    Thread {
-                        val file = File(mLifeThirdPath)
-                        val putObjectFromFileResponse =
-                            client.putObject("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }",
-                                FileUtils.getFileName(mLifeThirdPath), file)
-
-                        mLifeThirdUrl = client.generatePresignedUrl("user${
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", FileUtils.getFileName(mLifeThirdPath), -1).toString()
-
-                        Log.i("guo", "mLifeThirdUrl :$mLifeThirdUrl")
-
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, mLifeThirdUrl)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, lifeThirdPicText)
-
-
-                        isThreeUpload = true
-
-                        if (isOneUpload && isTwoUpload && isThreeUpload) {
-                            val intent = intent
-                            setResult(RESULT_OK, intent)
-                            finish()
-                        }
-
-                    }.start()
-                } else {
-                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
-                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
-
-                    isThreeUpload = true
-
-                    if (isOneUpload && isTwoUpload && isThreeUpload) {
-                        val intent = intent
-                        setResult(RESULT_OK, intent)
-                        finish()
-                    }
-                }
-
-            } else {
-
-                if (activityName == "data") {
-                    val intent = intent
-                    setResult(RESULT_OK, intent)
-                    finish()
-                } else {
-                    ToastUtils.showShort("您还未选择生活照信息")
-                }
-            }
 
         }
 
     }
 
+
+    // 删除生活照
+    private fun deleteLifePhoto(id: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ID] = id
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        doDeletePhotoPresent.doDeletePhoto(map)
+    }
+
     // 判断数据中存储的数据
     private fun updateExistDate() {
 
-        val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
-        val lifePhotoTwo = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
-        val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
+        mLifeFirstUrl = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
+        mLifeFirstText = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_TEXT, "")
+        mLifeFirstId = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_ID, "")
+        mLifeFirstState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
 
-        val lifePhotoOneText = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_TEXT, "")
-        val lifePhotoTwoText = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
-        val lifePhotoThreeText = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
+        mLifeSecondUrl = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
+        mLifeSecondText = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
+        mLifeSecondId = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_ID, "")
+        mLifeSecondState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
 
-        if (lifePhotoOne != "") {
+        mLifeThirdUrl = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
+        mLifeThirdText = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
+        mLifeThirdId = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_ID, "")
+        mLifeThirdState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
+
+        if (mLifeFirstUrl != "") {
 
             nsv_life_photo_default.visibility = View.GONE
             nsv_life_photo_pic.visibility = View.VISIBLE
@@ -431,160 +303,67 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
             rl_life_photo_pic_one.visibility = View.VISIBLE
             rl_life_photo_pic_more.visibility = View.VISIBLE
 
-            Thread {
-                lifeFirstBitmap = decodeUriAsBitmapFromNet(lifePhotoOne)
 
-                lifeFirstBitmap?.let { saveBitmap(it, mLifeFirstPath) }
+            Glide.with(this).load(mLifeFirstUrl).into(iv_life_photo_pic_one)
 
-
-
-                ThreadUtils.runOnUiThread {
-                    getFirstBitmap = true
-                    hideLoading()
-                    Glide.with(this).load(lifeFirstBitmap).into(iv_life_photo_pic_one)
-                }
-
-            }.start()
-
-
-
-            isFinishLife = true
             haveFirstPic = true
 
-            if (lifePhotoOneText != "") {
-                lifeFirstPicText = lifePhotoOneText
-                tv_life_photo_pic_one.text = lifeFirstPicText
+            if (mLifeFirstText != "") {
+                tv_life_photo_pic_one.text = mLifeFirstText
                 iv_life_photo_pic_one_icon.visibility = View.GONE
             }
 
-        } else {
-            getFirstBitmap = true
+            if (mLifeFirstState == "0") {
+                tv_life_photo_pic_one_audit.visibility = View.VISIBLE
+            } else {
+                tv_life_photo_pic_one_audit.visibility = View.GONE
+            }
+
         }
 
-        if (lifePhotoTwo != "") {
+        if (mLifeSecondUrl != "") {
 
             rl_life_photo_pic_two.visibility = View.VISIBLE
 
-            Thread {
-                lifeSecondBitmap = decodeUriAsBitmapFromNet(lifePhotoTwo)
+            Glide.with(this).load(mLifeSecondUrl).into(iv_life_photo_pic_two)
 
-                lifeSecondBitmap?.let { saveBitmap(it, mLifeSecondPath) }
-
-                ThreadUtils.runOnUiThread {
-                    getSecondBitmap = true
-                    hideLoading()
-                    Glide.with(this).load(lifeSecondBitmap).into(iv_life_photo_pic_two)
-                }
-
-            }.start()
-
-            isFinishLife = true
             haveSecondPic = true
 
-            if (lifePhotoTwoText != "") {
-                lifeSecondPicText = lifePhotoTwoText
-                tv_life_photo_pic_two.text = lifeSecondPicText
+            if (mLifeSecondText != "") {
+                tv_life_photo_pic_two.text = mLifeSecondText
                 iv_life_photo_pic_two_icon.visibility = View.GONE
             }
 
-        } else {
-            getSecondBitmap = true
+            if (mLifeSecondState == "0") {
+                tv_life_photo_pic_two_audit.visibility = View.VISIBLE
+            } else {
+                tv_life_photo_pic_two_audit.visibility = View.GONE
+            }
+
         }
 
-        if (lifePhotoThree != "") {
+        if (mLifeThirdUrl != "") {
 
             rl_life_photo_pic_three.visibility = View.VISIBLE
             rl_life_photo_pic_more.visibility = View.GONE
 
-            Thread {
-                lifeThirdBitmap = decodeUriAsBitmapFromNet(lifePhotoThree)
+            Glide.with(this).load(mLifeThirdUrl).into(iv_life_photo_pic_three)
 
-                lifeThirdBitmap?.let { saveBitmap(it, mLifeThirdPath) }
-
-                ThreadUtils.runOnUiThread {
-                    getThirdBitmap = true
-                    hideLoading()
-                    Glide.with(this).load(lifeThirdBitmap).into(iv_life_photo_pic_three)
-                }
-
-            }.start()
-
-            isFinishLife = true
             haveThirdPic = true
 
-            if (lifePhotoThreeText != "") {
-                lifeThirdPicText = lifePhotoThreeText
-                tv_life_photo_pic_three.text = lifeThirdPicText
+            if (mLifeThirdText != "") {
+                tv_life_photo_pic_three.text = mLifeThirdText
                 iv_life_photo_pic_three_icon.visibility = View.GONE
             }
-        } else {
-            getThirdBitmap = true
-            hideLoading()
-        }
 
-    }
-
-    // 判断数据操作是否读取完成,隐藏加载弹窗
-    private fun hideLoading() {
-        if (getFirstBitmap && getSecondBitmap && getThirdBitmap) {
-            ll_life_photo_loading.visibility = View.GONE
-        }
-    }
-
-    // 将图片转换成Base64编码的字符串
-    private fun bitmapToBase64(bitmap: Bitmap?): String {
-        var result: String = ""
-        var baos: ByteArrayOutputStream? = null
-        try {
-            if (bitmap != null) {
-                baos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                baos.flush()
-                baos.close()
-                val bitmapBytes = baos.toByteArray()
-                result =
-                    android.util.Base64.encodeToString(bitmapBytes, android.util.Base64.NO_WRAP)
+            if (mLifeThirdState == "0") {
+                tv_life_photo_pic_three_audit.visibility = View.VISIBLE
+            } else {
+                tv_life_photo_pic_three_audit.visibility = View.GONE
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.flush()
-                    baos.close()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        return result
-    }
 
-
-    private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
-        ImageUtils.save(bitmap, targetPath, Bitmap.CompressFormat.PNG)
-        return targetPath
-    }
-
-    private fun decodeUriAsBitmapFromNet(url: String): Bitmap? {
-        var fileUrl: URL? = null
-        var bitmap: Bitmap? = null
-        try {
-            fileUrl = URL(url)
-        } catch (e: MalformedURLException) {
-            e.printStackTrace()
         }
-        try {
-            val conn: HttpURLConnection = fileUrl?.openConnection() as HttpURLConnection
-            conn.doInput = true
-            conn.connect()
-            val `is`: InputStream = conn.inputStream
-            bitmap = BitmapFactory.decodeStream(`is`)
-            `is`.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return bitmap
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -602,16 +381,34 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
                         lifeChoosePath = mTempLifePath
 
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
-                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                        map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
+                        if (!haveFirstPic) {
 
-                        isNeedCallback = true
-                        doFaceDetectPresent.doLifeFaceDetect(map)
+                            val intent =
+                                Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
+                            intent.putExtra("path", lifeChoosePath)
+                            intent.putExtra("introduce", "")
+                            startActivityForResult(intent, 111)
 
-//                        // 显示加载动画
-                        ll_life_photo_loading.visibility = View.VISIBLE
+                        } else if (!haveSecondPic) {
+
+                            val intent =
+                                Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
+                            intent.putExtra("path", lifeChoosePath)
+                            intent.putExtra("introduce", "")
+                            startActivityForResult(intent, 222)
+
+                        } else if (!haveThirdPic) {
+
+                            val intent =
+                                Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
+                            intent.putExtra("path", lifeChoosePath)
+                            intent.putExtra("introduce", "")
+                            startActivityForResult(intent, 333)
+
+                        }
 
                     }
                 }
@@ -619,95 +416,94 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                     // 生活第一张图的介绍
                     if (data != null) {
 
+                        mLifeFirstPath = data.getStringExtra("path").toString()
+                        mLifeFirstUrl = data.getStringExtra("url").toString()
+                        mLifeFirstId = data.getStringExtra("id").toString()
+                        mLifeFirstText = data.getStringExtra("text").toString()
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, mLifeFirstUrl)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, mLifeFirstText)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, mLifeFirstId)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
+
+                        mLifeFirstState = "0"
+                        tv_life_photo_pic_one_audit.visibility = View.VISIBLE
+
                         nsv_life_photo_default.visibility = View.GONE
                         nsv_life_photo_pic.visibility = View.VISIBLE
 
                         rl_life_photo_pic_one.visibility = View.VISIBLE
                         rl_life_photo_pic_more.visibility = View.VISIBLE
 
-                        isFinishLife = true
 
-                        if (lifeBitmap == null) {
-                            lifeBitmap = lifeFirstBitmap
-                        }
-
-                        Glide.with(this).load(lifeBitmap).into(iv_life_photo_pic_one)
+                        Glide.with(this).load(mLifeFirstUrl).into(iv_life_photo_pic_one)
 
                         haveFirstPic = true
 
-                        lifeFirstBitmap = lifeBitmap
-
-                        FileUtils.delete(mLifeFirstPath)
-
-                        lifeFirstBitmap?.let { saveBitmap(it, mLifeFirstPath) }
-
-                        lifeFirstPicText = data.getStringExtra("introduce").toString()
-                        if (lifeFirstPicText != "") {
-                            tv_life_photo_pic_one.text = lifeFirstPicText
+                        if (mLifeFirstText != "") {
+                            tv_life_photo_pic_one.text = mLifeFirstText
                             iv_life_photo_pic_one_icon.visibility = View.GONE
                         }
-                        lifeBitmap = null
 
                     }
                 }
                 222 -> {
                     if (data != null) {
 
+                        mLifeSecondPath = data.getStringExtra("path").toString()
+                        mLifeSecondUrl = data.getStringExtra("url").toString()
+                        mLifeSecondId = data.getStringExtra("id").toString()
+                        mLifeSecondText = data.getStringExtra("text").toString()
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, mLifeSecondText)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, mLifeSecondId)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
+
+                        mLifeSecondState = "0"
+                        tv_life_photo_pic_two_audit.visibility = View.VISIBLE
+
                         rl_life_photo_pic_two.visibility = View.VISIBLE
 
-                        isFinishLife = true
-
-                        if (lifeBitmap == null) {
-                            lifeBitmap = lifeSecondBitmap
-                        }
-
-                        Glide.with(this).load(lifeBitmap).into(iv_life_photo_pic_two)
+                        Glide.with(this).load(mLifeSecondUrl).into(iv_life_photo_pic_two)
 
                         haveSecondPic = true
 
-                        lifeSecondBitmap = lifeBitmap
-
-                        FileUtils.delete(mLifeSecondPath)
-
-                        lifeSecondBitmap?.let { saveBitmap(it, mLifeSecondPath) }
-
-                        lifeSecondPicText = data.getStringExtra("introduce").toString()
-                        if (lifeSecondPicText != "") {
-                            tv_life_photo_pic_two.text = lifeSecondPicText
+                        if (mLifeSecondText != "") {
+                            tv_life_photo_pic_two.text = mLifeSecondText
                             iv_life_photo_pic_two_icon.visibility = View.GONE
                         }
-                        lifeBitmap = null
+
                     }
                 }
                 333 -> {
                     if (data != null) {
 
+                        mLifeThirdPath = data.getStringExtra("path").toString()
+                        mLifeThirdUrl = data.getStringExtra("url").toString()
+                        mLifeThirdId = data.getStringExtra("id").toString()
+                        mLifeThirdText = data.getStringExtra("text").toString()
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, mLifeThirdUrl)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, mLifeThirdText)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, mLifeThirdId)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
+
+                        mLifeThirdState = "0"
+                        tv_life_photo_pic_three_audit.visibility = View.VISIBLE
+
                         rl_life_photo_pic_three.visibility = View.VISIBLE
                         rl_life_photo_pic_more.visibility = View.GONE
 
-                        isFinishLife = true
-
-                        if (lifeBitmap == null) {
-                            lifeBitmap = lifeThirdBitmap
-                        }
-
-                        Glide.with(this).load(lifeBitmap).into(iv_life_photo_pic_three)
+                        Glide.with(this).load(mLifeThirdUrl).into(iv_life_photo_pic_three)
 
                         haveThirdPic = true
 
-                        lifeThirdBitmap = lifeBitmap
-
-                        FileUtils.delete(mLifeThirdPath)
-
-                        lifeThirdBitmap?.let { saveBitmap(it, mLifeThirdPath) }
-
-                        lifeThirdPicText = data.getStringExtra("introduce").toString()
-                        if (lifeThirdPicText != "") {
-                            tv_life_photo_pic_three.text = lifeThirdPicText
+                        if (mLifeThirdText != "") {
+                            tv_life_photo_pic_three.text = mLifeThirdText
                             iv_life_photo_pic_three_icon.visibility = View.GONE
                         }
 
-                        lifeBitmap = null
                     }
                 }
             }
@@ -794,19 +590,33 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
                         override fun onResult(result: ArrayList<LocalMedia>) {
 
                             lifeChoosePath = result[0].realPath
-
                             lifeBitmap = ImageUtils.getBitmap(result[0].realPath)
 
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))
+                            if (!haveFirstPic) {
 
-                            isNeedCallback = true
-                            doFaceDetectPresent.doLifeFaceDetect(map)
+                                val intent = Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
+                                intent.putExtra("path", lifeChoosePath)
+                                intent.putExtra("introduce", "")
+                                startActivityForResult(intent, 111)
 
-//                            // 显示加载动画
-                            ll_life_photo_loading.visibility = View.VISIBLE
+                            } else if (!haveSecondPic) {
+
+                                val intent = Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
+                                intent.putExtra("path", lifeChoosePath)
+                                intent.putExtra("introduce", "")
+                                startActivityForResult(intent, 222)
+
+                            } else if (!haveThirdPic) {
+
+                                val intent = Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
+                                intent.putExtra("path", lifeChoosePath)
+                                intent.putExtra("introduce", "")
+                                startActivityForResult(intent, 333)
+
+                            }
 
                         }
 
@@ -815,10 +625,6 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
                     })
             }
-        }
-
-        override fun onDismiss() {
-            super.onDismiss()
         }
 
     }
@@ -835,151 +641,16 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
             }
 
             findViewById<TextView>(R.id.tv_dialog_life_delete_confirm).setOnClickListener {
+
                 when (lifeDeleteMode) {
                     "one" -> {
-                        if (haveSecondPic) {
-
-                            if (haveThirdPic) {
-                                // 有三张图
-
-                                rl_life_photo_pic_three.visibility = View.GONE
-                                rl_life_photo_pic_more.visibility = View.VISIBLE
-
-                                FileUtils.delete(mLifeFirstPath)
-                                lifeSecondBitmap?.let { it1 -> saveBitmap(it1, mLifeFirstPath) }
-
-                                lifeFirstPicText = lifeSecondPicText
-                                lifeFirstBitmap = lifeSecondBitmap
-                                Glide.with(this).load(lifeFirstBitmap).into(iv_life_photo_pic_one)
-                                tv_life_photo_pic_one.text = lifeFirstPicText
-
-
-                                FileUtils.delete(mLifeSecondPath)
-                                lifeThirdBitmap?.let { it1 -> saveBitmap(it1, mLifeSecondPath) }
-
-                                lifeSecondPicText = lifeThirdPicText
-                                lifeSecondBitmap = lifeThirdBitmap
-                                Glide.with(this).load(lifeSecondBitmap).into(iv_life_photo_pic_two)
-                                tv_life_photo_pic_two.text = lifeSecondPicText
-
-                                haveThirdPic = false
-                                lifeThirdPicText = ""
-                                lifeThirdBitmap = null
-                                iv_life_photo_pic_three_icon.visibility = View.VISIBLE
-                                tv_life_photo_pic_three.text = "添加描述"
-
-                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
-                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
-
-                                FileUtils.delete(mLifeThirdPath)
-
-                            } else {
-                                // 有两张图
-
-                                rl_life_photo_pic_two.visibility = View.GONE
-
-                                FileUtils.delete(mLifeFirstPath)
-                                lifeSecondBitmap?.let { it1 -> saveBitmap(it1, mLifeFirstPath) }
-
-                                lifeFirstPicText = lifeSecondPicText
-                                lifeFirstBitmap = lifeSecondBitmap
-                                Glide.with(this).load(lifeFirstBitmap).into(iv_life_photo_pic_one)
-                                tv_life_photo_pic_one.text = lifeFirstPicText
-
-                                haveSecondPic = false
-                                lifeSecondPicText = ""
-                                lifeSecondBitmap = null
-                                iv_life_photo_pic_two_icon.visibility = View.VISIBLE
-                                tv_life_photo_pic_two.text = "添加描述"
-
-                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
-                                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
-
-                                FileUtils.delete(mLifeSecondPath)
-
-                            }
-                        } else {
-                            // 只有一张图
-
-                            rl_life_photo_pic_one.visibility = View.GONE
-                            rl_life_photo_pic_more.visibility = View.GONE
-                            nsv_life_photo_pic.visibility = View.GONE
-
-                            nsv_life_photo_default.visibility = View.VISIBLE
-
-                            haveFirstPic = false
-                            lifeFirstPicText = ""
-                            lifeFirstBitmap = null
-                            iv_life_photo_pic_one_icon.visibility = View.VISIBLE
-                            tv_life_photo_pic_one.text = "添加描述"
-
-                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, "")
-                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, "")
-
-                            FileUtils.delete(mLifeFirstPath)
-                            isFinishLife = false
-                        }
+                        deleteLifePhoto(SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_ID))
                     }
                     "two" -> {
-                        if (haveThirdPic) {
-                            // 有第三张图
-
-                            rl_life_photo_pic_three.visibility = View.GONE
-                            rl_life_photo_pic_more.visibility = View.VISIBLE
-
-                            FileUtils.delete(mLifeSecondPath)
-                            lifeThirdBitmap?.let { it1 -> saveBitmap(it1, mLifeSecondPath) }
-
-                            lifeSecondPicText = lifeThirdPicText
-                            lifeSecondBitmap = lifeThirdBitmap
-                            Glide.with(this).load(lifeSecondBitmap).into(iv_life_photo_pic_two)
-                            tv_life_photo_pic_two.text = lifeSecondPicText
-
-                            haveThirdPic = false
-                            lifeThirdPicText = ""
-                            lifeThirdBitmap = null
-                            iv_life_photo_pic_three_icon.visibility = View.VISIBLE
-                            tv_life_photo_pic_three.text = "添加描述"
-
-                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
-                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
-
-                            FileUtils.delete(mLifeThirdPath)
-
-                        } else {
-                            // 没有第三张图
-
-                            rl_life_photo_pic_two.visibility = View.GONE
-
-                            haveSecondPic = false
-                            lifeSecondPicText = ""
-                            lifeSecondBitmap = null
-                            iv_life_photo_pic_two_icon.visibility = View.VISIBLE
-                            tv_life_photo_pic_two.text = "添加描述"
-
-                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
-                            SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
-
-                            FileUtils.delete(mLifeSecondPath)
-                        }
+                        deleteLifePhoto(SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_ID))
                     }
                     "three" -> {
-
-                        rl_life_photo_pic_three.visibility = View.GONE
-                        rl_life_photo_pic_more.visibility = View.VISIBLE
-
-                        mLifeThirdPath = ""
-                        haveThirdPic = false
-                        lifeThirdPicText = ""
-                        lifeThirdBitmap = null
-                        iv_life_photo_pic_three_icon.visibility = View.VISIBLE
-                        tv_life_photo_pic_three.text = "添加描述"
-
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
-
-                        FileUtils.delete(mLifeThirdPath)
-
+                        deleteLifePhoto(SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_ID))
                     }
                 }
                 dismiss()
@@ -1001,43 +672,192 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoLifeFaceDetectCallback {
 
     }
 
-    override fun onDoLifeFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
-        ll_life_photo_loading.visibility = View.GONE
+    override fun onDoDeletePhotoSuccess(deletePhotoBean: DeletePhotoBean?) {
+        when (lifeDeleteMode) {
+            "one" -> {
+                if (haveSecondPic) {
 
-        if (isNeedCallback) {
-            isNeedCallback = false
-            if (faceDetectBean.conclusion != "合规") {
-                ToastUtils.showShort(faceDetectBean.data[0].msg)
-            } else {
-                if (!haveFirstPic) {
+                    if (haveThirdPic) {
+                        // 有三张图
 
-                    val intent = Intent(this, LifeIntroduceActivity::class.java)
+                        rl_life_photo_pic_three.visibility = View.GONE
+                        rl_life_photo_pic_more.visibility = View.VISIBLE
 
-                    intent.putExtra("path", lifeChoosePath)
-                    intent.putExtra("introduce", "")
-                    startActivityForResult(intent, 111)
+                        mLifeFirstUrl = mLifeSecondUrl
+                        mLifeFirstText = mLifeSecondText
+                        mLifeFirstId = mLifeSecondId
+                        mLifeFirstState = mLifeSecondState
 
-                } else if (!haveSecondPic) {
+                        Glide.with(applicationContext).load(mLifeFirstUrl)
+                            .into(iv_life_photo_pic_one)
+                        tv_life_photo_pic_one.text = mLifeFirstText
 
-                    val intent = Intent(this, LifeIntroduceActivity::class.java)
-                    intent.putExtra("path", lifeChoosePath)
-                    intent.putExtra("introduce", "")
-                    startActivityForResult(intent, 222)
+                        mLifeSecondUrl = mLifeThirdUrl
+                        mLifeSecondText = mLifeThirdText
+                        mLifeSecondId = mLifeThirdId
+                        mLifeSecondState = mLifeThirdState
 
-                } else if (!haveThirdPic) {
+                        Glide.with(applicationContext).load(mLifeSecondUrl)
+                            .into(iv_life_photo_pic_two)
+                        tv_life_photo_pic_two.text = mLifeSecondText
 
-                    val intent = Intent(this, LifeIntroduceActivity::class.java)
-                    intent.putExtra("path", lifeChoosePath)
-                    intent.putExtra("introduce", "")
-                    startActivityForResult(intent, 333)
+                        haveThirdPic = false
+                        mLifeThirdUrl = ""
+                        mLifeThirdText = ""
+
+                        iv_life_photo_pic_three_icon.visibility = View.VISIBLE
+                        tv_life_photo_pic_three.text = "添加描述"
+
+                        // 更新存储数据
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, mLifeFirstUrl)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, mLifeFirstText)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, mLifeFirstId)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, mLifeFirstState)
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, mLifeSecondText)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, mLifeSecondId)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, mLifeSecondState)
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "")
+
+                    } else {
+                        // 有两张图
+
+                        rl_life_photo_pic_two.visibility = View.GONE
+
+                        mLifeFirstUrl = mLifeSecondUrl
+                        mLifeFirstText = mLifeSecondText
+                        mLifeFirstId = mLifeSecondId
+                        mLifeFirstState = mLifeSecondState
+
+                        Glide.with(applicationContext).load(mLifeFirstUrl)
+                            .into(iv_life_photo_pic_one)
+                        tv_life_photo_pic_one.text = mLifeFirstText
+
+                        haveSecondPic = false
+                        mLifeSecondUrl = ""
+                        mLifeSecondText = ""
+
+                        iv_life_photo_pic_two_icon.visibility = View.VISIBLE
+                        tv_life_photo_pic_two.text = "添加描述"
+
+                        // 更新存储数据
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, mLifeFirstUrl)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, mLifeFirstText)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, mLifeFirstId)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, mLifeFirstState)
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "")
+
+                    }
+                } else {
+                    // 只有一张图
+
+                    rl_life_photo_pic_one.visibility = View.GONE
+                    rl_life_photo_pic_more.visibility = View.GONE
+                    nsv_life_photo_pic.visibility = View.GONE
+
+                    nsv_life_photo_default.visibility = View.VISIBLE
+
+                    haveFirstPic = false
+                    mLifeFirstUrl = ""
+
+                    iv_life_photo_pic_one_icon.visibility = View.VISIBLE
+                    tv_life_photo_pic_one.text = "添加描述"
+
+                    // 更新存储数据
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "")
 
                 }
+            }
+            "two" -> {
+                if (haveThirdPic) {
+                    // 有第三张图
+
+                    rl_life_photo_pic_three.visibility = View.GONE
+                    rl_life_photo_pic_more.visibility = View.VISIBLE
+
+                    mLifeSecondUrl = mLifeThirdUrl
+                    mLifeSecondText = mLifeThirdText
+                    mLifeSecondId = mLifeThirdId
+                    mLifeSecondState = mLifeThirdState
+
+
+                    Glide.with(applicationContext).load(mLifeSecondUrl).into(iv_life_photo_pic_two)
+                    tv_life_photo_pic_two.text = mLifeSecondText
+
+                    haveThirdPic = false
+                    mLifeThirdUrl = ""
+                    mLifeThirdText = ""
+
+                    iv_life_photo_pic_three_icon.visibility = View.VISIBLE
+                    tv_life_photo_pic_three.text = "添加描述"
+
+                    // 更新存储数据
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, mLifeSecondText)
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, mLifeSecondId)
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, mLifeSecondState)
+
+
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "")
+
+                } else {
+                    // 没有第三张图
+
+                    rl_life_photo_pic_two.visibility = View.GONE
+
+                    haveSecondPic = false
+                    mLifeSecondUrl = ""
+                    mLifeSecondText = ""
+
+                    iv_life_photo_pic_two_icon.visibility = View.VISIBLE
+                    tv_life_photo_pic_two.text = "添加描述"
+
+                    // 更新存储数据
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, "")
+                    SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "")
+
+                }
+            }
+            "three" -> {
+                rl_life_photo_pic_three.visibility = View.GONE
+                rl_life_photo_pic_more.visibility = View.VISIBLE
+
+                haveThirdPic = false
+                mLifeThirdUrl = ""
+                mLifeThirdText = ""
+
+                iv_life_photo_pic_three_icon.visibility = View.VISIBLE
+                tv_life_photo_pic_three.text = "添加描述"
+
+                // 更新存储数据
+                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
+                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
+                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, "")
+                SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "")
+
             }
         }
     }
 
-    override fun onDoLifeFaceDetectError() {
-        ll_life_photo_loading.visibility = View.GONE
+    override fun onDoDeletePhotoError() {
+
     }
 
 

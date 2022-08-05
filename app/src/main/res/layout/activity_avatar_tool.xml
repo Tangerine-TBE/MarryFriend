@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".tools.avatar.AvatarToolActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp">
+
+            <ImageView
+                android:id="@+id/iv_avatar_finish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:layout_marginStart="13dp"
+                android:src="@drawable/ic_back_black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="上传头像"
+                android:textColor="#404040"
+                android:textSize="22sp" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/shape_bg_dialog_bottom"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:text="这样的照片会收到更多的喜欢"
+                android:textColor="#404040"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="13dp"
+                android:text="五官清晰的本人照"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="32dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_avatar_good_one"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+                <View
+                    android:layout_width="21dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:id="@+id/iv_avatar_good_two"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+                <View
+                    android:layout_width="21dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:id="@+id/iv_avatar_good_three"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:text="请勿上传以下几类照片"
+                android:textColor="#FF4444"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_avatar_bad_one"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:id="@+id/iv_avatar_bad_two"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+                <View
+                    android:layout_width="20dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:id="@+id/iv_avatar_bad_three"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iv_avatar_bad_four"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+                <View
+                    android:layout_width="24dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:id="@+id/iv_avatar_bad_five"
+                    android:layout_width="95dp"
+                    android:layout_height="95dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_avatar_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_bg_dialog"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="正在加载中..."
+            android:textColor="#0F0F0F"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_avatar_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_bg_common_next"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="相册"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/tv_avatar_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="18dp"
+            android:text="没有照片？现在拍一张"
+            android:textColor="#9A9A9A"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -51,11 +51,17 @@ object Contents {
     //查看列表(头像,三张,相册)
     const val PHOTO_LIST = "LoginRegister/photoList"
 
-    //图片上传(头像,三张,相册)
+    //图片上传 生活照
     const val UPLOAD_PHOTO = "LoginRegister/uploadPhoto"
+
+    //图片上传 头像
+    const val UPLOAD_AVATAR = "LoginRegister/uploadHeadface"
 
     //查看头像
     const val VIEW_HEADFACE = "LoginRegister/viewHeadface"
+
+    // 删除图片(生活照)
+    const val DELETE_PHOTO = "LoginRegister/deletePhoto"
 
     // 更新资料完善度
     const val UPDATE_PROPORTION = "LoginRegister/proportionUpdate"

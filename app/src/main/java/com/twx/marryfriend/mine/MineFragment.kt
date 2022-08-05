@@ -60,6 +60,9 @@ import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.set.SetActivity
+import com.twx.marryfriend.tools.avatar.AvatarToolActivity
+import com.twx.marryfriend.tools.hobby.HobbyToolActivity
+import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.twx.marryfriend.vip.VipActivity
@@ -180,7 +183,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     private fun initData() {
 
-        recordPath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/record.wav"
+        recordPath = "/storage/emulated/0/Android/data/com.jiaou.love/cache/record.wav"
 
         audioRecorder = AudioRecorder.getInstance()
         mediaPlayer = MediaPlayer()

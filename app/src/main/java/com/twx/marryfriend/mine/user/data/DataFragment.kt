@@ -209,14 +209,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
         doUpdateGreetPresent.registerCallback(this)
 
-
         mTempPhotoPath =
             Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(requireActivity().cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "head.png"
 
-        recordPath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/record.wav"
+        recordPath = "/storage/emulated/0/Android/data/com.jiaou.love/cache/record.wav"
 
         audioRecorder = AudioRecorder.getInstance()
         mediaPlayer = MediaPlayer()
@@ -1533,8 +1532,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     // 获取、更新生活照
     private fun updateLife() {
         val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
+        val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
+
         val lifePhotoTwo = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
+        val lifePhotoTwoState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
+
         val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
+        val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
 
         if (lifePhotoOne != "") {
             if (lifePhotoTwo != "") {
@@ -1542,36 +1546,71 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 有三张图片,全部正常显示
                     ThreadUtils.runOnUiThread {
                         Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
-                        iv_user_data_life_two.visibility = View.VISIBLE
+                        if (lifePhotoOneState == "0") {
+                            tv_user_data_life_one.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_one.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_two.visibility = View.VISIBLE
                         Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
-                        iv_user_data_life_three.visibility = View.VISIBLE
+                        if (lifePhotoTwoState == "0") {
+                            tv_user_data_life_two.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_two.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_three.visibility = View.VISIBLE
                         Glide.with(this).load(lifePhotoThree).into(iv_user_data_life_three)
+                        if (lifePhotoThreeState == "0") {
+                            tv_user_data_life_three.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_three.visibility = View.GONE
+                        }
+
                     }
                 } else {
                     // 有两张图片，,第一、二张正常显示，第三张显示为添加
                     ThreadUtils.runOnUiThread {
                         Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
-                        iv_user_data_life_two.visibility = View.VISIBLE
+                        if (lifePhotoOneState == "0") {
+                            tv_user_data_life_one.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_one.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_two.visibility = View.VISIBLE
                         Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
-                        iv_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this).load(R.drawable.ic_data_life_add)
-                            .into(iv_user_data_life_three)
+                        if (lifePhotoTwoState == "0") {
+                            tv_user_data_life_two.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_two.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_three.visibility = View.VISIBLE
+                        Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_three)
                     }
                 }
             } else {
                 // 有一张图片,第一张正常显示，第二张显示为添加
                 ThreadUtils.runOnUiThread {
                     Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
-                    iv_user_data_life_two.visibility = View.VISIBLE
+                    if (lifePhotoOneState == "0") {
+                        tv_user_data_life_one.visibility = View.VISIBLE
+                    } else {
+                        tv_user_data_life_one.visibility = View.GONE
+                    }
+
+                    rl_user_data_life_two.visibility = View.VISIBLE
                     Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
-                    iv_user_data_life_three.visibility = View.GONE
+                    rl_user_data_life_three.visibility = View.GONE
                 }
             }
         } else {
             ThreadUtils.runOnUiThread {
                 Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
-                iv_user_data_life_two.visibility = View.GONE
-                iv_user_data_life_three.visibility = View.GONE
+                rl_user_data_life_two.visibility = View.GONE
+                rl_user_data_life_three.visibility = View.GONE
             }
         }
 
@@ -2510,14 +2549,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
 
-        if (ll_user_data_loading!= null){
+        if (ll_user_data_loading != null) {
             ll_user_data_loading.visibility = View.GONE
         }
 
 
         if (faceDetectBean.conclusion == "合规") {
 
-            if (iv_user_data_avatar!= null){
+            if (iv_user_data_avatar != null) {
                 iv_user_data_avatar.setImageDrawable(null)
             }
 

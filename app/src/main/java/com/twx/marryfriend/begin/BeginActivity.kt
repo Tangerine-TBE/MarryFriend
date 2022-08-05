@@ -191,7 +191,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 map[Contents.EQUIPMENT_NUMBER] = unique
                 map[Contents.USER_VERSION] = getVersion()
                 map[Contents.USER_PLATFORM] = "360"
-                map[Contents.USER_PACKAGE] = "com.weilai.marryfriend"
+                map[Contents.USER_PACKAGE] = "com.jiaou.love"
                 map[Contents.USER_SYSTEM] = 1.toString()
                 map[Contents.USER_PKG_CHN] = "未来佳偶婚恋交友"
                 doAutoLoginPresent.doAutoLogin(map)

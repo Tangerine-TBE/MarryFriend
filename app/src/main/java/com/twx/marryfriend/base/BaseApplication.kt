@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.os.Handler
+import com.twx.marryfriend.push.help.PushHelper
+import com.umeng.commonsdk.UMConfigure
+import com.umeng.commonsdk.utils.UMUtils
 
 open class BaseApplication : Application() {
 
@@ -43,13 +46,14 @@ open class BaseApplication : Application() {
         packName = packageName
 
 
-//        UMConfigure.init(
-//            applicationContext,
-//            UMConfigure.DEVICE_TYPE_PHONE,
-//            "621dca382b8de26e11d274d8"
-//        )
-//        UMConfigure.setLogEnabled(true)
+        /**
+         * 初始化友盟SDK
+         */
 
+        //日志开关
+        UMConfigure.setLogEnabled(true)
+        //预初始化
+        PushHelper.preInit(this)
 
 
 
@@ -72,3 +76,4 @@ open class BaseApplication : Application() {
     }
 
 }
+

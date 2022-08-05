@@ -36,7 +36,7 @@ public class FileUtils {
             if (!fileName.endsWith(".pcm")) {
                 fileName = fileName + ".pcm";
             }
-            String fileBasePath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/";
+            String fileBasePath = "/storage/emulated/0/Android/data/com.jiaou.love/cache/";
             File file = new File(fileBasePath);
             //创建目录
             if (!file.exists()) {
@@ -61,7 +61,7 @@ public class FileUtils {
             if (!fileName.endsWith(".wav")) {
                 fileName = fileName + ".wav";
             }
-            String fileBasePath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/";
+            String fileBasePath = "/storage/emulated/0/Android/data/com.jiaou.love/cache/";
             File file = new File(fileBasePath);
             //创建目录
             if (!file.exists()) {

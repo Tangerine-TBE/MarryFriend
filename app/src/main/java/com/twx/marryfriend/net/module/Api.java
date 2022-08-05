@@ -5,6 +5,7 @@ import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.BanBean;
 import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.bean.CityBean;
+import com.twx.marryfriend.bean.DeletePhotoBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
@@ -19,6 +20,7 @@ import com.twx.marryfriend.bean.UpdateGreetInfoBean;
 import com.twx.marryfriend.bean.UpdateMoreInfoBean;
 import com.twx.marryfriend.bean.UpdateProportionInfoBean;
 import com.twx.marryfriend.bean.UpdateVerifyInfoBean;
+import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
 import com.twx.marryfriend.bean.ViewHeadfaceBean;
@@ -95,13 +97,22 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/photoList")
     Call<PhotoListBean> getPhotoList(@QueryMap Map<String, Object> params);
 
-    // 图片上传(头像,三张,相册)
+    // 图片上传 生活照
     @POST("/marryfriend/LoginRegister/uploadPhoto")
     Call<UploadPhotoBean> doUploadPhoto(@QueryMap Map<String, Object> params);
+
+    // 上传头像
+    @POST("/marryfriend/LoginRegister/uploadHeadface")
+    Call<UploadAvatarBean> doUploadAvatar(@QueryMap Map<String, Object> params);
+
 
     // 查看头像
     @POST("/marryfriend/LoginRegister/viewHeadface")
     Call<ViewHeadfaceBean> doViewHeadface(@QueryMap Map<String, Object> params);
+
+    // 删除图片(生活照)
+    @POST("/marryfriend/LoginRegister/deletePhoto")
+    Call<DeletePhotoBean> doDeletePhoto(@QueryMap Map<String, Object> params);
 
     // 更新资料完善度
     @POST("/marryfriend/LoginRegister/proportionUpdate")
@@ -150,7 +161,6 @@ public interface Api {
     @FormUrlEncoded
     @POST("/rest/2.0/solution/v1/text_censor/v2/user_defined")
     Call<TextVerifyBean> doTextVerify(@FieldMap Map<String, Object> params);
-
 
 
     // 获取我的动态列表

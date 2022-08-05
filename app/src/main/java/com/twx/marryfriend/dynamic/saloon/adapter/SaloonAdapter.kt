@@ -666,9 +666,9 @@ class SaloonAdapter(
             }
         }
 
-        if (mDiyList[position].like) {
+        if (mDiyList[position].like && !mDiyList[position].anim) {
             holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
-        } else {
+        } else if (!mDiyList[position].like) {
             holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
         }
 

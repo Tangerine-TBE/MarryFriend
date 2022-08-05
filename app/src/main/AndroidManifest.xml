@@ -47,6 +47,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
+
+        <activity
+            android:name=".push.xiaomi.MfrMessageActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="${applicationId}"
+                    android:path="/thirdpush"
+                    android:scheme="agoo" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
+            android:name=".tools.introduce.IntroduceToolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tools.hobby.HobbyToolActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tools.avatar.AvatarToolActivity"
+            android:exported="false" />
         <activity
             android:name=".mine.voice.VoiceActivity"
             android:exported="false" />
@@ -137,11 +163,12 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+<!--             <intent-filter>-->
+<!--             <action android:name="android.intent.action.MAIN" />-->
+
+<!--             <category android:name="android.intent.category.LAUNCHER" />-->
+<!--             </intent-filter>-->
         </activity>
         <activity
             android:name=".main.MainActivity"
@@ -190,7 +217,7 @@
         <activity android:name=".search.AccurateSearchActivity" />
         <activity android:name=".search.SearchResultActivity" />
         <activity android:name=".ilove.ILikeActivity" /> <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
-        <activity android:name=".message.ChatActivity"/>
+        <activity android:name=".message.ChatActivity" />
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -210,7 +237,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.weilai.marryfriend.fileProvider"
+            android:authorities="com.jiaou.love.fileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -7,6 +7,7 @@ import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.BanBean;
 import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.bean.CityBean;
+import com.twx.marryfriend.bean.DeletePhotoBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
@@ -21,6 +22,7 @@ import com.twx.marryfriend.bean.UpdateGreetInfoBean;
 import com.twx.marryfriend.bean.UpdateMoreInfoBean;
 import com.twx.marryfriend.bean.UpdateProportionInfoBean;
 import com.twx.marryfriend.bean.UpdateVerifyInfoBean;
+import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
 import com.twx.marryfriend.bean.ViewHeadfaceBean;
@@ -221,6 +223,19 @@ public class UserData {
     }
 
 
+    // 上传头像
+    public void doUploadAvatar(Map<String, String> map, Callback<UploadAvatarBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPLOAD_AVATAR + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPLOAD_AVATAR, currentTimeMillis, random, checkCode, map);
+        mApi.doUploadAvatar(map1).enqueue(callback);
+    }
+
+
     // 查看头像
     public void doViewHeadface(Map<String, String> map, Callback<ViewHeadfaceBean> callback) {
         // 获取随机数
@@ -232,6 +247,20 @@ public class UserData {
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.VIEW_HEADFACE, currentTimeMillis, random, checkCode, map);
         mApi.doViewHeadface(map1).enqueue(callback);
     }
+
+
+    // 删除图片(生活照)
+    public void doDeletePhoto(Map<String, String> map, Callback<DeletePhotoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DELETE_PHOTO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DELETE_PHOTO, currentTimeMillis, random, checkCode, map);
+        mApi.doDeletePhoto(map1).enqueue(callback);
+    }
+
 
     // 更新资料完善度
     public void doUpdateProportion(Map<String, String> map, Callback<UpdateProportionInfoBean> callback) {

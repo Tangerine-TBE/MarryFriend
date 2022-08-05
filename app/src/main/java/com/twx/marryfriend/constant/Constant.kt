@@ -93,17 +93,29 @@ object Constant {
     const val ME_AVATAR = "ME_avatar"
 
     // 生活照
-    const val ME_LIFE_PHOTO_ONE = "ME_life_photo_one" // 第一张生活照
+    const val ME_LIFE_PHOTO_ONE = "ME_life_photo_one" // 第一张生活照(url)
 
     const val ME_LIFE_PHOTO_ONE_TEXT = "ME_life_photo_one_text" // 第一张生活照描述
 
-    const val ME_LIFE_PHOTO_TWO = "ME_life_photo_two"// 第二张生活照
+    const val ME_LIFE_PHOTO_ONE_ID = "ME_life_photo_one_id" // 第一张生活照ID
+
+    const val ME_LIFE_PHOTO_ONE_AUDIT = "ME_life_photo_one_audit" // 第一张生活照审核状态
+
+    const val ME_LIFE_PHOTO_TWO = "ME_life_photo_two"// 第二张生活照(url)
 
     const val ME_LIFE_PHOTO_TWO_TEXT = "ME_life_photo_two_text"// 第二张生活照描述
 
-    const val ME_LIFE_PHOTO_THREE = "ME_life_photo_three"// 第三张生活照
+    const val ME_LIFE_PHOTO_TWO_ID = "ME_life_photo_two_id" // 第二张生活照ID
+
+    const val ME_LIFE_PHOTO_TWO_AUDIT = "ME_life_photo_two_audit" // 第二张生活照审核状态
+
+    const val ME_LIFE_PHOTO_THREE = "ME_life_photo_three"// 第三张生活照(url)
 
     const val ME_LIFE_PHOTO_THREE_TEXT = "ME_life_photo_three_text"// 第三张生活照描述
+
+    const val ME_LIFE_PHOTO_THREE_ID = "ME_life_photo_three_id" // 第三张生活照ID
+
+    const val ME_LIFE_PHOTO_THREE_AUDIT = "ME_life_photo_three_audit" // 第二张生活照审核状态
 
 
     const val IS_IDENTITY_VERIFY = "is_identity_verify"    // 是否实名认证

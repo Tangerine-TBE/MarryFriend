@@ -10,6 +10,7 @@ import com.twx.marryfriend.bean.dynamic.LikeList
 import com.twx.marryfriend.bean.dynamic.LikeListBean
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.show.mine.adapter.DynamicMineLikeAdapter
+import com.twx.marryfriend.friend.FriendInfoActivity
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.activity_my_dynamic.*
 import java.util.*
@@ -88,6 +89,12 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
             getLikeList(currentPaper)
             sfl_dynamic_mine_like_refresh.finishLoadMore(2000);//传入false表示刷新失败
         }
+
+        adapter.setOnItemClickListener(object :DynamicMineLikeAdapter.OnItemClickListener{
+            override fun onItemClick(v: View?, position: Int) {
+                startActivity(FriendInfoActivity.getIntent(this@DynamicMineLikeActivity,mLikeList[position].guest_uid))
+            }
+        })
 
     }
 
