@@ -4,7 +4,7 @@
 ext {
 
     version = [
-            applicationId    : "com.weilai.marryfriend",
+            applicationId    : "com.jiaou.love",
             applicationName  : "婚恋",
             versionCode      : 10010,
             versionName      : "1.0",

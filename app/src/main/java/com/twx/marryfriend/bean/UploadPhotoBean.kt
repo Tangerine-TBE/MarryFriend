@@ -6,6 +6,6 @@ package com.twx.marryfriend.bean
  */
 data class UploadPhotoBean(
     val code: Int,
-    val data: List<Boolean>,
+    val data: List<Int>,
     val msg: String
 )

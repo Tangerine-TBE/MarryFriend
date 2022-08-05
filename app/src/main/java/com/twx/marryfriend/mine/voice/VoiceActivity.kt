@@ -52,7 +52,7 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
         tv_voice_button.text = "点击开始录音"
 
-        recordPath = "/storage/emulated/0/Android/data/com.weilai.marryfriend/cache/record.wav"
+        recordPath = "/storage/emulated/0/Android/data/com.jiaou.love/cache/record.wav"
 
         audioRecorder = AudioRecorder.getInstance()
         mediaPlayer = MediaPlayer()

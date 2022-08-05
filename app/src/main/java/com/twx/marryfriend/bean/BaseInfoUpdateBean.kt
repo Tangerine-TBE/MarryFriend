@@ -5,7 +5,7 @@ package com.twx.marryfriend.bean
  * @date: 2022/5/23
  */
 data class BaseInfoUpdateBean(
-    val code: String,
+    val code: Int,
     val data: List<Any>,
     val msg: String,
 )

@@ -787,13 +787,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         val task: TimerTask = object : TimerTask() {
                             override fun run() {
-                                dssb_guide_target_age.setMin(targetAgeMin)
-                                dssb_guide_target_age.setMax(targetAgeMax)
+                                // 18 设置为 0开始点
+                                dssb_guide_target_age.setMin(targetAgeMin - 18)
+                                dssb_guide_target_age.setMax(targetAgeMax - 18)
                             }
                         }
                         val timer = Timer()
                         timer.schedule(task, 100)
-
 
                     } else {
 
@@ -1025,7 +1025,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 //                        }
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = hobbyText
                         isCompleteHobby = true
@@ -1092,7 +1093,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (RegexUtils.isIDCard18Exact(identityCode)) {
                             val map: MutableMap<String, String> = TreeMap()
 
-                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
+                            map[Contents.ACCESS_TOKEN] =
+                                SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
                             map[Contents.CONTENT_TYPE] = "application/json"
                             map[Contents.ID_CARD_NUMBER] = identityCode
                             map[Contents.NAME] = name
@@ -1617,7 +1619,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         // 应用上下文
         // 申请License取得的APPID
         // assets目录下License文件名
-        FaceSDKManager.getInstance().initialize(this, "hunlian-android-face-android",
+        FaceSDKManager.getInstance().initialize(this, "jiaou-hunlian-face-android",
             "idl-license.face-android", object : IInitCallback {
                 override fun initSuccess() {
                     runOnUiThread {
@@ -1878,7 +1880,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         lifeChoosePath = mTempLifePath
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.IMAGE] = bitmapToBase64(lifeBitmap)
 
@@ -3677,7 +3680,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             lifeBitmap = ImageUtils.getBitmap(result[0].realPath)
 
                             val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
+                            map[Contents.ACCESS_TOKEN] =
+                                SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                             map[Contents.IMAGE] =
                                 bitmapToBase64(ImageUtils.getBitmap(result[0].realPath))

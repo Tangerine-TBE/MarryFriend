@@ -515,7 +515,7 @@ class DynamicSendActivity : MainBaseViewActivity(),
                     if (System.currentTimeMillis() - lastClickTime >= delayTime) {
                         lastClickTime = System.currentTimeMillis();
 
-                        ToastUtils.showShort("上传")
+                        ll_send_loading.visibility = View.VISIBLE
 
                         when (mDataList.size) {
                             0 -> {
@@ -523,9 +523,7 @@ class DynamicSendActivity : MainBaseViewActivity(),
                             }
                             1 -> {
                                 trendsType =
-                                    if (com.blankj.utilcode.util.FileUtils.getFileExtension(
-                                            mDataList[0]) == "mp4"
-                                    ) {
+                                    if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
                                         2
                                     } else {
                                         1
@@ -615,6 +613,7 @@ class DynamicSendActivity : MainBaseViewActivity(),
                         .asCustom(IdentityDialog(this@DynamicSendActivity))
                         .show()
                 }
+
             } else {
                 ToastUtils.showShort("请输入您想发布的动态内容")
             }
@@ -656,10 +655,6 @@ class DynamicSendActivity : MainBaseViewActivity(),
     }
 
     private fun uploadTrend() {
-
-        ThreadUtils.runOnUiThread {
-            ll_send_loading.visibility = View.VISIBLE
-        }
 
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_INFO] = getUploadTrendInfo()
@@ -1013,7 +1008,6 @@ class DynamicSendActivity : MainBaseViewActivity(),
         }
 
     }
-
 
     inner class IdentityDialog(context: Context) : FullScreenPopupView(context) {
 

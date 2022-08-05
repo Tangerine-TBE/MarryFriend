@@ -255,13 +255,13 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                                     // 体型
                                     showBodyDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK,
-                                            34) == 34
-                                    ) {
+                                    if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
                                         // 工作地区
                                         showJobDialog()
                                     } else {
-                                        if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                                        if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD,
+                                                "") == ""
+                                        ) {
                                             // 有没有孩子
                                             showHaveChildDialog()
                                         } else {
@@ -327,9 +327,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                                 // 体型
                                 showBodyDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK,
-                                        34) == 34
-                                ) {
+                                if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
                                     // 工作地区
                                     showJobDialog()
                                 } else {
@@ -390,7 +388,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                             // 体型
                             showBodyDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                            if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
                                 // 工作地区
                                 showJobDialog()
                             } else {
@@ -444,7 +442,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                         // 体型
                         showBodyDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                        if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
                             // 工作地区
                             showJobDialog()
                         } else {
@@ -493,7 +491,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     // 体型
                     showBodyDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                    if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
                         // 工作地区
                         showJobDialog()
                     } else {
@@ -533,7 +531,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 }
             }
             5 -> {
-                if (SPStaticUtils.getInt(Constant.TA_WORK_PROVINCE_PICK, 34) == 34) {
+                if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
                     // 工作地区
                     showJobDialog()
                 } else {
@@ -900,9 +898,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
 
 
-            update()
-            Log.i("guo","updata")
-
+        update()
+        Log.i("guo", "updata")
 
 
     }
@@ -2613,21 +2610,28 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                 } else {
                     // “添加” ： 将滚轮中的数据储存至数组中
 
-                    jobAddressInfoList.add(mCitySecondList[mCitySecondPosition])
+                    if (!jobAddressInfoList.contains(mCitySecondList[mCitySecondPosition])) {
 
-                    Log.i("guo", mCitySecondList[mCitySecondPosition])
+                        jobAddressInfoList.add(mCitySecondList[mCitySecondPosition])
 
-                    jobAddressAdapter.notifyDataSetChanged()
-                    sum.text = jobAddressInfoList.size.toString()
+                        Log.i("guo", mCitySecondList[mCitySecondPosition])
 
-                    wheel.visibility = View.GONE
-                    info.visibility = View.VISIBLE
+                        jobAddressAdapter.notifyDataSetChanged()
+                        sum.text = jobAddressInfoList.size.toString()
 
-                    isConfirm = true
+                        wheel.visibility = View.GONE
+                        info.visibility = View.VISIBLE
 
-                    if (jobAddressInfoList.size == 5) {
-                        add.visibility = View.GONE
+                        isConfirm = true
+
+                        if (jobAddressInfoList.size == 5) {
+                            add.visibility = View.GONE
+                        }
+
+                    } else {
+                        ToastUtils.showShort("请勿添加重复数据")
                     }
+
 
                 }
 
@@ -2670,7 +2674,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         }
 
     }
-
 
     // 有不有孩子(多选)
     inner class HaveChildNewDialog(context: Context) : FullScreenPopupView(context) {

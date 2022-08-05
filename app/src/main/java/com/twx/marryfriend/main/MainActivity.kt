@@ -2,6 +2,7 @@ package com.twx.marryfriend.main
 
 import android.content.Intent
 import android.util.Log
+import android.view.KeyEvent
 import android.view.MotionEvent
 import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
@@ -9,13 +10,16 @@ import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
+import com.blankj.utilcode.util.AppUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.likeme.LiveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
+import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
-import com.twx.marryfriend.dynamic.DynamicFragment
+import com.umeng.message.PushAgent
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -35,6 +39,10 @@ class MainActivity : MainBaseViewActivity() {
         initEmojiCompat()
 
         initRecommendFragment()
+
+        Thread { PushHelper.init(applicationContext) }.start()
+        PushAgent.getInstance(this).onAppStart();
+
 
     }
 
@@ -192,5 +200,14 @@ class MainActivity : MainBaseViewActivity() {
         recommend?.dispatchTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
+
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            AppUtils.exitApp()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
 
 }

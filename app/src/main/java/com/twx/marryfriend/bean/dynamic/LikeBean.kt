@@ -11,4 +11,5 @@ data class LikeBean(
     var focus: Boolean,
     var like: Boolean,
     var likeCount: Int,
+    var anim: Boolean = false
 )

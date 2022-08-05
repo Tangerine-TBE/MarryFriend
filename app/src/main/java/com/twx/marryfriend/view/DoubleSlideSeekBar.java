@@ -510,7 +510,7 @@ public class DoubleSlideSeekBar extends View {
      */
     public void setMin(int min) {
 
-        slideLowX = (min * lineLength) / 100 + lineStart;
+        slideLowX = (min * lineLength) / 42 + lineStart;
         Log.e("---------------","min="  +min);
 
         invalidate();
@@ -522,7 +522,7 @@ public class DoubleSlideSeekBar extends View {
      */
     public void setMax(int max) {
 
-        slideBigX = (max * lineLength) / 100 + lineStart;
+        slideBigX = (max * lineLength) / 42 + lineStart;
         Log.e("---------------","max="  +max);
         postInvalidate();
 
