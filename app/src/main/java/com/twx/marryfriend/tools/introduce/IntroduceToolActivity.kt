@@ -20,6 +20,8 @@ import java.util.*
 
 class IntroduceToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
+    private var introduce = ""
+
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_introduce_tool
@@ -48,7 +50,7 @@ class IntroduceToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback 
         }
 
         iv_introduce_upload.setOnClickListener {
-            var introduce = et_introduce_content.text.toString().trim { it <= ' ' }
+            introduce = et_introduce_content.text.toString().trim { it <= ' ' }
             // 上传信息
             if (introduce.length > 10) {
                 doUploadInfo(introduce)
@@ -94,11 +96,15 @@ class IntroduceToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback 
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
+        ll_introduce_loading.visibility = View.GONE
         if (baseInfoUpdateBean != null) {
             if (baseInfoUpdateBean.code == 200) {
 
+                SPStaticUtils.put(Constant.ME_INTRODUCE,introduce)
+
+                introduce = ""
                 et_introduce_content.setText("")
-                ll_introduce_loading.visibility = View.GONE
+
                 this.finish()
 
             }

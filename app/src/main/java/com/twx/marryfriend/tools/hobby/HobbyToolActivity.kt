@@ -20,6 +20,8 @@ import java.util.*
 
 class HobbyToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
 
+    private var hobby = ""
+
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_hobby_tool
@@ -48,7 +50,7 @@ class HobbyToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
         }
 
         iv_hobby_upload.setOnClickListener {
-            var hobby = et_hobby_content.text.toString().trim { it <= ' ' }
+            hobby = et_hobby_content.text.toString().trim { it <= ' ' }
             // 上传信息
             if (hobby.length > 10) {
                 doUploadInfo(hobby)
@@ -94,12 +96,14 @@ class HobbyToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
-
+        ll_hobby_loading.visibility = View.GONE
         if (baseInfoUpdateBean != null) {
             if (baseInfoUpdateBean.code == 200) {
 
+                SPStaticUtils.put(Constant.ME_HOBBY,hobby)
+
                 et_hobby_content.setText("")
-                ll_hobby_loading.visibility = View.GONE
+                hobby = ""
                 this.finish()
 
             }

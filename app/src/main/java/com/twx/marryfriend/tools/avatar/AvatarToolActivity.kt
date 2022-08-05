@@ -385,6 +385,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
         if (uploadAvatarBean != null) {
             if (uploadAvatarBean.code == 200) {
                 SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+                this.finish()
             } else {
                 ToastUtils.showShort(uploadAvatarBean.msg)
             }
