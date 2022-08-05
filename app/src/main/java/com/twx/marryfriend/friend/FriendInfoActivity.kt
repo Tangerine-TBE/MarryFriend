@@ -20,15 +20,12 @@ import com.google.android.material.chip.Chip
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import com.kingja.loadsir.core.LoadSir
-import com.twx.marryfriend.DefEmptyDataCallBack
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
-import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
@@ -200,7 +197,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     }
                     uploadVoice.setOnClickListener {
                         lifecycleScope.launch {
-                            IntentManager.getUpVoiceIntent(it.context)?.also {
+                            IntentManager.getUpFillInVoiceIntent(it.context)?.also {
                                 startActivity(it)
                             }
                         }

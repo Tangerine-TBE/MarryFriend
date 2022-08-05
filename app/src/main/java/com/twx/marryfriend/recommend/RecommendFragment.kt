@@ -149,6 +149,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 }
             }
         }
+        notContent.refreshView(lifecycleScope)
     }
 
     private fun guideActionCompleteHandler(action:HomeCardAction?){
@@ -213,9 +214,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun initListener(){
-        upLife.setOnClickListener {
-            startActivity(IntentManager.getUpLifeIntent(requireContext())?:return@setOnClickListener)
-        }
         recommendSetting.setOnClickListener {
             startActivity(Intent(requireContext(),ILikeActivity::class.java))
         }
@@ -338,9 +336,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 左滑、不喜欢
      */
     private fun disLike(item: RecommendBean){
-//        if (BuildConfig.DEBUG){
-//            return
-//        }
+        if (BuildConfig.DEBUG){
+            return
+        }
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
             try {
@@ -356,9 +354,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 右滑、喜欢
      */
     private fun like(item: RecommendBean){
-//        if (BuildConfig.DEBUG){
-//            return
-//        }
+        if (BuildConfig.DEBUG){
+            return
+        }
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {

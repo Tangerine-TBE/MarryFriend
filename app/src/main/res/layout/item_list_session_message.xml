@@ -23,6 +23,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:riv_corner_radius="26dp"
             tools:src="#000"
+            android:scaleType="centerCrop"
             android:src="@{conversationsItemModel.userImage}"
             android:layout_width="52dp"
             android:layout_height="52dp"/>
@@ -45,6 +46,7 @@
             app:layout_constraintBottom_toBottomOf="@id/messageHead"
             app:layout_constraintStart_toStartOf="@id/messageHead"
             android:src="@mipmap/ic_launcher"
+            android:visibility="@{conversationsItemModel.isMutualLike?View.VISIBLE:View.GONE}"
             android:layout_width="22dp"
             android:layout_height="22dp"/>
         <TextView
@@ -97,6 +99,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:text="@{conversationsItemModel.location}"
+                android:visibility="@{conversationsItemModel.location==null?View.GONE:View.VISIBLE}"
                 tools:text="深圳"
                 android:textColor="#FF717171"
                 android:textSize="15dp"
@@ -104,6 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <View
+                android:visibility="@{conversationsItemModel.location==null?View.GONE:View.VISIBLE}"
                 android:background="#FFDCDCDC"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
@@ -111,6 +115,7 @@
                 android:layout_height="11dp"/>
             <TextView
                 android:text="@{conversationsItemModel.ageShow}"
+                android:visibility="@{conversationsItemModel.ageShow==null?View.GONE:View.VISIBLE}"
                 tools:text="24岁"
                 android:textColor="#FF717171"
                 android:textSize="15dp"
@@ -118,26 +123,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <View
+                android:visibility="@{conversationsItemModel.ageShow==null?View.GONE:View.VISIBLE}"
                 android:background="#FFDCDCDC"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_width="0.5dp"
                 android:layout_height="11dp"/>
             <TextView
-                android:text="幼师"
+                android:text="@{conversationsItemModel.occupation}"
+                android:visibility="@{conversationsItemModel.occupation==null?View.GONE:View.VISIBLE}"
+                tools:text="职业"
                 android:textColor="#FF717171"
                 android:textSize="15dp"
                 android:includeFontPadding="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <View
+                android:visibility="@{conversationsItemModel.occupation==null?View.GONE:View.VISIBLE}"
                 android:background="#FFDCDCDC"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_width="0.5dp"
                 android:layout_height="11dp"/>
             <TextView
-                android:text="大专"
+                android:text="@{conversationsItemModel.education}"
+                android:visibility="@{conversationsItemModel.education==null?View.GONE:View.VISIBLE}"
+                tools:text="大专"
                 android:textColor="#FF717171"
                 android:textSize="15dp"
                 android:includeFontPadding="false"

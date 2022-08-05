@@ -1,11 +1,39 @@
 package com.twx.marryfriend
 
 import com.blankj.utilcode.util.SPStaticUtils
+import com.google.gson.Gson
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.constant.Contents
+import com.xyzz.myutils.NetworkUtil
+import com.xyzz.myutils.show.eLog
+import org.json.JSONObject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.random.Random
 
 object UserInfo {
+    fun updateUserInfo(){
+        val url="${Contents.USER_URL}/marryfriend/LoginRegister/getFive"
+        val map= mapOf(
+            "user_id" to UserInfo.getUserId()
+        )
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+
+                eLog("成功","更新用户信息")
+            }catch (e:Exception){
+                eLog(e.stackTraceToString(),"更新用户信息")
+            }
+        },{
+            eLog(it,"更新用户信息")
+        })
+    }
+
+
     fun getUserId():String{
-        if(BuildConfig.DEBUG){
+        if(BuildConfig.DEBUG){//3是男的
             return "3"//3,4,6,11,16//
         }
         return SPStaticUtils.getString(
@@ -30,9 +58,9 @@ object UserInfo {
      * 2：女
      */
     fun getUserSex():Int{
-//        if(BuildConfig.DEBUG){
-//            return 1//3,4,6,11,16//
-//        }
+        if(BuildConfig.DEBUG){
+            return 1//3,4,6,11,16//
+        }
         return SPStaticUtils.getInt(Constant.ME_SEX, 2)
     }
 
@@ -71,5 +99,28 @@ object UserInfo {
             return "https://www.google.com/imgres?imgurl=https%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01c13f5b56bd8ba8012036be3d28b7.png%401280w_1l_2o_100sh.png&imgrefurl=https%3A%2F%2Fm.zcool.com.cn%2Fwork%2FZMjkxOTkxNDA%3D.html&tbnid=4rBY98RMBUB6SM&vet=12ahUKEwjAkN_xw4n5AhWvRvUHHX4sCx0QMygTegUIARDkAQ..i&docid=91X0_gUlFywQoM&w=265&h=265&q=%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F&ved=2ahUKEwjAkN_xw4n5AhWvRvUHHX4sCx0QMygTegUIARDkAQ"
         }
 
+    }
+
+    fun isHaveLifePhoto():Boolean{
+        return Random.nextBoolean()
+    }
+    fun isRealName():Boolean{
+        return Random.nextBoolean()
+    }
+    fun isHaveHeadImage():Boolean{
+        return Random.nextBoolean()
+    }
+    fun isFillInHobby():Boolean{//爱好
+        return Random.nextBoolean()
+    }
+
+    fun isFillInGreet():Boolean{//招呼
+        return Random.nextBoolean()
+    }
+    fun isFillInIntroduce():Boolean{//介绍
+        return Random.nextBoolean()
+    }
+    fun isFillInVoice():Boolean{//语音介绍
+        return Random.nextBoolean()
     }
 }

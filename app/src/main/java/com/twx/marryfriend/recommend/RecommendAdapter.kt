@@ -238,7 +238,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                                     }
                                     useFirstPushVoice()
                                     scope.launch {
-                                        IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
+                                        IntentManager.getUpFillInVoiceIntent(holder.itemView.context)?.also {
                                             holder.itemView.context.startActivity(it)
                                         }
                                     }
@@ -252,7 +252,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                 }
                 holder.getView<View>(R.id.uploadVoice).setOnClickListener {view->
                     scope.launch {
-                        IntentManager.getUpVoiceIntent(holder.itemView.context)?.also {
+                        IntentManager.getUpFillInVoiceIntent(holder.itemView.context)?.also {
                             view.context.startActivity(it)
                         }
                     }

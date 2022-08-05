@@ -1,6 +1,5 @@
 package com.twx.marryfriend.message.views
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import com.twx.marryfriend.databinding.BaseDataBindingView
 import com.twx.marryfriend.databinding.ItemListSessionMessageBinding
 import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.message.model.ConversationsItemModel
+import com.xyzz.myutils.show.toast
 
 class ConversationItemView constructor(parent: ViewGroup): BaseDataBindingView {
     private val dataBindingView by lazy {
@@ -25,8 +25,13 @@ class ConversationItemView constructor(parent: ViewGroup): BaseDataBindingView {
     }
 
     private fun View.initListener(){
+        val data=dataBindingView.conversationsItemModel
         this.setOnClickListener {
-            context?.startActivity(Intent(context,ChatActivity::class.java))
+            if (data==null){
+                toast(context,"数据为空")
+                return@setOnClickListener
+            }
+            context?.startActivity(ChatActivity.getIntent(context, data.userId,data.nickname,data.userImage))
         }
     }
 

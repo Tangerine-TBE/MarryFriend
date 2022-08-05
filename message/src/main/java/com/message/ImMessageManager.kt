@@ -1,15 +1,18 @@
-package com.message.conversations
+package com.message
 
 import com.hyphenate.EMMessageListener
-import com.hyphenate.chat.EMClient
-import com.hyphenate.chat.EMConversation
-import com.hyphenate.chat.EMMessage
-import com.hyphenate.chat.EMTextMessageBody
+import com.hyphenate.chat.*
+import com.hyphenate.exceptions.HyphenateException
+import com.message.chat.ImageMessage
+import com.message.chat.Message
+import com.message.chat.TxtMessage
+import com.message.conversations.ConversationType
+import com.message.conversations.ConversationsBean
 import com.xyzz.myutils.show.iLog
-import kotlin.collections.ArrayList
 
 
 //https://docs-im.easemob.com/im/android/basics/message
+//http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
     private val msgListener by lazy {
         object : EMMessageListener {
@@ -81,29 +84,43 @@ object ImMessageManager {
                         null
                     }
                 }
-                when(conversation.type){
-                    EMConversation.EMConversationType.Chat -> {
-                        this.conversationType=ConversationsBean.ConversationType.Chat
-                    }
-                    EMConversation.EMConversationType.GroupChat -> {
-
-                    }
-                    EMConversation.EMConversationType.ChatRoom -> {
-
-                    }
-                    EMConversation.EMConversationType.DiscussionGroup -> {
-
-                    }
-                    EMConversation.EMConversationType.HelpDesk -> {
-                        this.conversationType=ConversationsBean.ConversationType.Assistant
-                    }
-                    null -> {
-
-                    }
-                }
+                this.conversationType= ConversationType.toMyType(conversation.type) ?:throw IllegalStateException("还未实现该会话")
             }
         }
         return conversationsBeanList
+    }
+
+    fun getHistoryMessage(toChatUsername:String, chatType: EMConversation.EMConversationType, pageSize:Int, msgId:String?=null):List<Message<out EMMessageBody>>{
+        val resultList=ArrayList<EMMessage>()
+        try {
+            EMClient.getInstance().chatManager().fetchHistoryMessages(
+                toChatUsername, chatType, pageSize, msgId
+            )
+            val conversation = EMClient.getInstance().chatManager().getConversation(toChatUsername)
+            val ramMsg = conversation.allMessages
+            if (msgId!=null&&msgId.isNotBlank()){
+                val index=ramMsg.indexOfFirst {
+                    it.msgId==msgId
+                }
+                if (index==-1){
+                    resultList.addAll(conversation.loadMoreMsgFromDB(msgId, pageSize))
+                }else{
+                    resultList.addAll(ramMsg.slice(index+1 until ramMsg.size))
+                    resultList.addAll(conversation.loadMoreMsgFromDB(ramMsg[index].msgId,pageSize-index-1))
+                }
+            }else{
+                resultList.addAll(ramMsg)
+                if (ramMsg.size<pageSize){
+                    resultList.addAll(conversation.loadMoreMsgFromDB(null,pageSize-ramMsg.size))
+                }
+            }
+        } catch (e: HyphenateException) {
+            e.printStackTrace()
+        }
+
+        return resultList.mapNotNull {
+            Message.toMyMessage(it)
+        }
     }
 
     fun sendTextMsg(username: String,content:String){
