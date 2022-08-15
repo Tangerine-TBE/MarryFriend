@@ -2,6 +2,7 @@
 <layout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
+        <import type="android.view.View"/>
         <import type="com.message.chat.ImageMessage"/>
         <import type="com.twx.marryfriend.message.model.ChatItemModel"/>
         <variable
@@ -21,7 +22,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="12dp"
-            android:text="上午  06:58"
+            android:text="@{chatItemModel.showTimeText}"
+            android:visibility="@{chatItemModel.visibility?View.VISIBLE:View.GONE}"
+            tools:text="上午 10:00"
             android:textColor="#FF9A9A9A"
             android:textSize="13sp"
             android:layout_width="wrap_content"
@@ -32,6 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="12dp"
             tools:src="#000"
+            android:src="@{chatItemModel.imageHead}"
             app:riv_oval="true"
             android:layout_width="37dp"
             android:layout_height="37dp"/>
@@ -43,20 +47,32 @@
             android:layout_marginTop="2dp"
             android:layout_marginStart="8dp"
             tools:text="Breda Bell"
+            android:text="@{chatItemModel.nickname}"
             android:textColor="#FF0D0D0D"
             android:textSize="13sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/userImage"
+            android:id="@+id/previewUserImage"
             app:layout_constraintStart_toStartOf="@id/userNickname"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/userNickname"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="61dp"
             tools:src="@mipmap/ic_launcher"
+            android:src="@{chatItemModel.data.thumbnailLocalPath}"
             android:scaleType="fitStart"
-            android:layout_width="0dp"
+            android:layout_width="127dp"
+            android:layout_height="wrap_content"/>
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/userImage"
+            app:layout_constraintStart_toStartOf="@id/userNickname"
+            app:layout_constraintTop_toBottomOf="@id/userNickname"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="61dp"
+            tools:src="@mipmap/ic_launcher"
+            android:src="@{chatItemModel.data.thumbnailUrl}"
+            android:scaleType="fitStart"
+            android:layout_width="127dp"
             android:layout_height="wrap_content"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

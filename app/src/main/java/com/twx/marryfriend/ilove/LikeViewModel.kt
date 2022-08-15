@@ -32,7 +32,7 @@ class LikeViewModel:ViewModel() {
     suspend fun superLike(guest_uid: Int)=suspendCoroutine<Unit>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/unconcernToLike"
         val map= mapOf(
-            "host_uid" to UserInfo.getUserId(),
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "guest_uid" to guest_uid.toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -54,7 +54,7 @@ class LikeViewModel:ViewModel() {
     suspend fun loadLike(page:Int)= suspendCoroutine<ILikeData?> { coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/mePutongXihuanOtherList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId()
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -72,7 +72,7 @@ class LikeViewModel:ViewModel() {
     suspend fun loadSuperLike(page:Int)= suspendCoroutine<ILikeData?> { coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/meChaojiXihuanOtherList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId()
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -90,7 +90,7 @@ class LikeViewModel:ViewModel() {
     suspend fun loadDisLike(page:Int)= suspendCoroutine<ILikeData?> { coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/unconcernList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId()
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {

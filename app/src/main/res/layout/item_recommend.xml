@@ -199,7 +199,7 @@
                 <!--关于我-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/selfIntroduction"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -217,17 +217,31 @@
                         android:layout_marginTop="27dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/aboutMe"
-                        android:textColor="#FF101010"
-                        android:textSize="15sp"
+                    <FrameLayout
                         android:layout_marginTop="16dp"
-                        android:lineSpacingExtra="4dp"
-                        android:letterSpacing="0.25"
-                        android:text="穿鞋183长的凑合两个酒窝比较白直男拍照法阿可恶基本都是黑白色性格的话比较温顺逗比包开心辣种
-                    \n\n穿鞋183长的凑合两个酒窝比较白直男拍照法阿可恶基本都是黑白色性格的话比较温顺逗比包开心辣种"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/aboutMeTip"
+                            android:textColor="#FF101010"
+                            android:textSize="15sp"
+                            android:lineSpacingExtra="4dp"
+                            android:letterSpacing="0.25"
+                            tools:text="穿鞋183长的凑合两个酒窝比较白直男拍照法"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:id="@+id/aboutMe"
+                            android:textColor="#FF101010"
+                            android:textSize="15sp"
+                            android:lineSpacingExtra="4dp"
+                            android:letterSpacing="0.25"
+                            android:text="穿鞋183长的凑合两个酒窝比较白直男拍照法阿可恶基本都是黑白色性格的话比较温顺逗比包开心辣种
+                    \n\n穿鞋183长的凑合两个酒窝比较白直男拍照法阿可恶基本都是黑白色性格的话比较温顺逗比包开心辣种"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+                    </FrameLayout>
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_marginTop="30dp"
                         android:layout_width="match_parent"

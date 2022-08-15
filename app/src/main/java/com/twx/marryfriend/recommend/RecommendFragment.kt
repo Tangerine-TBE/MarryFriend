@@ -4,10 +4,22 @@ import android.Manifest
 import android.animation.Animator
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.URLSpan
 import android.view.MotionEvent
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
+import androidx.core.text.inSpans
+import androidx.core.text.italic
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,11 +37,14 @@ import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.dialog.OneClickHelloDialog
+import com.twx.marryfriend.dialog.SendFlowerDialog
+import com.twx.marryfriend.dialog.createDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
+import com.xyzz.myutils.setExpandableText
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
@@ -203,7 +218,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 val lastDynamic=recommendViewModel.loadLaseDynamic()
                 Glide.with(lastDynamicImage).load(lastDynamic.data?.image_url).placeholder(R.mipmap.ic_launcher).into(lastDynamicImage)
                 lastDynamicTitle.text=lastDynamic.data?.label
-                lastDynamicDes.text=lastDynamic.data?.text_content
+                lastDynamicDes.setExpandableText(lastDynamic.data?.text_content?:"", 3, "查看更多>", "收起")
                 lastDynamicView.setOnClickListener {
                     toast("最后一条动态")
                 }
@@ -336,6 +351,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 左滑、不喜欢
      */
     private fun disLike(item: RecommendBean){
+        if (RecommendGuideView.isShowGuide()){
+            iLog("引导期间")
+            return
+        }
         if (BuildConfig.DEBUG){
             return
         }
@@ -354,6 +373,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 右滑、喜欢
      */
     private fun like(item: RecommendBean){
+        if (RecommendGuideView.isShowGuide()){
+            iLog("引导期间")
+            return
+        }
         if (BuildConfig.DEBUG){
             return
         }
@@ -376,15 +399,21 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
      * 超级喜欢、送花
      */
     private fun superLike(item: RecommendBean){
-        viewLifecycleOwner.lifecycleScope.launch (){
-            loadingDialog.show()
-            try {
-                recommendViewModel.superLike(item.getId())
-                toast("送花成功")
-            }catch (e:Exception){
-                toast(e.message)
+        if (RecommendGuideView.isShowGuide()){
+            iLog("引导期间")
+            return
+        }
+        SendFlowerDialog.sendFlowerTip(requireContext()){
+            viewLifecycleOwner.lifecycleScope.launch (){
+                loadingDialog.show()
+                try {
+                    recommendViewModel.superLike(item.getId())
+                    toast("送花成功")
+                }catch (e:Exception){
+                    toast(e.message)
+                }
+                loadingDialog.dismiss()
             }
-            loadingDialog.dismiss()
         }
     }
 

@@ -2,6 +2,7 @@ package com.twx.marryfriend.recommend
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.View
 import android.widget.FrameLayout
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
@@ -67,5 +68,6 @@ class NotContentView @JvmOverloads constructor(context: Context,attributeSet: At
             }
             return
         }
+        upUserInfo.visibility= View.GONE
     }
 }

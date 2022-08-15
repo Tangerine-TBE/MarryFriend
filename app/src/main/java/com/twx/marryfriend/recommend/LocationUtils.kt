@@ -50,7 +50,7 @@ object LocationUtils {
                 val numberFormat=NumberFormat.getNumberInstance()
                 numberFormat.maximumFractionDigits=5
                 NetworkUtil.sendPostSecret("${Contents.USER_URL}/marryfriend/LoginRegister/positionUp",
-                    mapOf("user_id" to UserInfo.getUserId(),
+                    mapOf("user_id" to (UserInfo.getUserId()?:return),
                         "jingdu" to numberFormat.format(myLocation.longitude),
                         "weidu" to numberFormat.format(myLocation.latitude),
                         "address" to myLocation.address),{

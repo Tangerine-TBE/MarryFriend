@@ -4,6 +4,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.enumeration.ConstellationEnum
+import org.json.JSONArray
 import java.lang.IllegalStateException
 import java.text.NumberFormat
 
@@ -145,6 +146,23 @@ data class RecommendBean(
                 else-> null
             }?.toLabel(R.mipmap.ic_label_school)
         }
+        fun getEducationArrStr(education:List<Int>?): Label?{
+            return education?.map {
+                getEducationStr(it)?.label
+            }.let {
+                val str=StringBuilder()
+                it?.forEach {
+                    if (it!=null) {
+                        str.append(it+"、")
+                    }
+                }
+                if (str.isEmpty()){
+                    null
+                }else{
+                    str.removeSuffix("、").toString()
+                }
+            }?.toLabel(R.mipmap.ic_label_school)
+        }
         fun getMarry_hadStr(marry_status:Int?): Label?{
             return when(marry_status){
                 0->{
@@ -163,6 +181,23 @@ data class RecommendBean(
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_marriage)
+        }
+        fun getMarry_hadArrStr(education:List<Int>?): Label?{
+            return education?.map {
+                getMarry_hadStr(it)?.label
+            }.let {
+                val str=StringBuilder()
+                it?.forEach {
+                    if (it!=null) {
+                        str.append(it+"、")
+                    }
+                }
+                if (str.isEmpty()){
+                    null
+                }else{
+                    str.removeSuffix("、").toString()
+                }
+            }?.toLabel(R.mipmap.ic_label_school)
         }
         fun getChild_hadStr(child_had:Int?): Label?{
             return when(child_had){
@@ -185,6 +220,23 @@ data class RecommendBean(
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_children)
+        }
+        fun getChild_hadArrStr(education:List<Int>?): Label?{
+            return education?.map {
+                getChild_hadStr(it)?.label
+            }.let {
+                val str=StringBuilder()
+                it?.forEach {
+                    if (it!=null) {
+                        str.append(it+"、")
+                    }
+                }
+                if (str.isEmpty()){
+                    null
+                }else{
+                    str.removeSuffix("、").toString()
+                }
+            }?.toLabel(R.mipmap.ic_label_school)
         }
         fun getWant_childStr(want_child:Int?): Label?{
             return when(want_child){
@@ -268,6 +320,17 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_head)
         }
+        val salary by lazy {
+            arrayOf(
+                0 to 0..5,
+                1 to 0..5,
+                2 to 5..10,
+                3 to 10..20,
+                4 to 20..40,
+                5 to 40..70,
+                6 to 70..70
+            )
+        }
         fun getSalary_range(salary_range:Int?): Label?{
             return when(salary_range){
                 0->{
@@ -295,6 +358,43 @@ data class RecommendBean(
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_income)
+        }
+        fun getSalary_range(salary_range:String?): Label?{
+            val jsonArray=JSONArray(salary_range)
+            if (jsonArray.length()>0){
+                val first=jsonArray.getInt(0)
+                val last=jsonArray.getInt(jsonArray.length()-1)
+                if (last== salary.last().first){
+                    "七万及以上"
+                }else{
+                    val min=salary.find {
+                        it.first==first
+                    }?.second?.first?:0
+                    val max= salary.find {
+                        it.first==last
+                    }?.second?.last?:0
+                    if (min==0){
+                        if (max<10){
+                            "${max}千以下"
+                        }else{
+                            "${max/10}万以下"
+                        }
+                    }else{
+                        val m=if (min<10){
+                            "${min}千"
+                        }else{
+                            "${min/10}万"
+                        }
+                        val ma=if (max<10){
+                            "${max}千"
+                        }else{
+                            "${max/10}万"
+                        }
+                        "${m}到${ma}"
+                    }
+                }.toLabel(R.mipmap.ic_label_income)
+            }
+            return null
         }
         fun getFigure_nan(figure_nan:Int?): Label?{
             return when(figure_nan){
@@ -588,13 +688,13 @@ data class RecommendBean(
             list.add(it)
         }
 
-        getEducationStr(demand?.education)?.also {
+        getEducationArrStr(demand?.getEducationArray())?.also {
             list.add(it)
         }
-        getMarry_hadStr(demand?.marry_status)?.also {
+        getMarry_hadArrStr(demand?.getMarry_statusArray())?.also {
             list.add(it)
         }
-        getChild_hadStr(demand?.child_had)?.also {
+        getChild_hadArrStr(demand?.getChild_hadArray())?.also {
             list.add(it)
         }
         getWant_childStr(demand?.want_child)?.also {

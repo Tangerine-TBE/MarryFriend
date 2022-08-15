@@ -18,11 +18,21 @@ class RecommendGuideView @JvmOverloads constructor(context: Context,attributeSet
     companion object{
         private const val IS_USE_FIRST="is_first_use"
         fun notShowGuide(){
+            showGuide=false
             SPStaticUtils.put(IS_USE_FIRST,true)
         }
         fun isShowGuide():Boolean{
-            return !SPStaticUtils.getBoolean(IS_USE_FIRST,false)
+            return showGuide.let {
+                if (it==null){
+                    val isShow=!SPStaticUtils.getBoolean(IS_USE_FIRST,false)
+                    showGuide=isShow
+                    isShow
+                }else{
+                    it
+                }
+            }
         }
+        private var showGuide:Boolean?=null
     }
     init {
         inflate(context,R.layout.item_recommend_guide,this)

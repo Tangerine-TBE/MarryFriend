@@ -23,7 +23,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun loadRecommendUserId()=suspendCoroutine<List<Int>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/commendList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "user_sex" to UserInfo.getUserSex().toString())
         /**
          * {"code":200,"msg":"success","data":[{"5":5}]}
@@ -52,7 +52,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun loadRecommendUserInfo(idArray: List<Int>)=suspendCoroutine<List<RecommendBean>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachFive"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "id_array" to JSONArray(idArray).toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -89,7 +89,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun loadLaseDynamic()=suspendCoroutine<LastDynamicBean>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/newestTrends"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "user_level" to UserInfo.getUserVipLevel().toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -107,7 +107,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun disLike(guest_uid: Int)=suspendCoroutine<Unit>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
-            "host_uid" to UserInfo.getUserId(),
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "guest_uid" to guest_uid.toString(),
             "feeling" to "hate")
 
@@ -131,7 +131,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
-            "host_uid" to UserInfo.getUserId(),
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "guest_uid" to guest_uid.toString(),
             "feeling" to "love")
 
@@ -161,7 +161,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun otherLike(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
         val map= mapOf(
-            "host_uid" to UserInfo.getUserId(),
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "guest_uid" to guest_uid.toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -192,7 +192,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun superLike(guest_uid: Int)=suspendCoroutine<Unit>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusChaojiXihuanOther"
         val map= mapOf(
-            "host_uid" to UserInfo.getUserId(),
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "guest_uid" to guest_uid.toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -214,7 +214,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun loadOneClickHelloUserInfo() =suspendCoroutine<OneClickHelloBean>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/everydayLuckList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "user_sex" to UserInfo.getUserSex().toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -232,7 +232,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun sendHello(list: List<OneClickHelloItemBean>) =suspendCoroutine<Unit>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/oneClickHello"
         val map= mapOf(
-            "host_uid" to UserInfo.getUserId(),
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "host_sex" to UserInfo.getUserSex().toString(),
             "uid_array" to list.map { it.user_id }.let { Gson().toJson(it) })
 

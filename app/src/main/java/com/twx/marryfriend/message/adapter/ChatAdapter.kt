@@ -1,16 +1,17 @@
 package com.twx.marryfriend.message.adapter
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hyphenate.chat.EMMessageBody
 import com.message.chat.*
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.databinding.BaseDataBindingViewHolder
 import com.twx.marryfriend.message.model.ChatItemModel
 import com.twx.marryfriend.message.views.ChatImageMsgItemView
-import com.twx.marryfriend.message.views.ChatImageRedFlowerItemView
 import com.twx.marryfriend.message.views.ChatTextMsgItemView
 
-class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
+class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String?,):RecyclerView.Adapter<BaseDataBindingViewHolder>() {
     companion object{
         private const val CMD_TYPE=1
         private const val CUSTOM_TYPE=2
@@ -25,7 +26,7 @@ class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
     private val listData=ArrayList<ChatItemModel<Message<out EMMessageBody>>>()
 
     override fun getItemViewType(position: Int): Int {
-        when(listData[position].data){
+        return when(listData[position].data){
             is CmdMessage -> {
                 CMD_TYPE
             }
@@ -50,21 +51,23 @@ class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
             is VoiceMessage -> {
                 VOICE_TYPE
             }
+            else -> {
+                0
+            }
         }
-        return super.getItemViewType(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseDataBindingViewHolder {
 //        ChatImageRedFlowerItemView(parent)
         val view=when(viewType){
             TXT_TYPE->{
-                ChatTextMsgItemView(parent)
+                ChatTextMsgItemView(parent.context)
             }
             IMAGE_TYPE->{
-                ChatImageMsgItemView(parent)
+                ChatImageMsgItemView(parent.context)
             }
             VIDEO_TYPE->{
-                ChatTextMsgItemView(parent)
+                ChatTextMsgItemView(parent.context)
             }
             FILE_TYPE->{
                 null
@@ -73,7 +76,7 @@ class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
                 null
             }
             VOICE_TYPE->{
-                ChatImageMsgItemView(parent)
+                ChatImageMsgItemView(parent.context)
             }
             CMD_TYPE->{
                 null
@@ -85,11 +88,11 @@ class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
                 null
             }
         }
-        return BaseDataBindingViewHolder(view?:ChatTextMsgItemView(parent))
+        return BaseDataBindingViewHolder(view?: View(parent.context))
     }
 
     override fun onBindViewHolder(holder: BaseDataBindingViewHolder, position: Int) {
-        val dataBindingView=holder.dataBindingView
+        val dataBindingView=holder.itemView
         val item=listData[position]
         when(item.data){
             is CmdMessage -> {
@@ -108,7 +111,7 @@ class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
                 
             }
             is TxtMessage -> {
-                (dataBindingView as? ChatTextMsgItemView)?.chatItemModel=(item as ChatItemModel<TxtMessage>)
+                (dataBindingView as? ChatTextMsgItemView)?.setData(item as ChatItemModel<TxtMessage>)
             }
             is VideoMessage -> {
                 
@@ -121,5 +124,72 @@ class ChatAdapter:RecyclerView.Adapter<BaseDataBindingViewHolder>() {
 
     override fun getItemCount(): Int {
         return listData.size
+    }
+
+    fun setData(list: List<ChatItemModel<Message<out EMMessageBody>>>){
+        list.forEach {
+            setWhoSendInfo(it)
+        }
+
+        listData.clear()
+        listData.addAll(list)
+        val sss=listData.asReversed()
+        sss.forEachIndexed { index, chatItemModel ->
+            val preModel=if (index-1>=0){
+                sss[index-1]
+            }else{
+                null
+            }
+            setTimeVis(preModel,chatItemModel)
+        }
+        notifyDataSetChanged()
+    }
+
+    fun addAllData(list: List<ChatItemModel<Message<out EMMessageBody>>>){
+        list.forEach {
+            setWhoSendInfo(it)
+        }
+
+        listData.addAll(list)
+        val sss=listData.slice(listData.size-list.size-1 until listData.size)
+        sss.forEachIndexed { index, chatItemModel ->
+            val preModel=if (index-1>=0){
+                sss[index-1]
+            }else{
+                null
+            }
+            setTimeVis(preModel,chatItemModel)
+        }
+        notifyItemRangeInserted(listData.size-list.size,list.size)
+    }
+
+    fun addItem(message: Message<out EMMessageBody>){
+        listData.add(0,ChatItemModel(message).also {
+            val preModel=listData.firstOrNull()
+            setTimeVis(preModel,it)
+
+            setWhoSendInfo(it)
+        })
+        notifyItemInserted(0)
+    }
+
+    private fun setWhoSendInfo(it:ChatItemModel<Message<out EMMessageBody>>){
+        if (it.data.from==friendId){
+            it.imageHead=headImage
+            it.nickname=nickname
+            it.isISend=false
+        }else{
+            it.imageHead= UserInfo.getImgHead()
+            it.nickname= UserInfo.getNickname()
+            it.isISend=true
+        }
+    }
+
+    private fun setTimeVis(preModel:ChatItemModel<Message<out EMMessageBody>>?,chatItemModel:ChatItemModel<Message<out EMMessageBody>>){
+        chatItemModel.visibility=if (preModel==null){
+            true
+        }else{
+            (chatItemModel.msgTime-3*60*1000L)>preModel.msgTime
+        }
     }
 }

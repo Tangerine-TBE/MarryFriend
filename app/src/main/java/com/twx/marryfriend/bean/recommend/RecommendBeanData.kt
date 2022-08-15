@@ -1,5 +1,7 @@
 package com.twx.marryfriend.bean.recommend
 
+import org.json.JSONArray
+
 enum class Sex(val code:Int){
     male(1),female(2),unknown(0);
     companion object{
@@ -73,10 +75,10 @@ data class Demand(
     val age_min: Int?=null,
     val buy_car: Int?=null,
     val buy_house: Int?=null,
-    val child_had: Int?=null,
+    val child_had: String?=null,//int数组
     val create_time: String?=null,
     val drink_wine: Int?=null,
-    val education: Int?=null,
+    val education: String?=null,//int数组
     val figure_nan: String?=null,
     val figure_nv: Int?=null,
     val id: Int?=null,
@@ -84,11 +86,11 @@ data class Demand(
     val industry_str: String?=null,
     val is_headface: Int?=null,
     val is_smoking: Int?=null,
-    val marry_status: Int?=null,
+    val marry_status: String?=null,//int数组
     val marry_time: Int?=null,
     val max_high: String?=null,
     val min_high: String?=null,
-    val salary_range: Int?=null,
+    val salary_range: String?=null,
     val update_time: String?=null,
     val user_id: Int?=null,
     val user_sex: Int?=null,
@@ -97,7 +99,56 @@ data class Demand(
     val work_place_str: String?=null,
     val work_province_code: String?=null,
     val work_province_str: String?=null
-)
+){
+    fun getChild_hadArray():List<Int>{
+        val ja=JSONArray(child_had)
+        if (ja.length()==0){
+            return emptyList()
+        }else{
+            val resultArrayList=ArrayList<Int>()
+            for (i in 0 until ja.length()){
+                resultArrayList.add(ja.getInt(i))
+            }
+            return resultArrayList
+        }
+    }
+    fun getEducationArray():List<Int>{
+        val ja=JSONArray(education)
+        if (ja.length()==0){
+            return emptyList()
+        }else{
+            val resultArrayList=ArrayList<Int>()
+            for (i in 0 until ja.length()){
+                resultArrayList.add(ja.getInt(i))
+            }
+            return resultArrayList
+        }
+    }
+    fun getMarry_statusArray():List<Int>{
+        val ja=JSONArray(marry_status)
+        if (ja.length()==0){
+            return emptyList()
+        }else{
+            val resultArrayList=ArrayList<Int>()
+            for (i in 0 until ja.length()){
+                resultArrayList.add(ja.getInt(i))
+            }
+            return resultArrayList
+        }
+    }
+    fun getSalary_rangeArray():List<Int>{
+        val ja=JSONArray(salary_range)
+        if (ja.length()==0){
+            return emptyList()
+        }else{
+            val resultArrayList=ArrayList<Int>()
+            for (i in 0 until ja.length()){
+                resultArrayList.add(ja.getInt(i))
+            }
+            return resultArrayList
+        }
+    }
+}
 data class More(
     val blood_type: String?=null,
     val buy_car: Int?=null,

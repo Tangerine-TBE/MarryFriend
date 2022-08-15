@@ -1,13 +1,15 @@
 package com.message
 
+import android.net.Uri
+import com.hyphenate.EMConversationListener
 import com.hyphenate.EMMessageListener
 import com.hyphenate.chat.*
 import com.hyphenate.exceptions.HyphenateException
-import com.message.chat.ImageMessage
+import com.message.chat.CustomMessage
 import com.message.chat.Message
-import com.message.chat.TxtMessage
 import com.message.conversations.ConversationType
 import com.message.conversations.ConversationsBean
+import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 
 
@@ -41,6 +43,17 @@ object ImMessageManager {
                 iLog(messages?.firstOrNull()?.from,"收到消息,状态")
             }
 
+        }
+    }
+    private val conversationsListener by lazy { 
+        object : EMConversationListener{
+            override fun onCoversationUpdate() {
+                
+            }
+
+            override fun onConversationRead(from: String?, to: String?) {
+                iLog("会话变动${from+"发送给"+to}")
+            }
         }
     }
 
@@ -93,11 +106,8 @@ object ImMessageManager {
     fun getHistoryMessage(toChatUsername:String, chatType: EMConversation.EMConversationType, pageSize:Int, msgId:String?=null):List<Message<out EMMessageBody>>{
         val resultList=ArrayList<EMMessage>()
         try {
-            EMClient.getInstance().chatManager().fetchHistoryMessages(
-                toChatUsername, chatType, pageSize, msgId
-            )
             val conversation = EMClient.getInstance().chatManager().getConversation(toChatUsername)
-            val ramMsg = conversation.allMessages
+            val ramMsg = conversation.allMessages.asReversed()
             if (msgId!=null&&msgId.isNotBlank()){
                 val index=ramMsg.indexOfFirst {
                     it.msgId==msgId
@@ -106,35 +116,81 @@ object ImMessageManager {
                     resultList.addAll(conversation.loadMoreMsgFromDB(msgId, pageSize))
                 }else{
                     resultList.addAll(ramMsg.slice(index+1 until ramMsg.size))
-                    resultList.addAll(conversation.loadMoreMsgFromDB(ramMsg[index].msgId,pageSize-index-1))
+                    resultList.addAll(conversation.loadMoreMsgFromDB(ramMsg[index].msgId,pageSize-resultList.size))
                 }
             }else{
                 resultList.addAll(ramMsg)
                 if (ramMsg.size<pageSize){
-                    resultList.addAll(conversation.loadMoreMsgFromDB(null,pageSize-ramMsg.size))
+                    resultList.addAll(conversation.loadMoreMsgFromDB(ramMsg.lastOrNull()?.msgId,pageSize-ramMsg.size))
                 }
             }
         } catch (e: HyphenateException) {
-            e.printStackTrace()
+            eLog(e.stackTraceToString())
         }
-
         return resultList.mapNotNull {
             Message.toMyMessage(it)
+        }.sortedBy {
+            -it.msgTime
         }
     }
 
-    fun sendTextMsg(username: String,content:String){
+    fun markAllMsgAsRead(username: String){
+        val conversation = EMClient.getInstance().chatManager().getConversation(username)
+        //指定会话消息未读数清零
+        conversation.markAllMessagesAsRead()
+//        //把一条消息置为已读
+//        conversation.markMessageAsRead(messageId)
+//        //所有未读消息数清零
+//        EMClient.getInstance().chatManager().markAllConversationsAsRead()
+    }
+
+    fun sendTextMsg(username: String,content:String):Message<out EMMessageBody>?{
+        iLog("发送\"${content}\"给${username}")
         //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
         val message = EMMessage.createTxtSendMessage(content, username)
+//        message.isAcked
+//        message.isDelivered
+//        message.progress()
         //如果是群聊，设置chattype，默认是单聊
 //        if (chatType === CHATTYPE_GROUP) message.chatType = ChatType.GroupChat
         //发送消息
         EMClient.getInstance().chatManager().sendMessage(message)
+        return Message.toMyMessage(message)
+    }
+
+    fun sendImageMsg(username: String,uri: Uri):Message<out EMMessageBody>?{
+        val message=EMMessage.createImageSendMessage(uri,true,username)
+        EMClient.getInstance().chatManager().sendMessage(message)
+        return Message.toMyMessage(message)
+    }
+
+    fun sendImageMsg(username: String,file: String):Message<out EMMessageBody>?{
+        val message=EMMessage.createImageSendMessage(file,true,username)
+        EMClient.getInstance().chatManager().sendMessage(message)
+        return Message.toMyMessage(message)
+    }
+
+    fun sendFlower(username: String):Message<out EMMessageBody>?{
+        val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
+// event为需要传递的自定义消息事件，比如礼物消息，可以设置event = "gift"
+        val customBody = EMCustomMessageBody(CustomMessage.CustomEvent.flower.code)
+// params类型为Map<String, String>
+//        customBody.params = params
+        customMessage.addBody(customBody)
+// to指另一方环信id（或者群组id，聊天室id）
+        customMessage.setTo(username)
+// 如果是群聊，设置chattype，默认是单聊
+        customMessage.chatType = EMMessage.ChatType.Chat
+        EMClient.getInstance().chatManager().sendMessage(customMessage)
+        return Message.toMyMessage(customMessage)
     }
 
     fun startMessageListener(){
         iLog("用户${EMClient.getInstance().currentUser}注册消息监听")
         EMClient.getInstance().chatManager().removeMessageListener(msgListener)
         EMClient.getInstance().chatManager().addMessageListener(msgListener)
+
+        EMClient.getInstance().chatManager().removeConversationListener(conversationsListener)
+        EMClient.getInstance().chatManager().addConversationListener(conversationsListener)
     }
 }

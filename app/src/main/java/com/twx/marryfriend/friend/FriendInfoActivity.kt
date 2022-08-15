@@ -24,6 +24,7 @@ import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendViewModel
@@ -480,14 +481,17 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
      * 超级喜欢、送花
      */
     private fun superLike(item: RecommendBean){
-        lifecycleScope.launch (){
-            loadingDialog.show()
-            try {
-                recommendViewModel.superLike(userId?:return@launch toast("id 为空"))
-            }catch (e:Exception){
-                toast(e.message)
+        SendFlowerDialog.sendFlowerTip(this){
+            lifecycleScope.launch (){
+                loadingDialog.show()
+                try {
+                    recommendViewModel.superLike(userId?:return@launch toast("id 为空"))
+                }catch (e:Exception){
+                    toast(e.message)
+                }
+                toast("送花成功")
+                loadingDialog.dismiss()
             }
-            loadingDialog.dismiss()
         }
     }
 

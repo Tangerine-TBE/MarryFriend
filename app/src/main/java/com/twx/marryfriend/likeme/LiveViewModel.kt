@@ -17,7 +17,8 @@ class LiveViewModel():ViewModel() {
     suspend fun loadLoveMe(page:Int)=suspendCoroutine<LikeMeData?>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/otherPutongXihuanMeList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId())
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
+        )
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {

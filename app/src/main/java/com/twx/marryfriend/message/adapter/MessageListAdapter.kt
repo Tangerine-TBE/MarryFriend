@@ -39,17 +39,17 @@ class MessageListAdapter: RecyclerView.Adapter<BaseDataBindingViewHolder>() {
         viewType: Int
     ): BaseDataBindingViewHolder {
         val view=if (viewType== TYPE_CHAT){
-            ConversationItemView(parent)
+            ConversationItemView(parent.context)
         }else if (viewType== TYPE_ASSISTANT){
-            TipConversationItemView(parent)
+            TipConversationItemView(parent.context)
         }else{
-            ConversationItemView(parent)
+            ConversationItemView(parent.context)
         }
         return BaseDataBindingViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: BaseDataBindingViewHolder, position: Int) {
-        val itemView=holder.dataBindingView
+        val itemView=holder.itemView
         val item=listData[position]
         when(itemView){
             is ConversationItemView->{

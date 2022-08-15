@@ -11,10 +11,10 @@
         android:id="@+id/one_click_img"
         android:layout_width="54dp"
         android:layout_height="54dp"
+        android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
-        tools:src="@mipmap/icon_photo_male"
         app:shapeAppearance="@style/oneClickImage"
-        android:layout_centerHorizontal="true" />
+        tools:src="@mipmap/icon_photo_male" />
     <ImageView
         android:src="@drawable/selector_one_click_choice"
         android:layout_alignEnd="@id/one_click_img"

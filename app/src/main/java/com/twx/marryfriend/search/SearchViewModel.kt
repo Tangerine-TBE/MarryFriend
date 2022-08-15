@@ -48,7 +48,7 @@ class SearchViewModel:ViewModel() {
     suspend fun filtrateSearch()= suspendCoroutine<List<SearchResultItem>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/filtrateSearch"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "user_level" to UserInfo.getUserVipLevel().toString()
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -66,7 +66,7 @@ class SearchViewModel:ViewModel() {
     suspend fun accurateSearch(text:String) = suspendCoroutine<List<SearchResultItem>> {coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/idNickSearch"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "id_nick" to text
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->

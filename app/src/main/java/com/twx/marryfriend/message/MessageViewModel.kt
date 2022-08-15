@@ -61,7 +61,7 @@ class MessageViewModel:ViewModel() {
     private suspend fun getFriendsInfo(userArray:List<String>)=suspendCoroutine<ConversationBean>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/TrendsNotice/huanxinChatList"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId(),
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "uid_array" to gson.toJson(userArray)
             )
         NetworkUtil.sendPostSecret(url,map,{ response ->

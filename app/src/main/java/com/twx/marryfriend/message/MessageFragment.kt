@@ -24,7 +24,10 @@ import kotlin.random.Random
 
 class MessageFragment : Fragment(R.layout.fragment_message) {
     init {
-        ImUserManager.createOrLogin(UserInfo.getUserId())
+        val id=UserInfo.getUserId()
+        if (id!=null) {
+            ImUserManager.createOrLogin(id)
+        }
     }
 
     private val viewModel by lazy {

@@ -16,7 +16,7 @@ object UserInfo {
     fun updateUserInfo(){
         val url="${Contents.USER_URL}/marryfriend/LoginRegister/getFive"
         val map= mapOf(
-            "user_id" to UserInfo.getUserId()
+            "user_id" to (UserInfo.getUserId()?:return?:return)
         )
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -32,14 +32,23 @@ object UserInfo {
     }
 
 
-    fun getUserId():String{
+    fun getUserId():String?{
         if(BuildConfig.DEBUG){//3是男的
             return "3"//3,4,6,11,16//
         }
         return SPStaticUtils.getString(
             Constant.USER_ID,
-            "default")
+            null)
     }
+
+    fun getImgHead():String{
+        return SPStaticUtils.getString(Constant.ME_AVATAR, "")
+    }
+
+    fun getNickname():String{
+        return SPStaticUtils.getString(Constant.ME_NAME, "未填写")
+    }
+
     fun getUserVipLevel():Int{
         /*return SPStaticUtils.getInt(Constant.USER_VIP_LEVEL,0)*/
         return 1

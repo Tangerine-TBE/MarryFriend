@@ -19,6 +19,9 @@ import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
+import com.twx.marryfriend.tools.avatar.AvatarToolActivity
+import com.twx.marryfriend.tools.hobby.HobbyToolActivity
+import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
 import com.xyzz.myutils.show.toast
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -51,21 +54,21 @@ object IntentManager {
     }
 
     fun getUpHeadImageIntent(context: Context):Intent?{
-        val intent=Intent(context, LifePhotoActivity::class.java)
+        val intent=Intent(context, AvatarToolActivity::class.java)
         intent.putExtra("activity", "data")
         return null
     }
     fun getUpFillInHobbyIntent(context: Context):Intent?{
-        val intent=Intent(context, LifePhotoActivity::class.java)
+        val intent=Intent(context, HobbyToolActivity::class.java)
         intent.putExtra("activity", "data")
         return null
     }
-    fun getUpFillInGreetIntent(context: Context):Intent?{
+    fun getUpFillInGreetIntent(context: Context):Intent{
         val intent=Intent(context, GreetInfoActivity::class.java)
         return intent
     }
     fun getUpFillInIntroduceIntent(context: Context):Intent?{
-        val intent=Intent(context, LifePhotoActivity::class.java)
+        val intent=Intent(context, IntroduceToolActivity::class.java)
         intent.putExtra("activity", "data")
         return null
     }

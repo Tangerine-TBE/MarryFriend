@@ -1,8 +1,14 @@
 package com.twx.marryfriend.recommend
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.AnimationDrawable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +31,7 @@ import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
+import com.xyzz.myutils.setExpandableText
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.CoroutineScope
@@ -163,12 +170,12 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                 }else{
                     this.visibility=View.VISIBLE
                 }
-                holder.getView<TextView>(R.id.aboutMe).also {
+                holder.getView<TextView>(R.id.aboutMe).also { textView ->
                     if (text.isNotBlank()){
-                        it.visibility=View.VISIBLE
-                        it.text = text
+                        textView.visibility=View.VISIBLE
+                        textView.setExpandableText(text, 3, "查看更多>", "收起")
                     }else{
-                        it.visibility=View.GONE
+                        textView.visibility=View.GONE
                     }
                 }
             }
