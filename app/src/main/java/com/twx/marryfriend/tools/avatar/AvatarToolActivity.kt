@@ -384,7 +384,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
         ll_avatar_loading.visibility = View.GONE
         if (uploadAvatarBean != null) {
             if (uploadAvatarBean.code == 200) {
-                SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
                 this.finish()
             } else {
                 ToastUtils.showShort(uploadAvatarBean.msg)

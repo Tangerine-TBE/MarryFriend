@@ -140,9 +140,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var cityDate: CityBean
 
     private var mCityFirstList: MutableList<String> = arrayListOf()
-    private var mCityIdFirstList: MutableList<String> = arrayListOf()
+    private var mCityIdFirstList: MutableList<Int> = arrayListOf()
     private var mCitySecondList: MutableList<String> = arrayListOf()
-    private var mCityIdSecondList: MutableList<String> = arrayListOf()
+    private var mCityIdSecondList: MutableList<Int> = arrayListOf()
     private var mCityThirdList: MutableList<String> = arrayListOf()
     private var mCityIdThirdList: MutableList<String> = arrayListOf()
 
@@ -246,20 +246,50 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         rv_user_data_more.adapter = moreAdapter
 
 
-
         sb_user_data_progress.setOnTouchListener(View.OnTouchListener { v, event -> true })
 
 
-        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") == "") {
-            // 先判断性别
+        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""){
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_male)
+                Glide.with(requireContext())
+                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
+                    .placeholder(R.mipmap.icon_avatar_upload_male)
+                    .error(R.mipmap.icon_avatar_upload_male)
+                    .into(iv_user_data_avatar)
             } else {
-                iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_female)
+                Glide.with(requireContext())
+                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
+                    .placeholder(R.mipmap.icon_avatar_upload_female)
+                    .error(R.mipmap.icon_avatar_upload_female)
+                    .into(iv_user_data_avatar)
             }
-        } else {
-            Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR))
-                .into(iv_user_data_avatar)
+            tv_user_data_avatar_check.visibility = View.VISIBLE
+        }else{
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                        .placeholder(R.mipmap.icon_avatar_upload_male)
+                        .error(R.mipmap.icon_avatar_upload_male)
+                        .into(iv_user_data_avatar)
+                } else {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                        .placeholder(R.mipmap.icon_avatar_upload_female)
+                        .error(R.mipmap.icon_avatar_upload_female)
+                        .into(iv_user_data_avatar)
+                }
+                tv_user_data_avatar_check.visibility = View.GONE
+            }else{
+                // 先判断性别
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_male)
+                } else {
+                    iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_female)
+                }
+                tv_user_data_avatar_check.visibility = View.GONE
+            }
+
         }
 
         if (SPStaticUtils.getString(Constant.ME_INTRODUCE, "") != "") {
@@ -308,7 +338,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         getJobCityFirstList()
         getJobCitySecondList(0)
-        getJobCityThirdList(0, 0)
 
         for (i in 0..60) {
             mWeightList.add("${40 + i}kg")
@@ -2001,7 +2030,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         mCityIdFirstList.clear()
         for (i in 0.until(cityDate.data.size)) {
             mCityFirstList.add(cityDate.data[i].name)
-            mCityIdFirstList.add(cityDate.data[i].code)
+            mCityIdFirstList.add(cityDate.data[i].id)
         }
     }
 
@@ -2009,24 +2038,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private fun getJobCitySecondList(i: Int) {
         mCitySecondList.clear()
         mCityIdSecondList.clear()
-        for (j in 0.until(cityDate.data[i].cityList.size)) {
-            mCitySecondList.add(cityDate.data[i].cityList[j].name)
-            mCityIdSecondList.add(cityDate.data[i].cityList[j].code)
-        }
-    }
-
-    // 县
-    private fun getJobCityThirdList(i: Int, j: Int) {
-        mCityThirdList.clear()
-        mCityIdThirdList.clear()
-        if (cityDate.data[i].cityList[j].areaList.isNotEmpty()) {
-            for (k in 0.until(cityDate.data[i].cityList[j].areaList.size)) {
-                mCityThirdList.add(cityDate.data[i].cityList[j].areaList[k].name)
-                mCityIdThirdList.add(cityDate.data[i].cityList[j].areaList[k].code)
-            }
-        } else {
-            mCityThirdList.add("")
-            mCityIdThirdList.add("")
+        for (j in 0.until(cityDate.data[i].child.size)) {
+            mCitySecondList.add(cityDate.data[i].child[j].name)
+            mCityIdSecondList.add(cityDate.data[i].child[j].id)
         }
     }
 
@@ -2371,21 +2385,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     // 开始上传信息
     private fun update() {
 
-
-        Log.i("guo", "getMoreInfo")
         val moreInfoMap: MutableMap<String, String> = TreeMap()
         moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
         doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
 
-
-        Log.i("guo", "getBaseInfo")
         val baseInfoMap: MutableMap<String, String> = TreeMap()
         baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
         doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
 
         // 上传头像
         if (mPhotoUrl != "") {
@@ -2423,8 +2432,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val industryName = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
         val occupationCode = SPStaticUtils.getInt(Constant.ME_OCCUPATION_CODE, 0)
         val occupationName = SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")
-        val province = SPStaticUtils.getString(Constant.ME_WORK_PROVINCE_CODE, "")
-        val cityCode = SPStaticUtils.getString(Constant.ME_WORK_CITY_CODE, "")
+        val province = SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_CODE, 0)
+        val cityCode = SPStaticUtils.getInt(Constant.ME_WORK_CITY_CODE, 0)
         val cityName = SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "")
         val home = SPStaticUtils.getString(Constant.ME_HOME, "")
         val income = SPStaticUtils.getInt(Constant.ME_INCOME, 7)
@@ -2562,6 +2571,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             iv_user_data_avatar.setImageBitmap(photoBitmap)
 
+            tv_user_data_avatar_check.visibility = View.VISIBLE
+
             FileUtils.delete(mPhotoPath)
 
             photoBitmap?.let { saveBitmap(it, mPhotoPath) }
@@ -2588,7 +2599,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
 
-                SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
                 Log.i("guo", mPhotoUrl)
 

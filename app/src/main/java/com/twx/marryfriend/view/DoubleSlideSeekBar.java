@@ -327,10 +327,6 @@ public class DoubleSlideSeekBar extends View {
         //线（进度条）的开始位置
         lineStart = paddingLeft + bitmapWidth / 2;
 
-        Log.i("guo", "lineLength : " + lineLength);
-        Log.i("guo", "lineEnd : " + lineEnd);
-        Log.i("guo", "lineStart : " + lineStart);
-
         //初始化 游标位置
         slideBigX = lineEnd;
         slideLowX = lineStart;

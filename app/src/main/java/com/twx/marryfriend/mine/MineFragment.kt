@@ -134,17 +134,48 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     private fun initView() {
 
-        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
-            Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                .into(iv_mine_avatar)
-            tv_mine_avatar_check.visibility = View.VISIBLE
-        } else {
+        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
+                Glide.with(requireContext())
+                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                    .placeholder(R.mipmap.icon_mine_male_default)
+                    .error(R.mipmap.icon_mine_male_default)
                     .into(iv_mine_avatar)
             } else {
-                Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
+                Glide.with(requireContext())
+                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                    .placeholder(R.mipmap.icon_mine_female_default)
+                    .error(R.mipmap.icon_mine_female_default)
                     .into(iv_mine_avatar)
+            }
+            tv_mine_avatar_check.visibility = View.VISIBLE
+        } else {
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                        .placeholder(R.mipmap.icon_mine_male_default)
+                        .error(R.mipmap.icon_mine_male_default)
+                        .into(iv_mine_avatar)
+                } else {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                        .placeholder(R.mipmap.icon_mine_male_default)
+                        .error(R.mipmap.icon_mine_male_default)
+                        .into(iv_mine_avatar)
+                }
+                tv_mine_avatar_check.visibility = View.GONE
+            } else {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(requireContext())
+                        .load(R.mipmap.icon_mine_male_default)
+                        .into(iv_mine_avatar)
+                } else {
+                    Glide.with(requireContext())
+                        .load(R.mipmap.icon_mine_female_default)
+                        .into(iv_mine_avatar)
+                }
+                tv_mine_avatar_check.visibility = View.GONE
             }
         }
 
@@ -598,6 +629,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 .load(R.mipmap.icon_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
+                        tv_mine_avatar_check.visibility = View.GONE
                     }
                     1 -> {
 
@@ -617,61 +649,43 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
                         if (viewHeadfaceBean.data[0].status == 0) {
                             tv_mine_avatar_check.visibility = View.VISIBLE
+
+                            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                viewHeadfaceBean.data[0].image_url)
                         } else {
                             tv_mine_avatar_check.visibility = View.GONE
+
+                            SPStaticUtils.put(Constant.ME_AVATAR,
+                                viewHeadfaceBean.data[0].image_url)
                         }
 
                     }
                     2 -> {
 
-
-                        if (viewHeadfaceBean.data[0].status == 0 && viewHeadfaceBean.data[1].status == 0) {
-
-                            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                                Glide.with(requireContext())
-                                    .load(viewHeadfaceBean.data[0].image_url)
-                                    .error(R.mipmap.icon_mine_male_default)
-                                    .placeholder(R.mipmap.icon_mine_male_default)
-                                    .into(iv_mine_avatar)
-                            } else {
-                                Glide.with(requireContext())
-                                    .load(viewHeadfaceBean.data[0].image_url)
-                                    .error(R.mipmap.icon_mine_female_default)
-                                    .placeholder(R.mipmap.icon_mine_female_default)
-                                    .into(iv_mine_avatar)
-                            }
-
-                            tv_mine_avatar_check.visibility = View.VISIBLE
-
+                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                            Glide.with(requireContext())
+                                .load(viewHeadfaceBean.data[1].image_url)
+                                .error(R.mipmap.icon_mine_male_default)
+                                .placeholder(R.mipmap.icon_mine_male_default)
+                                .into(iv_mine_avatar)
                         } else {
-
-                            for (i in 0.until(2)) {
-                                if (viewHeadfaceBean.data[i].status == 1) {
-
-                                    if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                                        Glide.with(requireContext())
-                                            .load(viewHeadfaceBean.data[i].image_url)
-                                            .error(R.mipmap.icon_mine_male_default)
-                                            .placeholder(R.mipmap.icon_mine_male_default)
-                                            .into(iv_mine_avatar)
-                                    } else {
-                                        Glide.with(requireContext())
-                                            .load(viewHeadfaceBean.data[i].image_url)
-                                            .error(R.mipmap.icon_mine_female_default)
-                                            .placeholder(R.mipmap.icon_mine_female_default)
-                                            .into(iv_mine_avatar)
-                                    }
-
-                                    tv_mine_avatar_check.visibility = View.GONE
-
-                                }
-                            }
+                            Glide.with(requireContext())
+                                .load(viewHeadfaceBean.data[1].image_url)
+                                .error(R.mipmap.icon_mine_female_default)
+                                .placeholder(R.mipmap.icon_mine_female_default)
+                                .into(iv_mine_avatar)
                         }
+
+                        tv_mine_avatar_check.visibility = View.VISIBLE
+
+                        SPStaticUtils.put(Constant.ME_AVATAR, viewHeadfaceBean.data[0].image_url)
+
+                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                            viewHeadfaceBean.data[1].image_url)
                     }
                 }
             }
         }
-
 
     }
 
@@ -709,7 +723,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 val putObjectFromFileResponse =
                     client.putObject("user${
                         SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
+                            "13")
                     }",
                         FileUtils.getFileName(mPhotoPath), file)
 
@@ -719,7 +733,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
                 Log.i("guo", "onDoFaceDetectSuccess")
 
-                SPStaticUtils.put(Constant.ME_AVATAR, mPhotoUrl)
+                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
                 getDialogOrder()
 

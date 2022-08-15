@@ -7,26 +7,23 @@ package com.twx.marryfriend.bean
 
 data class CityBean(
     val code: Int,
-    val `data`: List<Province>,
+    val data: List<Province>,
     val msg: String
 )
 
 // 省
 data class Province(
-    val cityList: List<City>,
-    val code: String,
-    val name: String
+    val child: List<City>,
+    val id: Int,
+    val name: String,
+    val pid: Int  // 无用
+
 )
 
 // 市
 data class City(
-    val areaList: List<Area>,
-    val code: String,
-    val name: String
-)
-
-// 县
-data class Area(
-    val code: String,
-    val name: String
+    val child: List<Any>,
+    val id: Int,
+    val name: String,
+    val pid: Int  // 省编码
 )

@@ -263,49 +263,11 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         // 省份总数
         SPStaticUtils.put(Constant.CITY_JSON_DATE, GsonUtils.toJson(cityBean))
 
-        Log.i("guo", GsonUtils.toJson(cityBean))
+        Log.i("guo",
+            GsonUtils.fromJson(SPStaticUtils.getString(Constant.CITY_JSON_DATE,
+                GsonUtils.toJson(cityBean)), CityBean::class.java)
+                .toString())
 
-//        SPStaticUtils.put("city_province_sum", cityBean.data.size)
-
-//        Thread {
-//            for (i in 0.until(cityBean.data.size)) {
-//
-//                // 省份
-//                SPStaticUtils.put("city_province_$i _name", cityBean.data[i].name)
-//                SPStaticUtils.put("city_province_$i _code", cityBean.data[i].code)
-//
-//                // 市总数
-//                SPStaticUtils.put("city_province_$i _city_sum", cityBean.data[i].cityList.size)
-//
-//                for (j in 0.until(cityBean.data[i].cityList.size)) {
-//
-//                    // 城市
-//                    SPStaticUtils.put("city_province_$i _city_$j _name",
-//                        cityBean.data[i].cityList[j].name)
-//                    SPStaticUtils.put("city_province_$i _city_$j _code",
-//                        cityBean.data[i].cityList[j].code)
-//
-//                    // 县总数
-//                    SPStaticUtils.put("city_province_$i _city_$j _area_sum",
-//                        cityBean.data[i].cityList[j].areaList.size)
-//
-//                    for (k in 0.until(cityBean.data[i].cityList[j].areaList.size)) {
-//
-//                        // 县
-//                        SPStaticUtils.put("city_province_$i _city_$j _area_$k _name",
-//                            cityBean.data[i].cityList[j].areaList[k].name)
-//                        SPStaticUtils.put("city_province_$i _city_$j _area_$k _code",
-//                            cityBean.data[i].cityList[j].areaList[k].code)
-//
-//                    }
-//
-//                }
-//
-//
-//
-//            }
-//        }.start()
-//
         SPStaticUtils.put(Constant.CITY_HAVE, true)
 
         isLoadCity = true

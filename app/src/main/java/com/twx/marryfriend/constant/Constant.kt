@@ -92,6 +92,9 @@ object Constant {
     // 头像
     const val ME_AVATAR = "ME_avatar"
 
+    // 审核中的头像
+    const val ME_AVATAR_AUDIT = "ME_avatar_audit"
+
     // 生活照
     const val ME_LIFE_PHOTO_ONE = "ME_life_photo_one" // 第一张生活照(url)
 
@@ -244,7 +247,12 @@ object Constant {
 
     const val TA_BODY = "TA_body"  // 体型
 
+    // 仅用于择偶条件的条件存储
     const val TA_WORK_PLACE = "TA_work_place"  // 期望工作地点
+    const val WANT_WORK_PROVINCE_CODE = "want_work_province_code"  // 期望工作省份编码
+    const val WANT_WORK_PROVINCE_NAME = "want_work_province_name"  // 期望工作省份姓名
+    const val WANT_WORK_CITY_CODE = "want_work_city_code"  // 期望工作省份编码
+    const val WANT_WORK_CITY_NAME = "want_work_city_name"  // 期望工作省份姓名
 
     const val TA_WORK_PROVINCE_NAME = "TA_work_province_name"  // 期望工作省份
     const val TA_WORK_PROVINCE_CODE = "TA_work_province_code"  // 期望工作省份编码

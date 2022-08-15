@@ -14,17 +14,11 @@ import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.CommentTipBean
 import com.twx.marryfriend.bean.dynamic.CommentTipList
-import com.twx.marryfriend.bean.dynamic.LikeTipList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-import com.twx.marryfriend.dynamic.saloon.tip.like.LikeTipAdapter
-import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
-import com.twx.marryfriend.dynamic.show.mine.adapter.DynamicMineLikeAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetCommentTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getCommentTipsPresentImpl
-import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
-import kotlinx.android.synthetic.main.activity_dynamic_mine_like.sfl_dynamic_mine_like_refresh
 import kotlinx.android.synthetic.main.fragment_comment.*
 import java.util.*
 
@@ -104,14 +98,16 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
             sfl_dynamic_tip_comment_refresh.finishLoadMore(2000);//传入false表示刷新失败
         }
 
-        adapter.setOnItemClickListener(object :CommentTipAdapter.OnItemClickListener{
+        adapter.setOnItemClickListener(object : CommentTipAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 if (mList[position].user_id == SPStaticUtils.getString(Constant.USER_ID, "13")) {
                     ToastUtils.showShort("本人的动态")
                     startActivity(context?.let {
-                        DynamicMineShowActivity.getIntent(
+                        DynamicOtherShowActivity.getIntent(
                             it,
-                            mList[position].id)
+                            mList[position].id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+                        )
                     })
                 } else {
                     ToastUtils.showShort("他人的动态")
@@ -158,14 +154,14 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
             }
         }
 
-        if (sfl_dynamic_tip_comment_refresh != null){
+        if (sfl_dynamic_tip_comment_refresh != null) {
             sfl_dynamic_tip_comment_refresh.finishRefresh(true)
             sfl_dynamic_tip_comment_refresh.finishLoadMore(true)
         }
     }
 
     override fun onGetCommentTipsError() {
-        if (sfl_dynamic_tip_comment_refresh != null){
+        if (sfl_dynamic_tip_comment_refresh != null) {
             sfl_dynamic_tip_comment_refresh.finishRefresh(false)
             sfl_dynamic_tip_comment_refresh.finishLoadMore(false)
         }

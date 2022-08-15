@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
+import com.twx.marryfriend.constant.DataProvider.EduData
 import java.util.*
 
 /**
@@ -327,18 +328,13 @@ class SaloonAdapter(
                 .into(holder.identity)
         }
 
-        if (mList[position].focus_uid != null) {
-
-        } else {
-
-        }
 
         val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
             Calendar.YEAR) - mList[position].age).toString().substring(2, 4)
 
         val city = mList[position].work_city_str
 
-//        val edu = mEduData[mList[position].education]
+        val edu = EduData[mList[position].education]
 
         val job = if (mList[position].industry_str == "") {
             "${mList[position].industry_str}"
@@ -346,7 +342,7 @@ class SaloonAdapter(
             " ${mList[position].industry_str}/${mList[position].occupation_str}"
         }
 
-//        holder.info.text = "${year}年  $city  $edu  $job"
+        holder.info.text = "${year}年  $city  $edu  $job"
 
 
         if (mList[position].text_content != "") {

@@ -1,5 +1,11 @@
 package com.twx.marryfriend.constant
 
+import com.twx.marryfriend.bean.MeSeeWhoBean
+import com.twx.marryfriend.bean.WhoSeeMeBean
+import retrofit2.Call
+import retrofit2.http.POST
+import retrofit2.http.QueryMap
+
 object Contents {
 
     // 域名
@@ -48,6 +54,12 @@ object Contents {
     // 修改招呼语信息
     const val UPDATE_GREET_INFO = "LoginRegister/updateZhaohuyuInfo"
 
+    // 增加择偶省市要求列表
+    const val PLUS_DEMAND_ADDRESS = "LoginRegister/plusDemandShengshi"
+
+    // 增加择偶省市要求列表
+    const val GET_DEMAND_ADDRESS = "LoginRegister/demandShengshiList"
+
     //查看列表(头像,三张,相册)
     const val PHOTO_LIST = "LoginRegister/photoList"
 
@@ -66,11 +78,20 @@ object Contents {
     // 更新资料完善度
     const val UPDATE_PROPORTION = "LoginRegister/proportionUpdate"
 
+    // 最近来访 -- 谁看过我列表
+    const val WHO_SEE_ME = "UserCenter/whoSeenMeList"
+
+    // 最近来访 -- 我看过谁列表
+    const val ME_SEE_WHO = "UserCenter/meSeenWhoList"
+
 
     // ------------------------------- 动态 -------------------------------
 
     // 获取我的动态 列表
     const val GET_MY_TREND_LIST = "UserCenter/trendsList"
+
+    // 获取其他人的动态 列表
+    const val GET_OTHER_TREND_LIST = "UserCenter/othersTrendes"
 
     // 上传我的动态 列表
     const val DO_UPLOAD_TREND = "UserCenter/uploadTrend"
@@ -149,7 +170,7 @@ object Contents {
     // ------------------------------- 常量 -------------------------------
 
     // 获取学校
-    const val GET_CITY = "GetParameter/provinceCity"
+    const val GET_CITY = "GetParameter/shengShi"
 
     // 获取学校
     const val GET_SCHOOL = "GetParameter/manySchool"
@@ -205,6 +226,8 @@ object Contents {
     const val USER_PKG_CHN = "user_pkg_chn" // 婚恋交友安卓
 
 
+
+
     // 修改基础信息
     const val USER_ID = "user_id"
     const val BASE_UPDATE = "base_update"
@@ -222,8 +245,8 @@ object Contents {
     //    const val USER_ID = "user_id"
     const val GREET_UPDATE = "zhaohuyu_update"
 
-
-
+    // 修改工作区域
+    const val SHENG_SHI = "sheng_shi"
 
     //查看列表(头像,三张,相册)
     //    const val USER_ID = "user_id"
@@ -268,6 +291,11 @@ object Contents {
     const val MIN_ID = "min_id"  // 当前页的最小动态id，首页为0
     // const val SIZE = "size"   // 每页加载条数，默认10
 
+
+    // 其他人动态列表
+    const val MYSELF_UID = "myself_uid"  // 自己的uid
+    const val FRIEND_UID = "friend_uid"  // 对方的uid
+
     // ------------------------------------ 外部的api ------------------------------------
 
     // 获取 百度api所需的 Access Token
@@ -295,7 +323,6 @@ object Contents {
     const val TEXT = "text" // 待审核文本字符串
 
 
-
     // 百度地图地点搜索
     const val KEY = "key"
     const val LOCATION = "location"
@@ -318,15 +345,6 @@ object Contents {
     const val REGION = "region"  // 检索行政区划区域
     const val OUTPUT = "output"  // 输出格式  json或者xml
     const val AK = "ak"          // 开发者的访问密钥
-
-
-
-
-
-
-
-
-
 
 
 }

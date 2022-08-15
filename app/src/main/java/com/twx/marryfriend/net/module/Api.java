@@ -6,13 +6,16 @@ import com.twx.marryfriend.bean.BanBean;
 import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.bean.CityBean;
 import com.twx.marryfriend.bean.DeletePhotoBean;
+import com.twx.marryfriend.bean.DemandAddressBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
+import com.twx.marryfriend.bean.MeSeeWhoBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
 import com.twx.marryfriend.bean.PhotoListBean;
+import com.twx.marryfriend.bean.PlusDemandAddressBean;
 import com.twx.marryfriend.bean.SchoolBean;
 import com.twx.marryfriend.bean.TextVerifyBean;
 import com.twx.marryfriend.bean.UpdateDemandInfoBean;
@@ -24,6 +27,8 @@ import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
 import com.twx.marryfriend.bean.ViewHeadfaceBean;
+import com.twx.marryfriend.bean.WhoFocusMeBean;
+import com.twx.marryfriend.bean.WhoSeeMeBean;
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean;
 import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
@@ -41,6 +46,7 @@ import com.twx.marryfriend.bean.dynamic.LikeTipBean;
 import com.twx.marryfriend.bean.dynamic.MyFocusBean;
 import com.twx.marryfriend.bean.dynamic.MyTrendsListBean;
 import com.twx.marryfriend.bean.dynamic.OtherFocusBean;
+import com.twx.marryfriend.bean.dynamic.OtherTrendsListBean;
 import com.twx.marryfriend.bean.dynamic.PlaceSearchBean;
 import com.twx.marryfriend.bean.dynamic.PlusFocusBean;
 import com.twx.marryfriend.bean.dynamic.SearchBean;
@@ -93,6 +99,15 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/updateZhaohuyuInfo")
     Call<UpdateGreetInfoBean> doUpdateGreetInfo(@QueryMap Map<String, Object> params);
 
+    // 增加择偶省市要求列表
+    @POST("/marryfriend/LoginRegister/plusDemandShengshi")
+    Call<PlusDemandAddressBean> plusDemandAddress(@QueryMap Map<String, Object> params);
+
+    // 获取择偶省市要求列表
+    @POST("/marryfriend/LoginRegister/demandShengshiList")
+    Call<DemandAddressBean> getDemandAddress(@QueryMap Map<String, Object> params);
+
+
     // 查看列表(头像,三张,相册)
     @POST("/marryfriend/LoginRegister/photoList")
     Call<PhotoListBean> getPhotoList(@QueryMap Map<String, Object> params);
@@ -118,8 +133,35 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/proportionUpdate")
     Call<UpdateProportionInfoBean> doUpdateProportion(@QueryMap Map<String, Object> params);
 
+
+    // 最近来访 -- 我看过谁列表
+    @POST("/marryfriend/UserCenter/meSeenWhoList")
+    Call<MeSeeWhoBean> getMeSeeWho(@QueryMap Map<String, Object> params);
+
+    // 最近来访 -- 谁看过我列表
+    @POST("/marryfriend/UserCenter/whoSeenMeList")
+    Call<WhoSeeMeBean> getWhoSeeMe(@QueryMap Map<String, Object> params);
+
+
+    // 我关注其它人，列表
+    @POST("/marryfriend/UserCenter/mineFocusOtherList")
+    Call<WhoFocusMeBean> getMeFocusWho(@QueryMap Map<String, Object> params);
+
+    // 其它人关注我，列表
+    @POST("/marryfriend/UserCenter/otherFocusMineList")
+    Call<WhoFocusMeBean> getWhoFocusMe(@QueryMap Map<String, Object> params);
+
+    // 我点过谁赞列表
+
+    // 谁点过我赞列表
+
+    // 我评论过谁的列表
+
+    // 谁评论过我的列表
+
+
     // 获取省市县
-    @POST("/marryfriend/GetParameter/provinceCity")
+    @POST("/marryfriend/GetParameter/shengShi")
     Call<CityBean> getCity(@QueryMap Map<String, Object> params);
 
     // 获取学校
@@ -167,6 +209,9 @@ public interface Api {
     @POST("/marryfriend/UserCenter/trendsList")
     Call<MyTrendsListBean> getMyTrendsList(@QueryMap Map<String, Object> params);
 
+    // 获取其它人动态列表
+    @POST("/marryfriend/UserCenter/othersTrendes")
+    Call<OtherTrendsListBean> getOtherTrendsList(@QueryMap Map<String, Object> params);
 
     // 上传动态列表
     @POST("/marryfriend/UserCenter/uploadTrend")

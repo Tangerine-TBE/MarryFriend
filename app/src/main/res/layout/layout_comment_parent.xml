@@ -159,6 +159,12 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_detail_comment_parent_child_local"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ll_detail_comment_parent_child_info" />
+
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_detail_comment_parent_child_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

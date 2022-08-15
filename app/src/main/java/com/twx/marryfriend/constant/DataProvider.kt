@@ -66,6 +66,16 @@ object DataProvider {
     )
 
 
+    val EduData = arrayListOf(
+        "大专以下",
+        "大专",
+        "本科",
+        "硕士",
+        "博士",
+        "博士以上",
+    )
+
+
     val NormalVipData = arrayListOf(
         ItemBean("解锁收件箱", R.mipmap.icon_normal_1),
         ItemBean("解锁消息发送", R.mipmap.icon_normal_2),

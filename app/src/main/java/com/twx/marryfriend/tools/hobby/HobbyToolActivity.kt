@@ -100,7 +100,7 @@ class HobbyToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
         if (baseInfoUpdateBean != null) {
             if (baseInfoUpdateBean.code == 200) {
 
-                SPStaticUtils.put(Constant.ME_HOBBY,hobby)
+                SPStaticUtils.put(Constant.ME_HOBBY, hobby)
 
                 et_hobby_content.setText("")
                 hobby = ""

@@ -40,11 +40,30 @@
                     android:gravity="center"
                     android:orientation="horizontal">
 
-                    <com.makeramen.roundedimageview.RoundedImageView
-                        android:id="@+id/iv_user_data_avatar"
+                    <RelativeLayout
                         android:layout_width="82dp"
-                        android:layout_height="82dp"
-                        app:riv_corner_radius="16dp" />
+                        android:layout_height="82dp">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/iv_user_data_avatar"
+                            android:layout_width="82dp"
+                            android:layout_height="82dp"
+                            app:riv_corner_radius="16dp" />
+
+                        <TextView
+                            android:id="@+id/tv_user_data_avatar_check"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/shape_bg_data_avatar_check"
+                            android:gravity="center"
+                            android:text="审核中"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:visibility="visible" />
+
+                    </RelativeLayout>
+
+
 
                     <!--                    android:src="@mipmap/icon_avatar_upload_male"-->
 

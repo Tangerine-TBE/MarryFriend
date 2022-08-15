@@ -58,14 +58,11 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     private var mCityFirstPosition = 0
     private var mCitySecondPosition = 0
-    private var mCityThirdPosition = 0
 
     private var mCityFirstList: MutableList<String> = arrayListOf()
-    private var mCityIdFirstList: MutableList<String> = arrayListOf()
+    private var mCityIdFirstList: MutableList<Int> = arrayListOf()
     private var mCitySecondList: MutableList<String> = arrayListOf()
-    private var mCityIdSecondList: MutableList<String> = arrayListOf()
-    private var mCityThirdList: MutableList<String> = arrayListOf()
-    private var mCityIdThirdList: MutableList<String> = arrayListOf()
+    private var mCityIdSecondList: MutableList<Int> = arrayListOf()
 
     // 工作数据
 
@@ -114,7 +111,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         getJobCityFirstList()
         getJobCitySecondList(0)
-        getJobCityThirdList(0, 0)
 
         val size = SPStaticUtils.getInt(Constant.INDUSTRY_SUM, 0)
         for (i in 0.until(size)) {
@@ -157,7 +153,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                     if (isHomeReady) {
 
                         val home =
-                            "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}-${mCityThirdList[mCityThirdPosition]}"
+                            "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}}"
 
                         Log.i("guo", home)
 
@@ -168,7 +164,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                         ll_guide_jump_next.visibility = View.GONE
 
                     }else{
-                        val home = "${mCityFirstList[0]}-${mCitySecondList[0]}-${mCityThirdList[0]}"
+                        val home = "${mCityFirstList[0]}-${mCitySecondList[0]}]}"
 
                         Log.i("guo", home)
 
@@ -260,16 +256,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                 mCitySecondPosition = mCitySecondList.size - 1
             }
 
-            getJobCityThirdList(mCityFirstPosition, mCitySecondPosition)
-
-
-            // 当三级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位 ，
-            if (mCityThirdPosition >= mCityThirdList.size) {
-                mCityThirdPosition = mCityThirdList.size - 1
-            }
-
             wp_jump_home_two.data = mCitySecondList
-            wp_jump_home_three.data = mCityThirdList
 
         }
 
@@ -279,24 +266,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             ll_guide_jump_next.setBackgroundResource(R.drawable.shape_bg_common_next)
 
             mCitySecondPosition = position
-
-            getJobCityThirdList(mCityFirstPosition, mCitySecondPosition)
-
-            // 当三级条目多的向少的移动时 ， 默认使选择的选项调整为最后一位
-            if (mCityThirdPosition >= mCityThirdList.size) {
-                mCityThirdPosition = mCityThirdList.size - 1
-            }
-
-            wp_jump_home_three.data = mCityThirdList
-
-        }
-
-        wp_jump_home_three.setOnItemSelectedListener { picker, data, position ->
-
-            isHomeReady = true
-            ll_guide_jump_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-
-            mCityThirdPosition = position
 
         }
 
@@ -596,8 +565,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         val industryName = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
         val occupationCode = SPStaticUtils.getInt(Constant.ME_OCCUPATION_CODE, 0)
         val occupationName = SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")
-        val province = SPStaticUtils.getString(Constant.ME_WORK_PROVINCE_CODE, "")
-        val cityCode = SPStaticUtils.getString(Constant.ME_WORK_CITY_CODE, "")
+        val province = SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_CODE, 0)
+        val cityCode = SPStaticUtils.getInt(Constant.ME_WORK_CITY_CODE, 0)
         val cityName = SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "")
         val home = SPStaticUtils.getString(Constant.ME_HOME, "")
         val income = SPStaticUtils.getInt(Constant.ME_INCOME, 0)
@@ -690,7 +659,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         mCityIdFirstList.clear()
         for (i in 0.until(cityDate.data.size)) {
             mCityFirstList.add(cityDate.data[i].name)
-            mCityIdFirstList.add(cityDate.data[i].code)
+            mCityIdFirstList.add(cityDate.data[i].id)
         }
     }
 
@@ -698,24 +667,9 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     private fun getJobCitySecondList(i: Int) {
         mCitySecondList.clear()
         mCityIdSecondList.clear()
-        for (j in 0.until(cityDate.data[i].cityList.size)) {
-            mCitySecondList.add(cityDate.data[i].cityList[j].name)
-            mCityIdSecondList.add(cityDate.data[i].cityList[j].code)
-        }
-    }
-
-    // 县
-    private fun getJobCityThirdList(i: Int, j: Int) {
-        mCityThirdList.clear()
-        mCityIdThirdList.clear()
-        if (cityDate.data[i].cityList[j].areaList.isNotEmpty()) {
-            for (k in 0.until(cityDate.data[i].cityList[j].areaList.size)) {
-                mCityThirdList.add(cityDate.data[i].cityList[j].areaList[k].name)
-                mCityIdThirdList.add(cityDate.data[i].cityList[j].areaList[k].code)
-            }
-        } else {
-            mCityThirdList.add("")
-            mCityIdThirdList.add("")
+        for (j in 0.until(cityDate.data[i].child.size)) {
+            mCitySecondList.add(cityDate.data[i].child[j].name)
+            mCityIdSecondList.add(cityDate.data[i].child[j].id)
         }
     }
 
@@ -724,7 +678,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         wp_jump_home_one.data = mCityFirstList
         wp_jump_home_two.data = mCitySecondList
-        wp_jump_home_three.data = mCityThirdList
 
         wp_jump_job_one.data = mJobFirstList
         wp_jump_job_two.data = mJobSecondList
@@ -774,29 +727,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         wp_jump_home_two.isCurved = true
         // 设置滚轮选择器数据项的对齐方式
         wp_jump_home_two.itemAlign = WheelPicker.ALIGN_CENTER
-
-        // 是否为循环状态
-        wp_jump_home_three.isCyclic = false
-        // 当前选中的数据项文本颜色
-        wp_jump_home_three.selectedItemTextColor = Color.parseColor("#FF4444")
-        // 数据项文本颜色
-        wp_jump_home_three.itemTextColor = Color.parseColor("#9A9A9A")
-        // 设置数据项文本尺寸大小
-//        wp_jump_home_three.itemTextSize = ConvertUtils.dp2px(10F)
-        // 滚轮选择器数据项之间间距
-        wp_jump_home_three.itemSpace = ConvertUtils.dp2px(40F)
-        // 是否有指示器
-        wp_jump_home_three.setIndicator(true)
-        // 滚轮选择器指示器颜色，16位颜色值
-        wp_jump_home_three.indicatorColor = Color.parseColor("#FFF5F5")
-        // 滚轮选择器是否显示幕布
-        wp_jump_home_three.setCurtain(true)
-        // 滚轮选择器是否有空气感
-        wp_jump_home_three.setAtmospheric(true)
-        // 滚轮选择器是否开启卷曲效果
-        wp_jump_home_three.isCurved = true
-        // 设置滚轮选择器数据项的对齐方式
-        wp_jump_home_three.itemAlign = WheelPicker.ALIGN_CENTER
 
         // 是否为循环状态
         wp_jump_job_one.isCyclic = false

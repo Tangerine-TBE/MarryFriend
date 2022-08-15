@@ -211,7 +211,7 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
 
     private val cityData by lazy {
         getCityData()?.data?.map {
-            Pair(it, it.cityList)
+            Pair(it, it.child)
         }
     }
     //工作地区

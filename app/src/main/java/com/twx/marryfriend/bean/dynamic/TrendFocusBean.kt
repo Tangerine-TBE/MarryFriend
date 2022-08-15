@@ -7,12 +7,12 @@ package com.twx.marryfriend.bean.dynamic
 data class TrendFocusBean(
     val code: Int,
     val data: TrendFocusData,
-    val msg: String
+    val msg: String,
 )
 
 data class TrendFocusData(
     val list: List<TrendFocusList>,
-    val total: Int
+    val total: Int,
 )
 
 data class TrendFocusList(
@@ -23,6 +23,8 @@ data class TrendFocusList(
     val create_time: String,
     val discuss_count: Int,
     val education: Int,
+    val focous_uid: Any,
+    val guest_uid: Int?,
     val headface: String,
     val height: Int,
     val id: Int,
@@ -43,5 +45,5 @@ data class TrendFocusList(
     val video_url: String,
     val vip_level: Int,
     val weidu: String,
-    val work_city_str: String
+    val work_city_str: String,
 )

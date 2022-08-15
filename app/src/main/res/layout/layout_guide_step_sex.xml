@@ -12,7 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="16dp"
             android:text="填写您的基本资料"
             android:textColor="#404040"
             android:textSize="22sp"
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="8dp"
             android:text="给您推荐匹配的异性"
             android:textColor="#404040"
             android:textSize="15sp"
@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="50dp"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="16dp">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -55,7 +55,6 @@
                     android:src="@drawable/ic_sex_uncheck" />
 
             </RelativeLayout>
-
 
             <View
                 android:layout_width="10dp"

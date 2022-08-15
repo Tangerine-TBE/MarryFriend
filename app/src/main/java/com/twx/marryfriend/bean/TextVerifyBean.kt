@@ -11,7 +11,9 @@ data class TextVerifyBean(
     val conclusion: String,
     val conclusionType: Int,
     val `data`: List<TextVerifyData>,
-    val log_id: Long
+    val log_id: Long,
+    val error_code: Int,
+    val error_msg: String
 )
 
 data class TextVerifyData(

@@ -43,6 +43,8 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
     private var introduce = ""
     private var picUrl = ""
 
+    private var haveUpload = false
+
     private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
     private lateinit var doFaceDetectPresent: doLifeFaceDetectPresentImpl
     private lateinit var doUploadPhotoPresent: doUploadPhotoPresentImpl
@@ -70,9 +72,11 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
         picPath = intent.getStringExtra("path").toString()
         introduce = intent.getStringExtra("introduce").toString()
 
+        Log.i("guo", "picPath : $picPath")
+
         Glide.with(this)
             .load(picPath)
-            .apply(requestOptions)
+//            .apply(requestOptions)
             .into(iv_life_introduce_container)
 
         et_life_introduce_introduce.setText(introduce)
@@ -118,10 +122,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                 doTextVerifyPresent.doTextVerify(map)
 
             } else {
-                val intent = intent
-                intent.putExtra("introduce", introduce)
-                setResult(RESULT_OK, intent)
-                finish()
+                doFaceDetect()
             }
 
         }
@@ -198,34 +199,44 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
         if (faceDetectBean != null) {
             if (faceDetectBean.conclusion != "合规") {
-                ToastUtils.showShort(faceDetectBean.data[0].msg)
+                ToastUtils.showShort("图片审核失败，请稍后再试")
             } else {
                 // 图片合规，开始进行上传
 
-                Thread {
-                    val file = File(picPath)
+                if (!haveUpload) {
 
-                    val name =
-                        if (SPStaticUtils.getString(Constant.USER_ID, "default").length == 1) {
-                            "0${SPStaticUtils.getString(Constant.USER_ID, "default")}"
-                        } else {
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }
+                    haveUpload = true
 
-                    val putObjectFromFileResponse =
-                        client.putObject("user${name}", FileUtils.getFileName(picPath), file)
+                    Thread {
 
-                    picUrl = client.generatePresignedUrl("user${name}",
-                        FileUtils.getFileName(picPath), -1).toString()
+                        val file = File(picPath)
 
-                    Log.i("guo", "mLifeSecondUrl :$picUrl")
+                        val name =
+                            if (SPStaticUtils.getString(Constant.USER_ID, "default").length == 1) {
+                                "0${SPStaticUtils.getString(Constant.USER_ID, "default")}"
+                            } else {
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }
 
-                    uploadPhoto(picUrl,
-                        FileUtils.getFileNameNoExtension(picPath),
-                        FileUtils.getFileExtension(picPath),
-                        introduce)
+                        val putObjectFromFileResponse =
+                            client.putObject("user${name}", FileUtils.getFileName(picPath), file)
 
-                }.start()
+                        picUrl = client.generatePresignedUrl("user${name}",
+                            FileUtils.getFileName(picPath), -1).toString()
+
+                        Log.i("guo", "mLifeSecondUrl :$picUrl")
+
+                        if (introduce == "") introduce = "0"
+
+                        uploadPhoto(picUrl,
+                            FileUtils.getFileNameNoExtension(picPath),
+                            FileUtils.getFileExtension(picPath),
+                            introduce)
+
+                    }.start()
+
+                }
+
 
             }
         }
@@ -252,6 +263,8 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                 setResult(RESULT_OK, intent)
                 finish()
 
+            } else {
+                ToastUtils.showShort(uploadPhotoBean.msg)
             }
         }
 

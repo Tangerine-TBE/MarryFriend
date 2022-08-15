@@ -31,10 +31,10 @@ import com.twx.marryfriend.net.impl.dynamic.getMyTrendsListPresentImpl
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.send.DynamicSendActivity
-import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
+import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IDoDeleteTrendCallback
+import com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
 import kotlinx.android.synthetic.main.activity_my_dynamic.*
-import java.io.Serializable
 import java.util.*
 
 
@@ -81,8 +81,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
         getMyTrendsListPresent.registerCallback(this)
 
         adapter = MyDynamicAdapter(trendList)
-        linearLayoutManager =
-            WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        linearLayoutManager = WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rv_dynamic_mine_container.layoutManager = linearLayoutManager
         rv_dynamic_mine_container.adapter = adapter
 
@@ -175,9 +174,10 @@ class MyDynamicActivity : MainBaseViewActivity(),
         adapter.setOnItemClickListener(object : MyDynamicAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 if (trendList[position].audit_status == 1) {
-                    val intent = Intent(this@MyDynamicActivity, DynamicMineShowActivity::class.java)
-                    intent.putExtra("id", trendList[position].id)
-                    startActivity(intent)
+                    startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                        trendList[position].id,
+                        SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+
                 } else {
                     ToastUtils.showShort("此动态正在审核中")
                 }
@@ -202,9 +202,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         adapter.setOnCommentClickListener(object : MyDynamicAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
-                val intent = Intent(this@MyDynamicActivity, DynamicMineShowActivity::class.java)
-                intent.putExtra("id", trendList[position].id)
-                startActivity(intent)
+                startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                    trendList[position].id,
+                    SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
             }
         })
 
@@ -497,18 +497,17 @@ class MyDynamicActivity : MainBaseViewActivity(),
         IDoDeleteTrendCallback {
 
 
-        private lateinit var doDeleteTrendPresent: com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
+        private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
 
         // 是否删除动态，弹窗消失时结束
         private var isFinish = false
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_mine_edit
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_delete
 
         override fun onCreate() {
             super.onCreate()
 
-            doDeleteTrendPresent =
-                com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl.getsInstance()
+            doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
             doDeleteTrendPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)

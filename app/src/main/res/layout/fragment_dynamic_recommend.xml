@@ -27,7 +27,7 @@
                 android:layout_marginHorizontal="14dp"
                 android:layout_marginVertical="8dp"
                 android:background="@drawable/shape_bg_dialog"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:id="@+id/tv_dynamic_tips_count"
@@ -52,8 +52,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_dynamic_recommend_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp" />
+                android:layout_height="wrap_content" />
 
 
         </LinearLayout>
