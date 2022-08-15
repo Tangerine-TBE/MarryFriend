@@ -14,8 +14,10 @@ import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.send.location.LocationActivity
+import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.xyzz.myutils.show.toast
 import kotlin.coroutines.resume
@@ -42,10 +44,38 @@ object IntentManager {
         return intent
     }
 
-    /**
-     *上传语音
-     */
-    suspend fun getUpVoiceIntent(context: Context)= suspendCoroutine<Intent?>{
+    fun getUpRealNameIntent(context: Context):Intent?{
+        val intent=Intent(context, VerifyActivity::class.java)
+//        intent.putExtra("activity", "data")
+        return intent
+    }
+
+    fun getUpHeadImageIntent(context: Context):Intent?{
+        val intent=Intent(context, LifePhotoActivity::class.java)
+        intent.putExtra("activity", "data")
+        return null
+    }
+    fun getUpFillInHobbyIntent(context: Context):Intent?{
+        val intent=Intent(context, LifePhotoActivity::class.java)
+        intent.putExtra("activity", "data")
+        return null
+    }
+    fun getUpFillInGreetIntent(context: Context):Intent?{
+        val intent=Intent(context, GreetInfoActivity::class.java)
+        return intent
+    }
+    fun getUpFillInIntroduceIntent(context: Context):Intent?{
+        val intent=Intent(context, LifePhotoActivity::class.java)
+        intent.putExtra("activity", "data")
+        return null
+    }
+//    fun getUpFillInVoiceIntent(context: Context):Intent?{
+//        val intent=Intent(context, LifePhotoActivity::class.java)
+//        intent.putExtra("activity", "data")
+//        return null
+//    }
+
+    suspend fun getUpFillInVoiceIntent(context: Context)= suspendCoroutine<Intent?>{//上传语音
         XXPermissions.with(context)
             .permission(Permission.RECORD_AUDIO)
             .permission(Permission.MANAGE_EXTERNAL_STORAGE)

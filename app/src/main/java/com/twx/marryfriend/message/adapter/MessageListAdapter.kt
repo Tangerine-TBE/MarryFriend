@@ -2,7 +2,7 @@ package com.twx.marryfriend.message.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.message.conversations.ConversationsBean
+import com.message.conversations.ConversationType
 import com.twx.marryfriend.databinding.BaseDataBindingViewHolder
 import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.twx.marryfriend.message.views.ConversationItemView
@@ -29,8 +29,8 @@ class MessageListAdapter: RecyclerView.Adapter<BaseDataBindingViewHolder>() {
     override fun getItemViewType(position: Int): Int {
         val item=listData[position]
         return when (item.msgType){
-            ConversationsBean.ConversationType.Chat -> TYPE_CHAT
-            ConversationsBean.ConversationType.Assistant -> TYPE_ASSISTANT
+            ConversationType.Chat -> TYPE_CHAT
+            ConversationType.Assistant -> TYPE_ASSISTANT
         }
     }
 

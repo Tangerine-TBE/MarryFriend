@@ -25,9 +25,6 @@ class AppApplication:Application() {
 //            .addCallback(CustomCallback())
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
             .commit()
-//        Glide.init(this, GlideBuilder().setSourceExecutor(
-//            GlideExecutor.newSourceBuilder().setThreadCount(
-//                GlideExecutor.calculateBestThreadCount()*5).build()))
         ImUserManager.init(this)
     }
 }

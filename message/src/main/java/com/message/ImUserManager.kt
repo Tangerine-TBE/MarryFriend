@@ -11,7 +11,6 @@ import com.hyphenate.EMError
 import com.hyphenate.chat.BuildConfig
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
-import com.message.conversations.ImMessageManager
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 

@@ -57,9 +57,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone"/>
-        <include android:id="@+id/notContent"
+        <com.twx.marryfriend.recommend.NotContentView
+            android:id="@+id/notContent"
             android:visibility="gone"
-            layout="@layout/item_recommend_not_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
         <com.twx.marryfriend.recommend.widget.RecommendGuideView
             android:id="@+id/guideView"
             android:visibility="gone"
