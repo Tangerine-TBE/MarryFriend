@@ -1,6 +1,7 @@
 package com.twx.marryfriend.dynamic.show.mine.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -139,6 +140,9 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
     }
 
     override fun getItemCount(): Int {
+
+        Log.i("guo","adapterSize :  ${mList.size}")
+
         return mList.size
     }
 

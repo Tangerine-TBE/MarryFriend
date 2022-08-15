@@ -47,23 +47,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
-
         <activity
             android:name=".push.xiaomi.MfrMessageActivity"
             android:exported="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="${applicationId}"
                     android:path="/thirdpush"
                     android:scheme="agoo" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".tools.introduce.IntroduceToolActivity"
             android:exported="false" />
@@ -163,22 +162,21 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-
-<!--             <intent-filter>-->
-<!--             <action android:name="android.intent.action.MAIN" />-->
-
-<!--             <category android:name="android.intent.category.LAUNCHER" />-->
-<!--             </intent-filter>-->
-        </activity>
-        <activity
-            android:name=".main.MainActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".main.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"
@@ -252,7 +250,10 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
+            android:process=":remote" /> <!-- 华为应用推送的AppID -->
+        <meta-data
+            android:name="com.huawei.hms.client.appid"
+            android:value="appid=106852163" />
     </application>
 
 </manifest>

@@ -22,25 +22,24 @@ import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.dynamic.DeleteTrendBean
-import com.twx.marryfriend.bean.dynamic.MyTrendsList
-import com.twx.marryfriend.bean.dynamic.MyTrendsListBean
+import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.mine.adapter.MyDynamicAdapter
+import com.twx.marryfriend.dynamic.other.adapter.OtherDynamicAdapter
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
-import com.twx.marryfriend.dynamic.send.DynamicSendActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
-import com.twx.marryfriend.net.callback.dynamic.IDoDeleteTrendCallback
-import com.twx.marryfriend.net.callback.dynamic.IGetMyTrendsListCallback
-import com.twx.marryfriend.net.impl.dynamic.getMyTrendsListPresentImpl
-import com.xyzz.myutils.show.toast
+import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.net.callback.dynamic.*
+import com.twx.marryfriend.net.impl.dynamic.*
+import com.twx.marryfriend.utils.AnimalUtils
 import kotlinx.android.synthetic.main.activity_other_dynamic.*
 import java.util.*
 
 class OtherDynamicActivity : MainBaseViewActivity(),
-    IGetMyTrendsListCallback {
+    IGetOtherTrendsListCallback, IDoLikeClickCallback,
+    IDoLikeCancelCallback {
 
     companion object {
 
@@ -49,7 +48,13 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         private const val TA_AVATAR = "ta_avatar"
         private const val TA_ID = "ta_id"
 
-        fun getIntent(context: Context, name: String, sex: Int, avatar: String, user: String): Intent {
+        fun getIntent(
+            context: Context,
+            name: String,
+            sex: Int,
+            avatar: String,
+            user: String,
+        ): Intent {
             val intent = Intent(context, OtherDynamicActivity::class.java)
             intent.putExtra(TA_NAME, name)
             intent.putExtra(TA_SEX, sex)
@@ -65,17 +70,25 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
 
+    // 点赞时选择的position
+    private var mLikePosition: Int = 0
+
     private var trendType = 0
 
     private var currentPaper = 1
 
     private lateinit var linearLayoutManager: LinearLayoutManager
 
-    private var trendList: MutableList<MyTrendsList> = arrayListOf()
+    // 关注与点赞数据
+    private var mDiyList: MutableList<LikeBean> = arrayListOf()
 
-    private lateinit var adapter: MyDynamicAdapter
+    private var trendList: MutableList<OtherTrendsList> = arrayListOf()
 
-    private lateinit var getMyTrendsListPresent: getMyTrendsListPresentImpl
+    private lateinit var adapter: OtherDynamicAdapter
+
+    private lateinit var getOtherTrendsListPresent: getOtherTrendsListPresentImpl
+    private lateinit var doLikeClickPresent: doLikeClickPresentImpl
+    private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_other_dynamic
 
@@ -83,7 +96,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         super.initView()
 
         val name = intent.getStringExtra("ta_name")
-        val sex = intent.getIntExtra("ta_sex",1)
+        val sex = intent.getIntExtra("ta_sex", 1)
         val avatar = intent.getStringExtra("ta_avatar")
         userId = intent.getStringExtra("ta_id").toString()
 
@@ -105,10 +118,16 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
         tv_dynamic_other_name.text = name
 
-        getMyTrendsListPresent = getMyTrendsListPresentImpl.getsInstance()
-        getMyTrendsListPresent.registerCallback(this)
+        getOtherTrendsListPresent = getOtherTrendsListPresentImpl.getsInstance()
+        getOtherTrendsListPresent.registerCallback(this)
 
-        adapter = MyDynamicAdapter(trendList)
+        doLikeClickPresent = doLikeClickPresentImpl.getsInstance()
+        doLikeClickPresent.registerCallback(this)
+
+        doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
+        doLikeCancelPresent.registerCallback(this)
+
+        adapter = OtherDynamicAdapter(trendList, mDiyList)
         linearLayoutManager =
             WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rv_dynamic_other_container.layoutManager = linearLayoutManager
@@ -200,13 +219,12 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             srl_dynamic_other_refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
         }
 
-        adapter.setOnItemClickListener(object : MyDynamicAdapter.OnItemClickListener {
+        adapter.setOnItemClickListener(object : OtherDynamicAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 if (trendList[position].audit_status == 1) {
-                    val intent =
-                        Intent(this@OtherDynamicActivity, DynamicOtherShowActivity::class.java)
-                    intent.putExtra("id", trendList[position].id)
-                    startActivity(intent)
+                    startActivity(DynamicOtherShowActivity.getIntent(this@OtherDynamicActivity,
+                        trendList[position].id,
+                        trendList[position].user_id.toInt()))
                 } else {
                     ToastUtils.showShort("此动态正在审核中")
                 }
@@ -223,21 +241,59 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnLikeClickListener(object : MyDynamicAdapter.OnLikeClickListener {
+        adapter.setOnLikeClickListener(object : OtherDynamicAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
-                ToastUtils.showShort("不能给自己点赞")
+
+                // 点赞， 此时需要验证是否上传头像
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+//                    mLikePosition = position
+
+                    if (!mDiyList[position].like) {
+                        // 点赞
+                        if (trendList[position].user_id != SPStaticUtils.getString(Constant.USER_ID,
+                                "13")
+                        ) {
+                            mDiyList[position].anim = true
+
+                            AnimalUtils.getAnimal(v as ImageView)
+
+                            doLikeClick(trendList[position].id, trendList[position].user_id,
+                                SPStaticUtils.getString(Constant.USER_ID, "13"))
+                        } else {
+                            ToastUtils.showShort("不能给自己点赞")
+                        }
+
+                    } else {
+                        // 取消赞
+                        doLikeCancelClick(
+                            trendList[position].id,
+                            trendList[position].user_id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                    }
+                } else {
+                    XPopup.Builder(this@OtherDynamicActivity)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(AvatarDialog(this@OtherDynamicActivity))
+                        .show()
+                }
+
             }
         })
 
-        adapter.setOnCommentClickListener(object : MyDynamicAdapter.OnCommentClickListener {
+        adapter.setOnCommentClickListener(object : OtherDynamicAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
-                val intent = Intent(this@OtherDynamicActivity, DynamicOtherShowActivity::class.java)
-                intent.putExtra("id", trendList[position].id)
-                startActivity(intent)
+
+                startActivity(DynamicOtherShowActivity.getIntent(this@OtherDynamicActivity,
+                    trendList[position].id,
+                    trendList[position].user_id.toInt()))
+
             }
         })
 
-        adapter.setOnOneClickListener(object : MyDynamicAdapter.OnOneClickListener {
+        adapter.setOnOneClickListener(object : OtherDynamicAdapter.OnOneClickListener {
             override fun onOneClick(v: View?, position: Int) {
                 imageIndex = 0
 
@@ -254,7 +310,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnTwoClickListener(object : MyDynamicAdapter.OnTwoClickListener {
+        adapter.setOnTwoClickListener(object : OtherDynamicAdapter.OnTwoClickListener {
             override fun onTwoClick(v: View?, position: Int) {
                 imageIndex = 1
 
@@ -271,7 +327,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnThreeClickListener(object : MyDynamicAdapter.OnThreeClickListener {
+        adapter.setOnThreeClickListener(object : OtherDynamicAdapter.OnThreeClickListener {
             override fun onThreeClick(v: View?, position: Int) {
                 imageIndex = 2
 
@@ -288,7 +344,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnFourClickListener(object : MyDynamicAdapter.OnFourClickListener {
+        adapter.setOnFourClickListener(object : OtherDynamicAdapter.OnFourClickListener {
             override fun onFourClick(v: View?, position: Int) {
                 imageIndex = 3
 
@@ -312,7 +368,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnFiveClickListener(object : MyDynamicAdapter.OnFiveClickListener {
+        adapter.setOnFiveClickListener(object : OtherDynamicAdapter.OnFiveClickListener {
             override fun onFiveClick(v: View?, position: Int) {
                 imageIndex = 4
 
@@ -336,7 +392,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnSixClickListener(object : MyDynamicAdapter.OnSixClickListener {
+        adapter.setOnSixClickListener(object : OtherDynamicAdapter.OnSixClickListener {
             override fun onSixClick(v: View?, position: Int) {
                 imageIndex = 5
 
@@ -353,7 +409,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnSevenClickListener(object : MyDynamicAdapter.OnSevenClickListener {
+        adapter.setOnSevenClickListener(object : OtherDynamicAdapter.OnSevenClickListener {
             override fun onSevenClick(v: View?, position: Int) {
                 imageIndex = 6
 
@@ -370,7 +426,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnEightClickListener(object : MyDynamicAdapter.OnEightClickListener {
+        adapter.setOnEightClickListener(object : OtherDynamicAdapter.OnEightClickListener {
             override fun onEightClick(v: View?, position: Int) {
                 imageIndex = 7
 
@@ -387,7 +443,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnNineClickListener(object : MyDynamicAdapter.OnNineClickListener {
+        adapter.setOnNineClickListener(object : OtherDynamicAdapter.OnNineClickListener {
             override fun onNineClick(v: View?, position: Int) {
                 imageIndex = 8
 
@@ -404,7 +460,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             }
         })
 
-        adapter.setOnVideoClickListener(object : MyDynamicAdapter.OnVideoClickListener {
+        adapter.setOnVideoClickListener(object : OtherDynamicAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
                 startActivity(VideoPreviewActivity.getIntent(this@OtherDynamicActivity,
                     trendList[position].video_url,
@@ -417,9 +473,10 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     // 初次加载我的动态列表
     private fun getFirstTrendsList() {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = userId
+        map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.FRIEND_UID] = userId
         map[Contents.TRENDS_TYPE] = trendType.toString()
-        getMyTrendsListPresent.getMyTrendsList(map, 1, 10)
+        getOtherTrendsListPresent.getOtherTrendsList(map, 1, 10)
     }
 
     // 加载更多我的动态列表
@@ -427,7 +484,27 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = userId
         map[Contents.TRENDS_TYPE] = trendType.toString()
-        getMyTrendsListPresent.getMyTrendsList(map, currentPaper, 10)
+        getOtherTrendsListPresent.getOtherTrendsList(map, currentPaper, 10)
+    }
+
+    // 动态点赞
+    private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
+
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.TRENDS_ID] = trendId.toString()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doLikeClickPresent.doLikeClick(map)
+
+    }
+
+    // 取消点赞
+    private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.TRENDS_ID] = trendId.toString()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doLikeCancelPresent.doLikeCancel(map)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -451,69 +528,124 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
     }
 
-    override fun onGetMyTrendsListSuccess(myTrendsListBean: MyTrendsListBean) {
+    override fun onGetOtherTrendsListSuccess(otherTrendsListBean: OtherTrendsListBean?) {
+        if (otherTrendsListBean != null) {
+            if (otherTrendsListBean.data.list.isNotEmpty()) {
 
-        if (myTrendsListBean.data.list.isNotEmpty()) {
+                if (currentPaper == 1) {
+                    trendList.clear()
+                    mDiyList.clear()
+                }
 
-            if (currentPaper == 1) {
-                trendList.clear()
+                currentPaper++
+
+                srl_dynamic_other_refresh.finishRefresh();//传入false表示刷新失败
+
+                when (trendType) {
+                    0 -> {
+                        //  获取全部数据，此时应该更新数据
+                        tv_dynamic_other_all.text = otherTrendsListBean.data.total.all.toString()
+                        tv_dynamic_other_pic.text = otherTrendsListBean.data.total.image.toString()
+                        tv_dynamic_other_video.text = otherTrendsListBean.data.total.video.toString()
+                        tv_dynamic_other_text.text = otherTrendsListBean.data.total.wenzi.toString()
+
+                        for (i in 0.until(otherTrendsListBean.data.list.size)) {
+                            trendList.add(otherTrendsListBean.data.list[i])
+
+                            val focus = true
+                            val like = otherTrendsListBean.data.list[i].is_like != null
+
+                            mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                        }
+
+                    }
+                    1 -> {
+                        for (i in 0.until(otherTrendsListBean.data.list.size)) {
+                            if (otherTrendsListBean.data.list[i].trends_type == 1) {
+                                trendList.add(otherTrendsListBean.data.list[i])
+
+                                val focus = true
+                                val like = otherTrendsListBean.data.list[i].is_like != null
+
+                                mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                            }
+                        }
+                    }
+                    2 -> {
+                        for (i in 0.until(otherTrendsListBean.data.list.size)) {
+                            if (otherTrendsListBean.data.list[i].trends_type == 2) {
+                                trendList.add(otherTrendsListBean.data.list[i])
+
+                                val focus = true
+                                val like = otherTrendsListBean.data.list[i].is_like != null
+
+                                mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                            }
+                        }
+                    }
+                    3 -> {
+                        for (i in 0.until(otherTrendsListBean.data.list.size)) {
+                            if (otherTrendsListBean.data.list[i].trends_type == 3) {
+                                trendList.add(otherTrendsListBean.data.list[i])
+
+                                val focus = true
+                                val like = otherTrendsListBean.data.list[i].is_like != null
+
+                                mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                            }
+                        }
+                    }
+                }
+
+                ll_dynamic_other_empty.visibility = View.GONE
+                rv_dynamic_other_container.visibility = View.VISIBLE
+
+                adapter.notifyDataSetChanged()
+
             }
-
-            currentPaper++
-
-            srl_dynamic_other_refresh.finishRefresh();//传入false表示刷新失败
-
-            when (trendType) {
-                0 -> {
-                    //  获取全部数据，此时应该更新数据
-                    tv_dynamic_other_all.text = myTrendsListBean.data.total.all.toString()
-                    tv_dynamic_other_pic.text = myTrendsListBean.data.total.image.toString()
-                    tv_dynamic_other_video.text = myTrendsListBean.data.total.video.toString()
-                    tv_dynamic_other_text.text = myTrendsListBean.data.total.wenzi.toString()
-
-                    for (i in 0.until(myTrendsListBean.data.list.size)) {
-                        trendList.add(myTrendsListBean.data.list[i])
-                    }
-
-                }
-                1 -> {
-                    for (i in 0.until(myTrendsListBean.data.list.size)) {
-                        if (myTrendsListBean.data.list[i].trends_type == 1) {
-                            trendList.add(myTrendsListBean.data.list[i])
-                        }
-                    }
-                }
-                2 -> {
-                    for (i in 0.until(myTrendsListBean.data.list.size)) {
-                        if (myTrendsListBean.data.list[i].trends_type == 2) {
-                            trendList.add(myTrendsListBean.data.list[i])
-                        }
-                    }
-                }
-                3 -> {
-                    for (i in 0.until(myTrendsListBean.data.list.size)) {
-                        if (myTrendsListBean.data.list[i].trends_type == 3) {
-                            trendList.add(myTrendsListBean.data.list[i])
-                        }
-                    }
-                }
-            }
-
-            ll_dynamic_other_empty.visibility = View.GONE
-            rv_dynamic_other_container.visibility = View.VISIBLE
-
-            adapter.notifyDataSetChanged()
-
         }
 
         srl_dynamic_other_refresh.finishRefresh(true)
         srl_dynamic_other_refresh.finishLoadMore(true)
+    }
+
+    override fun onGetOtherTrendsListCodeError() {
+        srl_dynamic_other_refresh.finishRefresh(false)
+        srl_dynamic_other_refresh.finishLoadMore(false)
+    }
+
+    override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
+        // 点赞
+        if (likeClickBean != null) {
+            if (likeClickBean.code == 200) {
+                mDiyList[mLikePosition].like = true
+                mDiyList[mLikePosition].likeCount++
+                adapter.notifyDataSetChanged()
+            } else {
+                ToastUtils.showShort(likeClickBean.msg)
+            }
+        }
+    }
+
+    override fun onDoLikeClickError() {
 
     }
 
-    override fun onGetMyTrendsListCodeError() {
-        srl_dynamic_other_refresh.finishRefresh(false)
-        srl_dynamic_other_refresh.finishLoadMore(false)
+    override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+        // 取消赞
+        if (likeCancelBean != null) {
+            if (likeCancelBean.code == 200) {
+                mDiyList[mLikePosition].like = false
+                mDiyList[mLikePosition].likeCount--
+                adapter.notifyDataSetChanged()
+            } else {
+                ToastUtils.showShort(likeCancelBean.msg)
+            }
+        }
+    }
+
+    override fun onLikeCancelError() {
+
     }
 
     inner class DynamicEditDialog(context: Context, val position: Int) :
@@ -521,18 +653,17 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         IDoDeleteTrendCallback {
 
 
-        private lateinit var doDeleteTrendPresent: com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
+        private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
 
         // 是否删除动态，弹窗消失时结束
         private var isFinish = false
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_other_edit
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_report
 
         override fun onCreate() {
             super.onCreate()
 
-            doDeleteTrendPresent =
-                com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl.getsInstance()
+            doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
             doDeleteTrendPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
@@ -596,6 +727,32 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
         override fun onDoDeleteTrendError() {
 
+        }
+
+    }
+
+
+    inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
+                dismiss()
+                ToastUtils.showShort("跳转到资料填写界面")
+                startActivity(Intent(context, UserActivity::class.java))
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
         }
 
     }

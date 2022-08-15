@@ -173,6 +173,7 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
         val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_mine_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_location)
         val time: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_time)
+        val audit: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_audit)
 
         val tvLike: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_like)
 
@@ -555,7 +556,11 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
         holder.time.text = TimeUtil.getCommonTime(mList[position].create_time)
 
-
+        if (mList[position].audit_status == 1) {
+            holder.audit.visibility = View.GONE
+        } else {
+            holder.audit.visibility = View.VISIBLE
+        }
 
         holder.tvLike.text = mList[position].like_count.toString()
         holder.tvComment.text = mList[position].discuss_count.toString()

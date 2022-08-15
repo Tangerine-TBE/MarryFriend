@@ -29,18 +29,16 @@ import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.net.callback.dynamic.*
+import com.twx.marryfriend.net.impl.dynamic.*
+import com.twx.marryfriend.utils.AnimalUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.fragment_dynamic_recommend.*
 import java.io.Serializable
 import java.util.*
 
-class DynamicRecommendFragment : Fragment(),
-    com.twx.marryfriend.net.callback.dynamic.IGetTrendSaloonCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoLikeClickCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoLikeCancelCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoPlusFocusCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoCancelFocusCallback,
-    com.twx.marryfriend.net.callback.dynamic.IGetTotalCountCallback {
+class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeClickCallback,
+    IDoLikeCancelCallback, IDoPlusFocusCallback, IDoCancelFocusCallback, IGetTotalCountCallback {
 
     // 上次点击时间
     private var lastClickTime = 0L
@@ -73,12 +71,12 @@ class DynamicRecommendFragment : Fragment(),
 
     private lateinit var adapter: SaloonAdapter
 
-    private lateinit var getTrendSaloonPresent: com.twx.marryfriend.net.impl.dynamic.getTrendSaloonPresentImpl
-    private lateinit var doLikeClickPresent: com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl
-    private lateinit var doLikeCancelPresent: com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl
-    private lateinit var doPlusFocusPresent: com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl
-    private lateinit var doCancelFocusPresent: com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl
-    private lateinit var getTotalCountPresent: com.twx.marryfriend.net.impl.dynamic.getTotalCountPresentImpl
+    private lateinit var getTrendSaloonPresent: getTrendSaloonPresentImpl
+    private lateinit var doLikeClickPresent: doLikeClickPresentImpl
+    private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
+    private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
+    private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
+    private lateinit var getTotalCountPresent: getTotalCountPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -103,37 +101,23 @@ class DynamicRecommendFragment : Fragment(),
 
     private fun initView() {
 
-        getTrendSaloonPresent =
-            com.twx.marryfriend.net.impl.dynamic.getTrendSaloonPresentImpl.getsInstance()
+        getTrendSaloonPresent = getTrendSaloonPresentImpl.getsInstance()
         getTrendSaloonPresent.registerCallback(this)
 
-        doLikeClickPresent =
-            com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
+        doLikeClickPresent = doLikeClickPresentImpl.getsInstance()
         doLikeClickPresent.registerCallback(this)
 
-        doLikeCancelPresent =
-            com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
+        doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
 
-        doPlusFocusPresent =
-            com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl.getsInstance()
+        doPlusFocusPresent = doPlusFocusPresentImpl.getsInstance()
         doPlusFocusPresent.registerCallback(this)
 
-        doCancelFocusPresent =
-            com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl.getsInstance()
+        doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
         doCancelFocusPresent.registerCallback(this)
 
-        getTotalCountPresent =
-            com.twx.marryfriend.net.impl.dynamic.getTotalCountPresentImpl.getsInstance()
+        getTotalCountPresent = getTotalCountPresentImpl.getsInstance()
         getTotalCountPresent.registerCallback(this)
-
-        val mEduData: MutableList<String> = arrayListOf()
-        mEduData.add("大专以下")
-        mEduData.add("大专")
-        mEduData.add("本科")
-        mEduData.add("硕士")
-        mEduData.add("博士")
-        mEduData.add("博士以上")
 
         adapter = SaloonAdapter(mTrendList, mDiyList)
 
@@ -454,19 +438,18 @@ class DynamicRecommendFragment : Fragment(),
             override fun onLikeClick(v: View?, position: Int) {
 
                 // 点赞， 此时需要验证是否上传头像
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
                     mLikePosition = position
 
                     if (!mDiyList[position].like) {
                         // 点赞
 
-//                        getAnimal(v as ImageView)
-
                         if (mTrendList[position].user_id != SPStaticUtils.getString(Constant.USER_ID,
                                 "13")
                         ) {
                             mDiyList[position].anim = true
-                            getAnimal(v as ImageView)
+
+                            AnimalUtils.getAnimal(v as ImageView)
 
                             doLikeClick(mTrendList[position].id,
                                 mTrendList[position].user_id,
@@ -680,60 +663,6 @@ class DynamicRecommendFragment : Fragment(),
         srl_dynamic_recommend_refresh.finishRefresh(false)
         srl_dynamic_recommend_refresh.finishLoadMore(false)
     }
-
-    private fun getAnimal(view: ImageView) {
-        val animationDrawable = AnimationDrawable()
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_01), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_02), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_03), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_04), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_05), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_06), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_07), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_08), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_09), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_10), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_11), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_12), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_13), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_14), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_15), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_16), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_17), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_18), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_19), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_20), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_21), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_22), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_23), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_24), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_25), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_26), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_27), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_28), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_29), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_30), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_31), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_32), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_33), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_34), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_35), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_36), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_37), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_38), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_39), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_40), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_41), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_42), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_43), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_44), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_45), 50)
-        animationDrawable.addFrame(resources.getDrawable(R.mipmap.like_46), 50)
-        animationDrawable.isOneShot = true
-        view.setImageDrawable(animationDrawable)
-        animationDrawable.start()
-    }
-
 
     inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {
 

@@ -16,14 +16,9 @@ import com.twx.marryfriend.bean.dynamic.LikeTipBean
 import com.twx.marryfriend.bean.dynamic.LikeTipList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-import com.twx.marryfriend.dynamic.saloon.tip.comment.CommentFragment
-import com.twx.marryfriend.dynamic.saloon.tip.comment.CommentTipAdapter
-import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetTrendTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getTrendTipsPresentImpl
-import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
-import kotlinx.android.synthetic.main.fragment_comment.*
 import kotlinx.android.synthetic.main.fragment_like.*
 import java.util.*
 
@@ -103,13 +98,14 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
 
         adapter.setOnItemClickListener(object : LikeTipAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-
                 if (mList[position].user_id == SPStaticUtils.getString(Constant.USER_ID, "13")) {
                     ToastUtils.showShort("本人的动态")
                     startActivity(context?.let {
-                        DynamicMineShowActivity.getIntent(
+                        DynamicOtherShowActivity.getIntent(
                             it,
-                            mList[position].id)
+                            mList[position].id,
+                            SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+                        )
                     })
                 } else {
                     ToastUtils.showShort("他人的动态")
@@ -156,7 +152,7 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
             }
         }
 
-        if (sfl_dynamic_tip_like_refresh != null){
+        if (sfl_dynamic_tip_like_refresh != null) {
             sfl_dynamic_tip_like_refresh.finishRefresh(true)
             sfl_dynamic_tip_like_refresh.finishLoadMore(true)
         }
@@ -165,7 +161,7 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
 
     override fun onGetTrendTipsError() {
 
-        if (sfl_dynamic_tip_like_refresh != null){
+        if (sfl_dynamic_tip_like_refresh != null) {
             sfl_dynamic_tip_like_refresh.finishRefresh(false)
             sfl_dynamic_tip_like_refresh.finishLoadMore(false)
         }

@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp"
+        android:layout_marginBottom="35dp"
         android:text="注：性别、年龄完成注册后不可修改"
         android:textColor="#FF4444"
         android:textSize="13sp"

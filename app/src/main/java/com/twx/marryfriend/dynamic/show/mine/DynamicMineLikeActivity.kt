@@ -11,12 +11,14 @@ import com.twx.marryfriend.bean.dynamic.LikeListBean
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.show.mine.adapter.DynamicMineLikeAdapter
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.net.callback.dynamic.IGetLikeListCallback
+import com.twx.marryfriend.net.impl.dynamic.getLikeListPresentImpl
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.activity_my_dynamic.*
 import java.util.*
 
 class DynamicMineLikeActivity : MainBaseViewActivity(),
-    com.twx.marryfriend.net.callback.dynamic.IGetLikeListCallback {
+    IGetLikeListCallback {
 
     private var currentPaper = 1
 
@@ -28,7 +30,7 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
 
     private lateinit var adapter: DynamicMineLikeAdapter
 
-    private lateinit var getLikeListPresent: com.twx.marryfriend.net.impl.dynamic.getLikeListPresentImpl
+    private lateinit var getLikeListPresent: getLikeListPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_dynamic_mine_like
 
@@ -38,7 +40,7 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
         trendId = intent.getIntExtra("trendId", 0)
         userId = intent.getIntExtra("userId", 0)
 
-        getLikeListPresent = com.twx.marryfriend.net.impl.dynamic.getLikeListPresentImpl.getsInstance()
+        getLikeListPresent = getLikeListPresentImpl.getsInstance()
         getLikeListPresent.registerCallback(this)
 
         mEduData.add("大专以下")
@@ -90,9 +92,10 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
             sfl_dynamic_mine_like_refresh.finishLoadMore(2000);//传入false表示刷新失败
         }
 
-        adapter.setOnItemClickListener(object :DynamicMineLikeAdapter.OnItemClickListener{
+        adapter.setOnItemClickListener(object : DynamicMineLikeAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                startActivity(FriendInfoActivity.getIntent(this@DynamicMineLikeActivity,mLikeList[position].guest_uid))
+                startActivity(FriendInfoActivity.getIntent(this@DynamicMineLikeActivity,
+                    mLikeList[position].guest_uid))
             }
         })
 

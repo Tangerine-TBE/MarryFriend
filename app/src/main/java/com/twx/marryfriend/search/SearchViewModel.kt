@@ -119,7 +119,7 @@ class SearchViewModel:ViewModel() {
         if (listParameter.isNullOrEmpty()){
             searchParameterMap.remove(key1)
         }else{
-            searchParameterMap[key1] = listParameter.map { it.second.code }.toJsonString()
+            searchParameterMap[key1] = listParameter.map { it.second.id }.toJsonString()
         }
     }
 
@@ -178,7 +178,7 @@ class SearchViewModel:ViewModel() {
         if (listParameter.isNullOrEmpty()){
             searchParameterMap.remove(key1)
         }else{
-            searchParameterMap[key1] = listParameter.map { it.second.code }.toJsonString()
+            searchParameterMap[key1] = listParameter.map { it.second.id }.toJsonString()
         }
     }
 

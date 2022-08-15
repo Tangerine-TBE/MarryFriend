@@ -598,6 +598,7 @@
                 android:layout_toStartOf="@+id/iv_dynamic_other_show_like"
                 android:background="@drawable/shape_bg_comment"
                 android:hint="走心,说点好听的"
+                android:maxLength="300"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="11dp"
                 android:textSize="15sp" />

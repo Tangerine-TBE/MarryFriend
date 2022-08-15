@@ -24,22 +24,22 @@ import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
-import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.net.callback.dynamic.*
+import com.twx.marryfriend.net.impl.dynamic.*
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
-import java.io.Serializable
 import java.util.*
 
 class DynamicMineShowActivity : MainBaseViewActivity(),
-    com.twx.marryfriend.net.callback.dynamic.IDoCheckTrendCallback,
-    com.twx.marryfriend.net.callback.dynamic.IGetCommentOneCallback,
-    com.twx.marryfriend.net.callback.dynamic.IGetCommentTwoCallback,
+    IDoCheckTrendCallback,
+    IGetCommentOneCallback,
+    IGetCommentTwoCallback,
     CommentOneAdapter.OnItemClickListener, CommentOneAdapter.OnItemLongClickListener,
-    com.twx.marryfriend.net.callback.dynamic.IDoCommentOneCreateCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoCreateCallback {
+    IDoCommentOneCreateCallback,
+    IDoCommentTwoCreateCallback {
 
     private var currentPaper = 1
 
@@ -101,11 +101,11 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     // 是否需要更新父评论
     private var needUpdateParent = false
 
-    private lateinit var doCheckTrendPresent: com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl
-    private lateinit var getCommentOnePresent: com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl
-    private lateinit var doCommentOneCreatePresent: com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl
-    private lateinit var getCommentTwoPresent: com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl
-    private lateinit var doCommentTwoCreatePresent: com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl
+    private lateinit var doCheckTrendPresent: doCheckTrendPresentImpl
+    private lateinit var getCommentOnePresent: getCommentOnePresentImpl
+    private lateinit var doCommentOneCreatePresent: doCommentOneCreatePresentImpl
+    private lateinit var getCommentTwoPresent: getCommentTwoPresentImpl
+    private lateinit var doCommentTwoCreatePresent: doCommentTwoCreatePresentImpl
 
     private lateinit var adapter: CommentOneAdapter
 
@@ -127,24 +127,19 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         super.initView()
         id = intent.getIntExtra("id", 0);
 
-        doCheckTrendPresent =
-            com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl.getsInstance()
+        doCheckTrendPresent = doCheckTrendPresentImpl.getsInstance()
         doCheckTrendPresent.registerCallback(this)
 
-        getCommentOnePresent =
-            com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl.getsInstance()
+        getCommentOnePresent = getCommentOnePresentImpl.getsInstance()
         getCommentOnePresent.registerCallback(this)
 
-        doCommentOneCreatePresent =
-            com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl.getsInstance()
+        doCommentOneCreatePresent = doCommentOneCreatePresentImpl.getsInstance()
         doCommentOneCreatePresent.registerCallback(this)
 
-        getCommentTwoPresent =
-            com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl.getsInstance()
+        getCommentTwoPresent = getCommentTwoPresentImpl.getsInstance()
         getCommentTwoPresent.registerCallback(this)
 
-        doCommentTwoCreatePresent =
-            com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl.getsInstance()
+        doCommentTwoCreatePresent = doCommentTwoCreatePresentImpl.getsInstance()
         doCommentTwoCreatePresent.registerCallback(this)
 
 
@@ -341,7 +336,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
             if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
 
                     if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
@@ -424,7 +419,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
             if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
 
                     if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
@@ -662,10 +657,12 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
             if (commentOneBean.data.list[i].count_two !== null) {
                 mCommentOneList.add(CommentBean(commentOneBean.data.list[i],
                     arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
+                    arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
                     commentOneBean.data.list[i].count_two!!,
                     commentOneBean.data.list[i].count_two!!))
             } else {
                 mCommentOneList.add(CommentBean(commentOneBean.data.list[i],
+                    arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
                     arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
                     0,
                     0))
@@ -1312,6 +1309,22 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
             mCommentOneList[positionOne].twoList[two].two_first_uid))
     }
 
+    override fun onLocalChildClick(positionOne: Int, two: Int) {
+
+    }
+
+    override fun onLocalChildAvatarClick(positionOne: Int, two: Int) {
+
+    }
+
+    override fun onLocalChildReplyClick(positionOne: Int, two: Int) {
+
+    }
+
+    override fun onLocalChildReplyAvatarClick(positionOne: Int, two: Int) {
+
+    }
+
     override fun onItemLongClick(v: View?, positionOne: Int) {
         ToastUtils.showShort(positionOne)
         // adapter
@@ -1414,21 +1427,23 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
     }
 
-    class DynamicEditDialog(context: Context) : FullScreenPopupView(context),
-        com.twx.marryfriend.net.callback.dynamic.IDoDeleteTrendCallback {
+    override fun onLocalChildContentLongClick(positionOne: Int, two: Int) {
 
-        private lateinit var doDeleteTrendPresent: com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
+    }
+
+    class DynamicEditDialog(context: Context) : FullScreenPopupView(context), IDoDeleteTrendCallback {
+
+        private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
 
         // 是否删除动态，弹窗消失时结束
         private var isFinish = false
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_mine_edit
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_delete
 
         override fun onCreate() {
             super.onCreate()
 
-            doDeleteTrendPresent =
-                com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl.getsInstance()
+            doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
             doDeleteTrendPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
@@ -1499,9 +1514,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         mode: Int,
         childMode: Int,
     ) :
-        FullScreenPopupView(context),
-        com.twx.marryfriend.net.callback.dynamic.IDoCommentOneDeleteCallback,
-        com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoDeleteCallback {
+        FullScreenPopupView(context), IDoCommentOneDeleteCallback, IDoCommentTwoDeleteCallback {
 
         private val mid = id
         private val trendsId = trendsId
@@ -1512,20 +1525,18 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         private val childMode = childMode
 
 
-        private lateinit var doCommentOneDeletePresent: com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl
-        private lateinit var doCommentTwoDeletePresent: com.twx.marryfriend.net.impl.dynamic.doCommentTwoDeletePresentImpl
+        private lateinit var doCommentOneDeletePresent: doCommentOneDeletePresentImpl
+        private lateinit var doCommentTwoDeletePresent: doCommentTwoDeletePresentImpl
 
         override fun getImplLayoutId(): Int = R.layout.dialog_tips
 
         override fun onCreate() {
             super.onCreate()
 
-            doCommentOneDeletePresent =
-                com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl.getsInstance()
+            doCommentOneDeletePresent = doCommentOneDeletePresentImpl.getsInstance()
             doCommentOneDeletePresent.registerCallback(this)
 
-            doCommentTwoDeletePresent =
-                com.twx.marryfriend.net.impl.dynamic.doCommentTwoDeletePresentImpl.getsInstance()
+            doCommentTwoDeletePresent = doCommentTwoDeletePresentImpl.getsInstance()
             doCommentTwoDeletePresent.registerCallback(this)
 
             findViewById<TextView>(R.id.tv_dialog_tip_info).text = "您确定要删除该动态吗"

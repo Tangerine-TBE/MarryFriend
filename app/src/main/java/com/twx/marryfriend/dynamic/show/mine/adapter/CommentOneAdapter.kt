@@ -51,6 +51,12 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         fun onChildAvatarClick(positionOne: Int, two: Int)
         fun onChildReplyClick(positionOne: Int, two: Int)
         fun onChildReplyAvatarClick(positionOne: Int, two: Int)
+
+
+        fun onLocalChildClick(positionOne: Int, two: Int)
+        fun onLocalChildAvatarClick(positionOne: Int, two: Int)
+        fun onLocalChildReplyClick(positionOne: Int, two: Int)
+        fun onLocalChildReplyAvatarClick(positionOne: Int, two: Int)
     }
 
     interface OnItemLongClickListener {
@@ -59,6 +65,8 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         fun onItemChildContentLongClick(v: View?, positionOne: Int)
 
         fun onChildContentLongClick(positionOne: Int, two: Int)
+
+        fun onLocalChildContentLongClick(positionOne: Int, two: Int)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
@@ -102,6 +110,8 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         val childMore: TextView = view.findViewById(R.id.tv_detail_comment_parent_child_more)
         val container: RecyclerView =
             view.findViewById(R.id.rv_detail_comment_parent_child_container)
+        val localContainer: RecyclerView =
+            view.findViewById(R.id.rv_detail_comment_parent_child_local)
 
     }
 
@@ -120,6 +130,12 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
         holder.container.layoutManager = LinearLayoutManager(mContext)
         var mFrontAdapter = CommentTwoAdapter(mList[position].twoList)
         holder.container.adapter = mFrontAdapter
+
+
+        holder.localContainer.layoutManager = LinearLayoutManager(mContext)
+        var mLocalAdapter = CommentTwoAdapter(mList[position].twoLocalList)
+        holder.localContainer.adapter = mLocalAdapter
+
 
         mFrontAdapter.setOnItemClickListener(object : CommentTwoAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, positionTwo: Int) {
@@ -140,12 +156,39 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
 
         })
 
+        mLocalAdapter.setOnItemClickListener(object : CommentTwoAdapter.OnItemClickListener {
+            override fun onItemClick(v: View?, positionTwo: Int) {
+                mOnItemClickListener?.onLocalChildClick(position, positionTwo)
+            }
+
+            override fun onAvatarClick(v: View?, positionTwo: Int) {
+                mOnItemClickListener?.onLocalChildAvatarClick(position, positionTwo)
+            }
+
+            override fun onReplyAvatarClick(v: View?, positionTwo: Int) {
+                mOnItemClickListener?.onLocalChildReplyAvatarClick(position, positionTwo)
+            }
+
+            override fun onReplyClick(v: View?, positionTwo: Int) {
+                mOnItemClickListener?.onLocalChildReplyClick(position, positionTwo)
+            }
+
+        })
+
         mFrontAdapter.setOnItemLongClickListener(object :
             CommentTwoAdapter.OnItemLongClickListener {
             override fun onItemLongClick(v: View?, positionTwo: Int) {
                 mOnItemLongClickListener?.onChildContentLongClick(position, positionTwo)
             }
         })
+
+        mLocalAdapter.setOnItemLongClickListener(object :
+            CommentTwoAdapter.OnItemLongClickListener {
+            override fun onItemLongClick(v: View?, positionTwo: Int) {
+                mOnItemLongClickListener?.onLocalChildContentLongClick(position, positionTwo)
+            }
+        })
+
 
         holder.user.setOnClickListener {
             mOnItemClickListener?.onItemAvatarClick(it, position)
@@ -236,7 +279,7 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
                 holder.childMore.visibility = View.GONE
                 holder.container.visibility = View.GONE
 
-                if (mList[position].total == 0) {
+                if (mList[position].total <= 0) {
                     holder.childMore.visibility = View.GONE
                 }
 
@@ -260,7 +303,7 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
 
                 holder.childTime.text = TimeUtil.getCommonTime(mList[position].list.time_two)
 
-                if (mList[position].total == 0) {
+                if (mList[position].total <= 0) {
                     holder.childMore.visibility = View.GONE
                 } else {
                     holder.childMore.visibility = View.VISIBLE
@@ -269,7 +312,7 @@ class CommentOneAdapter(private val mList: MutableList<CommentBean>) :
             }
         }
 
-        if (mList[position].total - 1 == 0) {
+        if (mList[position].total - 1 <= 0) {
             holder.childMore.visibility = View.GONE
         }
 

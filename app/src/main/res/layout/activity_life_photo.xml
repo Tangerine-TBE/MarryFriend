@@ -326,4 +326,29 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_life_photo_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_bg_dialog"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="正在删除..."
+            android:textColor="#0F0F0F"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
 </RelativeLayout>

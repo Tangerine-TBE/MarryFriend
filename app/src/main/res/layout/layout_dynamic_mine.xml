@@ -16,8 +16,11 @@
             android:id="@+id/tv_detail_dynamic_mine_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/iv_detail_dynamic_mine_more"
             android:text="疫情前的游乐场"
             android:textColor="#101010"
             android:textSize="15sp" />
@@ -251,6 +254,17 @@
             android:text="1小时前"
             android:textColor="#9A9A9A"
             android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_detail_dynamic_mine_audit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/tv_detail_dynamic_mine_time"
+            android:text="审核中..."
+            android:textColor="#9A9A9A"
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/iv_detail_dynamic_mine_like"

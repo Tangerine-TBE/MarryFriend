@@ -42,6 +42,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.TextVerifyBean
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
@@ -52,16 +53,20 @@ import com.twx.marryfriend.dynamic.send.adapter.PhotoPublishAdapter
 import com.twx.marryfriend.dynamic.send.location.LocationActivity
 import com.twx.marryfriend.dynamic.send.utils.ItemTouchHelperCallback
 import com.twx.marryfriend.mine.verify.VerifyActivity
+import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
+import com.twx.marryfriend.net.callback.dynamic.IDoUploadTrendCallback
+import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
+import com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl
 import com.twx.marryfriend.utils.DynamicFileProvider
 import com.twx.marryfriend.utils.GlideEngine
+import com.twx.marryfriend.utils.UnicodeUtils
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
 import java.io.File
 import java.util.*
 
-class DynamicSendActivity : MainBaseViewActivity(),
-    com.twx.marryfriend.net.callback.dynamic.IDoUploadTrendCallback {
+class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoTextVerifyCallback {
 
     // 上次点击时间
     private var lastClickTime = 0L
@@ -110,7 +115,8 @@ class DynamicSendActivity : MainBaseViewActivity(),
 
     private lateinit var mItemTouchHelper: ItemTouchHelper
 
-    private lateinit var doUploadTrendPresent: com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl
+    private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
+    private lateinit var doUploadTrendPresent: doUploadTrendPresentImpl
 
     var emojiList: MutableList<String> = arrayListOf()
     private lateinit var emojiAdapter: EmojiDetailAdapter
@@ -122,8 +128,10 @@ class DynamicSendActivity : MainBaseViewActivity(),
     override fun initView() {
         super.initView()
 
-        doUploadTrendPresent =
-            com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl.getsInstance()
+        doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
+        doTextVerifyPresent.registerCallback(this)
+
+        doUploadTrendPresent = doUploadTrendPresentImpl.getsInstance()
         doUploadTrendPresent.registerCallback(this)
 
         mAdapter = PhotoPublishAdapter(this)
@@ -314,16 +322,14 @@ class DynamicSendActivity : MainBaseViewActivity(),
                         mLocationClient.registerLocationListener(object :
                             BDAbstractLocationListener() {
                             override fun onReceiveLocation(location: BDLocation) {
-
                                 if (x) {
                                     val city = location.city
-                                    val location = "${location.longitude},${location.latitude}"
+                                    val locations = "${location.longitude},${location.latitude}"
+
                                     val intent = Intent(this@DynamicSendActivity,
                                         LocationActivity::class.java)
-                                    intent.putExtra("location", location)
+                                    intent.putExtra("location", locations)
                                     intent.putExtra("city", city)
-
-                                    Log.i("Guo", "startActivityForResult")
 
                                     startActivityForResult(intent, 0)
                                     x = false
@@ -506,7 +512,7 @@ class DynamicSendActivity : MainBaseViewActivity(),
 
         tv_send_send.setOnClickListener {
 
-            content = et_send_content.text.toString().trim { it <= ' ' }
+            content = UnicodeUtils.newLineText(et_send_content.text.toString().trim { it <= ' ' })
 
             if (mDataList.isNotEmpty() || content != "") {
 
@@ -591,13 +597,16 @@ class DynamicSendActivity : MainBaseViewActivity(),
 
                                 Log.i("guo", "imageUrl : $imageUrl")
 
-                                uploadTrend()
+
+                                doTextVerify(content)
 
                             }.start()
 
                         } else {
                             // 不需要上传图片，直接上传文字即可
-                            uploadTrend()
+
+                            doTextVerify(content)
+
                         }
 
                     } else {
@@ -652,6 +661,15 @@ class DynamicSendActivity : MainBaseViewActivity(),
         val layoutMargin: Int = ConvertUtils.dp2px(20F) //距离上部应用的间隔
         val marginTop = itemHeight * row + editHeight + layoutMargin //+ itemSpace * (row - 1)
 
+    }
+
+
+    private fun doTextVerify(text: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+        map[Contents.TEXT] = text
+        doTextVerifyPresent.doTextVerify(map)
     }
 
     private fun uploadTrend() {
@@ -750,6 +768,23 @@ class DynamicSendActivity : MainBaseViewActivity(),
     }
 
     override fun onError() {
+
+    }
+
+    override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean?) {
+
+        if (textVerifyBean != null) {
+            if (textVerifyBean.conclusion == "合规") {
+                // 上传动态
+                uploadTrend()
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+            }
+        }
+
+    }
+
+    override fun onDoTextVerifyError() {
 
     }
 

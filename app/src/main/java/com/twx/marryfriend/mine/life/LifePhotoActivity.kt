@@ -132,9 +132,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
     // 是否存在
     private var haveThirdPic = false
 
-
     private lateinit var doDeletePhotoPresent: doDeletePhotoPresentImpl
-
 
     override fun getLayoutView(): Int = R.layout.activity_life_photo
 
@@ -268,13 +266,17 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
     }
 
-
     // 删除生活照
     private fun deleteLifePhoto(id: String) {
+
+        ll_life_photo_loading.visibility = View.VISIBLE
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.ID] = id
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         doDeletePhotoPresent.doDeletePhoto(map)
+
+
     }
 
     // 判断数据中存储的数据
@@ -854,11 +856,11 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             }
         }
+        ll_life_photo_loading.visibility = View.GONE
     }
 
     override fun onDoDeletePhotoError() {
-
+        ll_life_photo_loading.visibility = View.GONE
     }
-
 
 }

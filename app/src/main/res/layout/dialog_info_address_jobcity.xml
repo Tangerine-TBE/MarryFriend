@@ -95,15 +95,6 @@
             app:wheel_item_space="80dp"
             app:wheel_item_text_size="17sp"/>
 
-        <com.aigestudio.wheelpicker.WheelPicker
-            android:id="@+id/wp_address_jobcity_third_container"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            app:wheel_item_space="80dp"
-            app:wheel_item_text_size="17sp"/>
-
     </LinearLayout>
 
     <TextView

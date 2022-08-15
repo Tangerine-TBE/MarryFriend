@@ -16,43 +16,31 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
-import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
-import com.twx.marryfriend.dynamic.saloon.friend.DynamicFriendFragment
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.dynamic.show.mine.DynamicMineLikeActivity
-import com.twx.marryfriend.dynamic.show.mine.DynamicMineShowActivity
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.mine.user.UserActivity
-import com.twx.marryfriend.net.callback.dynamic.IDoCommentOneDeleteCallback
-import com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoDeleteCallback
+import com.twx.marryfriend.net.callback.dynamic.*
+import com.twx.marryfriend.net.impl.dynamic.*
+import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.utils.TimeUtil
+import com.twx.marryfriend.utils.UnicodeUtils
 import com.twx.marryfriend.utils.emoji.EmojiUtils
-import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
 import kotlinx.android.synthetic.main.activity_dynamic_other_show.*
-import java.io.Serializable
-import java.sql.Time
 import java.util.*
 
 class DynamicOtherShowActivity : MainBaseViewActivity(),
-    com.twx.marryfriend.net.callback.dynamic.IDoCheckTrendCallback,
-    com.twx.marryfriend.net.callback.dynamic.IGetCommentOneCallback,
-    com.twx.marryfriend.net.callback.dynamic.IGetCommentTwoCallback,
-    CommentOneAdapter.OnItemClickListener,
-    com.twx.marryfriend.net.callback.dynamic.IDoCommentOneCreateCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoCommentTwoCreateCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoLikeClickCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoLikeCancelCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoPlusFocusCallback,
-    CommentOneAdapter.OnItemLongClickListener,
-    com.twx.marryfriend.net.callback.dynamic.IDoCancelFocusCallback {
+    IDoCheckTrendCallback, IGetCommentOneCallback, IGetCommentTwoCallback,
+    CommentOneAdapter.OnItemClickListener, IDoCommentOneCreateCallback, IDoCommentTwoCreateCallback,
+    IDoLikeClickCallback, IDoLikeCancelCallback, IDoPlusFocusCallback,
+    CommentOneAdapter.OnItemLongClickListener, IDoCancelFocusCallback {
 
     private var currentPaper = 1
 
@@ -61,6 +49,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     private var trendId = 0
 
     private var userId = 0
+
+    // 此条动态是否是本人
+    private var isMine = false
 
     // 是否关注
     private var haveFocus = false
@@ -113,6 +104,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     // 现在这个用户uid
     private var lastUid = 0
 
+
     private lateinit var info: CheckTrendList
     private var eduList: MutableList<String> = arrayListOf()
     private var mCommentOneList: MutableList<CommentBean> = arrayListOf()
@@ -125,28 +117,27 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     // 点击的子评论position
     private var mChildItem = 0
 
+    // 点击的本地子评论position
+    private var mLocalChildItem = 0
+
 
     // 删除dialog 对应的position
     private var twoPosition = 0
-
-
-    // 是否需要更新父评论
-    private var needUpdateParent = false
 
     var emojiList: MutableList<String> = arrayListOf()
     private lateinit var emojiAdapter: EmojiDetailAdapter
 
     private lateinit var adapter: CommentOneAdapter
 
-    private lateinit var doCheckTrendPresent: com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl
-    private lateinit var getCommentOnePresent: com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl
-    private lateinit var doCommentOneCreatePresent: com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl
-    private lateinit var getCommentTwoPresent: com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl
-    private lateinit var doCommentTwoCreatePresent: com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl
-    private lateinit var doLikeClickPresent: com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl
-    private lateinit var doLikeCancelPresent: com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl
-    private lateinit var doPlusFocusPresent: com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl
-    private lateinit var doCancelFocusPresent: com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl
+    private lateinit var doCheckTrendPresent: doCheckTrendPresentImpl
+    private lateinit var getCommentOnePresent: getCommentOnePresentImpl
+    private lateinit var doCommentOneCreatePresent: doCommentOneCreatePresentImpl
+    private lateinit var getCommentTwoPresent: getCommentTwoPresentImpl
+    private lateinit var doCommentTwoCreatePresent: doCommentTwoCreatePresentImpl
+    private lateinit var doLikeClickPresent: doLikeClickPresentImpl
+    private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
+    private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
+    private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
 
     companion object {
 
@@ -167,43 +158,40 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun initView() {
         super.initView()
 
+
+        Log.i("guo", "trend : ${intent.getIntExtra("trendId", 0)}")
+
         trendId = intent.getIntExtra("trendId", 0)
         userId = intent.getIntExtra("usersId", 0)
 
-        doCheckTrendPresent =
-            com.twx.marryfriend.net.impl.dynamic.doCheckTrendPresentImpl.getsInstance()
+        // 判断是否是我的动态，是我的动态就修改一下相关的逻辑
+        isMine = userId.toString() == SPStaticUtils.getString(Constant.USER_ID, "13")
+
+        doCheckTrendPresent = doCheckTrendPresentImpl.getsInstance()
         doCheckTrendPresent.registerCallback(this)
 
-        getCommentOnePresent =
-            com.twx.marryfriend.net.impl.dynamic.getCommentOnePresentImpl.getsInstance()
+        getCommentOnePresent = getCommentOnePresentImpl.getsInstance()
         getCommentOnePresent.registerCallback(this)
 
-        doCommentOneCreatePresent =
-            com.twx.marryfriend.net.impl.dynamic.doCommentOneCreatePresentImpl.getsInstance()
+        doCommentOneCreatePresent = doCommentOneCreatePresentImpl.getsInstance()
         doCommentOneCreatePresent.registerCallback(this)
 
-        getCommentTwoPresent =
-            com.twx.marryfriend.net.impl.dynamic.getCommentTwoPresentImpl.getsInstance()
+        getCommentTwoPresent = getCommentTwoPresentImpl.getsInstance()
         getCommentTwoPresent.registerCallback(this)
 
-        doCommentTwoCreatePresent =
-            com.twx.marryfriend.net.impl.dynamic.doCommentTwoCreatePresentImpl.getsInstance()
+        doCommentTwoCreatePresent = doCommentTwoCreatePresentImpl.getsInstance()
         doCommentTwoCreatePresent.registerCallback(this)
 
-        doLikeClickPresent =
-            com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
+        doLikeClickPresent = doLikeClickPresentImpl.getsInstance()
         doLikeClickPresent.registerCallback(this)
 
-        doLikeCancelPresent =
-            com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
+        doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
 
-        doPlusFocusPresent =
-            com.twx.marryfriend.net.impl.dynamic.doPlusFocusPresentImpl.getsInstance()
+        doPlusFocusPresent = doPlusFocusPresentImpl.getsInstance()
         doPlusFocusPresent.registerCallback(this)
 
-        doCancelFocusPresent =
-            com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl.getsInstance()
+        doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
         doCancelFocusPresent.registerCallback(this)
 
 
@@ -264,24 +252,36 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             if (haveFocus) {
                 // 关注了，需要取消关注
                 ToastUtils.showShort("取消关注")
-                doCancelFocus(userId, SPStaticUtils.getString(Constant.USER_ID, "13"))
+                doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
 
             } else {
                 // 未关注了，需要关注
                 ToastUtils.showShort("关注")
-                doPlusFocus(userId, SPStaticUtils.getString(Constant.USER_ID, "13"))
+                doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
 
             }
         }
 
         iv_dynamic_other_show_heard_edit.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DynamicEditDialog(this))
-                .show()
+
+            if (isMine) {
+                XPopup.Builder(this)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(DynamicDeleteDialog(this))
+                    .show()
+            } else {
+                XPopup.Builder(this)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(DynamicReportDialog(this))
+                    .show()
+            }
+
         }
 
         riv_dynamic_other_show_avatar.setOnClickListener {
@@ -383,6 +383,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
 
         sfl_dynamic_other_show_refresh.setOnLoadMoreListener {
+            Log.i("guo", "CommentOneRefresh")
             getCommentOne(currentPaper)
             sfl_dynamic_other_show_refresh.finishLoadMore(2000);//传入false表示刷新失败
         }
@@ -395,31 +396,38 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         iv_dynamic_other_show_like.setOnClickListener {
             ToastUtils.showShort("添加一下点赞")
 
-            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
+                    Constant.ME_AVATAR_AUDIT,
+                    "") != ""
+            ) {
 
-                // 加个延时
-                if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                    lastClickTime = System.currentTimeMillis();
+                if (userId == SPStaticUtils.getString(Constant.USER_ID, "13").toInt()) {
+                    // 加个延时
+                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
+                        lastClickTime = System.currentTimeMillis();
 
-                    if (!isLike) {
-                        // 点赞
-                        isLike = true
+                        if (!isLike) {
+                            // 点赞
+                            isLike = true
 
-                        doLikeClick(trendId,
-                            userId,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                            doLikeClick(trendId,
+                                SPStaticUtils.getString(Constant.USER_ID, "13"),
+                                userId)
+
+                        } else {
+                            // 取消赞
+                            isLike = false
+
+                            doLikeCancelClick(trendId,
+                                SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                        }
+                        adapter.notifyDataSetChanged()
 
                     } else {
-                        // 取消赞
-                        isLike = false
-
-                        doLikeCancelClick(trendId, userId,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
                     }
-                    adapter.notifyDataSetChanged()
-
                 } else {
-                    ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                    ToastUtils.showShort("不能点赞自己的动态")
                 }
 
             } else {
@@ -480,7 +488,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
             if (eet_emoji_other_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
 
                     if (System.currentTimeMillis() - lastClickTime >= delayTime) {
                         lastClickTime = System.currentTimeMillis();
@@ -489,7 +499,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         KeyboardUtils.hideSoftInput(this)
                         ll_emoji_other_container.visibility = View.GONE
 
-                        this.content = content
+                        this.content = UnicodeUtils.newLineText(content)
 
                         switchSendMode(mode,
                             trendsId,
@@ -527,7 +537,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
         })
 
-
         iv_emoji_other_delete.setOnClickListener {
             val keyCode = KeyEvent.KEYCODE_DEL
             val keyEventDown = KeyEvent(KeyEvent.ACTION_DOWN, keyCode)
@@ -536,12 +545,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             eet_emoji_other_edit.onKeyUp(keyCode, keyEventUp);
         }
 
-
         iv_emoji_other_send.setOnClickListener {
 
             if (eet_emoji_other_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
 
                     if (System.currentTimeMillis() - lastClickTime >= delayTime) {
                         lastClickTime = System.currentTimeMillis();
@@ -551,7 +561,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         KeyboardUtils.hideSoftInput(this)
                         ll_emoji_other_container.visibility = View.GONE
 
-                        this.content = content
+                        this.content = UnicodeUtils.newLineText(content)
 
                         switchSendMode(mode,
                             trendsId,
@@ -626,12 +636,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         when (mode) {
             0 -> {
                 // 父动态
-                needUpdateParent = true
+
                 doCommentOne(trends_id, host_uid, three_id, content)
             }
             1 -> {
                 // 子动态
-                needUpdateParent = true
                 doCommentTwo(trends_id,
                     host_uid,
                     three_id,
@@ -648,7 +657,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     private fun getTrendsList() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.ID] = trendId.toString()
-        map[Contents.USER_ID] = userId.toString()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         doCheckTrendPresent.doCheckTrend(map)
     }
 
@@ -700,9 +709,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         doCommentTwoCreatePresent.doCommentTwoCreate(map)
     }
 
-
     // 动态点赞
-    private fun doLikeClick(trendId: Int, hostUid: Int, guestUid: String) {
+    private fun doLikeClick(trendId: Int, hostUid: String, guestUid: Int) {
 
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
@@ -712,7 +720,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     // 取消点赞
-    private fun doLikeCancelClick(trendId: Int, hostUid: Int, guestUid: String) {
+    private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
@@ -721,7 +729,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     // 关注
-    private fun doPlusFocus(hostUid: Int, guestUid: String) {
+    private fun doPlusFocus(hostUid: String, guestUid: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
@@ -729,7 +737,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     // 取消关注
-    private fun doCancelFocus(hostUid: Int, guestUid: String) {
+    private fun doCancelFocus(hostUid: String, guestUid: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
@@ -813,6 +821,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onGetCommentTwoSuccess(commentTwoBean: CommentTwoBean) {
+
         if (mPageList[mItem] == 1) {
             mCommentOneList[mItem].twoList.clear()
         }
@@ -821,16 +830,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             mCommentOneList[mItem].twoList.add(commentTwoBean.data.list[i])
         }
 
-        mCommentOneList[mItem].total =
-            mCommentOneList[mItem].total - commentTwoBean.data.list.size
+        Log.i("two", "mCommentOneList[mItem].twoList : ${mCommentOneList[mItem].twoList}")
+
+        mCommentOneList[mItem].total = mCommentOneList[mItem].total - commentTwoBean.data.list.size
 
         if (mPageList[mItem] == 1) {
             mCommentOneList[mItem].twoList.removeAt(0)
         }
 
         mPageList[mItem]++
-
-        Log.i("guo", "onGetCommentTwoSuccess : ${GsonUtils.toJson(mCommentOneList)}")
 
         adapter.notifyDataSetChanged()
     }
@@ -840,10 +848,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onGetCommentOneSuccess(commentOneBean: CommentOneBean) {
-        if (needUpdateParent) {
-            mCommentOneList.clear()
-            needUpdateParent = false
-        }
 
         for (i in 0.until(commentOneBean.data.list.size)) {
 
@@ -855,10 +859,12 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             if (commentOneBean.data.list[i].count_two !== null) {
                 mCommentOneList.add(CommentBean(commentOneBean.data.list[i],
                     arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
+                    arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
                     commentOneBean.data.list[i].count_two!!,
                     commentOneBean.data.list[i].count_two!!))
             } else {
                 mCommentOneList.add(CommentBean(commentOneBean.data.list[i],
+                    arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
                     arrayListOf<CommentTwoList>() as MutableList<CommentTwoList>,
                     0,
                     0))
@@ -910,12 +916,12 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                     when (mCommentOneList[mItem].all) {
                         0 -> {
+
                             // 此时一个数据都没有，不要添加到two里面，直接添加到one里面
 
                             mCommentOneList[mItem].list.content_two = content
                             mCommentOneList[mItem].list.count_two = 1
-                            mCommentOneList[mItem].list.id_two =
-                                commentTwoCreateBean.data.one_id
+                            mCommentOneList[mItem].list.id_two = commentTwoCreateBean.data.one_id
                             mCommentOneList[mItem].list.image_two =
                                 SPStaticUtils.getString(Constant.ME_AVATAR, "")
                             mCommentOneList[mItem].list.nick_two =
@@ -936,6 +942,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         else -> {
                             // 需要添加到two里面
+
+                            Log.i("guo", "tttttxxxxxxxxx")
 
                             val two = CommentTwoList(
                                 content,
@@ -958,19 +966,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                                 0
                             )
 
-                            mCommentOneList[mItem].all += 1
-                            mCommentOneList[mItem].total += 1
-
-                            mCommentOneList[mItem].twoList.add(two)
+                            mCommentOneList[mItem].twoLocalList.add(two)
 
                         }
                     }
 
-                    Log.i("guo", "list: ${mCommentOneList[mItem]} ")
 
                     adapter.notifyDataSetChanged()
-                    isLocalAdd = true
 
+                    isLocalAdd = true
 
                     childAvatar = ""
                     childNick = ""
@@ -1024,7 +1028,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     )
 
                     val x: MutableList<CommentTwoList> = arrayListOf()
-                    val bean = CommentBean(list, x, 0, 0)
+                    val y: MutableList<CommentTwoList> = arrayListOf()
+                    val bean = CommentBean(list, x, y, 0, 0)
                     mCommentOneList.add(bean)
                     adapter.notifyDataSetChanged()
 
@@ -1060,10 +1065,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     hostUid = info.user_id.toInt()
                     threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
 
-                    when (info.user_sex) {
-                        1 -> riv_dynamic_other_show_heard_name.text = "他的动态"
-                        2 -> riv_dynamic_other_show_heard_name.text = "她的动态"
-                        else -> riv_dynamic_other_show_heard_name.text = "他的动态"
+
+                    if (isMine) {
+                        riv_dynamic_other_show_heard_name.text = "我的动态"
+                    } else {
+                        when (info.user_sex) {
+                            1 -> riv_dynamic_other_show_heard_name.text = "他的动态"
+                            2 -> riv_dynamic_other_show_heard_name.text = "她的动态"
+                            else -> riv_dynamic_other_show_heard_name.text = "他的动态"
+                        }
                     }
 
                     Glide.with(applicationContext).load(info.headface)
@@ -1590,8 +1600,16 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onItemMoreClick(v: View?, positionOne: Int) {
         // 请求数据
+
+        // 存在本地数据未清掉，又添加数据的情况
+
         mItem = positionOne
+
+        Log.i("guo", " mItem : $mItem")
+
         getCommentTwo(trendId, mCommentOneList[positionOne].list.id, mPageList[positionOne])
+
+
     }
 
     override fun onItemChildAvatarClick(v: View?, positionOne: Int) {
@@ -1678,6 +1696,56 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             mCommentOneList[positionOne].twoList[two].two_first_uid))
     }
 
+    override fun onLocalChildClick(positionOne: Int, two: Int) {
+        // 子评论点击事件
+        ToastUtils.showShort("${positionOne}/${two}")
+    }
+
+    override fun onLocalChildAvatarClick(positionOne: Int, two: Int) {
+        // 子评论头像点击事件
+        ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].twoLocalList[two].two_last_uid))
+    }
+
+    override fun onLocalChildReplyClick(positionOne: Int, two: Int) {
+        // 子评论回复内容点击事件
+        ToastUtils.showShort("子评论回复内容点击 ${positionOne}/${two}")
+
+        mItem = positionOne
+
+        mLocalChildItem = two
+
+        childAvatar = mCommentOneList[positionOne].twoLocalList[two].last_img_url
+        childNick = mCommentOneList[positionOne].twoLocalList[two].last_nick
+        childSex = mCommentOneList[positionOne].twoLocalList[two].last_sex
+
+
+        // edittext 获取焦点 模式切换成父评论
+
+        eet_emoji_other_edit.hint = "回复${mCommentOneList[positionOne].twoLocalList[two].last_nick}"
+
+        eet_emoji_other_edit.isFocusable = true
+        eet_emoji_other_edit.isFocusableInTouchMode = true
+        eet_emoji_other_edit.requestFocus()
+        KeyboardUtils.showSoftInput()
+
+        mode = 1
+        trendsId = mCommentOneList[positionOne].list.trends_id
+        hostUid = mCommentOneList[positionOne].list.host_uid
+        threeId = mCommentOneList[positionOne].list.id
+        oneLevelId = mCommentOneList[positionOne].twoLocalList[two].pid
+        firstUid = mCommentOneList[positionOne].twoLocalList[two].two_last_uid
+        lastUid = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+    }
+
+    override fun onLocalChildReplyAvatarClick(positionOne: Int, two: Int) {
+        // 子评论回复的用户名点击事件
+        ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].twoLocalList[two].two_first_uid))
+    }
+
     override fun onItemLongClick(v: View?, positionOne: Int) {
         ToastUtils.showShort(positionOne)
         // adapter
@@ -1713,7 +1781,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .asCustom(ReportDialog(this))
                 .show()
         }
 
@@ -1757,7 +1825,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .asCustom(ReportDialog(this))
                 .show()
         }
 
@@ -1798,14 +1866,53 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 .dismissOnBackPressed(false)
                 .isDestroyOnDismiss(true)
                 .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DynamicMineShowActivity.ReportDialog(this))
+                .asCustom(ReportDialog(this))
                 .show()
         }
     }
 
-    inner class DynamicEditDialog(context: Context) : FullScreenPopupView(context) {
+    override fun onLocalChildContentLongClick(positionOne: Int, two: Int) {
+        Log.i("guo", "guo : ${two}")
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_other_edit
+        if (mCommentOneList[positionOne].twoLocalList[two].two_last_uid.toString() ==
+            SPStaticUtils.getString(Constant.USER_ID, "13")
+        ) {
+
+            ToastUtils.showShort("本人发的")
+            val id = mCommentOneList[positionOne].twoLocalList[two].id
+            val trendId = mCommentOneList[positionOne].list.trends_id
+            val hostId = mCommentOneList[positionOne].list.id
+
+            twoPosition = two
+
+            if (id != 0) {
+                XPopup.Builder(this)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 1, 1))
+                    .show()
+            } else {
+                ToastUtils.showShort("此条数据刚添加，暂时无法删除")
+            }
+
+
+        } else {
+            ToastUtils.showShort("不是本人发的，无法删除")
+            XPopup.Builder(this)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(ReportDialog(this))
+                .show()
+        }
+    }
+
+    inner class DynamicReportDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_report
 
         override fun onCreate() {
             super.onCreate()
@@ -1835,6 +1942,40 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     }
 
+
+    inner class DynamicDeleteDialog(context: Context) :
+        FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_delete
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
+            val delete = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_delete)
+            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_cancel)
+
+            close.setOnClickListener {
+                dismiss()
+            }
+
+            delete.setOnClickListener {
+                ToastUtils.showShort("删除动态,百度云图片还未添加删除功能，待添加")
+                dismiss()
+            }
+
+            cancel.setOnClickListener {
+                dismiss()
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+    }
+
     inner class DeleteDialog(
         context: Context,
         private val mid: Int,
@@ -1849,8 +1990,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         IDoCommentTwoDeleteCallback {
 
 
-        private lateinit var doCommentOneDeletePresent: com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl
-        private lateinit var doCommentTwoDeletePresent: com.twx.marryfriend.net.impl.dynamic.doCommentTwoDeletePresentImpl
+        private lateinit var doCommentOneDeletePresent: doCommentOneDeletePresentImpl
+        private lateinit var doCommentTwoDeletePresent: doCommentTwoDeletePresentImpl
 
         private var load = false
 
@@ -1859,12 +2000,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         override fun onCreate() {
             super.onCreate()
 
-            doCommentOneDeletePresent =
-                com.twx.marryfriend.net.impl.dynamic.doCommentOneDeletePresentImpl.getsInstance()
+            doCommentOneDeletePresent = doCommentOneDeletePresentImpl.getsInstance()
             doCommentOneDeletePresent.registerCallback(this)
 
-            doCommentTwoDeletePresent =
-                com.twx.marryfriend.net.impl.dynamic.doCommentTwoDeletePresentImpl.getsInstance()
+            doCommentTwoDeletePresent = doCommentTwoDeletePresentImpl.getsInstance()
             doCommentTwoDeletePresent.registerCallback(this)
 
             findViewById<TextView>(R.id.tv_dialog_tip_info).text = "您确定要删除该动态吗"
@@ -2039,8 +2178,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
             findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
                 dismiss()
-                ToastUtils.showShort("跳转到资料填写界面")
-                startActivity(Intent(context, UserActivity::class.java))
+                ToastUtils.showShort("跳转到头像界面")
+                startActivity(Intent(context, AvatarToolActivity::class.java))
             }
 
         }

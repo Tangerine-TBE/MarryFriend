@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="16dp"
             android:gravity="center">
 
             <ImageView
@@ -48,19 +48,19 @@
             android:textSize="15sp" />
 
         <RelativeLayout
-            android:layout_width="253dp"
-            android:layout_height="260dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
             android:layout_gravity="center"
-            android:layout_marginTop="40dp">
+            android:layout_marginTop="56dp">
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/iv_photo_container"
-                android:layout_width="225dp"
-                android:layout_height="225dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                app:riv_corner_radius="16dp"
                 android:layout_marginTop="14dp"
-                android:src="@mipmap/icon_photo_male" />
+                android:src="@mipmap/icon_photo_male"
+                app:riv_corner_radius="16dp" />
 
             <ImageView
                 android:id="@+id/iv_photo_delete"
@@ -85,17 +85,6 @@
                 android:visibility="invisible" />
 
         </RelativeLayout>
-
-
-        <TextView
-            android:id="@+id/tv_photo_upload"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="24dp"
-            android:text="上传形象照"
-            android:textColor="#FF4444"
-            android:textSize="17sp" />
 
     </LinearLayout>
 

@@ -418,7 +418,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
             } else {
 
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 haveName = false
                 tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
 

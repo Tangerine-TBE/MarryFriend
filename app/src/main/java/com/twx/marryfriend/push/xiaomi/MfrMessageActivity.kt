@@ -14,6 +14,7 @@ open class MfrMessageActivity : Activity() {
     private val mNotificationClick: UmengNotifyClick = object : UmengNotifyClick() {
         public override fun onMessage(msg: UMessage) {
             val body = msg.raw.toString()
+
             Log.d(MfrMessageActivity.Companion.TAG, "body: $body")
             if (!TextUtils.isEmpty(body)) {
                 runOnUiThread(Runnable { (findViewById<TextView>(R.id.tv)).text = body })
@@ -21,14 +22,17 @@ open class MfrMessageActivity : Activity() {
         }
     }
 
-    protected override fun onCreate(bundle: Bundle?) {
+    override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         Log.i("guo", "onCREATE")
+
+        Log.i("guo","huaweihuawei")
+
         setContentView(R.layout.activity_mfr_message)
         mNotificationClick.onCreate(this, intent)
     }
 
-    protected override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         mNotificationClick.onNewIntent(intent)
     }
@@ -36,4 +40,5 @@ open class MfrMessageActivity : Activity() {
     companion object {
         private const val TAG = "MfrMessageActivity"
     }
+
 }

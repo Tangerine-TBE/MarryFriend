@@ -8,13 +8,16 @@ import com.twx.marryfriend.bean.BanBean;
 import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.bean.CityBean;
 import com.twx.marryfriend.bean.DeletePhotoBean;
+import com.twx.marryfriend.bean.DemandAddressBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
+import com.twx.marryfriend.bean.MeSeeWhoBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
 import com.twx.marryfriend.bean.PhotoListBean;
+import com.twx.marryfriend.bean.PlusDemandAddressBean;
 import com.twx.marryfriend.bean.SchoolBean;
 import com.twx.marryfriend.bean.TextVerifyBean;
 import com.twx.marryfriend.bean.UpdateDemandInfoBean;
@@ -26,6 +29,7 @@ import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
 import com.twx.marryfriend.bean.ViewHeadfaceBean;
+import com.twx.marryfriend.bean.WhoSeeMeBean;
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean;
 import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
@@ -43,6 +47,7 @@ import com.twx.marryfriend.bean.dynamic.LikeTipBean;
 import com.twx.marryfriend.bean.dynamic.MyFocusBean;
 import com.twx.marryfriend.bean.dynamic.MyTrendsListBean;
 import com.twx.marryfriend.bean.dynamic.OtherFocusBean;
+import com.twx.marryfriend.bean.dynamic.OtherTrendsListBean;
 import com.twx.marryfriend.bean.dynamic.PlaceSearchBean;
 import com.twx.marryfriend.bean.dynamic.PlusFocusBean;
 import com.twx.marryfriend.bean.dynamic.SearchBean;
@@ -95,7 +100,7 @@ public class UserData {
         Retrofit gaoDeMapRetrofitUser = RetrofitManager.getInstance().getGaodeMapRetrofitUser();
         mMapApi = gaoDeMapRetrofitUser.create(Api.class);
 
-        Retrofit baiduRetrofit = RetrofitManager.getInstance().getBaiduRetrofitUser();
+        Retrofit baiduRetrofit = RetrofitManager.getInstance().getBaiduMapRetrofitUser();
         mBaiduMapApi = baiduRetrofit.create(Api.class);
 
     }
@@ -197,6 +202,30 @@ public class UserData {
         mApi.doUpdateGreetInfo(map1).enqueue(callback);
     }
 
+    // 增加择偶省市要求列表
+    public void plusDemandAddress(Map<String, String> map, Callback<PlusDemandAddressBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PLUS_DEMAND_ADDRESS + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PLUS_DEMAND_ADDRESS, currentTimeMillis, random, checkCode, map);
+        mApi.plusDemandAddress(map1).enqueue(callback);
+    }
+
+    // 增加择偶省市要求列表
+    public void getDemandAddress(Map<String, String> map, Callback<DemandAddressBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_DEMAND_ADDRESS + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_DEMAND_ADDRESS, currentTimeMillis, random, checkCode, map);
+        mApi.getDemandAddress(map1).enqueue(callback);
+    }
+
 
     //查看列表(头像,三张,相册)
     public void getPhotoList(Map<String, String> map, Callback<PhotoListBean> callback) {
@@ -273,6 +302,34 @@ public class UserData {
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_PROPORTION, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateProportion(map1).enqueue(callback);
     }
+
+    // 最近来访 -- 我看过谁列表
+    public void getMeSeeWho(Map<String, String> map, Callback<MeSeeWhoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_SEE_WHO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_SEE_WHO, currentTimeMillis, random, checkCode, map);
+        mApi.getMeSeeWho(map1).enqueue(callback);
+    }
+
+    // 最近来访 -- 谁看过我列表
+    public void getWhoSeeMe(Map<String, String> map, Callback<WhoSeeMeBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_SEE_ME + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_SEE_ME, currentTimeMillis, random, checkCode, map);
+        mApi.getWhoSeeMe(map1).enqueue(callback);
+    }
+
+
+
+
 
 
     // 获取学校
@@ -413,6 +470,20 @@ public class UserData {
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_MY_TREND_LIST, currentTimeMillis, random, checkCode, map, page, size);
         mApi.getMyTrendsList(map1).enqueue(callback);
     }
+
+
+    // 获取其它人动态列表
+    public void getOtherTrendsList(Map<String, String> map, Integer page, Integer size, Callback<OtherTrendsListBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_OTHER_TREND_LIST + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_OTHER_TREND_LIST, currentTimeMillis, random, checkCode, map, page, size);
+        mApi.getOtherTrendsList(map1).enqueue(callback);
+    }
+
 
     // 上传动态列表
     public void doUploadTrend(Map<String, String> map, Callback<UploadTrendBean> callback) {

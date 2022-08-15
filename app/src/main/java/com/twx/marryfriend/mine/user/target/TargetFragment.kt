@@ -22,20 +22,24 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
-import com.twx.marryfriend.bean.CityBean
-import com.twx.marryfriend.bean.UpdateDemandInfoBean
+import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.mine.user.target.adapter.JobAddressAdapter
 import com.twx.marryfriend.mine.user.target.adapter.TargetBaseAdapter
 import com.twx.marryfriend.mine.user.target.adapter.TargetMoreAdapter
+import com.twx.marryfriend.net.callback.IDoGetDemandAddressCallback
+import com.twx.marryfriend.net.callback.IDoPlusDemandAddressCallback
 import com.twx.marryfriend.net.callback.IDoUpdateDemandInfoCallback
+import com.twx.marryfriend.net.impl.doGetDemandAddressPresentImpl
+import com.twx.marryfriend.net.impl.doPlusDemandAddressPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateDemandInfoPresentImpl
 import kotlinx.android.synthetic.main.fragment_target.*
 import java.util.*
 
-class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
+class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddressCallback,
+    IDoPlusDemandAddressCallback {
 
     private var mAgeMinList: MutableList<Int> = arrayListOf()
     private var mAgeMaxList: MutableList<Int> = arrayListOf()
@@ -51,15 +55,20 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     private lateinit var cityDate: CityBean
 
     private var mCityFirstList: MutableList<String> = arrayListOf()
-    private var mCityIdFirstList: MutableList<String> = arrayListOf()
+    private var mCityIdFirstList: MutableList<Int> = arrayListOf()
     private var mCitySecondList: MutableList<String> = arrayListOf()
-    private var mCityIdSecondList: MutableList<String> = arrayListOf()
-    private var mCityThirdList: MutableList<String> = arrayListOf()
-    private var mCityIdThirdList: MutableList<String> = arrayListOf()
+    private var mCityIdSecondList: MutableList<Int> = arrayListOf()
 
     private var baseInfoList: MutableList<String> = arrayListOf()
     private var moreInfoList: MutableList<String> = arrayListOf()
     private var jobAddressInfoList: MutableList<String> = arrayListOf()
+
+
+    // 存储
+    private var provinceInfo: MutableList<String> = arrayListOf()
+    private var provinceCodeInfo: MutableList<Int> = arrayListOf()
+    private var cityInfo: MutableList<String> = arrayListOf()
+    private var cityCodeInfo: MutableList<Int> = arrayListOf()
 
     private lateinit var baseAdapter: TargetBaseAdapter
     private lateinit var moreAdapter: TargetMoreAdapter
@@ -67,6 +76,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     private lateinit var jobAddressAdapter: JobAddressAdapter
 
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
+    private lateinit var doGetDemandAddressPresent: doGetDemandAddressPresentImpl
+    private lateinit var doPlusDemandAddressPresent: doPlusDemandAddressPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -112,6 +123,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         updateDemandInfoPresent = doUpdateDemandInfoPresentImpl.getsInstance()
         updateDemandInfoPresent.registerCallback(this)
 
+        doGetDemandAddressPresent = doGetDemandAddressPresentImpl.getsInstance()
+        doGetDemandAddressPresent.registerCallback(this)
+
+        doPlusDemandAddressPresent = doPlusDemandAddressPresentImpl.getsInstance()
+        doPlusDemandAddressPresent.registerCallback(this)
+
     }
 
     private fun initData() {
@@ -156,7 +173,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
         getJobCityFirstList()
         getJobCitySecondList(0)
-        getJobCityThirdList(0, 0)
 
     }
 
@@ -229,6 +245,28 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             }
         })
 
+    }
+
+    private fun update() {
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+    }
+
+    // 获取择偶省市要求列表
+    private fun getDemandAddress() {
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
+    }
+
+    // 修改择偶省市要求列表
+    private fun uploadDemandAddress() {
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
+        doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
     }
 
     // 点击选项之后显示下一个弹窗
@@ -930,15 +968,55 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
             }
         }
 
+        if (SPStaticUtils.getString(Constant.WANT_WORK_PROVINCE_CODE, "") != "") {
+
+            val x: MutableList<String> =
+                SPStaticUtils.getString(Constant.WANT_WORK_PROVINCE_CODE, "")
+                    .split(",") as MutableList<String>
+            x.removeAt(0)
+
+            for (i in 0.until(x.size)) {
+                provinceCodeInfo.add(x[i].toInt())
+            }
+        }
+
+        if (SPStaticUtils.getString(Constant.WANT_WORK_PROVINCE_NAME, "") != "") {
+
+            val x: MutableList<String> =
+                SPStaticUtils.getString(Constant.WANT_WORK_PROVINCE_NAME, "")
+                    .split(",") as MutableList<String>
+            x.removeAt(0)
+
+            for (i in 0.until(x.size)) {
+                provinceInfo.add(x[i])
+            }
+        }
+
+        if (SPStaticUtils.getString(Constant.WANT_WORK_CITY_CODE, "") != "") {
+
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.WANT_WORK_CITY_CODE, "")
+                .split(",") as MutableList<String>
+            x.removeAt(0)
+
+            for (i in 0.until(x.size)) {
+                cityCodeInfo.add(x[i].toInt())
+            }
+        }
+
+        if (SPStaticUtils.getString(Constant.WANT_WORK_CITY_NAME, "") != "") {
+
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.WANT_WORK_CITY_NAME, "")
+                .split(",") as MutableList<String>
+            x.removeAt(0)
+
+            for (i in 0.until(x.size)) {
+                cityInfo.add(x[i])
+            }
+        }
+
+
     }
 
-    private fun update() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
-        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
-
-    }
 
     // 需要上传的择偶条件信息
     private fun getDemandInfo(): String {
@@ -948,12 +1026,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         val ageMax = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)
         val heightMin = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)
         val heightMax = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
-        val income = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
+        val incomeMin = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
         val incomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
-        val edu = SPStaticUtils.getString(Constant.TA_EDU, "")
-        val marryState = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
+        val edu = SPStaticUtils.getString(Constant.TA_EDU, "").split(",").toString()
+        val marryState = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "0").split(",").toString()
         val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
-        val childHave = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
+        val childHave = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "0").split(",").toString()
         val childWant = SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 0)
         val smoke = SPStaticUtils.getInt(Constant.TA_SMOKE, 0)
         val drink = SPStaticUtils.getInt(Constant.TA_DRINK, 0)
@@ -961,8 +1039,21 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         val marryTime = SPStaticUtils.getInt(Constant.TA_MARRY, 0)
         val car = SPStaticUtils.getInt(Constant.TA_CAR, 0)
         val house = SPStaticUtils.getInt(Constant.TA_HOUSE, 0)
-        val city = SPStaticUtils.getString(Constant.TA_WORK_CITY_NAME, "")
-        val cityCode = SPStaticUtils.getString(Constant.TA_WORK_CITY_CODE, "")
+
+        val incomeList: MutableList<Int> = arrayListOf()
+        if (incomeMin == 0){
+            incomeList.add(0)
+        }else{
+            for (i in incomeMin..6){
+                if (i < incomeMax){
+                    incomeList.add(i)
+                }
+            }
+        }
+        val income = incomeList.toString()
+
+
+
 
         val demandInfo =
             " {\"user_sex\": $sex, " +
@@ -982,13 +1073,29 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     "\"is_headface\":   $havePhoto," +
                     "\"marry_time\":    $marryTime," +
                     "\"buy_car\":       $car," +
-                    "\"buy_house\":     $house," +
-                    "\"work_place_str\":\"$city\"," +
-                    "\"work_place_code\": $cityCode}"
+                    "\"buy_house\":     $house}"
 
         return demandInfo
 
     }
+
+    private fun getDemandAddressInfo(): String {
+
+        val result: MutableList<WantWorkBean> = arrayListOf()
+
+        for (i in 0.until(provinceInfo.size)) {
+            result.add(WantWorkBean(
+                SPStaticUtils.getString(Constant.USER_ID, "13"),
+                provinceCodeInfo[i],
+                provinceInfo[i],
+                cityCodeInfo[i],
+                cityInfo[i],
+            ))
+        }
+
+        return GsonUtils.toJson(result)
+    }
+
 
     // 省
     private fun getJobCityFirstList() {
@@ -996,7 +1103,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
         mCityIdFirstList.clear()
         for (i in 0.until(cityDate.data.size)) {
             mCityFirstList.add(cityDate.data[i].name)
-            mCityIdFirstList.add(cityDate.data[i].code)
+            mCityIdFirstList.add(cityDate.data[i].id)
         }
     }
 
@@ -1004,26 +1111,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     private fun getJobCitySecondList(i: Int) {
         mCitySecondList.clear()
         mCityIdSecondList.clear()
-        for (j in 0.until(cityDate.data[i].cityList.size)) {
-            mCitySecondList.add(cityDate.data[i].cityList[j].name)
-            mCityIdSecondList.add(cityDate.data[i].cityList[j].code)
+        for (j in 0.until(cityDate.data[i].child.size)) {
+            mCitySecondList.add(cityDate.data[i].child[j].name)
+            mCityIdSecondList.add(cityDate.data[i].child[j].id)
         }
     }
 
-    // 县
-    private fun getJobCityThirdList(i: Int, j: Int) {
-        mCityThirdList.clear()
-        mCityIdThirdList.clear()
-        if (cityDate.data[i].cityList[j].areaList.isNotEmpty()) {
-            for (k in 0.until(cityDate.data[i].cityList[j].areaList.size)) {
-                mCityThirdList.add(cityDate.data[i].cityList[j].areaList[k].name)
-                mCityIdThirdList.add(cityDate.data[i].cityList[j].areaList[k].code)
-            }
-        } else {
-            mCityThirdList.add("")
-            mCityIdThirdList.add("")
-        }
-    }
 
     // 年龄弹窗
     private fun showAgeDialog() {
@@ -1169,7 +1262,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     }
 
 
-    // ---------------------------------- 点击弹窗 ----------------------------------
+// ---------------------------------- 点击弹窗 ----------------------------------
 
     // 年龄
     inner class AgeDialog(context: Context) : FullScreenPopupView(context) {
@@ -2595,14 +2688,37 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                     // “确定” ： 将数组中的数据存储至sp中，显示下一个弹窗
 
                     var workPlace = ""
-
                     for (i in 0.until(jobAddressInfoList.size)) {
                         workPlace += ",${jobAddressInfoList[i]}"
                     }
-
-                    Log.i("guo", "liset : $workPlace")
-
                     SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
+
+                    var workProvinceName = ""
+                    for (i in 0.until(provinceInfo.size)) {
+                        workProvinceName += ",${provinceInfo[i]}"
+                    }
+                    SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_NAME, workProvinceName)
+
+                    var workProvinceCode = ""
+                    for (i in 0.until(provinceCodeInfo.size)) {
+                        workProvinceCode += ",${provinceCodeInfo[i]}"
+                    }
+                    SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE, workProvinceCode)
+
+                    var workCityName = ""
+                    for (i in 0.until(cityInfo.size)) {
+                        workCityName += ",${cityInfo[i]}"
+                    }
+                    SPStaticUtils.put(Constant.WANT_WORK_CITY_NAME, workCityName)
+
+                    var workCityCode = ""
+                    for (i in 0.until(cityCodeInfo.size)) {
+                        workCityCode += ",${cityCodeInfo[i]}"
+                    }
+                    SPStaticUtils.put(Constant.WANT_WORK_CITY_CODE, workCityCode)
+
+
+                    uploadDemandAddress()
 
                     isNeedJump = true
                     dismiss()
@@ -2614,7 +2730,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
 
                         jobAddressInfoList.add(mCitySecondList[mCitySecondPosition])
 
-                        Log.i("guo", mCitySecondList[mCitySecondPosition])
+                        provinceInfo.add(mCityFirstList[mCityFirstPosition])
+                        provinceCodeInfo.add(mCityIdFirstList[mCityFirstPosition])
+                        cityInfo.add(mCitySecondList[mCitySecondPosition])
+                        cityCodeInfo.add(mCityIdSecondList[mCitySecondPosition])
 
                         jobAddressAdapter.notifyDataSetChanged()
                         sum.text = jobAddressInfoList.size.toString()
@@ -2632,24 +2751,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
                         ToastUtils.showShort("请勿添加重复数据")
                     }
 
-
                 }
 
-//                val workPlace = "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
-//
-//                ToastUtils.showShort(workPlace)
-//
-//                SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
-//
-//                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
-//                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
-//                SPStaticUtils.put(Constant.TA_WORK_PROVINCE_PICK, mCityFirstPosition)
-//                SPStaticUtils.put(Constant.TA_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
-//                SPStaticUtils.put(Constant.TA_WORK_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
-//                SPStaticUtils.put(Constant.TA_WORK_CITY_PICK, mCitySecondPosition)
-
-//                isNeedJump = true
-//                dismiss()
             }
 
             close.setOnClickListener {
@@ -3586,6 +3689,26 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback {
     }
 
     override fun onError() {
+
+    }
+
+    override fun onDoPlusDemandAddressSuccess(plusDemandAddressBean: PlusDemandAddressBean?) {
+        if (plusDemandAddressBean != null) {
+            if (plusDemandAddressBean.code == 200) {
+                ToastUtils.showShort("工作地区上传成功")
+            }
+        }
+    }
+
+    override fun onDoPlusDemandAddressError() {
+        ToastUtils.showShort("工作地区上传失败，请重新选择工作地区")
+    }
+
+    override fun onDoGetDemandAddressSuccess(demandAddressBean: DemandAddressBean?) {
+
+    }
+
+    override fun onDoGetDemandAddressError() {
 
     }
 

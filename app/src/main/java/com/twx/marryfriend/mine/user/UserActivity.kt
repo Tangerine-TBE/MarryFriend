@@ -128,6 +128,8 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
 
         if (photoListBean != null) {
             if (photoListBean.code == 200) {
+                Log.i("guo","photoListBean.data.size : ${photoListBean.data.size}")
+
                 when (photoListBean.data.size) {
                     0 -> {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, "")

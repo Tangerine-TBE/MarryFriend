@@ -15,6 +15,7 @@ import com.umeng.message.UmengNotificationClickHandler;
 import com.umeng.message.api.UPushRegisterCallback;
 import com.umeng.message.entity.UMessage;
 
+import org.android.agoo.huawei.HuaWeiRegister;
 import org.android.agoo.oppo.OppoRegister;
 import org.android.agoo.vivo.VivoRegister;
 import org.android.agoo.xiaomi.MiPushRegistar;
@@ -92,10 +93,9 @@ public class PushHelper {
         //小米推送：填写您在小米后台APP对应的xiaomi id和key
         MiPushRegistar.register(context, "2882303761520176390", "5612017666390");
 
-        Log.i("guo","xiaomi");
-
-//        //华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
-//        HuaWeiRegister.register(context.getApplicationContext());
+        Log.i("guo","huawei");
+        //华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
+        HuaWeiRegister.register(context.getApplicationContext());
 //        //OPPO推送：填写您在OPPO后台APP对应的app key和secret
 //        OppoRegister.register(context, PushConstants.OPPO_KEY, PushConstants.OPPO_SECRET);
 //        //vivo推送：注意vivo推送的初始化参数在AndroidManifest.xml中配置

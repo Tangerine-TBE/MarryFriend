@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginHorizontal="50dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="16dp"
             android:gravity="center">
 
             <ImageView
@@ -119,6 +119,20 @@
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_photo_delete" />
 
+                    <TextView
+                        android:id="@+id/tv_guide_life_pic_one_audit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/ll_guide_life_pic_one"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/shape_bg_audit"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
+                        android:text="审核中..."
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
                     <LinearLayout
                         android:id="@+id/ll_guide_life_pic_one"
                         android:layout_width="match_parent"
@@ -174,6 +188,20 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_photo_delete" />
+
+                    <TextView
+                        android:id="@+id/tv_guide_life_pic_two_audit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/ll_guide_life_pic_two"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/shape_bg_audit"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
+                        android:text="审核中..."
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
 
                     <LinearLayout
                         android:id="@+id/ll_guide_life_pic_two"
@@ -231,6 +259,20 @@
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_photo_delete" />
 
+                    <TextView
+                        android:id="@+id/tv_guide_life_pic_three_audit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/ll_guide_life_pic_three"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="6dp"
+                        android:background="@drawable/shape_bg_audit"
+                        android:paddingHorizontal="20dp"
+                        android:paddingVertical="10dp"
+                        android:text="审核中..."
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+
                     <LinearLayout
                         android:id="@+id/ll_guide_life_pic_three"
                         android:layout_width="match_parent"
@@ -270,34 +312,39 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="15dp"
                     android:layout_marginTop="18dp"
-                    android:background="@drawable/shape_bg_life"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:layout_width="94dp"
-                        android:layout_height="94dp"
-                        android:layout_marginVertical="12dp"
-                        android:layout_marginStart="24dp"
-                        android:src="@drawable/ic_life_add" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="28dp"
-                        android:text="添加更多"
-                        android:textColor="#101010"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                </RelativeLayout>
+                    android:background="@mipmap/icon_life_three"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
 
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_guide_life_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_bg_dialog"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="正在加载中..."
+            android:textColor="#0F0F0F"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

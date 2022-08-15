@@ -1,16 +1,20 @@
 package com.twx.marryfriend.dynamic.saloon.adapter
 
 import android.content.Context
+import android.graphics.drawable.AnimationDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.constant.TimeConstants
+import com.blankj.utilcode.util.ResourceUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
+import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.TrendFocusList
+import com.twx.marryfriend.constant.DataProvider.EduData
 import java.util.*
 
 /**
@@ -19,7 +23,7 @@ import java.util.*
  */
 class SaloonFocusAdapter(
     private val mList: MutableList<TrendFocusList>,
-    private val mEduData: MutableList<String>,
+    private val mDiyList: MutableList<LikeBean>,
 ) :
     RecyclerView.Adapter<SaloonFocusAdapter.ViewHolder>(), View.OnClickListener {
 
@@ -320,6 +324,27 @@ class SaloonFocusAdapter(
             holder.vip.visibility = View.VISIBLE
         }
 
+
+        if (mDiyList[position].like && !mDiyList[position].anim) {
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
+        } else if (!mDiyList[position].like) {
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
+        }
+
+
+        if (mDiyList[position].focus) {
+            holder.focus.setImageResource(R.drawable.ic_base_chat)
+        } else {
+            holder.focus.setImageResource(R.drawable.ic_base_focus)
+        }
+
+        if (mDiyList[position].likeCount != 0) {
+            holder.tvLike.text = mDiyList[position].likeCount.toString()
+        } else {
+            holder.tvLike.text = "抢首赞"
+        }
+
+
         if (mList[position].identity_status == 1) {
             Glide.with(mContext).load(R.mipmap.icon_identify_success)
                 .into(holder.identity)
@@ -336,7 +361,7 @@ class SaloonFocusAdapter(
 
         val city = mList[position].work_city_str
 
-        val edu = mEduData[mList[position].education]
+        val edu = EduData[mList[position].education]
 
         val job = if (mList[position].industry_str == "") {
             "${mList[position].industry_str}"
@@ -666,8 +691,11 @@ class SaloonFocusAdapter(
             }
         }
 
-        holder.tvLike.text = mList[position].like_count.toString()
-        holder.tvComment.text = mList[position].discuss_count.toString()
+        if (mList[position].discuss_count != 0) {
+            holder.tvComment.text = mList[position].discuss_count.toString()
+        } else {
+            holder.tvComment.text = "评论"
+        }
 
     }
 

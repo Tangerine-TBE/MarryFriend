@@ -2,7 +2,9 @@ package com.twx.marryfriend.dynamic.saloon.friend
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.ResourceUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.lxj.xpopup.XPopup
@@ -33,20 +36,13 @@ import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.utils.AnimalUtils
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
 import java.io.Serializable
 import java.util.*
 
-class DynamicFriendFragment : Fragment(),
-    com.twx.marryfriend.net.callback.dynamic.IGetTrendFocusCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoLikeClickCallback,
-    com.twx.marryfriend.net.callback.dynamic.IDoLikeCancelCallback {
-
-    // 上次点击时间
-    private var lastClickTime = 0L
-
-    // 两次点击间隔时间（毫秒）
-    private val delayTime = 3000
+class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCallback,
+    IDoLikeCancelCallback {
 
     // 数据加载模式
     private var mode = "first"
@@ -68,13 +64,14 @@ class DynamicFriendFragment : Fragment(),
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
 
+
     private var mTrendList: MutableList<TrendFocusList> = arrayListOf()
 
     private lateinit var adapter: SaloonFocusAdapter
 
-    private lateinit var getTrendFocusPresent: com.twx.marryfriend.net.impl.dynamic.getTrendFocusPresentImpl
-    private lateinit var doLikeClickPresent: com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl
-    private lateinit var doLikeCancelPresent: com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl
+    private lateinit var getTrendFocusPresent: getTrendFocusPresentImpl
+    private lateinit var doLikeClickPresent: doLikeClickPresentImpl
+    private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,28 +96,18 @@ class DynamicFriendFragment : Fragment(),
 
     private fun initView() {
 
-        getTrendFocusPresent =
-            com.twx.marryfriend.net.impl.dynamic.getTrendFocusPresentImpl.getsInstance()
+        getTrendFocusPresent = getTrendFocusPresentImpl.getsInstance()
         getTrendFocusPresent.registerCallback(this)
 
-        doLikeClickPresent =
-            com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl.getsInstance()
+        doLikeClickPresent = doLikeClickPresentImpl.getsInstance()
         doLikeClickPresent.registerCallback(this)
 
-        doLikeCancelPresent =
-            com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl.getsInstance()
+        doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
 
 
-        val mEduData: MutableList<String> = arrayListOf()
-        mEduData.add("大专以下")
-        mEduData.add("大专")
-        mEduData.add("本科")
-        mEduData.add("硕士")
-        mEduData.add("博士")
-        mEduData.add("博士以上")
 
-        adapter = SaloonFocusAdapter(mTrendList, mEduData)
+        adapter = SaloonFocusAdapter(mTrendList, mDiyList)
 
         rv_dynamic_focus_container.adapter = adapter
         rv_dynamic_focus_container.layoutManager = LinearLayoutManager(context)
@@ -309,6 +296,7 @@ class DynamicFriendFragment : Fragment(),
             }
         })
 
+
         adapter.setOnSixClickListener(object : SaloonFocusAdapter.OnSixClickListener {
             override fun onSixClick(v: View?, position: Int) {
                 ToastUtils.showShort("six")
@@ -399,20 +387,31 @@ class DynamicFriendFragment : Fragment(),
             override fun onLikeClick(v: View?, position: Int) {
 
                 // 点赞， 此时需要验证是否上传头像
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
 
                     mLikePosition = position
 
                     if (!mDiyList[position].like) {
                         // 点赞
-                        doLikeClick(mTrendList[position].id, mTrendList[position].user_id,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"))
+                        if (mTrendList[position].user_id != SPStaticUtils.getString(Constant.USER_ID,
+                                "13")
+                        ) {
+                            mDiyList[position].anim = true
+
+                            AnimalUtils.getAnimal(v as ImageView)
+
+                            doLikeClick(mTrendList[position].id,
+                                mTrendList[position].user_id,
+                                SPStaticUtils.getString(Constant.USER_ID, "13"))
+                        } else {
+                            ToastUtils.showShort("不能给自己点赞")
+                        }
+
                     } else {
                         // 取消赞
                         doLikeCancelClick(mTrendList[position].id, mTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
-                    adapter.notifyDataSetChanged()
 
                 } else {
                     XPopup.Builder(context)
@@ -495,7 +494,6 @@ class DynamicFriendFragment : Fragment(),
             }
         }
 
-
     }
 
     override fun onLikeCancelError() {
@@ -518,7 +516,11 @@ class DynamicFriendFragment : Fragment(),
                 mTrendList.add(trendFocusBean.data.list[i])
                 mIdList.add(trendFocusBean.data.list[i].id)
 
-                mDiyList.add(LikeBean(false, false, trendFocusBean.data.list[i].like_count))
+                val focus = true
+                val like = trendFocusBean.data.list[i].guest_uid != null
+
+                mDiyList.add(LikeBean(focus, like, trendFocusBean.data.list[i].like_count))
+
             }
 
             max = Collections.max(mIdList)

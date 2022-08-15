@@ -34,4 +34,29 @@ object UnicodeUtils {
         return retBuf.toString()
     }
 
+
+    /** 取出string字符串中的换行 */
+    fun newLineText(text: String): String {
+        return text.replace("\r|\n".toRegex(), " ")
+    }
+
+    // 取出第一个汉字，然后添加星号
+    fun hideName(name: String): String {
+        var newName = name.substring(0, 1)
+        for (i in 0.until(name.length - 1)) {
+            newName = "$newName*"
+        }
+        return newName
+    }
+
+    // 取出前6个数字，然后添加星号
+    fun hideId(name: String): String {
+        var newId = name.substring(0, 6)
+        for (i in 0.until(name.length - 6)) {
+            newId = "$newId*"
+        }
+        return newId
+    }
+
+
 }
