@@ -163,7 +163,6 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 //            doFaceVerifyPresent.doFaceVerify(map)
 
 
-
         }
 
         ll_code_input.setOnClickListener {
@@ -256,7 +255,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                     map[Contents.VERIFY_CODE] = s.toString()
                     map[Contents.DEVICE_CODE] = unique
                     map[Contents.VERSION] = SPStaticUtils.getString(Constant.VERSION, "_360")
-                    map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+                    map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
                     map[Contents.PACKAGE_ENGLISH] = "com.twx.marryfriend"
                     map[Contents.SYSTEM] = "1"
                     map[Contents.PACKAGE_CHINESE] = "婚恋"
@@ -394,6 +393,9 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
             ToastUtils.showShort("登陆成功，跳转至资料填写界面")
 
             // 存储一下资料
+            SpUtil.storeVipInfo(
+                phoneLoginBean.data.close_time_low,
+                phoneLoginBean.data.close_time_high)
 
             SpUtil.saveUserInfo(phoneLoginBean)
 
@@ -401,7 +403,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
             startActivity(intent)
             this.finish()
         } else {
-            Log.i("guo","errormsg : ${phoneLoginBean.msg}")
+            Log.i("guo", "errormsg : ${phoneLoginBean.msg}")
 
             ToastUtils.showShort(phoneLoginBean.msg)
         }

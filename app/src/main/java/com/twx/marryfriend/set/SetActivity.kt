@@ -19,6 +19,7 @@ import com.twx.marryfriend.set.adapter.SetSwitchAdapter
 import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.message.MessageActivity
 import com.twx.marryfriend.set.safe.SafeActivity
+import com.twx.marryfriend.set.web.SetWebActivity
 import kotlinx.android.synthetic.main.activity_set.*
 
 class SetActivity : MainBaseViewActivity() {
@@ -36,8 +37,6 @@ class SetActivity : MainBaseViewActivity() {
 
     override fun initView() {
         super.initView()
-
-
 
         mSwitchList.add(SetSwitchBean("隐藏在线状态",
             R.drawable.ic_set_state_hide,
@@ -70,6 +69,7 @@ class SetActivity : MainBaseViewActivity() {
         adapter3.notifyDataSetChanged()
         adapter4.notifyDataSetChanged()
         adapter5.notifyDataSetChanged()
+
     }
 
     override fun initLoadData() {
@@ -126,7 +126,9 @@ class SetActivity : MainBaseViewActivity() {
                     }
                     1 -> {
                         ToastUtils.showShort("帮助反馈")
-                        startActivity(Intent(this@SetActivity, FeedbackActivity::class.java))
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "在线客服",
+                            DataProvider.WebUrlData[0].url))
                     }
                     2 -> {
                         ToastUtils.showShort("账户与安全")
@@ -156,6 +158,51 @@ class SetActivity : MainBaseViewActivity() {
                     }
                     2 -> {
                         ToastUtils.showShort("好评")
+                    }
+                    3 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "第三方信息共享清单",
+                            DataProvider.WebUrlData[3].url))
+                    }
+                    4 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "文字审核标准",
+                            DataProvider.WebUrlData[4].url))
+                    }
+                    5 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "个人信息收集清单",
+                            DataProvider.WebUrlData[5].url))
+                    }
+                    6 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "常见诈骗方式",
+                            DataProvider.WebUrlData[7].url))
+                    }
+                    7 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "个人动态服务协议",
+                            DataProvider.WebUrlData[8].url))
+                    }
+                    8 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "网络交友防骗指南",
+                            DataProvider.WebUrlData[9].url))
+                    }
+                    9 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "网络交友防骗指南",
+                            DataProvider.WebUrlData[10].url))
+                    }
+                    10 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "隐私政策",
+                            DataProvider.WebUrlData[2].url))
+                    }
+                    11 -> {
+                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+                            "用户协议",
+                            DataProvider.WebUrlData[1].url))
                     }
                 }
             }

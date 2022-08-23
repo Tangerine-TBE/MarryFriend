@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".mine.MyDynamicActivity">
 
@@ -31,234 +32,249 @@
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="16dp">
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/iv_dynamic_mine_avatar"
-            android:layout_width="62dp"
-            android:layout_height="62dp"
-            android:layout_marginStart="14dp"
-            android:scaleType="centerCrop"
-            app:riv_corner_radius="16dp" />
-
-        <TextView
-            android:id="@+id/tv_dynamic_mine_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="12dp"
-            android:text="罐头香菜"
-            android:textColor="#404040"
-            android:textSize="17sp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp">
-
-        <LinearLayout
-            android:id="@+id/ll_dynamic_mine_all"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="动态"
-                android:textColor="#9A9A9A"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tv_dynamic_mine_all"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="0"
-                android:textColor="#404040"
-                android:textSize="17sp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="18dp"
-            android:background="#F5F5F5" />
-
-        <LinearLayout
-            android:id="@+id/ll_dynamic_mine_pic"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="照片"
-                android:textColor="#9A9A9A"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tv_dynamic_mine_pic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="0"
-                android:textColor="#404040"
-                android:textSize="17sp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="18dp"
-            android:background="#F5F5F5" />
-
-        <LinearLayout
-            android:id="@+id/ll_dynamic_mine_video"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="视频"
-                android:textColor="#9A9A9A"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tv_dynamic_mine_video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="0"
-                android:textColor="#404040"
-                android:textSize="17sp" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="18dp"
-            android:background="#F5F5F5" />
-
-        <LinearLayout
-            android:id="@+id/ll_dynamic_mine_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="文字"
-                android:textColor="#9A9A9A"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tv_dynamic_mine_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="0"
-                android:textColor="#404040"
-                android:textSize="17sp" />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="8dp"
-        android:background="#F5F5F5" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="fill_parent">
 
-        <RelativeLayout
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/srl_dynamic_mine_refresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#F5F5F5">
+            android:layout_height="match_parent">
 
-            <LinearLayout
-                android:id="@+id/ll_dynamic_mine_empty"
+            <com.scwang.smart.refresh.header.ClassicsHeader
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"
-                android:background="@color/white"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_height="wrap_content" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_dynamic_empty" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="暂时还没有动态哦~"
-                    android:textColor="#404040"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:text="快去发布一条吧！"
-                    android:textColor="#404040"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <com.scwang.smart.refresh.layout.SmartRefreshLayout
-                android:id="@+id/srl_dynamic_mine_refresh"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.scwang.smart.refresh.header.ClassicsHeader
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_dynamic_mine_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="16dp">
 
-                <com.scwang.smart.refresh.footer.ClassicsFooter
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/iv_dynamic_mine_avatar"
+                            android:layout_width="62dp"
+                            android:layout_height="62dp"
+                            android:layout_marginStart="14dp"
+                            android:scaleType="centerCrop"
+                            app:riv_corner_radius="16dp" />
 
-            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+                        <TextView
+                            android:id="@+id/tv_dynamic_mine_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="12dp"
+                            android:text="罐头香菜"
+                            android:textColor="#404040"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="10dp">
+
+                        <LinearLayout
+                            android:id="@+id/ll_dynamic_mine_all"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="动态"
+                                android:textColor="#9A9A9A"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/tv_dynamic_mine_all"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#404040"
+                                android:textSize="17sp" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="18dp"
+                            android:background="#F5F5F5" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_dynamic_mine_pic"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="照片"
+                                android:textColor="#9A9A9A"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/tv_dynamic_mine_pic"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#404040"
+                                android:textSize="17sp" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="18dp"
+                            android:background="#F5F5F5" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_dynamic_mine_video"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="视频"
+                                android:textColor="#9A9A9A"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/tv_dynamic_mine_video"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#404040"
+                                android:textSize="17sp" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="18dp"
+                            android:background="#F5F5F5" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_dynamic_mine_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="16dp"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="文字"
+                                android:textColor="#9A9A9A"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/tv_dynamic_mine_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="0"
+                                android:textColor="#404040"
+                                android:textSize="17sp" />
+
+                        </LinearLayout>
 
 
-        </RelativeLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:background="#F5F5F5" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#F5F5F5">
+
+                        <LinearLayout
+                            android:id="@+id/ll_dynamic_mine_empty"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_centerHorizontal="true"
+                            android:background="@color/white"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_dynamic_empty" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="24dp"
+                                android:text="暂时还没有动态哦~"
+                                android:textColor="#404040"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="18dp"
+                                android:text="快去发布一条吧！"
+                                android:textColor="#404040"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_dynamic_mine_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp" />
+
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+            <com.scwang.smart.refresh.footer.ClassicsFooter
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -779,13 +779,14 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 uploadTrend()
             } else {
                 ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ll_send_loading.visibility = View.GONE
             }
         }
 
     }
 
     override fun onDoTextVerifyError() {
-
+        ll_send_loading.visibility = View.GONE
     }
 
     override fun onDoUploadTrendSuccess(uploadTrendBean: UploadTrendBean?) {

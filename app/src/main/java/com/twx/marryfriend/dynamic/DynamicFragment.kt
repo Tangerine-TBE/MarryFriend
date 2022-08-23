@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.blankj.utilcode.util.ToastUtils
@@ -85,6 +87,16 @@ class DynamicFragment : Fragment() {
             ?.setOnClickListener {
                 ToastUtils.showShort("123456")
             }
+
+        //设置 分割线
+        for (index in 0..tb_dynamic_indicator.tabCount) {
+            val linearLayout = tb_dynamic_indicator.getChildAt(index) as? LinearLayout
+            linearLayout?.let {
+                it.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
+                it.dividerDrawable = context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.shape_tab_divider) }
+                it.dividerPadding = 50
+            }
+        }
 
     }
 

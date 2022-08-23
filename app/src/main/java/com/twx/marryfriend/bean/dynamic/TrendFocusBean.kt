@@ -46,4 +46,12 @@ data class TrendFocusList(
     val vip_level: Int,
     val weidu: String,
     val work_city_str: String,
-)
+
+    val level_low: Int,
+    val close_time_low: String,
+    val level_high: Int,
+    val close_time_high: String,
+
+    val real_face: Int,
+
+    )

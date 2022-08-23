@@ -294,6 +294,15 @@ object Constant {
     const val HIDE_REPORT_TIP = "hide_report_tip" // 是否展示举报方式的RelativeLayout
 
 
+    // --------------------------------------  支付模块  ------------------------------------
+
+    const val COIN_SUM = "coin_sum"  // 目前金币
+
+    const val CLOSE_TIME_LOW = "close_time_low"  // 	低级过期时间
+
+    const val CLOSE_TIME_HIGH = "close_time_high"  // 	高级过期时间
+
+
     // --------------------------------------  设置模块  ------------------------------------
 
     const val HIDE_STATE = "hide_state" // 是否隐藏在线状态

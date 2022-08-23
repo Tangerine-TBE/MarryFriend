@@ -87,9 +87,24 @@ class LikeTipAdapter(private val mList: MutableList<LikeTipList>) :
                 holder.image.visibility = View.VISIBLE
                 holder.video.visibility = View.GONE
                 holder.text.visibility = View.GONE
+
+                val images: MutableList<String> =
+                    mList[position].image_url.split(",") as MutableList<String>
+
+                if (images.size > 1) {
+                    for (i in 0.until(images.size)) {
+                        if (images[i].contains(" ")) {
+                            images[i] = images[i].replace(" ", "")
+                        }
+                    }
+                }
+
                 Glide.with(mContext)
-                    .load(mList[position].image_url)
+                    .load(images[0])
+                    .error(R.drawable.ic_dynamic_tip_default)
+                    .placeholder(R.drawable.ic_dynamic_tip_default)
                     .into(holder.image)
+
             }
             2 -> {
                 // 视频动态
@@ -98,6 +113,8 @@ class LikeTipAdapter(private val mList: MutableList<LikeTipList>) :
                 holder.text.visibility = View.GONE
                 Glide.with(mContext)
                     .load(mList[position].video_url)
+                    .error(R.drawable.ic_dynamic_tip_default)
+                    .placeholder(R.drawable.ic_dynamic_tip_default)
                     .into(holder.videoPic)
             }
             3 -> {

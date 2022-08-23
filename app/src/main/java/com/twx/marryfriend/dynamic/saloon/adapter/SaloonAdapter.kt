@@ -1,6 +1,7 @@
 package com.twx.marryfriend.dynamic.saloon.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,14 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.TimeUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.constant.DataProvider.EduData
+import com.twx.marryfriend.utils.FolderTextView
+import com.twx.marryfriend.utils.SpUtil.getVipLevel
 import java.util.*
 
 /**
@@ -60,7 +64,9 @@ class SaloonAdapter(
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, position: Int)
+        fun onTextClick(v: View?, position: Int)
     }
+
 
     interface OnAvatarClickListener {
         fun onAvatarClick(v: View?, position: Int)
@@ -190,11 +196,14 @@ class SaloonAdapter(
 
         val avatar: ImageView = view.findViewById(R.id.riv_detail_dynamic_other_avatar)
         val name: TextView = view.findViewById(R.id.tv_detail_dynamic_other_name)
+
+        val trueAvatar: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_avatar)
         val identity: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_identity)
         val vip: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_vip)
+
         val info: TextView = view.findViewById(R.id.tv_detail_dynamic_other_info)
 
-        val text: TextView = view.findViewById(R.id.tv_detail_dynamic_other_text)
+        val text: FolderTextView = view.findViewById(R.id.tv_detail_dynamic_other_text)
 
         val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_other_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_other_location)
@@ -248,6 +257,10 @@ class SaloonAdapter(
         holder.itemView.tag = position
 
         initPic(holder, position)
+
+        holder.text.setOnClickListener {
+            mOnItemClickListener?.onTextClick(it, position)
+        }
 
         holder.detail.setOnClickListener {
             mOnAvatarClickListener?.onAvatarClick(it, position)
@@ -313,11 +326,22 @@ class SaloonAdapter(
 
     private fun initPic(holder: ViewHolder, position: Int) {
 
+
         Glide.with(mContext).load(mList[position].headface).into(holder.avatar)
         holder.name.text = mList[position].nick
 
-        if (mList[position].vip_level > 0) {
-            holder.vip.visibility = View.VISIBLE
+        when (getVipLevel(mList[position].close_time_low, mList[position].close_time_high)) {
+            0 -> {
+                holder.vip.visibility = View.GONE
+            }
+            1 -> {
+                holder.vip.visibility = View.VISIBLE
+                holder.vip.setImageResource(R.drawable.ic_vip)
+            }
+            2 -> {
+                holder.vip.visibility = View.VISIBLE
+                holder.vip.setImageResource(R.drawable.ic_svip)
+            }
         }
 
         if (mList[position].identity_status == 1) {
@@ -328,6 +352,11 @@ class SaloonAdapter(
                 .into(holder.identity)
         }
 
+        if (mList[position].real_face == 1) {
+            holder.trueAvatar.visibility = View.VISIBLE
+        } else {
+            holder.trueAvatar.visibility = View.GONE
+        }
 
         val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
             Calendar.YEAR) - mList[position].age).toString().substring(2, 4)
@@ -346,7 +375,10 @@ class SaloonAdapter(
 
 
         if (mList[position].text_content != "") {
+
+            holder.text.visibility = View.VISIBLE
             holder.text.text = mList[position].text_content
+
         } else {
             holder.text.visibility = View.GONE
         }

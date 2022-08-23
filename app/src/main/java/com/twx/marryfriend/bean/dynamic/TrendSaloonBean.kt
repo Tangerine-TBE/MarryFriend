@@ -47,6 +47,14 @@ data class TrendSaloonList(
     val guest_uid: Int?,
     val close_time: String,
     val focus_uid: Int?,
+
+    val level_low: Int,
+    val close_time_low: String,
+    val level_high: Int,
+    val close_time_high: String,
+
+    val real_face: Int,
+
 )
 
 

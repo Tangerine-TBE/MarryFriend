@@ -1,11 +1,5 @@
 package com.twx.marryfriend.constant
 
-import com.twx.marryfriend.bean.MeSeeWhoBean
-import com.twx.marryfriend.bean.WhoSeeMeBean
-import retrofit2.Call
-import retrofit2.http.POST
-import retrofit2.http.QueryMap
-
 object Contents {
 
     // 域名
@@ -84,6 +78,26 @@ object Contents {
     // 最近来访 -- 我看过谁列表
     const val ME_SEE_WHO = "UserCenter/meSeenWhoList"
 
+    // 我关注其它人，列表
+    const val ME_FOCUS_WHO = "UserCenter/mineFocusOtherList"
+
+    // 其它人关注我，列表
+    const val WHO_FOCUS_ME = "UserCenter/otherFocusMineList"
+
+
+    // 我点过谁赞列表
+    const val ME_LIKE_WHO = "UserCenter/meDianzanWhoList"
+
+    // 谁点过我赞列表
+    const val WHO_LIKE_ME = "UserCenter/whoDianzanMeList"
+
+
+    // 我评论过谁的列表
+    const val ME_DISCUSS_WHO = "UserCenter/meDiscussWhoList"
+
+    // 谁评论过我的列表
+    const val WHO_DISCUSS_ME = "UserCenter/whoDiscussMeList"
+
 
     // ------------------------------- 动态 -------------------------------
 
@@ -158,6 +172,22 @@ object Contents {
 
     const val GET_COMMENT_TIP = "TrendsNotice/discussUnreadList"
 
+
+    // 会员价格列表
+    const val GET_VIP_PRICE = "MemberCharge/vipList"
+
+    // 金币价格列表
+    const val GET_COIN_PRICE = "MemberCharge/jinbiList"
+
+    // 苹果安卓发起支付宝
+    const val DO_ALI_PAY = "MemberCharge/alibabaPayment"
+
+    // 金币收支记录列表
+    const val GET_COIN_RECORD = "MemberCharge/jinbiRecordList"
+
+    // 刷新金币与会员
+    const val DO_REFRESH_SELF ="MemberCharge/refreshSelf"
+
     // ------------------------------- 高德地图 -------------------------------
 
     // 高德地图-地点检索
@@ -211,7 +241,8 @@ object Contents {
     const val VERIFY_CODE = "code_key"     // 验证码
     const val DEVICE_CODE = "equipment_number"     // 唯一设备编码
     const val VERSION = "user_version"     // 版本号
-    const val PLATFORM = "user_platform"     // 渠道
+
+    // const val USER_PLATFORM = "user_platform"     // 渠道
     const val PACKAGE_ENGLISH = "user_package"     // 包英文名(固定)
     const val SYSTEM = "user_system"     // 系统
     const val PACKAGE_CHINESE = "user_pkg_chn"     // 包中文名(固定)
@@ -224,8 +255,6 @@ object Contents {
     const val USER_PACKAGE = "user_package" // 包英文名(固定)
     const val USER_SYSTEM = "user_system" // 系统
     const val USER_PKG_CHN = "user_pkg_chn" // 婚恋交友安卓
-
-
 
 
     // 修改基础信息
@@ -295,6 +324,19 @@ object Contents {
     // 其他人动态列表
     const val MYSELF_UID = "myself_uid"  // 自己的uid
     const val FRIEND_UID = "friend_uid"  // 对方的uid
+
+
+    // ------------------------------------ 支付 ------------------------------------
+
+    const val PLATFORM = "platform"  // 充值渠道
+    const val TYPE_KIND = "type_kind" // 安卓苹果 二选一
+    const val VIP_LEVEL = "vip_level" // 会员等级
+
+    const val BUY_ORDER_NUMBER = "buy_order_number" // 订单号
+    const val FEE = "fee" // 金额
+    const val BODY = "body" // 描述
+
+
 
     // ------------------------------------ 外部的api ------------------------------------
 

@@ -65,10 +65,6 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
         doUploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         doUploadPhotoPresent.registerCallback(this)
 
-        val requestOptions = RequestOptions()
-            .skipMemoryCache(true)
-            .diskCacheStrategy(DiskCacheStrategy.NONE);
-
         picPath = intent.getStringExtra("path").toString()
         introduce = intent.getStringExtra("introduce").toString()
 
@@ -225,8 +221,6 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                             FileUtils.getFileName(picPath), -1).toString()
 
                         Log.i("guo", "mLifeSecondUrl :$picUrl")
-
-                        if (introduce == "") introduce = "0"
 
                         uploadPhoto(picUrl,
                             FileUtils.getFileNameNoExtension(picPath),

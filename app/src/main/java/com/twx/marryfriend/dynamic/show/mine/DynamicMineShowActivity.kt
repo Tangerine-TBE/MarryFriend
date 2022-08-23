@@ -28,6 +28,7 @@ import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
+import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
@@ -336,7 +337,9 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
             if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
 
                     if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
@@ -419,7 +422,9 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
             if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
 
                     if (eet_emoji_mine_edit.text.toString().trim { it <= ' ' } != "") {
 
@@ -714,8 +719,12 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
         if (checkTrendBean != null) {
             if (checkTrendBean.code == 200) {
+
+
                 info = checkTrendBean.data.list[0]
                 val image = checkTrendBean.data.imgs
+
+                SpUtil.storeVipInfo(info.close_time_low, info.close_time_high)
 
                 trendsId = info.id
                 hostUid = info.user_id.toInt()
@@ -1431,7 +1440,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
     }
 
-    class DynamicEditDialog(context: Context) : FullScreenPopupView(context), IDoDeleteTrendCallback {
+    class DynamicEditDialog(context: Context) : FullScreenPopupView(context),
+        IDoDeleteTrendCallback {
 
         private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
 

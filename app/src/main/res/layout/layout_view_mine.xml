@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_detail_view_mine_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/riv_detail_view_mine_avatar"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"
+            android:scaleType="centerCrop"
+            app:riv_oval="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="28dp"
+            android:layout_toEndOf="@+id/riv_detail_view_mine_avatar"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_detail_view_mine_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/ll_detail_view_mine_icon"
+                    android:ellipsize="end"
+                    android:gravity="start"
+                    android:maxLines="1"
+                    android:text="湖北人,在深圳做程序员"
+                    android:textColor="#404040"
+                    android:textSize="17sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_detail_view_mine_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true">
+
+                    <ImageView
+                        android:id="@+id/iv_detail_view_mine_avatar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/icon_avatar_true" />
+
+                    <ImageView
+                        android:id="@+id/iv_detail_view_mine_identify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        android:src="@mipmap/icon_identify_success" />
+
+                    <ImageView
+                        android:id="@+id/iv_detail_view_mine_vip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
+                        android:src="@drawable/ic_vip" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/tv_detail_view_mine_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="深圳"
+                android:textColor="#101010"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_detail_view_mine_act"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="84dp"
+        android:layout_marginTop="10dp"
+        android:text="最近发布了动态"
+        android:textColor="#9A9A9A"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_detail_view_mine_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/shape_bg_button_add"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:text="关于我：你走过的每一条弯路，其实都是必经之路，你要记住的是，永远都无法借...人的翅膀"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/ll_detail_view_mine_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_bg_focus_chat"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_common_chat" />
+
+            <TextView
+                android:id="@+id/tv_detail_view_mine_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:paddingVertical="11dp"
+                android:text="去聊天"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="24dp"
+        android:background="#F5F5F5" />
+
+</LinearLayout>

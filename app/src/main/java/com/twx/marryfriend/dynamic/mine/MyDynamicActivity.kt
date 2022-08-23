@@ -34,12 +34,13 @@ import com.twx.marryfriend.dynamic.send.DynamicSendActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IDoDeleteTrendCallback
 import com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
+import kotlinx.android.synthetic.main.activity_hobby_tool.*
 import kotlinx.android.synthetic.main.activity_my_dynamic.*
 import java.util.*
 
 
 class MyDynamicActivity : MainBaseViewActivity(),
-    IGetMyTrendsListCallback {
+    IGetMyTrendsListCallback, MyDynamicAdapter.OnItemClickListener {
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
@@ -81,7 +82,12 @@ class MyDynamicActivity : MainBaseViewActivity(),
         getMyTrendsListPresent.registerCallback(this)
 
         adapter = MyDynamicAdapter(trendList)
-        linearLayoutManager = WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        adapter.setOnItemClickListener(this)
+
+        linearLayoutManager =
+            WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
         rv_dynamic_mine_container.layoutManager = linearLayoutManager
         rv_dynamic_mine_container.adapter = adapter
 
@@ -170,29 +176,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
             getMoreTrendsList(currentPaper)
             srl_dynamic_mine_refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
         }
-
-        adapter.setOnItemClickListener(object : MyDynamicAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, position: Int) {
-                if (trendList[position].audit_status == 1) {
-                    startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
-                        trendList[position].id,
-                        SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
-
-                } else {
-                    ToastUtils.showShort("此动态正在审核中")
-                }
-            }
-
-            override fun onItemMoreClick(v: View?, position: Int) {
-                XPopup.Builder(this@MyDynamicActivity)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(DynamicEditDialog(this@MyDynamicActivity, position))
-                    .show()
-            }
-        })
 
         adapter.setOnLikeClickListener(object : MyDynamicAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
@@ -573,6 +556,38 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         }
 
+    }
+
+    override fun onItemClick(v: View?, position: Int) {
+        if (trendList[position].audit_status == 1) {
+            startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                trendList[position].id,
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+
+        } else {
+            ToastUtils.showShort("此动态正在审核中")
+        }
+    }
+
+    override fun onTextClick(v: View?, position: Int) {
+        if (trendList[position].audit_status == 1) {
+            startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                trendList[position].id,
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+
+        } else {
+            ToastUtils.showShort("此动态正在审核中")
+        }
+    }
+
+    override fun onItemMoreClick(v: View?, position: Int) {
+        XPopup.Builder(this@MyDynamicActivity)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(DynamicEditDialog(this@MyDynamicActivity, position))
+            .show()
     }
 
 }
