@@ -52,8 +52,12 @@ object ImMessageManager {
 
             override fun onMessageRead(messages: MutableList<EMMessage>?) {
                 //收到已读回执
-                iLog(messages?.firstOrNull()?.from,"收到消息,已读")
+                iLog("收到消息,已读"+messages?.firstOrNull()?.from+"发给"+messages?.firstOrNull()?.to)
                 messageRead.value=messages
+//                messages?.forEach {
+//                    it.isUnread=false
+//                    updateMessage(it)
+//                }
             }
 
             override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
@@ -250,6 +254,7 @@ object ImMessageManager {
 // 如果是群聊，设置chattype，默认是单聊
         customMessage.chatType = EMMessage.ChatType.Chat
         customMessage.isUnread=true
+        updateMessage(customMessage)
         EMClient.getInstance().chatManager().sendMessage(customMessage)
         return Message.toMyMessage(customMessage)
     }

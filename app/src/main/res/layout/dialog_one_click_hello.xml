@@ -382,7 +382,7 @@
                 <ImageView
                     android:id="@+id/one_click_heart"
                     tools:src="@drawable/ic_one_click_heart"
-                    android:layout_width="50dp"
+                    android:layout_width="35dp"
                     android:layout_height="wrap_content"/>
                 <TextView
                     android:text="打招呼"

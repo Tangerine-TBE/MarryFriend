@@ -85,6 +85,7 @@
             <TextView
                 android:id="@+id/msgReadState"
                 tools:text="已读"
+                android:visibility="gone"
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp"
                 android:textColor="@color/msg_read_state"

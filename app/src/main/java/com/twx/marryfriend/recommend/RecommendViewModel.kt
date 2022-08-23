@@ -89,8 +89,8 @@ class RecommendViewModel():ViewModel() {
     suspend fun loadLaseDynamic()=suspendCoroutine<LastDynamicBean>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/newestTrends"
         val map= mapOf(
-            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "user_level" to UserInfo.getUserVipLevel().toString())
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
+        )
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {

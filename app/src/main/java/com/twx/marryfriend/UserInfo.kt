@@ -40,7 +40,7 @@ object UserInfo {
 
     fun getUserId():String?{
         if(BuildConfig.DEBUG){//3是男的
-            return "4"//3,4,6,11,16//
+            return "3"//3,4,6,11,16//
         }
         return SPStaticUtils.getString(
             Constant.USER_ID,

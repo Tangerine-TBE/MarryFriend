@@ -13,6 +13,7 @@
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/selector_send_flower_s.xml" value="0.2395" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_input.xml" value="0.171" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_setting.xml" value="0.242" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_sys_tip.xml" value="0.245" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_text.xml" value="0.1905" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_confirm.xml" value="0.2965" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_confirm2.xml" value="0.232" />
@@ -55,6 +56,7 @@
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_superlike_people.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_chat_text_msg.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_emoji.xml" value="0.35260416666666666" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_first_msg_vip.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_image_msg.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_red_flower_msg.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_text_msg.xml" value="0.33" />
@@ -79,6 +81,7 @@
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend_not_content.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_search_result.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_sys_chat_tip_msg.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_upload_head.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/layout_address_search.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/layout_detail_emoji.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/layout_dynamic_other.xml" value="0.3536458333333333" />

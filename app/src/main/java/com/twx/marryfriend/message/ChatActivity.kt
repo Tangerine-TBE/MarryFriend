@@ -202,14 +202,6 @@ class ChatActivity:AppCompatActivity(/*R.layout.activity_chat*/) {
                 }
             }
         }
-        ImMessageManager.observeMessageRead(this){
-            chatAdapter.onMessageRead(it?:return@observeMessageRead)
-        }
-        ImMessageManager.observeConversationMessage(this){
-            if (it==conversationId){
-                chatAdapter.onConversationRead()
-            }
-        }
         initListener()
         emojiRecyclerView.layoutManager=GridLayoutManager(this,8)
         emojiRecyclerView.adapter=chatEmojiAdapter
