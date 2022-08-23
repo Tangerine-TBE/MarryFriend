@@ -22,13 +22,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
-                android:layout_marginEnd="25dp"
+                android:id="@+id/chatSetting"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
                 android:layout_gravity="end"
-                android:layout_width="26dp"
-                android:src="@mipmap/ic_launcher"
+                android:layout_width="wrap_content"
+                android:src="@mipmap/ic_chat_setting"
                 android:layout_height="match_parent"/>
         </com.xyzz.myutils.action.ActionBarNoPadding>
         <FrameLayout
+            android:id="@+id/friendRealName"
+            android:visibility="@{chatModel.isRealName?View.GONE:View.VISIBLE}"
             android:background="#FFFFF5F5"
             android:layout_width="match_parent"
             android:layout_height="38dp">
@@ -64,42 +68,57 @@
                 android:layout_height="match_parent"/>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/inputView"
             android:layout_width="match_parent"
             android:layout_height="53dp"
             android:background="#FFFFFFFF"
             android:gravity="center_vertical"
             android:orientation="horizontal">
             <ImageView
+                android:id="@+id/voiceAndKeyboard"
                 android:layout_marginStart="13dp"
-                android:src="@mipmap/ic_launcher"
+                android:src="@drawable/selector_chat_spack_voice"
                 android:layout_width="37dp"
                 android:layout_height="37dp"/>
-            <androidx.emoji.widget.EmojiEditText
-                android:id="@+id/editText"
+            <FrameLayout
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="15dp"
-                android:hint="和你喜欢的人开始聊天吧~"
-                android:textColorHint="#FF9A9A9A"
-                android:textSize="15sp"
-                android:paddingStart="18dp"
-                android:text="@={chatModel.editText}"
-                android:background="@drawable/shape_chat_input"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="37dp"/>
+                android:layout_height="37dp">
+                <androidx.emoji.widget.EmojiEditText
+                    android:id="@+id/editText"
+                    android:hint="和你喜欢的人开始聊天吧~"
+                    android:textColorHint="#FF9A9A9A"
+                    android:textSize="15sp"
+                    android:paddingStart="18dp"
+                    android:text="@={chatModel.editText}"
+                    android:visibility="@{chatModel.isVoiceShow?View.GONE:View.VISIBLE}"
+                    android:background="@drawable/shape_chat_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+                <com.twx.marryfriend.view.PressedTextView
+                    android:id="@+id/inputVoice"
+                    android:gravity="center"
+                    android:text="按住说话"
+                    android:visibility="@{chatModel.isVoiceShow?View.VISIBLE:View.GONE}"
+                    android:textColor="#FF101010"
+                    android:background="@drawable/shape_chat_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:src="@mipmap/icon_emoji_send"
-                    android:text="键盘"
+                <ImageView
+                    android:id="@+id/keyboard"
+                    android:src="@mipmap/ic_chat_keyboard"
                     android:visibility="@{chatModel.emojiShow?View.VISIBLE:View.GONE}"
                     android:layout_width="37dp"
                     android:layout_height="37dp"/>
                 <ImageView
                     android:id="@+id/emoji"
                     android:src="@drawable/ic_dynamic_emoji"
-                    android:text="表情"
                     android:visibility="@{chatModel.emojiShow?View.GONE:View.VISIBLE}"
                     android:layout_width="37dp"
                     android:layout_height="37dp"/>
@@ -115,13 +134,12 @@
                     android:visibility="@{chatModel.isEditTextEmpty?View.GONE:View.VISIBLE}"
                     android:layout_width="37dp"
                     android:layout_height="37dp"/>
-                <TextView
+                <ImageView
                     android:id="@+id/addAnnex"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    android:src="@mipmap/icon_emoji_send"
+                    android:src="@mipmap/ic_chat_add_enclosure"
                     android:visibility="@{chatModel.isEditTextEmpty?View.VISIBLE:View.GONE}"
-                    android:text="附件"
                     android:layout_width="37dp"
                     android:layout_height="37dp"/>
             </FrameLayout>
@@ -129,10 +147,12 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#FFFFFFFF"
             android:visibility="@{chatModel.isMoreMsgShow?View.VISIBLE:View.GONE}"
             android:orientation="vertical">
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_marginTop="7dp"
+                android:paddingBottom="17dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -147,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageView
-                        android:src="#000"
+                        android:src="@mipmap/ic_chat_take_pic"
                         android:layout_width="58dp"
                         android:layout_height="58dp"/>
                     <TextView
@@ -169,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageView
-                        android:src="#000"
+                        android:src="@mipmap/ic_chat_choice_pic"
                         android:layout_width="58dp"
                         android:layout_height="58dp"/>
                     <TextView
@@ -191,7 +211,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageView
-                        android:src="#000"
+                        android:src="@mipmap/ic_chat_send_flower"
                         android:layout_width="58dp"
                         android:layout_height="58dp"/>
                     <TextView
@@ -207,6 +227,7 @@
                     android:id="@+id/msgType4"
                     android:layout_marginTop="17dp"
                     android:layout_marginEnd="24dp"
+                    android:visibility="invisible"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toEndOf="@id/sendFlowers"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -218,7 +239,7 @@
                         android:layout_width="58dp"
                         android:layout_height="58dp"/>
                     <TextView
-                        android:text="送花"
+                        android:text="xxx"
                         android:layout_marginTop="8dp"
                         android:layout_gravity="center_horizontal"
                         android:textColor="#FF404040"
@@ -230,8 +251,9 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
         <androidx.appcompat.widget.LinearLayoutCompat
             android:background="#FFF5F5F5"
-            android:visibility="gone"
             android:orientation="vertical"
+            android:visibility="@{chatModel.emojiShow?View.VISIBLE:View.GONE}"
+            tools:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -244,18 +266,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/emojiRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"/>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:gravity="end"
                 android:layout_marginTop="9dp"
+                android:layout_marginBottom="18dp"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:orientation="horizontal">
                 <ImageView
+                    android:layout_marginEnd="8dp"
+                    android:src="@mipmap/ic_delete_emoji"
+                    android:layout_width="52dp"
+                    android:layout_height="35dp"/>
+                <ImageView
                     android:layout_marginEnd="10dp"
-
-                    android:src="#000"
+                    android:src="@mipmap/icon_emoji_send"
                     android:layout_width="52dp"
                     android:layout_height="35dp"/>
             </androidx.appcompat.widget.LinearLayoutCompat>

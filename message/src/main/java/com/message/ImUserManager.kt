@@ -87,7 +87,7 @@ object ImUserManager {
                     try {
                         createAccount(username,pwd)
                     }catch (e:Exception){
-                        eLog(e.stackTraceToString())
+                        iLog(e.stackTraceToString())
                     }
                     login(username,pwd)
                 },{code, message ->
@@ -98,7 +98,7 @@ object ImUserManager {
             try {
                 createAccount(username,pwd)
             }catch (e:Exception){
-                eLog(e.stackTraceToString())
+                iLog(e.stackTraceToString())
             }
             login(username,pwd)
         }

@@ -493,13 +493,19 @@ data class RecommendBean(
                     null//"不限"
                 }
                 1->{
-                    "买了"
+                    "和家人同住"
                 }
                 2->{
-                    "没买"
+                    "已购房"
                 }
                 3->{
-                    "和1家人同住/已购房2/租房3/打算婚后购房4/住在单位宿舍5"
+                    "租房"
+                }
+                4->{
+                    "打算婚后购房"
+                }
+                5->{
+                    "住在单位宿舍"
                 }
                 else->{
                     null
@@ -621,6 +627,12 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_love)
         }
+
+        fun getAge(age:Int?):Label?{
+            return age?.toString()?.let {
+                "${it}岁"
+            }?.toLabel(R.mipmap.ic_label_age)
+        }
     }
 
     /**
@@ -730,6 +742,9 @@ data class RecommendBean(
 
     fun getBaseLabel():List<Label>{
         val list=ArrayList<Label>()
+        getAge(base?.age)?.also {
+            list.add(it)
+        }
         getIndustry_str(base?.industry_str)?.also {
             list.add(it)
         }

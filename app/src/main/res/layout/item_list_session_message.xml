@@ -36,6 +36,7 @@
             tools:text="1"
             android:background="@drawable/shape_message_list_count"
             android:text="@{String.valueOf(conversationsItemModel.unReaderCount)}"
+            android:visibility="@{conversationsItemModel.unReaderCount>0?View.VISIBLE:View.GONE}"
             android:textColor="#FFFFFFFF"
             android:textSize="11dp"
             android:gravity="center"
@@ -45,7 +46,7 @@
             android:id="@+id/messageMutualLikeIcon"
             app:layout_constraintBottom_toBottomOf="@id/messageHead"
             app:layout_constraintStart_toStartOf="@id/messageHead"
-            android:src="@mipmap/ic_launcher"
+            android:src="@{conversationsItemModel.mutualAndFlower}"
             android:visibility="@{conversationsItemModel.isMutualLike?View.VISIBLE:View.GONE}"
             android:layout_width="22dp"
             android:layout_height="22dp"/>
@@ -85,7 +86,7 @@
             app:layout_constraintTop_toTopOf="@id/isMessageRealName"
             app:layout_constraintBottom_toBottomOf="@id/isMessageRealName"
             android:layout_marginStart="4dp"
-            android:src="@mipmap/ic_launcher"
+            android:src="@mipmap/ic_message_vip"
             android:visibility="@{conversationsItemModel.isVip? View.VISIBLE:View.GONE}"
             android:layout_width="20dp"
             android:layout_height="20dp"/>

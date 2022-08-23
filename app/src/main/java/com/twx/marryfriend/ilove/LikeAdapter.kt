@@ -38,7 +38,7 @@ class LikeAdapter(private val isChat:Boolean=false):RecyclerView.Adapter<BaseVie
         val switcherView=holder.getView<ViewSwitcher>(R.id.iLikeViewSwitcher)
         val iLikeSendFlowers=holder.getView<View>(R.id.iLikeSendFlowers)
         val iLikeChat=holder.getView<View>(R.id.iLikeChat)
-        if ((switcherView.currentView==iLikeChat).xor(isChat)){
+        if ((switcherView.currentView==iLikeChat).xor(/*isChat*/false)){
             switcherView.showNext()
         }
         iLikeSendFlowers.setOnClickListener {

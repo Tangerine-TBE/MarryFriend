@@ -1,5 +1,7 @@
 package com.twx.marryfriend
 
+import android.content.Context
+import android.content.Intent
 import com.blankj.utilcode.util.SPStaticUtils
 import com.google.gson.Gson
 import com.twx.marryfriend.bean.recommend.RecommendBean
@@ -7,9 +9,13 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.eLog
+import kotlinx.android.synthetic.main.item_recommend_not_content.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 object UserInfo {
@@ -34,7 +40,7 @@ object UserInfo {
 
     fun getUserId():String?{
         if(BuildConfig.DEBUG){//3是男的
-            return "3"//3,4,6,11,16//
+            return "4"//3,4,6,11,16//
         }
         return SPStaticUtils.getString(
             Constant.USER_ID,
@@ -81,6 +87,15 @@ object UserInfo {
         return (sex%2)+1
     }
 
+    fun getDefHeadImage():Int{
+        val sex= getUserSex()
+        return if (sex==1){
+            R.mipmap.icon_mine_male_default
+        }else{
+            R.mipmap.icon_mine_female_default
+        }
+    }
+
     fun getReversedDefHeadImage():Int{
         val sex= reversalSex(getUserSex())
         return if (sex==1){
@@ -110,26 +125,108 @@ object UserInfo {
 
     }
 
+    fun getGreetText():String{
+        return SPStaticUtils.getString(Constant.ME_GREET).let {
+            if (it.isNullOrBlank()){
+                "你好啊！"
+            }else{
+                it
+            }
+        }
+    }
+
     fun isHaveLifePhoto():Boolean{
-        return Random.nextBoolean()
+        return !SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_ID).isNullOrBlank()
     }
     fun isRealName():Boolean{
-        return Random.nextBoolean()
+        return SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)
     }
     fun isHaveHeadImage():Boolean{
-        return Random.nextBoolean()
+        return !SPStaticUtils.getString(Constant.ME_AVATAR).isNullOrBlank()
     }
     fun isFillInHobby():Boolean{//爱好
-        return Random.nextBoolean()
+        return !SPStaticUtils.getString(Constant.ME_HOBBY).isNullOrBlank()
     }
 
     fun isFillInGreet():Boolean{//招呼
-        return Random.nextBoolean()
+        return !SPStaticUtils.getString(Constant.ME_GREET).isNullOrBlank()
     }
     fun isFillInIntroduce():Boolean{//介绍
-        return Random.nextBoolean()
+        return !SPStaticUtils.getString(Constant.ME_INTRODUCE).isNullOrBlank()
     }
     fun isFillInVoice():Boolean{//语音介绍
-        return Random.nextBoolean()
+        return !SPStaticUtils.getString(Constant.ME_VOICE).isNullOrBlank()
+    }
+
+    suspend fun getNextNotFillIn(context:Context,scope: CoroutineScope)= suspendCoroutine<Pair<Int,Intent?>?>{
+        if(!UserInfo.isHaveLifePhoto()){//生活
+            it.resume(R.mipmap.ic_item_up_load_life to IntentManager.getUpLifeIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isRealName()){//实名
+            it.resume(R.mipmap.ic_item_up_real_name to IntentManager.getUpRealNameIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isHaveHeadImage()){//头像
+            it.resume(R.mipmap.ic_item_up_head_image to IntentManager.getUpHeadImageIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInHobby()){//兴趣
+            it.resume(R.mipmap.ic_item_up_fill_in_hobby to IntentManager.getUpFillInHobbyIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInGreet()){//招呼
+            it.resume(R.mipmap.ic_item_up_fill_in_greet to IntentManager.getUpFillInGreetIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInIntroduce()){//介绍
+            it.resume(R.mipmap.ic_item_up_fill_in_introduce to IntentManager.getUpFillInIntroduceIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInVoice()){//语音
+            scope.launch {
+                it.resume(R.mipmap.ic_item_up_fill_in_voice to IntentManager.getUpFillInVoiceIntent(context))
+            }
+            return@suspendCoroutine
+        }else{
+            it.resume(null)
+            return@suspendCoroutine
+        }
+    }
+
+    suspend fun getNextNotFillIn2(context:Context,scope: CoroutineScope)= suspendCoroutine<Pair<Int,Intent?>?>{
+        if(!UserInfo.isHaveLifePhoto()){//生活
+            it.resume(R.mipmap.ic_item_up_load_life_l to IntentManager.getUpLifeIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isRealName()){//实名
+            it.resume(R.mipmap.ic_item_up_real_name_l to IntentManager.getUpRealNameIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isHaveHeadImage()){//头像
+            it.resume(R.mipmap.ic_item_up_head_image_l to IntentManager.getUpHeadImageIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInHobby()){//兴趣
+            it.resume(R.mipmap.ic_item_up_fill_in_hobby_l to IntentManager.getUpFillInHobbyIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInGreet()){//招呼
+            it.resume(R.mipmap.ic_item_up_fill_in_greet_l to IntentManager.getUpFillInGreetIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInIntroduce()){//介绍
+            it.resume(R.mipmap.ic_item_up_fill_in_introduce_l to IntentManager.getUpFillInIntroduceIntent(context))
+            return@suspendCoroutine
+        }
+        if(!UserInfo.isFillInVoice()){//语音
+            scope.launch {
+                it.resume(R.mipmap.ic_item_up_fill_in_voice_l to IntentManager.getUpFillInVoiceIntent(context))
+            }
+            return@suspendCoroutine
+        }else{
+            it.resume(null)
+            return@suspendCoroutine
+        }
     }
 }

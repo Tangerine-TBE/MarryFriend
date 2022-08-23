@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -79,7 +80,10 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
 
     private fun initListener(){
         searchResultAdapter.chatAction={
-            toast("聊天")
+            val userid=it.user_id
+            if (userid!=null){
+                startActivity(ChatActivity.getIntent(this,userid.toString(),it.nick,it.getHeadImage(),it.isRealName()))
+            }
         }
         searchResultAdapter.likeAction={item,view->
             lifecycleScope.launch {

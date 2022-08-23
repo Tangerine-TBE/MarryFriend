@@ -17,57 +17,17 @@ class NotContentView @JvmOverloads constructor(context: Context,attributeSet: At
     }
 
     fun refreshView(scope: CoroutineScope){
-        if(!UserInfo.isHaveLifePhoto()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_load_life)
-            upUserInfo.setOnClickListener {
-                context?.startActivity(IntentManager.getUpLifeIntent(context)?:return@setOnClickListener)
-            }
-            return
-        }
-        if(!UserInfo.isRealName()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_real_name)
-            upUserInfo.setOnClickListener {
-                context?.startActivity(IntentManager.getUpRealNameIntent(context)?:return@setOnClickListener)
-            }
-            return
-        }
-        if(!UserInfo.isHaveHeadImage()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_head_image)
-            upUserInfo.setOnClickListener {
-                context?.startActivity(IntentManager.getUpHeadImageIntent(context)?:return@setOnClickListener)
-            }
-            return
-        }
-        if(!UserInfo.isFillInHobby()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_fill_in_hobby)
-            upUserInfo.setOnClickListener {
-                context?.startActivity(IntentManager.getUpFillInHobbyIntent(context)?:return@setOnClickListener)
-            }
-            return
-        }
-        if(!UserInfo.isFillInGreet()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_fill_in_greet)
-            upUserInfo.setOnClickListener {
-                context?.startActivity(IntentManager.getUpFillInGreetIntent(context)?:return@setOnClickListener)
-            }
-            return
-        }
-        if(!UserInfo.isFillInIntroduce()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_fill_in_introduce)
-            upUserInfo.setOnClickListener {
-                context?.startActivity(IntentManager.getUpFillInIntroduceIntent(context)?:return@setOnClickListener)
-            }
-            return
-        }
-        if(!UserInfo.isFillInVoice()){
-            upImageTip.setImageResource(R.mipmap.ic_item_up_fill_in_voice)
-            upUserInfo.setOnClickListener {
-                scope.launch {
-                    context?.startActivity(IntentManager.getUpFillInVoiceIntent(context)?:return@launch)
+        scope.launch {
+            UserInfo.getNextNotFillIn2(context,scope).also { pair ->
+                if (pair!=null) {
+                    upImageTip.setImageResource(pair.first)
+                    upUserInfo.setOnClickListener {
+                        context?.startActivity(pair.second?:return@setOnClickListener)
+                    }
+                }else{
+                    upUserInfo.visibility= View.GONE
                 }
             }
-            return
         }
-        upUserInfo.visibility= View.GONE
     }
 }

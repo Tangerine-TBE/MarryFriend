@@ -12,6 +12,9 @@
     <cache-path
         name="download"
         path="."/>
+    <files-path
+        name="file"
+        path="."/>
     <external-cache-path
         name="download"
         path="."/>

@@ -1,5 +1,6 @@
 package com.twx.marryfriend.message
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
@@ -7,28 +8,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.message.ImUserManager
-import com.message.ImMessageManager
 import com.twx.marryfriend.R
-import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.databinding.FragmentMessageBinding
 import com.twx.marryfriend.message.adapter.MessageListAdapter
 import com.twx.marryfriend.message.model.ConversationsModel
+import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_message.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 class MessageFragment : Fragment(R.layout.fragment_message) {
-    init {
-        val id=UserInfo.getUserId()
-        if (id!=null) {
-            ImUserManager.createOrLogin(id)
-        }
-    }
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(MessageViewModel::class.java)
@@ -53,10 +46,6 @@ class MessageFragment : Fragment(R.layout.fragment_message) {
         messageRecyclerView.layoutManager=LinearLayoutManager(context)
         messageRecyclerView.adapter=adapter
         loadData()
-        test.setOnClickListener {
-            iLog("向用户3发送信息")
-            ImMessageManager.sendTextMsg("3","你好啊！收到我的消息了吗？")
-        }
         initListener()
     }
 
@@ -64,25 +53,40 @@ class MessageFragment : Fragment(R.layout.fragment_message) {
         msgSmartRefresh.setOnRefreshListener {
             loadData()
         }
+        mutualLike.setOnClickListener {
+            startActivity(Intent(requireContext(),MutualLikeActivity::class.java))
+        }
     }
 
     private fun loadData(){
         iLog("加载一下")
         loadingDialog.show()
-        conversationsModel.laterLikeCount= Random.nextInt()
         dataBinding?.conversationsModel=conversationsModel
         lifecycleScope.launch {
-            val data=try {
-                viewModel.getAllConversations().also {
-                    msgSmartRefresh.finishRefresh()
+            val task1=async (){
+                val data=try {
+                    viewModel.getAllConversations().also {
+                        msgSmartRefresh.finishRefresh()
+                    }
+                }catch (e:Exception){
+                    eLog(e.stackTraceToString())
+                    toast(e.message)
+                    msgSmartRefresh.finishRefresh(false)
+                    null
                 }
-            }catch (e:Exception){
-                eLog(e.stackTraceToString())
-                toast(e.message)
-                msgSmartRefresh.finishRefresh(false)
-                null
+                adapter.setData(data)
             }
-            adapter.setData(data)
+            val task2=async() {
+                try {
+                    val mutualLike=viewModel.getMutualLike()
+                    conversationsModel.laterLikeCount = mutualLike.total?:0
+                    conversationsModel.list = mutualLike.list
+                }catch (e:Exception){
+                    eLog(e.stackTraceToString())
+                }
+            }
+            task1.await()
+            task2.await()
             loadingDialog.dismiss()
         }
     }

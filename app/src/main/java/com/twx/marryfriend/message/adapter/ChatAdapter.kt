@@ -3,18 +3,21 @@ package com.twx.marryfriend.message.adapter
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.hyphenate.chat.EMMessage
 import com.hyphenate.chat.EMMessageBody
 import com.message.chat.*
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.databinding.BaseDataBindingViewHolder
 import com.twx.marryfriend.message.model.ChatItemModel
 import com.twx.marryfriend.message.views.ChatImageMsgItemView
+import com.twx.marryfriend.message.views.ChatRedFlowerItemView
 import com.twx.marryfriend.message.views.ChatTextMsgItemView
+import com.twx.marryfriend.message.views.ChatVoiceItemView
 
 class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String?,):RecyclerView.Adapter<BaseDataBindingViewHolder>() {
     companion object{
         private const val CMD_TYPE=1
-        private const val CUSTOM_TYPE=2
+        private const val SEND_FLOWER_TYPE=2
         private const val FILE_TYPE=3
         private const val IMAGE_TYPE=4
         private const val LOCATION_TYPE=5
@@ -26,12 +29,16 @@ class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String
     private val listData=ArrayList<ChatItemModel<Message<out EMMessageBody>>>()
 
     override fun getItemViewType(position: Int): Int {
-        return when(listData[position].data){
+        return when(val d=listData[position].data){
             is CmdMessage -> {
                 CMD_TYPE
             }
             is CustomMessage -> {
-                CUSTOM_TYPE
+                when(d){
+                    is SendFlowerMessage -> {
+                        SEND_FLOWER_TYPE
+                    }
+                }
             }
             is FileMessage -> {
                 FILE_TYPE
@@ -76,13 +83,13 @@ class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String
                 null
             }
             VOICE_TYPE->{
-                ChatImageMsgItemView(parent.context)
+                ChatVoiceItemView(parent.context)
             }
             CMD_TYPE->{
                 null
             }
-            CUSTOM_TYPE->{
-                null
+            SEND_FLOWER_TYPE->{
+                ChatRedFlowerItemView(parent.context)
             }
             else->{
                 null
@@ -94,12 +101,17 @@ class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String
     override fun onBindViewHolder(holder: BaseDataBindingViewHolder, position: Int) {
         val dataBindingView=holder.itemView
         val item=listData[position]
-        when(item.data){
+        val data=item.data
+        when(data){
             is CmdMessage -> {
                 
             }
             is CustomMessage -> {
-                
+                when(data){
+                    is SendFlowerMessage -> {
+                        (dataBindingView as? ChatRedFlowerItemView)?.setData(item as ChatItemModel<SendFlowerMessage>)
+                    }
+                }
             }
             is FileMessage -> {
 
@@ -117,7 +129,7 @@ class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String
                 
             }
             is VoiceMessage -> {
-                
+                (dataBindingView as? ChatVoiceItemView)?.setData(item as ChatItemModel<VoiceMessage>)
             }
         }
     }
@@ -171,6 +183,24 @@ class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String
             setWhoSendInfo(it)
         })
         notifyItemInserted(0)
+    }
+
+    fun onConversationRead() {
+        listData.forEach {
+            it.data.emMessage.isUnread=false
+        }
+        notifyDataSetChanged()
+    }
+
+    fun onMessageRead(message:List<EMMessage>){
+        listData.filter {chatItemModel->
+            message.find {
+                chatItemModel.data.emMessage.msgId==it.msgId
+            }!=null
+        }.forEach {
+            it.data.emMessage.isUnread=false
+        }
+        notifyDataSetChanged()
     }
 
     private fun setWhoSendInfo(it:ChatItemModel<Message<out EMMessageBody>>){

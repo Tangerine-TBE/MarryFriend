@@ -21,4 +21,14 @@ class ChatModel :BaseObservable(){
             field=value
             notifyChange()
         }
+    var isVoiceShow=false
+        set(value) {
+            field=value
+            notifyChange()
+        }
+    var isRealName=false
+        set(value) {
+            field=value
+            notifyChange()
+        }
 }

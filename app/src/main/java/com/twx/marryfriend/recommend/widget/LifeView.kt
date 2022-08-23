@@ -18,9 +18,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.net.utils.BuildConfig.DEBUG
 import kotlinx.android.synthetic.main.item_recommend_life_view.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyle:Int=0):FrameLayout(context,attrs,defStyle) {
     class LifeImage(val imgUrl:String,val title:String,val des:String)
@@ -30,11 +33,6 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
 
     init {
         inflate(context,R.layout.item_recommend_life_view,this)
-        upLife.setOnClickListener { view ->
-            IntentManager.getUpLifeIntent(view.context).also {
-                view.context.startActivity(it?:return@setOnClickListener)
-            }
-        }
     }
 
     fun setImageData(imageList: List<LifeImage>){
@@ -82,4 +80,19 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
         }
     }
 
+
+    fun refreshView(scope: CoroutineScope){
+        scope.launch {
+            UserInfo.getNextNotFillIn(context,scope).also { pair ->
+                if (pair!=null) {
+                    upLifeImg.setImageResource(pair.first)
+                    upLoadLife.setOnClickListener {
+                        context?.startActivity(pair.second?:return@setOnClickListener)
+                    }
+                }else{
+                    upLoadLife.visibility= View.GONE
+                }
+            }
+        }
+    }
 }

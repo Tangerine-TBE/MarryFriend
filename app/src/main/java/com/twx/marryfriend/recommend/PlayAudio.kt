@@ -1,6 +1,8 @@
 package com.twx.marryfriend.recommend
 
 import android.media.MediaPlayer
+import android.net.Uri
+import com.twx.marryfriend.base.BaseConstant
 
 object PlayAudio {
     private val mediaPlayer by lazy { MediaPlayer() }
@@ -17,6 +19,35 @@ object PlayAudio {
 
         stop()
         mediaPlayer.setDataSource(path)
+
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnErrorListener { mediaPlayer, i, i2 ->
+            mediaPlayer?.reset()
+            onError?.invoke("出错了")
+            false
+        }
+        mediaPlayer.setOnPreparedListener { player ->
+            currentOnCompletion=onCompletion
+            isPrepare=true
+            player.start()
+            currentPath=path
+            onPlay.invoke()
+        }
+        mediaPlayer.setOnCompletionListener {
+            onCompletion.invoke()
+        }
+    }
+
+    fun play(uri: Uri,onPlay:()->Unit,onCompletion:()->Unit,onError:((String)->Unit)?=null){
+        val path=uri.toString()
+        if (currentPath==path&&isPrepare){
+            resume()
+            onPlay.invoke()
+            return
+        }
+
+        stop()
+        mediaPlayer.setDataSource(BaseConstant.application,uri)
 
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnErrorListener { mediaPlayer, i, i2 ->

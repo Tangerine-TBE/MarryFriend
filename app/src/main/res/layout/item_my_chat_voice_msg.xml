@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="android.view.View"/>
+        <import type="com.message.chat.VoiceMessage"/>
+        <import type="com.twx.marryfriend.message.model.ChatItemModel"/>
+        <variable
+            name="chatItemModel"
+            type="ChatItemModel&lt;VoiceMessage>" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_marginTop="12dp"
+        tools:background="#FFF5F5F5"
+        android:layout_marginBottom="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/chatMsgTime"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            tools:text="上午  06:58"
+            android:text="@{chatItemModel.showTimeText}"
+            android:visibility="@{chatItemModel.visibility?View.VISIBLE:View.GONE}"
+            android:textColor="#FF9A9A9A"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/userHead"
+            app:layout_constraintTop_toBottomOf="@id/chatMsgTime"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="12dp"
+            tools:src="#000"
+            android:scaleType="centerCrop"
+            android:src="@{chatItemModel.imageHead}"
+            app:riv_oval="true"
+            android:layout_width="37dp"
+            android:layout_height="37dp"/>
+        <TextView
+            android:id="@+id/userNickname"
+            app:layout_constraintTop_toTopOf="@id/userHead"
+            app:layout_constraintEnd_toStartOf="@id/userHead"
+            android:includeFontPadding="false"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            tools:text="Breda Bell"
+            android:text="@{chatItemModel.nickname}"
+            android:textColor="#FF0D0D0D"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.25"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <FrameLayout
+            app:layout_constraintStart_toStartOf="@id/guideline"
+            app:layout_constraintEnd_toEndOf="@id/userNickname"
+            app:layout_constraintTop_toBottomOf="@id/userNickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/playVoice"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="end"
+                android:layout_width="wrap_content"
+                android:background="@drawable/shape_chat_text"
+                android:orientation="horizontal"
+                android:gravity="center_vertical|end"
+                android:layout_height="40dp">
+                <TextView
+                    android:id="@+id/durationSpace"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:text="@{chatItemModel.data.lengthSpace}"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/durationTime"
+                    android:layout_marginStart="20dp"
+                    tools:text="23''"
+                    android:text="@{chatItemModel.data.lengthShow}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <ImageView
+                    android:layout_marginStart="8dp"
+                    android:src="#000"
+                    android:layout_width="25dp"
+                    android:layout_height="match_parent"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

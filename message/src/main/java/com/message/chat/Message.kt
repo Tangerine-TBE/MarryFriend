@@ -5,7 +5,7 @@ import com.hyphenate.chat.EMMessage
 import com.hyphenate.chat.EMMessageBody
 import com.xyzz.myutils.show.iLog
 
-sealed class Message<BODY: EMMessageBody>(protected val emMessage: EMMessage){
+sealed class Message<BODY: EMMessageBody>(val emMessage: EMMessage){
     companion object{
         fun toMyMessage(emMessage: EMMessage):Message<out EMMessageBody>?{
             return when(emMessage.type){

@@ -707,6 +707,7 @@
                             <ImageView
                                 android:id="@+id/dislike"
                                 android:src="@mipmap/ic_item_dislike"
+                                android:visibility="gone"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toStartOf="@id/sendFlowers"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -773,6 +774,7 @@
                         android:layout_height="58dp"/>
                     <ImageView
                         android:id="@+id/dislike2"
+                        android:visibility="gone"
                         android:layout_marginTop="24dp"
                         android:src="@mipmap/ic_item_dislike"
                         android:layout_width="58dp"

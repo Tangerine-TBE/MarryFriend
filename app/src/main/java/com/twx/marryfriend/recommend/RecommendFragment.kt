@@ -30,6 +30,7 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.kingja.loadsir.core.LoadSir
+import com.message.ImMessageManager
 import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
@@ -164,7 +165,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 }
             }
         }
-        notContent.refreshView(lifecycleScope)
     }
 
     private fun guideActionCompleteHandler(action:HomeCardAction?){
@@ -347,6 +347,15 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         LocationUtils.frontBackstageLiveData(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (recommendAdapter.itemCount>0){
+            recommendAdapter.lifeView?.refreshView(lifecycleScope)
+        }else{
+            notContent.refreshView(lifecycleScope)
+        }
+    }
+
     /**
      * 左滑、不喜欢
      */
@@ -387,6 +396,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     showView(ViewType.mutual)
                     Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
                 }
+                ImMessageManager.sendTextMsg(item.getId().toString(), UserInfo.getGreetText())
                 toast(str)
             }catch (e:Exception){
                 toast(e.message)
@@ -408,6 +418,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 loadingDialog.show()
                 try {
                     recommendViewModel.superLike(item.getId())
+                    ImMessageManager.sendFlower(item.getId().toString())
                     toast("送花成功")
                 }catch (e:Exception){
                     toast(e.message)

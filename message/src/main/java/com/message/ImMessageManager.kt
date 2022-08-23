@@ -1,6 +1,9 @@
 package com.message
 
 import android.net.Uri
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import com.hyphenate.EMConversationListener
 import com.hyphenate.EMMessageListener
 import com.hyphenate.chat.*
@@ -16,11 +19,30 @@ import com.xyzz.myutils.show.iLog
 //https://docs-im.easemob.com/im/android/basics/message
 //http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
+    private val newMessageLiveData=MutableLiveData<List<Message<out EMMessageBody>>>()
+    private val fromConversationRead=MutableLiveData<String>()
+    private val messageRead=MutableLiveData<List<EMMessage>>()
+
+    fun observeMessageRead(owner: LifecycleOwner,observer: Observer<List<EMMessage>>){
+        messageRead.value=null
+        messageRead.observe(owner,observer)
+    }
+
+    fun observeConversationMessage(owner: LifecycleOwner,observer: Observer<String>){
+        fromConversationRead.value=null
+        fromConversationRead.observe(owner,observer)
+    }
+
+    fun observeNewMessage(owner: LifecycleOwner,observer: Observer<List<Message<out EMMessageBody>>>){
+        newMessageLiveData.value=null
+        newMessageLiveData.observe(owner,observer)
+    }
     private val msgListener by lazy {
         object : EMMessageListener {
             override fun onMessageReceived(messages: MutableList<EMMessage>?) {
                 //收到消息
                 iLog(messages?.firstOrNull()?.from,"收到消息,收到")
+                newMessageLiveData.postValue(messages?.mapNotNull { Message.toMyMessage(it) })
             }
 
             override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
@@ -31,6 +53,7 @@ object ImMessageManager {
             override fun onMessageRead(messages: MutableList<EMMessage>?) {
                 //收到已读回执
                 iLog(messages?.firstOrNull()?.from,"收到消息,已读")
+                messageRead.value=messages
             }
 
             override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
@@ -45,14 +68,16 @@ object ImMessageManager {
 
         }
     }
-    private val conversationsListener by lazy { 
+
+    private val conversationsListener by lazy {
         object : EMConversationListener{
             override fun onCoversationUpdate() {
                 
             }
 
             override fun onConversationRead(from: String?, to: String?) {
-                iLog("会话变动${from+"发送给"+to}")
+                iLog("会话已读${from+"发送给"+to}")
+                fromConversationRead.value=from
             }
         }
     }
@@ -144,6 +169,34 @@ object ImMessageManager {
 //        EMClient.getInstance().chatManager().markAllConversationsAsRead()
     }
 
+    fun ackConversationRead(conversationId:String){
+        try {
+            EMClient.getInstance().chatManager().ackConversationRead(conversationId)
+        } catch (e: HyphenateException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun sendReadAck(message: EMMessage) {
+        //是接收的消息，未发送过read ack消息且是单聊
+        if (message.direct() == EMMessage.Direct.RECEIVE && !message.isAcked && message.chatType == EMMessage.ChatType.Chat) {
+//            val type = message.type
+            //视频，语音及文件需要点击后再发送,这个可以根据需求进行调整
+//            if (type == EMMessage.Type.VIDEO || type == EMMessage.Type.VOICE || type == EMMessage.Type.FILE) {
+//                return
+//            }
+            try {
+                EMClient.getInstance().chatManager().ackMessageRead(message.from, message.msgId)
+            } catch (e: HyphenateException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun updateMessage(msg:EMMessage){
+        EMClient.getInstance().chatManager().updateMessage(msg)
+    }
+
     fun sendTextMsg(username: String,content:String):Message<out EMMessageBody>?{
         iLog("发送\"${content}\"给${username}")
         //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
@@ -154,6 +207,8 @@ object ImMessageManager {
         //如果是群聊，设置chattype，默认是单聊
 //        if (chatType === CHATTYPE_GROUP) message.chatType = ChatType.GroupChat
         //发送消息
+        message.isUnread=true
+        updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
     }
@@ -166,6 +221,19 @@ object ImMessageManager {
 
     fun sendImageMsg(username: String,file: String):Message<out EMMessageBody>?{
         val message=EMMessage.createImageSendMessage(file,true,username)
+        message.isUnread=true
+        updateMessage(message)
+        EMClient.getInstance().chatManager().sendMessage(message)
+        return Message.toMyMessage(message)
+    }
+
+    fun sendVoiceMsg(username: String,voiceUri:Uri,length:Int):Message<out EMMessageBody>?{
+        //voiceUri 为语音文件本地资源标志符，length 为录音时间(秒)
+        val message = EMMessage.createVoiceSendMessage(voiceUri, length, username)
+//如果是群聊，设置 chattype，默认是单聊
+//        message.chatType = ChatType.GroupChat
+        message.isUnread=true
+        updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
     }
@@ -181,6 +249,7 @@ object ImMessageManager {
         customMessage.setTo(username)
 // 如果是群聊，设置chattype，默认是单聊
         customMessage.chatType = EMMessage.ChatType.Chat
+        customMessage.isUnread=true
         EMClient.getInstance().chatManager().sendMessage(customMessage)
         return Message.toMyMessage(customMessage)
     }

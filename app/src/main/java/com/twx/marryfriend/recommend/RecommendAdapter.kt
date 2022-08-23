@@ -67,6 +67,8 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
     var myLatitude:Double?=null
     private var currentPlayVoiceItem: RecommendBean?=null
     var itemAction:((HomeCardAction?)->Unit)?=null
+    var lifeView :LifeView?=null
+        private set
 
     fun getData():List<RecommendBean>{
         return listData
@@ -381,6 +383,9 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         }
         //生活
         holder.getView<LifeView>(R.id.life_view).apply {
+            if (position==0){
+                lifeView=this
+            }
             item.getLifePhoto().also {
                 if(position!=0){
                     this.setImageData(emptyList())

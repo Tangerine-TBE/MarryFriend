@@ -2,9 +2,10 @@ package com.twx.marryfriend.message.model
 
 import androidx.databinding.BaseObservable
 import com.message.conversations.ConversationType
+import com.twx.marryfriend.R
 import com.xyzz.myutils.display.DateDisplayManager
 
-class ConversationsItemModel(val userId:String,val conversationsType: ConversationType) :BaseObservable(){
+class ConversationsItemModel constructor(val conversationId:String, val conversationsType: ConversationType) :BaseObservable(){
     private val messageDataDisplay by lazy {
         DateDisplayManager.getMessageDataImpl()
     }
@@ -37,4 +38,16 @@ class ConversationsItemModel(val userId:String,val conversationsType: Conversati
     var lastMassage:String?=null
     var lastTimeShow:String?=null
     var isMutualLike=false
+    var isFlower=false
+
+    var mutualAndFlower= R.mipmap.ic_message_mutual_like
+        get() {
+            return if (isMutualLike){
+                R.mipmap.ic_message_mutual_like
+            }else if (isFlower){
+                R.mipmap.ic_message_flower
+            }else{
+                field
+            }
+        }
 }

@@ -8,13 +8,17 @@ import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
+import com.message.ImUserManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.likeme.LiveFragment
+import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.push.help.PushHelper
@@ -24,6 +28,12 @@ import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MainBaseViewActivity() {
+    init {
+        val id= UserInfo.getUserId()
+        if (id!=null) {
+            ImUserManager.createOrLogin(id)
+        }
+    }
 
     private var recommend: RecommendFragment? = null
     private var love: LiveFragment? = null
@@ -35,15 +45,11 @@ class MainActivity : MainBaseViewActivity() {
 
     override fun initView() {
         super.initView()
-
         initEmojiCompat()
 
         initRecommendFragment()
-
         Thread { PushHelper.init(applicationContext) }.start()
-        PushAgent.getInstance(this).onAppStart();
-
-
+        PushAgent.getInstance(this).onAppStart()
     }
 
     override fun initLoadData() {

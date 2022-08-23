@@ -42,4 +42,12 @@ data class FriendInfo(
     fun isRealName():Boolean{
         return identity_status==1
     }
+
+    fun isLike():Boolean{
+        return like_uid!=null
+    }
+
+    fun isFlower():Boolean{
+        return super_uid!=null
+    }
 }

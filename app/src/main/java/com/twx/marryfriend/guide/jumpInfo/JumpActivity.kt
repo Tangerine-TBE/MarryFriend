@@ -790,8 +790,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
             ToastUtils.showShort("资料上传成功")
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
             this.finish()
         }
 
@@ -804,8 +804,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
             ToastUtils.showShort("资料上传失败")
 
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
             this.finish()
         }
 
@@ -818,8 +818,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
             ToastUtils.showShort("资料上传成功")
 
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
             this.finish()
         }
 
@@ -832,8 +832,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
             ToastUtils.showShort("资料上传失败")
 
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, MainActivity::class.java)
+//            startActivity(intent)
             this.finish()
         }
 

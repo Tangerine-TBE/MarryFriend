@@ -12,6 +12,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
+import com.message.ImMessageManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
@@ -63,6 +64,12 @@ class OneClickHelloDialog(context: Context,private val data:List<OneClickHelloIt
                 return@setOnClickListener
             }
             sendAction.invoke(resultList)
+            resultList?.forEach {
+                val id=it.user_id
+                if (id!=null) {
+                    ImMessageManager.sendTextMsg(id.toString(), UserInfo.getGreetText())
+                }
+            }
             dismiss()
         }
     }
