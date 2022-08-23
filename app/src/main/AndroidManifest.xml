@@ -33,6 +33,10 @@
             <action android:name="android.media.action.ACTION_VIDEO_CAPTURE" />
         </intent>
     </queries>
+    <queries>
+        <package android:name="com.eg.android.AlipayGphone" />
+        <package android:name="com.tencent.mm" />
+    </queries>
 
     <application
         android:name=".AppApplication"
@@ -47,6 +51,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
+        <activity
+            android:name=".set.web.SetWebActivity"
+            android:exported="false" />
+        <activity
+            android:name=".coin.CoinRecordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mine.view.RecentViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mine.like.RecentLikeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mine.focus.RecentFocusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mine.comment.RecentCommentActivity"
+            android:exported="false" />
         <activity
             android:name=".push.xiaomi.MfrMessageActivity"
             android:exported="true"
@@ -101,7 +123,7 @@
             android:exported="false" />
         <activity
             android:name=".vip.VipActivity"
-            android:exported="false" />
+            android:exported="true"></activity>
         <activity
             android:name=".mine.greet.GreetEditActivity"
             android:exported="false" />
@@ -162,21 +184,23 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+
+
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
         </activity>
         <activity
             android:name=".main.MainActivity"
             android:exported="true"
             android:launchMode="singleTask">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"

@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -147,6 +148,11 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
         updateExistDate()
 
+
+        mLifeFirstPath = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
+        mLifeSecondPath = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
+        mLifeThirdPath = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
+
     }
 
     override fun initLoadData() {
@@ -206,13 +212,19 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 .show()
         }
 
-        ll_life_photo_pic_one.setOnClickListener {
+        rl_life_photo_pic_one.setOnClickListener {
             // 第一张图片的描述
 
+            // 这个地方做个判断，要是有url，就传入url，若是没有，就正常流程，包装点进预览有数据
+
             val intent = Intent(this, LifeIntroduceActivity::class.java)
+
+            Log.i("guo", "lifeChoosePath : $mLifeFirstPath")
+
             intent.putExtra("path", mLifeFirstPath)
             intent.putExtra("introduce", mLifeFirstText)
             startActivityForResult(intent, 111)
+
         }
 
         iv_life_photo_pic_two_delete.setOnClickListener {
@@ -230,10 +242,13 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
         }
 
-        ll_life_photo_pic_two.setOnClickListener {
+        rl_life_photo_pic_two.setOnClickListener {
             // 第二张图片的描述
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
+
+            Log.i("guo", "lifeChoosePath : $mLifeSecondPath")
+
             intent.putExtra("path", mLifeSecondPath)
             intent.putExtra("introduce", mLifeSecondText)
             startActivityForResult(intent, 222)
@@ -254,10 +269,13 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
         }
 
-        ll_life_photo_pic_three.setOnClickListener {
+        rl_life_photo_pic_three.setOnClickListener {
             // 第三张图片的描述
 
             val intent = Intent(this, LifeIntroduceActivity::class.java)
+
+            Log.i("guo", "lifeChoosePath : $mLifeThirdPath")
+
             intent.putExtra("path", mLifeThirdPath)
             intent.putExtra("introduce", mLifeThirdText)
             startActivityForResult(intent, 333)
@@ -386,8 +404,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                         if (!haveFirstPic) {
 
                             val intent =
-                                Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
+                                Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
                             intent.putExtra("path", lifeChoosePath)
                             intent.putExtra("introduce", "")
                             startActivityForResult(intent, 111)
@@ -395,8 +412,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                         } else if (!haveSecondPic) {
 
                             val intent =
-                                Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
+                                Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
                             intent.putExtra("path", lifeChoosePath)
                             intent.putExtra("introduce", "")
                             startActivityForResult(intent, 222)
@@ -404,8 +420,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                         } else if (!haveThirdPic) {
 
                             val intent =
-                                Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
+                                Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
                             intent.putExtra("path", lifeChoosePath)
                             intent.putExtra("introduce", "")
                             startActivityForResult(intent, 333)
@@ -862,5 +877,17 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
     override fun onDoDeletePhotoError() {
         ll_life_photo_loading.visibility = View.GONE
     }
+
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val intent = intent
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+        return super.onKeyDown(keyCode, event)
+
+    }
+
 
 }

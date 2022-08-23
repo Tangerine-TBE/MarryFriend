@@ -51,4 +51,10 @@ data class CheckTrendList(
     val discuss_count: Int?,
     val focous_uid: Int?,
     val guest_uid: Int?,
+
+    val level_low: Int,
+    val close_time_low: String,
+    val level_high: Int,
+    val close_time_high: String,
+
 )

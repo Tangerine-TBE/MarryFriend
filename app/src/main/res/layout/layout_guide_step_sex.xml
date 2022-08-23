@@ -102,7 +102,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="18岁"
+                android:text="0岁"
                 android:textColor="#0D0D0D"
                 android:textSize="15sp" />
 
@@ -138,7 +138,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="150cm"
+                android:text="0cm"
                 android:textColor="#0D0D0D"
                 android:textSize="15sp" />
 

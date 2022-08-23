@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/riv_detail_focus_mine_avatar"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="14dp"
+            android:scaleType="centerCrop"
+            app:riv_oval="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="8dp"
+            android:layout_toEndOf="@+id/riv_detail_focus_mine_avatar"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/tv_detail_focus_mine_detail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/tv_detail_focus_mine_day"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="湖北人,在深圳做程序员"
+                    android:textColor="#404040"
+                    android:textSize="17sp" />
+
+                <TextView
+                    android:id="@+id/tv_detail_focus_mine_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/shape_bg_focus_day"
+                    android:paddingHorizontal="11dp"
+                    android:paddingVertical="5dp"
+                    android:text="关注你356天"
+                    android:textColor="#FFFFFF"
+                    android:textSize="11sp" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
+
+                <TextView
+                    android:id="@+id/tv_detail_focus_mine_edu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_bg_focus_label"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:text="学历高"
+                    android:textColor="#FF4545"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/tv_detail_focus_mine_income"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/shape_bg_focus_label"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="5dp"
+                    android:text="收入高"
+                    android:textColor="#FF4545"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_detail_focus_mine_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="84dp"
+        android:layout_marginTop="10dp"
+        android:text="最近查看了你的资料"
+        android:textColor="#9A9A9A"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_detail_focus_mine_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="14dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/shape_bg_button_add"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        android:text="关于我：你走过的每一条弯路，其实都是必经之路，你要记住的是，永远都无法借...人的翅膀"
+        android:textColor="#101010"
+        android:textSize="15sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="24dp"
+        android:background="#F5F5F5" />
+
+</LinearLayout>

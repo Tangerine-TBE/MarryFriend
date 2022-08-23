@@ -51,11 +51,15 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
 import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
+import com.twx.marryfriend.mine.comment.RecentCommentActivity
+import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
+import com.twx.marryfriend.mine.like.RecentLikeActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
+import com.twx.marryfriend.mine.view.RecentViewActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
@@ -150,7 +154,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             }
             tv_mine_avatar_check.visibility = View.VISIBLE
         } else {
-            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
+                    Constant.ME_AVATAR_AUDIT,
+                    "") != ""
+            ) {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
@@ -331,6 +338,26 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         ll_mine_date.setOnClickListener {
             startActivityForResult(Intent(context, UserActivity::class.java), 0)
+        }
+
+        rl_mine_visit.setOnClickListener {
+            startActivity(Intent(context, RecentViewActivity::class.java))
+        }
+
+        rl_mine_fan.setOnClickListener {
+            startActivity(Intent(context, RecentFocusActivity::class.java))
+        }
+
+        rl_mine_like.setOnClickListener {
+            startActivity(Intent(context, RecentLikeActivity::class.java))
+        }
+
+        rl_mine_comment.setOnClickListener {
+            startActivity(Intent(context, RecentCommentActivity::class.java))
+        }
+
+        rl_mine_vip.setOnClickListener {
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0) })
         }
 
         ll_mine_set_dynamic.setOnClickListener {

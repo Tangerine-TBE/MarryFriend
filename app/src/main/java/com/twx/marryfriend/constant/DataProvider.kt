@@ -2,6 +2,7 @@ package com.twx.marryfriend.constant
 
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.ItemBean
+import com.twx.marryfriend.bean.WebUrlBean
 
 /**
  * @author: Administrator
@@ -118,6 +119,30 @@ object DataProvider {
         ItemBean("关于佳偶婚恋交友", R.drawable.ic_set_about),
         ItemBean("黑名单", R.drawable.ic_set_blacklist),
         ItemBean("好评", R.drawable.ic_set_praise),
+        ItemBean("第三方信息共享清单", R.drawable.ic_set_third),
+        ItemBean("文字审核标准", R.drawable.ic_set_text),
+        ItemBean("个人信息收集清单", R.drawable.ic_set_info),
+        ItemBean("常见诈骗方式", R.drawable.ic_set_scam),
+        ItemBean("个人动态服务协议", R.drawable.ic_set_dynamic),
+        ItemBean("网络交友防骗指南", R.drawable.ic_set_friend),
+        ItemBean("人脸认证服务协议", R.drawable.ic_set_face),
+        ItemBean("隐私政策", R.drawable.ic_set_praise),
+        ItemBean("用户协议", R.drawable.ic_set_user),
+    )
+
+
+    val WebUrlData = arrayListOf(
+        WebUrlBean("在线客服", "http://test.aisou.club/userManual/problem/index.html"),
+        WebUrlBean("用户协议", "http://test.aisou.club/userManual/agreement.html"),
+        WebUrlBean("隐私政策", "http://test.aisou.club/userManual/privacy_policy.html"),
+        WebUrlBean("第三方信息共享清单", "http://test.aisou.club/userManual/information_sharing.html"),
+        WebUrlBean("文字审核标准", "http://test.aisou.club/userManual/review.html"),
+        WebUrlBean("个人信息收集清单", "http://test.aisou.club/userManual/collelist.html"),
+        WebUrlBean("注销通知", "http://test.aisou.club/userManual/cancella.html"),
+        WebUrlBean("常见诈骗方式", "http://test.aisou.club/userManual/fraud.html"),
+        WebUrlBean("个人动态服务协议", "http://test.aisou.club/userManual/dynamic.html"),
+        WebUrlBean("网络交友防骗指南", "http://test.aisou.club/userManual/preven.html"),
+        WebUrlBean("人脸认证服务协议", "http://test.aisou.club/userManual/face_auth.html"),
     )
 
 
@@ -147,10 +172,30 @@ object DataProvider {
         ItemBean("我在使用中遇到了问题，该如何联系客服？", 0),
     )
 
+    // 超一线城市
+    val SuperOneCity = arrayListOf(
+        "北京",
+        "上海",
+        "广州",
+        "深圳",
+    )
 
-
-
-
-
-
+    // 一线城市
+    val OneCity = arrayListOf(
+        "成都",
+        "重庆",
+        "杭州",
+        "西安",
+        "武汉",
+        "苏州",
+        "郑州",
+        "南京",
+        "天津",
+        "长沙",
+        "东莞",
+        "宁波",
+        "佛山",
+        "合肥",
+        "青岛",
+    )
 }

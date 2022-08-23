@@ -3,85 +3,45 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidSDK/Sdk/platforms/android-31/data/res/layout/auto_complete_list.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/ic_big_default_pic.xml" value="0.204" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/ic_dynamic_emoji.xml" value="0.254" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/selector_chat_spack_voice.xml" value="0.1695" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/selector_recommend_head_pro.xml" value="0.204" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/selector_recommend_id_card.xml" value="0.204" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/selector_search_like.xml" value="0.339" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/selector_send_flower_s.xml" value="0.2395" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_input.xml" value="0.171" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_setting.xml" value="0.242" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_chat_text.xml" value="0.1905" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_confirm.xml" value="0.2965" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_confirm2.xml" value="0.232" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_life_text_bg.xml" value="0.204" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_love_item.xml" value="0.242" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_message_list_count.xml" value="0.1805" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_message_real_name.xml" value="0.1805" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_msg_authentication.xml" value="0.171" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_mutual_like_fl.xml" value="0.2565" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_one_click.xml" value="0.1685" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_red_frame.xml" value="0.2205" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_send_flower.xml" value="0.2395" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/drawable/shape_send_flower_bg.xml" value="0.2395" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_chat.xml" value="0.33" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_chat.xml" value="0.18" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_dynamic_mine_show.xml" value="0.19739583333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_dynamic_other_show.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_friend_info.xml" value="0.16" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_life_photo.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_main.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_mutual_like.xml" value="0.221875" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_mutual_like_dialog.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_search.xml" value="0.17198581560283688" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_search_result.xml" value="0.2" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_search_result.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_test.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_user.xml" value="0.2" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/activity_vip.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/dialog_chat_setting.xml" value="0.2520833333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/dialog_dynamic_mine_edit.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/dialog_mate_selection_edu.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/dialog_one_click_hello.xml" value="0.33" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/dialog_send_flower.xml" value="0.22" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_comment.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_data.xml" value="0.2" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_dynamic.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_dynamic_recommend.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_love.xml" value="0.22291666666666668" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_message.xml" value="0.2" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_message.xml" value="0.22" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_mine.xml" value="0.17198581560283688" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_recommend.xml" value="0.2296195652173913" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/fragment_superlike_people.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_chat_text_msg.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_emoji.xml" value="0.35260416666666666" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_image_msg.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_red_flower_msg.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_text_msg.xml" value="0.33" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_friend_chat_voice_msg.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_ilike.xml" value="0.278125" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_chat_text_msg.xml" value="0.35260416666666666" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_life_image.xml" value="0.35260416666666666" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_list_session_message.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_list_session_message_tip.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_love.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_message_follow.xml" value="0.35260416666666666" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_mutual_like.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_my_chat_image_msg.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_my_chat_red_flower_msg.xml" value="0.18" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_my_chat_text_msg.xml" value="0.33" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_my_chat_voice_msg.xml" value="0.22" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_one_click.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_picture_preview_1_item.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_picture_preview_6_item.xml" value="0.3536458333333333" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend.xml" value="0.33" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend_life_view.xml" value="0.35260416666666666" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend_mutual_like.xml" value="0.22" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend_not_content.xml" value="0.2" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend_mutual_like.xml" value="0.3536458333333333" />
+        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_recommend_not_content.xml" value="0.22" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_search_result.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/item_sys_chat_tip_msg.xml" value="0.25" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/layout_address_search.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/layout_detail_emoji.xml" value="0.25" />
-        <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/app/src/main/res/layout/layout_dynamic_other.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/myutils/src/main/res/layout/item_action_bar_myutils.xml" value="0.3536458333333333" />
         <entry key="..\:/AndroidStudioProjects/AAA_shejiao/marriage-and-love/myutils/src/main/res/layout/item_action_bar_no_padding_myutils.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/aaa.xml" value="0.221" />
@@ -90,12 +50,14 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_back_black.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_bg_dialog_down.xml" value="0.2425" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_bg_dialog_mine_info.xml" value="0.2425" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_common_chat.xml" value="0.1385" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_common_error.xml" value="0.2045" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_common_input_next.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_common_next.xml" value="0.2015" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_data_life_add.xml" value="0.234" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_dialog_close.xml" value="0.2015" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_dynamic_like.xml" value="0.221" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_focus_more.xml" value="0.1" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_guide_photo_female_default.xml" value="0.2015" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_guide_photo_male_default.xml" value="0.2015" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_guide_star.xml" value="0.209" />
@@ -104,11 +66,14 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_login_check.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_login_uncheck.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_main_dynamic.xml" value="0.229" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_main_dynamic_default.xml" value="0.1915" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_main_message.xml" value="0.229" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_main_recommend_default.xml" value="0.1715" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_mine_female_default.xml" value="0.254" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_mine_male_default.xml" value="0.2145" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_mine_set_coin.xml" value="0.254" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_month_normal.xml" value="0.2045" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_month_super.xml" value="0.203" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_normal_email.xml" value="0.173" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_picture_image_placeholder.xml" value="0.2205" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_school_close.xml" value="0.2055" />
@@ -117,7 +82,9 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_seekbar_icon_left.xml" value="0.2025" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_seekbar_icon_right.xml" value="0.2025" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_select_point.xml" value="0.2145" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_svip.xml" value="0.1" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_verify_firend.xml" value="0.2145" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/ic_vip.xml" value="0.1" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/picture_image_placeholder.xml" value="0.223" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/seekbar_blue_style.xml" value="0.2145" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/seekbar_style.xml" value="0.2025" />
@@ -137,6 +104,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_coin_choose.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_coin_choose_non.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_coin_more.xml" value="0.209" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_delete.xml" value="0.1385" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_input.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_next.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_common_next_non.xml" value="0.209" />
@@ -146,6 +114,9 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_dialog_bottom.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_dialog_choose_check.xml" value="0.2145" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_dialog_choose_uncheck.xml" value="0.2145" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_focus_chat.xml" value="0.1385" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_focus_day.xml" value="0.1" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_focus_label.xml" value="0.1" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_guide_target_choose.xml" value="0.2015" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_identity_next.xml" value="0.2015" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_identity_pic.xml" value="0.2015" />
@@ -165,23 +136,26 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_search.xml" value="0.209" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_seekbar.xml" value="0.2025" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_set_dialog.xml" value="0.2125" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_bg_vip_top.xml" value="0.2045" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_logoff_circle.xml" value="0.237" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_switch_trace_off.xml" value="0.2375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_switch_trace_on.xml" value="0.2375" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/shape_tab_divider.xml" value="0.2095" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/thumb_off.xml" value="0.2375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/drawable/thumb_on.xml" value="0.2375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout-w1240dp/activity_greet_info.xml" value="0.30625" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout-w1240dp/activity_identity.xml" value="0.248828125" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_avatar_tool.xml" value="0.22" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_base_info.xml" value="0.33" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_base_info.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_begin.xml" value="0.2713541666666667" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_coin.xml" value="0.33" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_coin.xml" value="0.22" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_coin_record.xml" value="0.19114583333333332" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_collect_success.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_common_question.xml" value="0.2421875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_detail_info.xml" value="0.22" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_dynamic_mine_like.xml" value="0.2578125" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_dynamic_mine_show.xml" value="0.2453125" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_dynamic_other_show.xml" value="0.2453125" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_dynamic_other_show.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_dynamic_send.xml" value="0.24895833333333334" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_feedback.xml" value="0.23958333333333334" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_get_info.xml" value="0.29583333333333334" />
@@ -206,10 +180,15 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_mfr_message.xml" value="0.27395833333333336" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_my_dynamic.xml" value="0.26614583333333336" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_other_dynamic.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_recent_comment.xml" value="0.25625" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_recent_focus.xml" value="0.21927083333333333" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_recent_like.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_recent_view.xml" value="0.21302083333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_retrieve.xml" value="0.25104166666666666" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_safe.xml" value="0.2875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_school_search.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_set.xml" value="0.23697916666666666" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_set_web.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_sz.xml" value="0.2609375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_test.xml" value="0.2609375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/activity_tips.xml" value="0.246875" />
@@ -223,6 +202,8 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_dynamic_delete.xml" value="0.2755208333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_dynamic_mine_edit.xml" value="0.15260416666666668" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_dynamic_other_edit.xml" value="0.2" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_dynamic_report.xml" value="0.26927083333333335" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_focus_delete.xml" value="0.26927083333333335" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_info_address_jobcity.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_info_edu.xml" value="0.22" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_info_income_income.xml" value="0.22" />
@@ -295,20 +276,30 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_user_target_state.xml" value="0.22239583333333332" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/dialog_user_target_wantchild.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_comment.xml" value="0.246875" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_comment_mine.xml" value="0.2557291666666667" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_comment_other.xml" value="0.2557291666666667" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_data.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_date.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_dynamic.xml" value="0.24947916666666667" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_dynamic_recommend.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_focus_mine.xml" value="0.21927083333333333" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_focus_other.xml" value="0.21927083333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_like.xml" value="0.246875" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_like_mine.xml" value="0.2796875" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_like_other.xml" value="0.2796875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_love.xml" value="0.24947916666666667" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_message.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_mine.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_normal.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_recommend.xml" value="0.175" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_super.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_super.xml" value="0.2" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_target.xml" value="0.24947916666666667" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_view_mine.xml" value="0.21302083333333333" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/fragment_view_other.xml" value="0.21302083333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/item_layout_school_search.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_banner.xml" value="0.24010416666666667" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_coin_record.xml" value="0.25" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_comment.xml" value="0.1" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_comment_child.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_comment_parent.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_custom_login.xml" value="0.3260416666666667" />
@@ -317,10 +308,12 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_detail_target_job_address.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_like.xml" value="0.21875" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_mine.xml" value="0.25" />
-        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_other.xml" value="0.33" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_other.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_tip_like.xml" value="0.23177083333333334" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_dynamic_tips.xml" value="0.3536458333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_feedback.xml" value="0.23958333333333334" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_focus_mine.xml" value="0.33" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_focus_other.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_guide_step_address.xml" value="0.25" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_guide_step_adress.xml" value="0.20520833333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_guide_step_edu.xml" value="0.22" />
@@ -337,6 +330,7 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_guide_step_sex.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_guide_step_target.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_image_preview.xml" value="0.3536458333333333" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_like.xml" value="0.2859375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_location_info.xml" value="0.15260416666666668" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_main_guide_car.xml" value="0.28541666666666665" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_main_guide_havechild.xml" value="0.3" />
@@ -349,6 +343,8 @@
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_set.xml" value="0.2859375" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_set_data.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_set_switch.xml" value="0.2859375" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_view_mine.xml" value="0.33" />
+        <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_view_other.xml" value="0.33" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/layout/layout_vip_tool.xml" value="0.2552083333333333" />
         <entry key="..\:/project/MarryFriend/app/src/main/res/xml/file_paths.xml" value="0.259375" />
         <entry key="..\:/project/MarryFriend/faceplatform-ui/src/main/res/drawable/collect_image_close_selector.xml" value="0.214" />
@@ -442,7 +438,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

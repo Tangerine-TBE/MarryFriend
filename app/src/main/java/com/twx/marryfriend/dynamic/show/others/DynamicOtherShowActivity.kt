@@ -29,6 +29,7 @@ import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
+import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.UnicodeUtils
 import com.twx.marryfriend.utils.emoji.EmojiUtils
@@ -1061,6 +1062,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     info = checkTrendBean.data.list[0]
                     val image = checkTrendBean.data.imgs
 
+                    SpUtil.storeVipInfo(info.close_time_low, info.close_time_high)
+
                     trendsId = info.id
                     hostUid = info.user_id.toInt()
                     threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
@@ -1079,6 +1082,33 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     Glide.with(applicationContext).load(info.headface)
                         .into(riv_dynamic_other_show_avatar)
                     tv_dynamic_other_show_name.text = info.nick
+
+
+                    when (info.identity_status) {
+                        1 -> {
+                            iv_detail_dynamic_other_identity.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            iv_detail_dynamic_other_identity.visibility = View.GONE
+                        }
+                    }
+
+                    iv_detail_dynamic_other_identity
+
+                    when (SpUtil.getVipLevel(info.close_time_low, info.close_time_high)) {
+                        0 -> {
+                            iv_detail_dynamic_other_vip.visibility = View.GONE
+                        }
+                        1 -> {
+                            iv_detail_dynamic_other_vip.visibility = View.VISIBLE
+                            iv_detail_dynamic_other_vip.setImageResource(R.drawable.ic_vip)
+                        }
+                        2 -> {
+                            iv_detail_dynamic_other_vip.visibility = View.VISIBLE
+                            iv_detail_dynamic_other_vip.setImageResource(R.drawable.ic_svip)
+                        }
+                    }
+
 
                     val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
                         Calendar.YEAR) - info.age).toString().substring(2, 4)

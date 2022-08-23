@@ -38,7 +38,8 @@ import java.io.Serializable
 import java.util.*
 
 class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback, IDoPlusFocusCallback, IDoCancelFocusCallback, IGetTotalCountCallback {
+    IDoLikeCancelCallback, IDoPlusFocusCallback, IDoCancelFocusCallback, IGetTotalCountCallback,
+    SaloonAdapter.OnItemClickListener {
 
     // 上次点击时间
     private var lastClickTime = 0L
@@ -63,6 +64,13 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     // 点赞时选择的position
     private var mLikePosition: Int = 0
+
+
+    // 未读评论数据
+    private var commentSum = 0
+
+    // 未读评论数据
+    private var likeSum = 0
 
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
@@ -119,7 +127,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         getTotalCountPresent = getTotalCountPresentImpl.getsInstance()
         getTotalCountPresent.registerCallback(this)
 
+
+
         adapter = SaloonAdapter(mTrendList, mDiyList)
+        adapter.setOnItemClickListener(this)
 
         rv_dynamic_recommend_container.adapter = adapter
         rv_dynamic_recommend_container.layoutManager = LinearLayoutManager(context)
@@ -164,8 +175,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         rl_dynamic_tips.setOnClickListener {
             ToastUtils.showShort("提醒列表")
             rl_dynamic_tips.visibility = View.GONE
-            val intent = Intent(context, TipsActivity::class.java)
-            startActivity(intent)
+
+            startActivity(context?.let { it1 -> TipsActivity.getIntent(it1, commentSum, likeSum) })
 
         }
 
@@ -179,20 +190,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             }
         })
 
-        adapter.setOnItemClickListener(object : SaloonAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, position: Int) {
-                val intent = Intent(context, DynamicOtherShowActivity::class.java)
-                intent.putExtra("trendId", mTrendList[position].id)
-                intent.putExtra("usersId", mTrendList[position].user_id.toInt())
-                val mode = if (mDiyList[position].focus) {
-                    1
-                } else {
-                    0
-                }
-                intent.putExtra("mode", mode)
-                startActivity(intent)
-            }
-        })
 
         adapter.setOnAvatarClickListener(object : SaloonAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
@@ -438,7 +435,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             override fun onLikeClick(v: View?, position: Int) {
 
                 // 点赞， 此时需要验证是否上传头像
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
                     mLikePosition = position
 
                     if (!mDiyList[position].like) {
@@ -559,6 +558,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             if (totalCountBean.code == 200) {
                 rl_dynamic_tips.visibility = View.VISIBLE
                 tv_dynamic_tips_count.text = "${totalCountBean.data}条新消息"
+
+
             }
         }
     }
@@ -687,6 +688,32 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             super.onDismiss()
         }
 
+    }
+
+    override fun onItemClick(v: View?, position: Int) {
+        val intent = Intent(context, DynamicOtherShowActivity::class.java)
+        intent.putExtra("trendId", mTrendList[position].id)
+        intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+        val mode = if (mDiyList[position].focus) {
+            1
+        } else {
+            0
+        }
+        intent.putExtra("mode", mode)
+        startActivity(intent)
+    }
+
+    override fun onTextClick(v: View?, position: Int) {
+        val intent = Intent(context, DynamicOtherShowActivity::class.java)
+        intent.putExtra("trendId", mTrendList[position].id)
+        intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+        val mode = if (mDiyList[position].focus) {
+            1
+        } else {
+            0
+        }
+        intent.putExtra("mode", mode)
+        startActivity(intent)
     }
 
 }

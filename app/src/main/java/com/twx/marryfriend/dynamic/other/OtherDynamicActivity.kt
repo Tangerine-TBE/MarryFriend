@@ -39,7 +39,7 @@ import java.util.*
 
 class OtherDynamicActivity : MainBaseViewActivity(),
     IGetOtherTrendsListCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback {
+    IDoLikeCancelCallback, OtherDynamicAdapter.OnItemClickListener {
 
     companion object {
 
@@ -128,6 +128,8 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         doLikeCancelPresent.registerCallback(this)
 
         adapter = OtherDynamicAdapter(trendList, mDiyList)
+        adapter.setOnItemClickListener(this)
+
         linearLayoutManager =
             WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         rv_dynamic_other_container.layoutManager = linearLayoutManager
@@ -219,33 +221,13 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             srl_dynamic_other_refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
         }
 
-        adapter.setOnItemClickListener(object : OtherDynamicAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, position: Int) {
-                if (trendList[position].audit_status == 1) {
-                    startActivity(DynamicOtherShowActivity.getIntent(this@OtherDynamicActivity,
-                        trendList[position].id,
-                        trendList[position].user_id.toInt()))
-                } else {
-                    ToastUtils.showShort("此动态正在审核中")
-                }
-            }
-
-            override fun onItemMoreClick(v: View?, position: Int) {
-                XPopup.Builder(this@OtherDynamicActivity)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(DynamicEditDialog(this@OtherDynamicActivity, position))
-                    .show()
-            }
-        })
-
         adapter.setOnLikeClickListener(object : OtherDynamicAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
 
                 // 点赞， 此时需要验证是否上传头像
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
 //                    mLikePosition = position
 
                     if (!mDiyList[position].like) {
@@ -546,7 +528,8 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                         //  获取全部数据，此时应该更新数据
                         tv_dynamic_other_all.text = otherTrendsListBean.data.total.all.toString()
                         tv_dynamic_other_pic.text = otherTrendsListBean.data.total.image.toString()
-                        tv_dynamic_other_video.text = otherTrendsListBean.data.total.video.toString()
+                        tv_dynamic_other_video.text =
+                            otherTrendsListBean.data.total.video.toString()
                         tv_dynamic_other_text.text = otherTrendsListBean.data.total.wenzi.toString()
 
                         for (i in 0.until(otherTrendsListBean.data.list.size)) {
@@ -555,7 +538,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                             val focus = true
                             val like = otherTrendsListBean.data.list[i].is_like != null
 
-                            mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                            mDiyList.add(LikeBean(focus,
+                                like,
+                                otherTrendsListBean.data.list[i].like_count))
                         }
 
                     }
@@ -567,7 +552,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                                 val focus = true
                                 val like = otherTrendsListBean.data.list[i].is_like != null
 
-                                mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                                mDiyList.add(LikeBean(focus,
+                                    like,
+                                    otherTrendsListBean.data.list[i].like_count))
                             }
                         }
                     }
@@ -579,7 +566,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                                 val focus = true
                                 val like = otherTrendsListBean.data.list[i].is_like != null
 
-                                mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                                mDiyList.add(LikeBean(focus,
+                                    like,
+                                    otherTrendsListBean.data.list[i].like_count))
                             }
                         }
                     }
@@ -591,7 +580,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                                 val focus = true
                                 val like = otherTrendsListBean.data.list[i].is_like != null
 
-                                mDiyList.add(LikeBean(focus, like, otherTrendsListBean.data.list[i].like_count))
+                                mDiyList.add(LikeBean(focus,
+                                    like,
+                                    otherTrendsListBean.data.list[i].like_count))
                             }
                         }
                     }
@@ -755,6 +746,32 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             super.onDismiss()
         }
 
+    }
+
+    override fun onItemClick(v: View?, position: Int) {
+
+        startActivity(DynamicOtherShowActivity.getIntent(this@OtherDynamicActivity,
+            trendList[position].id,
+            trendList[position].user_id.toInt()))
+
+    }
+
+    override fun onTextClick(v: View?, position: Int) {
+
+        startActivity(DynamicOtherShowActivity.getIntent(this@OtherDynamicActivity,
+            trendList[position].id,
+            trendList[position].user_id.toInt()))
+
+    }
+
+    override fun onItemMoreClick(v: View?, position: Int) {
+        XPopup.Builder(this@OtherDynamicActivity)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(DynamicEditDialog(this@OtherDynamicActivity, position))
+            .show()
     }
 
 }

@@ -128,7 +128,6 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
 
         if (photoListBean != null) {
             if (photoListBean.code == 200) {
-                Log.i("guo","photoListBean.data.size : ${photoListBean.data.size}")
 
                 when (photoListBean.data.size) {
                     0 -> {
@@ -148,10 +147,14 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
                     }
                     1 -> {
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, photoListBean.data[0].image_url)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, photoListBean.data[0].content)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, photoListBean.data[0].id.toString())
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, photoListBean.data[0].status.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
+                            photoListBean.data[0].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT,
+                            photoListBean.data[0].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID,
+                            photoListBean.data[0].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT,
+                            photoListBean.data[0].status.toString())
 
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, "")
@@ -164,15 +167,23 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
                     }
                     2 -> {
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, photoListBean.data[0].image_url)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, photoListBean.data[0].content)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, photoListBean.data[0].id.toString())
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, photoListBean.data[0].status.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
+                            photoListBean.data[0].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT,
+                            photoListBean.data[0].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID,
+                            photoListBean.data[0].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT,
+                            photoListBean.data[0].status.toString())
 
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, photoListBean.data[1].image_url)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, photoListBean.data[1].content)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, photoListBean.data[1].id.toString())
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, photoListBean.data[1].status.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO,
+                            photoListBean.data[1].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT,
+                            photoListBean.data[1].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID,
+                            photoListBean.data[1].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT,
+                            photoListBean.data[1].status.toString())
 
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
@@ -180,20 +191,32 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
                     }
                     3 -> {
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, photoListBean.data[0].image_url)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT, photoListBean.data[0].content)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID, photoListBean.data[0].id.toString())
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, photoListBean.data[0].status.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
+                            photoListBean.data[0].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT,
+                            photoListBean.data[0].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID,
+                            photoListBean.data[0].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT,
+                            photoListBean.data[0].status.toString())
 
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, photoListBean.data[1].image_url)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT, photoListBean.data[1].content)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID, photoListBean.data[1].id.toString())
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, photoListBean.data[1].status.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO,
+                            photoListBean.data[1].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT,
+                            photoListBean.data[1].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID,
+                            photoListBean.data[1].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT,
+                            photoListBean.data[1].status.toString())
 
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, photoListBean.data[2].image_url)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT,  photoListBean.data[2].content)
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, photoListBean.data[1].id.toString())
-                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, photoListBean.data[1].status.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE,
+                            photoListBean.data[2].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT,
+                            photoListBean.data[2].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID,
+                            photoListBean.data[1].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT,
+                            photoListBean.data[1].status.toString())
                     }
                 }
             }

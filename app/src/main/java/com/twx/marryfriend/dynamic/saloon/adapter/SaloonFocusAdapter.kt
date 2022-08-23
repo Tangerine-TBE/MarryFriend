@@ -1,20 +1,19 @@
 package com.twx.marryfriend.dynamic.saloon.adapter
 
 import android.content.Context
-import android.graphics.drawable.AnimationDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.constant.TimeConstants
-import com.blankj.utilcode.util.ResourceUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.TrendFocusList
 import com.twx.marryfriend.constant.DataProvider.EduData
+import com.twx.marryfriend.utils.SpUtil
 import java.util.*
 
 /**
@@ -120,7 +119,6 @@ class SaloonFocusAdapter(
         fun onVideoClick(v: View?, position: Int)
     }
 
-
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mOnItemClickListener = listener
     }
@@ -191,8 +189,11 @@ class SaloonFocusAdapter(
 
         val avatar: ImageView = view.findViewById(R.id.riv_detail_dynamic_other_avatar)
         val name: TextView = view.findViewById(R.id.tv_detail_dynamic_other_name)
+
+        val trueAvatar: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_avatar)
         val identity: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_identity)
         val vip: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_vip)
+
         val info: TextView = view.findViewById(R.id.tv_detail_dynamic_other_info)
 
         val text: TextView = view.findViewById(R.id.tv_detail_dynamic_other_text)
@@ -320,8 +321,18 @@ class SaloonFocusAdapter(
         Glide.with(mContext).load(mList[position].headface).into(holder.avatar)
         holder.name.text = mList[position].nick
 
-        if (mList[position].vip_level > 0) {
-            holder.vip.visibility = View.VISIBLE
+        when (SpUtil.getVipLevel(mList[position].close_time_low, mList[position].close_time_high)) {
+            0 -> {
+                holder.vip.visibility = View.GONE
+            }
+            1 -> {
+                holder.vip.visibility = View.VISIBLE
+                holder.vip.setImageResource(R.drawable.ic_vip)
+            }
+            2 -> {
+                holder.vip.visibility = View.VISIBLE
+                holder.vip.setImageResource(R.drawable.ic_svip)
+            }
         }
 
 
@@ -351,6 +362,12 @@ class SaloonFocusAdapter(
         } else {
             Glide.with(mContext).load(R.mipmap.icon_identify_non)
                 .into(holder.identity)
+        }
+
+        if (mList[position].real_face == 1) {
+            holder.trueAvatar.visibility = View.VISIBLE
+        } else {
+            holder.trueAvatar.visibility = View.GONE
         }
 
         val x = TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),

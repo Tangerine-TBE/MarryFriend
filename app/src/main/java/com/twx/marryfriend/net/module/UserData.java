@@ -1,7 +1,5 @@
 package com.twx.marryfriend.net.module;
 
-import androidx.annotation.AnyRes;
-
 import com.twx.marryfriend.bean.AccessTokenBean;
 import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.BanBean;
@@ -14,7 +12,10 @@ import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
-import com.twx.marryfriend.bean.MeSeeWhoBean;
+import com.twx.marryfriend.bean.mine.MeDiscussWhoBean;
+import com.twx.marryfriend.bean.mine.MeFocusWhoBean;
+import com.twx.marryfriend.bean.mine.MeLikeWhoBean;
+import com.twx.marryfriend.bean.mine.MeSeeWhoBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
 import com.twx.marryfriend.bean.PhotoListBean;
 import com.twx.marryfriend.bean.PlusDemandAddressBean;
@@ -29,7 +30,10 @@ import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
 import com.twx.marryfriend.bean.ViewHeadfaceBean;
-import com.twx.marryfriend.bean.WhoSeeMeBean;
+import com.twx.marryfriend.bean.mine.WhoDiscussMeBean;
+import com.twx.marryfriend.bean.mine.WhoFocusMeBean;
+import com.twx.marryfriend.bean.mine.WhoLikeMeBean;
+import com.twx.marryfriend.bean.mine.WhoSeeMeBean;
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean;
 import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
@@ -54,16 +58,18 @@ import com.twx.marryfriend.bean.dynamic.SearchBean;
 import com.twx.marryfriend.bean.dynamic.TotalCountBean;
 import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
-import com.twx.marryfriend.bean.dynamic.TrendTipBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
+import com.twx.marryfriend.bean.vip.AliPayBean;
+import com.twx.marryfriend.bean.vip.CoinPriceBean;
+import com.twx.marryfriend.bean.vip.CoinRecordBean;
+import com.twx.marryfriend.bean.vip.RefreshSelfBean;
+import com.twx.marryfriend.bean.vip.VipPriceBean;
 import com.twx.marryfriend.constant.Contents;
 import com.twx.marryfriend.net.utils.ApiMapUtil;
 import com.twx.marryfriend.net.utils.Md5Util;
 import com.twx.marryfriend.net.utils.RetrofitManager;
 import com.twx.marryfriend.net.utils.SortMapUtil;
 
-import java.io.File;
-import java.io.PipedReader;
 import java.util.Map;
 
 import retrofit2.Callback;
@@ -304,32 +310,103 @@ public class UserData {
     }
 
     // 最近来访 -- 我看过谁列表
-    public void getMeSeeWho(Map<String, String> map, Callback<MeSeeWhoBean> callback) {
+    public void getMeSeeWho(Map<String, String> map, Integer page, Callback<MeSeeWhoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByValue(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_SEE_WHO + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_SEE_WHO, currentTimeMillis, random, checkCode, map);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_SEE_WHO, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getMeSeeWho(map1).enqueue(callback);
     }
 
     // 最近来访 -- 谁看过我列表
-    public void getWhoSeeMe(Map<String, String> map, Callback<WhoSeeMeBean> callback) {
+    public void getWhoSeeMe(Map<String, String> map, Integer page, Callback<WhoSeeMeBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByValue(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_SEE_ME + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_SEE_ME, currentTimeMillis, random, checkCode, map);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_SEE_ME, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getWhoSeeMe(map1).enqueue(callback);
     }
 
 
+    // 我关注其它人，列表
+    public void getMeFocusWho(Map<String, String> map, Integer page, Callback<MeFocusWhoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_FOCUS_WHO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_FOCUS_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getMeFocusWho(map1).enqueue(callback);
+    }
+
+    // 其它人关注我，列表
+    public void getWhoFocusMe(Map<String, String> map, Integer page, Callback<WhoFocusMeBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_FOCUS_ME + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_FOCUS_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getWhoFocusMe(map1).enqueue(callback);
+    }
 
 
+    // 我点过谁赞列表
+    public void getMeLikeWho(Map<String, String> map, Integer page, Callback<MeLikeWhoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_LIKE_WHO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_LIKE_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getMeLikeWho(map1).enqueue(callback);
+    }
+
+    // 谁点过我赞列表
+    public void getWhoLikeMe(Map<String, String> map, Integer page, Callback<WhoLikeMeBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_LIKE_ME + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_LIKE_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getWhoLikeMe(map1).enqueue(callback);
+    }
+
+
+    // 我评论过谁的列表
+    public void getMeDiscussWho(Map<String, String> map, Integer page, Callback<MeDiscussWhoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_DISCUSS_WHO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_DISCUSS_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getMeDiscussWho(map1).enqueue(callback);
+    }
+
+    // 谁评论过我的列表
+    public void getWhoDiscussMe(Map<String, String> map, Integer page, Callback<WhoDiscussMeBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_DISCUSS_ME + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_DISCUSS_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getWhoDiscussMe(map1).enqueue(callback);
+    }
 
 
     // 获取学校
@@ -747,6 +824,68 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_TIP + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TIP, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getCommentTips(map1).enqueue(callback);
+    }
+
+
+    // 会员价格列表
+    public void getVipPrice(Map<String, String> map, Callback<VipPriceBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_VIP_PRICE + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_VIP_PRICE, currentTimeMillis, random, checkCode, map);
+        mApi.getVipPrice(map1).enqueue(callback);
+    }
+
+    // 金币价格列表
+    public void getCoinPrice(Map<String, String> map, Callback<CoinPriceBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COIN_PRICE + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COIN_PRICE, currentTimeMillis, random, checkCode, map);
+        mApi.getCoinPrice(map1).enqueue(callback);
+    }
+
+    // 苹果安卓发起支付宝
+    public void doAliPay(Map<String, String> map, Callback<AliPayBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_ALI_PAY + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_ALI_PAY, currentTimeMillis, random, checkCode, map);
+        mApi.doAliPay(map1).enqueue(callback);
+    }
+
+    // 金币收支记录列表
+    public void getCoinRecord(Map<String, String> map, Integer page, Callback<CoinRecordBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COIN_RECORD + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COIN_RECORD, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getCoinRecord(map1).enqueue(callback);
+    }
+
+
+    // 刷新金币与会员
+    public void doRefreshSelf(Map<String, String> map, Callback<RefreshSelfBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REFRESH_SELF + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REFRESH_SELF, currentTimeMillis, random, checkCode, map);
+        mApi.doRefreshSelf(map1).enqueue(callback);
     }
 
 

@@ -13,9 +13,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.TimeUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.MyTrendsList
+import com.twx.marryfriend.utils.FolderTextView
 import com.twx.marryfriend.utils.TimeUtil
 import java.util.*
 
@@ -57,6 +59,7 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, position: Int)
+        fun onTextClick(v: View?, position: Int)
         fun onItemMoreClick(v: View?, position: Int)
     }
 
@@ -168,7 +171,7 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val text: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_text)
+        val text: FolderTextView = view.findViewById(R.id.tv_detail_dynamic_mine_text)
 
         val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_mine_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_location)
@@ -222,6 +225,11 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
         holder.more.setOnClickListener {
             mOnItemClickListener?.onItemMoreClick(it, position)
+        }
+
+        holder.text.setOnClickListener {
+            Log.i("guo","123456")
+            mOnItemClickListener?.onTextClick(it, position)
         }
 
         holder.ivLike.setOnClickListener {
@@ -281,6 +289,7 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
     private fun initPic(holder: ViewHolder, position: Int) {
 
         if (mList[position].text_content != "") {
+            holder.text.visibility = View.VISIBLE
             holder.text.text = mList[position].text_content
         } else {
             holder.text.visibility = View.GONE

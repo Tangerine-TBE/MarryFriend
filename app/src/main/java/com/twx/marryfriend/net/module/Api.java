@@ -12,7 +12,10 @@ import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
-import com.twx.marryfriend.bean.MeSeeWhoBean;
+import com.twx.marryfriend.bean.mine.MeDiscussWhoBean;
+import com.twx.marryfriend.bean.mine.MeFocusWhoBean;
+import com.twx.marryfriend.bean.mine.MeLikeWhoBean;
+import com.twx.marryfriend.bean.mine.MeSeeWhoBean;
 import com.twx.marryfriend.bean.PhoneLoginBean;
 import com.twx.marryfriend.bean.PhotoListBean;
 import com.twx.marryfriend.bean.PlusDemandAddressBean;
@@ -27,8 +30,10 @@ import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.bean.VerifyCodeBean;
 import com.twx.marryfriend.bean.ViewHeadfaceBean;
-import com.twx.marryfriend.bean.WhoFocusMeBean;
-import com.twx.marryfriend.bean.WhoSeeMeBean;
+import com.twx.marryfriend.bean.mine.WhoDiscussMeBean;
+import com.twx.marryfriend.bean.mine.WhoFocusMeBean;
+import com.twx.marryfriend.bean.mine.WhoLikeMeBean;
+import com.twx.marryfriend.bean.mine.WhoSeeMeBean;
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean;
 import com.twx.marryfriend.bean.dynamic.CheckTrendBean;
 import com.twx.marryfriend.bean.dynamic.CommentOneBean;
@@ -53,8 +58,12 @@ import com.twx.marryfriend.bean.dynamic.SearchBean;
 import com.twx.marryfriend.bean.dynamic.TotalCountBean;
 import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
-import com.twx.marryfriend.bean.dynamic.TrendTipBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
+import com.twx.marryfriend.bean.vip.AliPayBean;
+import com.twx.marryfriend.bean.vip.CoinPriceBean;
+import com.twx.marryfriend.bean.vip.CoinRecordBean;
+import com.twx.marryfriend.bean.vip.RefreshSelfBean;
+import com.twx.marryfriend.bean.vip.VipPriceBean;
 
 import java.util.Map;
 
@@ -145,19 +154,27 @@ public interface Api {
 
     // 我关注其它人，列表
     @POST("/marryfriend/UserCenter/mineFocusOtherList")
-    Call<WhoFocusMeBean> getMeFocusWho(@QueryMap Map<String, Object> params);
+    Call<MeFocusWhoBean> getMeFocusWho(@QueryMap Map<String, Object> params);
 
     // 其它人关注我，列表
     @POST("/marryfriend/UserCenter/otherFocusMineList")
     Call<WhoFocusMeBean> getWhoFocusMe(@QueryMap Map<String, Object> params);
 
     // 我点过谁赞列表
+    @POST("/marryfriend/UserCenter/meDianzanWhoList")
+    Call<MeLikeWhoBean> getMeLikeWho(@QueryMap Map<String, Object> params);
 
     // 谁点过我赞列表
+    @POST("/marryfriend/UserCenter/whoDianzanMeList")
+    Call<WhoLikeMeBean> getWhoLikeMe(@QueryMap Map<String, Object> params);
 
     // 我评论过谁的列表
+    @POST("/marryfriend/UserCenter/meDiscussWhoList")
+    Call<MeDiscussWhoBean> getMeDiscussWho(@QueryMap Map<String, Object> params);
 
     // 谁评论过我的列表
+    @POST("/marryfriend/UserCenter/whoDiscussMeList")
+    Call<WhoDiscussMeBean> getWhoDiscussMe(@QueryMap Map<String, Object> params);
 
 
     // 获取省市县
@@ -306,6 +323,31 @@ public interface Api {
     // 评论未读列表
     @POST("/marryfriend/TrendsNotice/discussUnreadList")
     Call<CommentTipBean> getCommentTips(@QueryMap Map<String, Object> params);
+
+
+    // 会员价格列表
+    @POST("/marryfriend/MemberCharge/vipList")
+    Call<VipPriceBean> getVipPrice(@QueryMap Map<String, Object> params);
+
+    // 金币价格列表
+    @POST("/marryfriend/MemberCharge/jinbiList")
+    Call<CoinPriceBean> getCoinPrice(@QueryMap Map<String, Object> params);
+
+    // 苹果安卓发起支付宝
+    @POST("/marryfriend/MemberCharge/alibabaPayment")
+    Call<AliPayBean> doAliPay(@QueryMap Map<String, Object> params);
+
+    // 金币收支记录列表
+    @POST("/marryfriend/MemberCharge/jinbiRecordList")
+    Call<CoinRecordBean> getCoinRecord(@QueryMap Map<String, Object> params);
+
+
+    // 刷新金币与会员
+    @POST("/marryfriend/MemberCharge/refreshSelf")
+    Call<RefreshSelfBean> doRefreshSelf(@QueryMap Map<String, Object> params);
+
+
+
 
     // 高德地图-地点检索
     @POST("/v3/place/around")

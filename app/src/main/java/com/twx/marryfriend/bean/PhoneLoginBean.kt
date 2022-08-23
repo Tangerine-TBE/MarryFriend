@@ -11,10 +11,13 @@ data class PhoneLoginBean(
 )
 
 data class PhoneLoginData(
+    val close_time_high: String,
+    val close_time_low: String,
     val create_time: String,
+    val jinbi_goldcoin: Int,
+    val level_high: Int,
+    val level_low: Int,
     val server_time: String,
     val user_id: Int,
-    val user_mobile: String,
-    val user_vipExpire: String,
-    val user_vipLevel: Int,
+    val user_mobile: String
 )

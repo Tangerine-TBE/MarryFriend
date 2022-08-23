@@ -592,7 +592,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         tv_guide_detail_skip.setOnClickListener {
             ToastUtils.showShort("跳过整个流程，前往主页")
-//            startActivity(Intent(this, JumpActivity::class.java))
+
+            SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
+
             startActivity(Intent(this, MainActivity::class.java))
         }
 
@@ -2409,6 +2411,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             SPStaticUtils.put(Constant.TRUE_NAME, name)
             SPStaticUtils.put(Constant.TRUE_ID, identityCode)
+
+            // 这里需要
+
 
             XXPermissions.with(this)
                 .permission(Permission.CAMERA)

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context="com.twx.marryfriend.dynamic.DynamicFragment">
 
@@ -14,13 +15,15 @@
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tb_dynamic_indicator"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="44dp"
+            android:background="@color/white"
+            android:layout_gravity="center"
+            android:layout_marginTop="44dp"
+            app:tabIndicator="@drawable/shape_bg_indicator"
             app:tabIndicatorColor="#FF7700"
             app:tabIndicatorFullWidth="false"
-            app:tabMaxWidth="180dp"
-            app:tabMinWidth="120dp"
+            app:tabMinWidth="100dp"
             app:tabRippleColor="@android:color/transparent"
             app:tabSelectedTextColor="#FF4444"
             app:tabTextColor="#101010">

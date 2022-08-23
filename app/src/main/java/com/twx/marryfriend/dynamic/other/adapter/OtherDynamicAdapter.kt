@@ -18,6 +18,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.MyTrendsList
 import com.twx.marryfriend.bean.dynamic.OtherTrendsList
+import com.twx.marryfriend.utils.FolderTextView
 import com.twx.marryfriend.utils.TimeUtil
 import java.util.*
 
@@ -62,6 +63,7 @@ class OtherDynamicAdapter(
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, position: Int)
+        fun onTextClick(v: View?, position: Int)
         fun onItemMoreClick(v: View?, position: Int)
     }
 
@@ -173,7 +175,7 @@ class OtherDynamicAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val text: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_text)
+        val text: FolderTextView = view.findViewById(R.id.tv_detail_dynamic_mine_text)
 
         val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_mine_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_mine_location)
@@ -227,6 +229,10 @@ class OtherDynamicAdapter(
 
         holder.more.setOnClickListener {
             mOnItemClickListener?.onItemMoreClick(it, position)
+        }
+
+        holder.text.setOnClickListener {
+            mOnItemClickListener?.onTextClick(it, position)
         }
 
         holder.ivLike.setOnClickListener {
@@ -304,9 +310,9 @@ class OtherDynamicAdapter(
             holder.tvLike.text = "抢首赞"
         }
 
-        if (mList[position].discuss_count != 0){
+        if (mList[position].discuss_count != 0) {
             holder.tvComment.text = mList[position].discuss_count.toString()
-        }else{
+        } else {
             holder.tvComment.text = "评论"
         }
 
@@ -585,7 +591,6 @@ class OtherDynamicAdapter(
         } else {
             holder.audit.visibility = View.VISIBLE
         }
-
 
 
     }

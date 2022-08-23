@@ -3,20 +3,46 @@ package com.twx.marryfriend.vip
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
+import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
+import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.vip.VipPriceBean
 import com.twx.marryfriend.constant.Constant
-import com.twx.marryfriend.vip.normal.NormalFragment
-import com.twx.marryfriend.vip.svip.SuperFragment
+import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.net.callback.vip.IGetSVipPriceCallback
+import com.twx.marryfriend.net.callback.vip.IGetVipPriceCallback
+import com.twx.marryfriend.net.impl.vip.getSVipPricePresentImpl
+import com.twx.marryfriend.net.impl.vip.getVipPricePresentImpl
+import com.twx.marryfriend.utils.weight.FragmentPagerAdapter
+import com.twx.marryfriend.utils.weight.XCollapsingToolbarLayout
+import com.twx.marryfriend.vip.normal.VipFragment
+import com.twx.marryfriend.vip.svip.SVipFragment
 import kotlinx.android.synthetic.main.activity_vip.*
+import java.util.*
 
-class VipActivity : MainBaseViewActivity() {
+class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsListener,
+    OnPageChangeListener, IGetVipPriceCallback, IGetSVipPriceCallback {
 
-    private var normal: NormalFragment? = null
-    private var svip: SuperFragment? = null
+    private lateinit var normal: VipFragment
+    private lateinit var svip: SVipFragment
+
+    // 是否加载普通会员价格信息
+    private var isLoadVip = false
+
+    // 是否加载超级会员价格信息
+    private var isLoadSVip = false
+
+    private lateinit var getVipPricePresent: getVipPricePresentImpl
+    private lateinit var getSVipPricePresent: getSVipPricePresentImpl
+
+    private lateinit var mPagerAdapter: FragmentPagerAdapter<Fragment>
 
     companion object {
         private const val VIP_MODE = "vip_mode"
@@ -32,16 +58,16 @@ class VipActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
 
-        when (intent.getIntExtra("vip_mode", 0)) {
-            0 -> {
-                initNormalFragment()
-                chooseMode(0)
-            }
-            1 -> {
-                initSuperFragment()
-                chooseMode(1)
-            }
-        }
+        getVipPricePresent = getVipPricePresentImpl.getsInstance()
+        getVipPricePresent.registerCallback(this)
+
+        getSVipPricePresent = getSVipPricePresentImpl.getsInstance()
+        getSVipPricePresent.registerCallback(this)
+
+        normal = VipFragment().newInstance(this)
+        svip = SVipFragment().newInstance(this)
+
+
 
         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
             Glide.with(this)
@@ -58,6 +84,33 @@ class VipActivity : MainBaseViewActivity() {
         }
 
         tv_vip_name.text = SPStaticUtils.getString(Constant.ME_NAME, "default")
+
+        updateTopView()
+
+        mPagerAdapter = FragmentPagerAdapter(this)
+        mPagerAdapter.addFragment(normal, "")
+        mPagerAdapter.addFragment(svip, "")
+
+        nvp_vip_container.adapter = mPagerAdapter
+        nvp_vip_container.addOnPageChangeListener(this)
+
+
+        xctl.setOnScrimsListener(this)
+
+        when (intent.getIntExtra("vip_mode", 0)) {
+            0 -> {
+                if (!isLoadVip) {
+                    getVipPrice()
+                }
+                chooseMode(0)
+            }
+            1 -> {
+                if (!isLoadSVip) {
+                    getSVipPrice()
+                }
+                chooseMode(1)
+            }
+        }
 
     }
 
@@ -77,68 +130,193 @@ class VipActivity : MainBaseViewActivity() {
         }
 
         tv_vip_normal.setOnClickListener {
-            initNormalFragment()
+            if (!isLoadVip) {
+                getVipPrice()
+            }
             chooseMode(0)
         }
 
         tv_vip_super.setOnClickListener {
-            initSuperFragment()
+            if (!isLoadSVip) {
+                getSVipPrice()
+            }
+            chooseMode(1)
+        }
+
+
+        iv_vip_top_switch_vip.setOnClickListener {
+            if (!isLoadVip) {
+                getVipPrice()
+            }
+            chooseMode(0)
+        }
+
+        iv_vip_top_switch_svip.setOnClickListener {
+            if (!isLoadSVip) {
+                getSVipPrice()
+            }
             chooseMode(1)
         }
 
     }
 
+    private fun getVipPrice() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+        map[Contents.TYPE_KIND] = "android"
+        map[Contents.VIP_LEVEL] = "1"
+        getVipPricePresent.getVipPrice(map)
+    }
+
+    private fun getSVipPrice() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+        map[Contents.TYPE_KIND] = "android"
+        map[Contents.VIP_LEVEL] = "2"
+        getSVipPricePresent.getSVipPrice(map)
+    }
+
+
     private fun chooseMode(mode: Int) {
         if (mode == 0) {
+
+            iv_vip_top_switch_vip.setImageResource(R.mipmap.pic_vip_check)
+            iv_vip_top_switch_svip.setImageResource(R.mipmap.pic_svip_uncheck)
+
+            ll_vip_top_background.setBackgroundResource(R.mipmap.pic_normal_top)
+
             tv_vip_normal.setPadding(0, 30, 0, 30)
             tv_vip_super.setPadding(0, 20, 0, 20)
             tv_vip_normal.setTextColor(Color.parseColor("#DF43FC"))
             tv_vip_super.setTextColor(Color.parseColor("#717171"))
+
+            nvp_vip_container.currentItem = 0
+
         } else {
+
+            iv_vip_top_switch_vip.setImageResource(R.mipmap.pic_vip_uncheck)
+            iv_vip_top_switch_svip.setImageResource(R.mipmap.pic_svip_check)
+
+            ll_vip_top_background.setBackgroundResource(R.mipmap.pic_super_top)
+
             tv_vip_super.setPadding(0, 30, 0, 30)
             tv_vip_normal.setPadding(0, 20, 0, 20)
             tv_vip_super.setTextColor(Color.parseColor("#DF43FC"))
             tv_vip_normal.setTextColor(Color.parseColor("#717171"))
+
+            nvp_vip_container.currentItem = 1
         }
     }
 
+    // 更新最上方视图数据
+    fun updateTopView() {
 
-    private fun initNormalFragment() {
 
-        ll_vip_top.setBackgroundResource(R.mipmap.pic_normal_top)
-
-        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        if (normal == null) {
-            normal = NormalFragment().newInstance(this)
-            transaction.add(R.id.fl_vip_container, normal!!)
+        when (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)) {
+            0 -> {
+                tv_vip_level.text = "您还不是会员"
+                tv_vip_time.visibility = View.GONE
+            }
+            1 -> {
+                tv_vip_level.text = "您已经是普通会员"
+                tv_vip_time.visibility = View.VISIBLE
+                tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_LOW)
+            }
+            2 -> {
+                tv_vip_level.text = "您已经是超级会员"
+                tv_vip_time.visibility = View.VISIBLE
+                tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_HIGH)
+            }
         }
-        hideFragment(transaction)
-        transaction.show(normal!!)
-        transaction.commit()
-    }
 
-    private fun initSuperFragment() {
 
-        ll_vip_top.setBackgroundResource(R.mipmap.pic_super_top)
-
-        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        if (svip == null) {
-            svip = SuperFragment().newInstance(this)
-            transaction.add(R.id.fl_vip_container, svip!!)
-        }
-        hideFragment(transaction)
-        transaction.show(svip!!)
-        transaction.commit()
     }
 
 
-    private fun hideFragment(transaction: FragmentTransaction) {
-        if (normal != null) {
-            transaction.hide(normal!!)
+    override fun onScrimsStateChange(layout: XCollapsingToolbarLayout?, shown: Boolean) {
+
+        if (shown) {
+
+            ll_vip_top.setBackgroundResource(R.drawable.shape_bg_vip_top)
+
+            tv_vip_top_title.visibility = View.GONE
+            ll_vip_top_switch.visibility = View.VISIBLE
+
+        } else {
+
+            ll_vip_top.setBackgroundResource(R.color.transparent)
+
+            tv_vip_top_title.visibility = View.VISIBLE
+            ll_vip_top_switch.visibility = View.GONE
+
         }
-        if (svip != null) {
-            transaction.hide(svip!!)
+
+    }
+
+    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+    }
+
+    override fun onPageSelected(position: Int) {
+
+    }
+
+    override fun onPageScrollStateChanged(state: Int) {
+
+    }
+
+    override fun onLoading() {
+
+    }
+
+    override fun onError() {
+
+    }
+
+    override fun onGetSVipPriceSuccess(vipPriceBean: VipPriceBean?) {
+        if (vipPriceBean != null) {
+            if (vipPriceBean.code == 200) {
+                isLoadSVip = true
+
+                for (i in 0.until(vipPriceBean.data.size)) {
+                    svip.mVipPriceList.add(vipPriceBean.data[i].now_price)
+                    svip.mVipModeList.add(vipPriceBean.data[i].level.toString())
+                }
+
+                svip.mVipPrice = vipPriceBean.data[2].now_price
+                svip.mVipMode = vipPriceBean.data[2].level.toString()
+
+                svip.updateView(vipPriceBean)
+            }
         }
+    }
+
+    override fun onGetSVipPriceCodeError() {
+
+    }
+
+    override fun onGetVipPriceSuccess(vipPriceBean: VipPriceBean?) {
+        if (vipPriceBean != null) {
+            if (vipPriceBean.code == 200) {
+                isLoadVip = true
+
+                for (i in 0.until(vipPriceBean.data.size)) {
+                    normal.mVipPriceList.add(vipPriceBean.data[i].now_price)
+                    normal.mVipModeList.add(vipPriceBean.data[i].level.toString())
+                }
+
+                normal.mVipPrice = vipPriceBean.data[2].now_price
+                normal.mVipMode = vipPriceBean.data[2].level.toString()
+
+                normal.updateView(vipPriceBean)
+            }
+        }
+    }
+
+    override fun onGetVipPriceCodeError() {
+
     }
 
 }

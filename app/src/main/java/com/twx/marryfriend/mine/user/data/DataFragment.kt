@@ -53,6 +53,7 @@ import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
+import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
 import com.twx.marryfriend.net.callback.*
@@ -429,65 +430,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
-
-    // 验证码倒计时
-    private fun startCurrentDownTimer(mBeginTime: Long) {
-        isCurrentDown = true
-        mCountDownTimer = object : CountDownTimer(mBeginTime, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                var text = ""
-                if (millisUntilFinished.div(1000) / 60 >= 10) {
-
-                    if (millisUntilFinished.div(1000) % 60 >= 10) {
-                        text =
-                            "${millisUntilFinished.div(1000) / 60} : ${millisUntilFinished.div(1000) % 60}"
-                    } else {
-                        text =
-                            "${millisUntilFinished.div(1000) / 60} : 0${millisUntilFinished.div(1000) % 60}"
-                    }
-
-                } else {
-                    if (millisUntilFinished.div(1000) % 60 >= 10) {
-                        text =
-                            "0${millisUntilFinished.div(1000) / 60} : ${millisUntilFinished.div(1000) % 60}"
-                    } else {
-                        text = "0${millisUntilFinished.div(1000) / 60} : 0${
-                            millisUntilFinished.div(1000) % 60
-                        }"
-                    }
-                }
-                tv_user_data_voice.text = text
-            }
-
-            override fun onFinish() {
-                isCurrentDown = false
-
-                // 暂停播放
-                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
-
-                val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
-                var formatTime = if (time.div(1000) / 60 >= 10) {
-                    if (time.div(1000) % 60 >= 10) {
-                        "${time.div(1000) / 60} : ${time.div(1000) % 60}"
-                    } else {
-                        "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
-                    }
-                } else {
-                    if (time.div(1000) % 60 >= 10) {
-                        "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
-                    } else {
-                        "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
-                    }
-                }
-
-                tv_user_data_voice.text = formatTime
-
-                isPlaying = !isPlaying
-
-            }
-        }.start()
-    }
-
     private fun initEvent() {
 
         showFirstDialog()
@@ -694,6 +636,64 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
         })
 
+    }
+
+    // 验证码倒计时
+    private fun startCurrentDownTimer(mBeginTime: Long) {
+        isCurrentDown = true
+        mCountDownTimer = object : CountDownTimer(mBeginTime, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                var text = ""
+                if (millisUntilFinished.div(1000) / 60 >= 10) {
+
+                    if (millisUntilFinished.div(1000) % 60 >= 10) {
+                        text =
+                            "${millisUntilFinished.div(1000) / 60} : ${millisUntilFinished.div(1000) % 60}"
+                    } else {
+                        text =
+                            "${millisUntilFinished.div(1000) / 60} : 0${millisUntilFinished.div(1000) % 60}"
+                    }
+
+                } else {
+                    if (millisUntilFinished.div(1000) % 60 >= 10) {
+                        text =
+                            "0${millisUntilFinished.div(1000) / 60} : ${millisUntilFinished.div(1000) % 60}"
+                    } else {
+                        text = "0${millisUntilFinished.div(1000) / 60} : 0${
+                            millisUntilFinished.div(1000) % 60
+                        }"
+                    }
+                }
+                tv_user_data_voice.text = text
+            }
+
+            override fun onFinish() {
+                isCurrentDown = false
+
+                // 暂停播放
+                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+
+                val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+                var formatTime = if (time.div(1000) / 60 >= 10) {
+                    if (time.div(1000) % 60 >= 10) {
+                        "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                } else {
+                    if (time.div(1000) % 60 >= 10) {
+                        "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                    } else {
+                        "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                    }
+                }
+
+                tv_user_data_voice.text = formatTime
+
+                isPlaying = !isPlaying
+
+            }
+        }.start()
     }
 
     // 判断是否为闰年
@@ -1559,7 +1559,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
 
     // 获取、更新生活照
-    private fun updateLife() {
+    fun updateLife() {
         val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
         val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
 
@@ -1569,12 +1569,20 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
         val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
 
+        tv_user_data_life_one.visibility = View.GONE
+        tv_user_data_life_two.visibility = View.GONE
+        tv_user_data_life_three.visibility = View.GONE
+
         if (lifePhotoOne != "") {
             if (lifePhotoTwo != "") {
                 if (lifePhotoThree != "") {
                     // 有三张图片,全部正常显示
                     ThreadUtils.runOnUiThread {
-                        Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                        Glide.with(this)
+                            .load(lifePhotoOne)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_one)
                         if (lifePhotoOneState == "0") {
                             tv_user_data_life_one.visibility = View.VISIBLE
                         } else {
@@ -1582,7 +1590,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         }
 
                         rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
+                        Glide.with(this)
+                            .load(lifePhotoTwo)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_two)
                         if (lifePhotoTwoState == "0") {
                             tv_user_data_life_two.visibility = View.VISIBLE
                         } else {
@@ -1590,7 +1602,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         }
 
                         rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this).load(lifePhotoThree).into(iv_user_data_life_three)
+                        Glide.with(this)
+                            .load(lifePhotoThree)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_three)
                         if (lifePhotoThreeState == "0") {
                             tv_user_data_life_three.visibility = View.VISIBLE
                         } else {
@@ -1601,7 +1617,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 } else {
                     // 有两张图片，,第一、二张正常显示，第三张显示为添加
                     ThreadUtils.runOnUiThread {
-                        Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                        Glide.with(this)
+                            .load(lifePhotoOne)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_one)
                         if (lifePhotoOneState == "0") {
                             tv_user_data_life_one.visibility = View.VISIBLE
                         } else {
@@ -1609,7 +1629,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         }
 
                         rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(this).load(lifePhotoTwo).into(iv_user_data_life_two)
+                        Glide.with(this)
+                            .load(lifePhotoTwo)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_two)
                         if (lifePhotoTwoState == "0") {
                             tv_user_data_life_two.visibility = View.VISIBLE
                         } else {
@@ -1623,7 +1647,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             } else {
                 // 有一张图片,第一张正常显示，第二张显示为添加
                 ThreadUtils.runOnUiThread {
-                    Glide.with(this).load(lifePhotoOne).into(iv_user_data_life_one)
+                    Glide.with(this)
+                        .load(lifePhotoOne)
+                        .error(R.drawable.ic_data_life_default)
+                        .placeholder(R.drawable.ic_data_life_default)
+                        .into(iv_user_data_life_one)
                     if (lifePhotoOneState == "0") {
                         tv_user_data_life_one.visibility = View.VISIBLE
                     } else {
@@ -1643,6 +1671,116 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
         }
 
+    }
+
+
+    fun update111(activity: UserActivity){
+        val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
+        val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
+
+        val lifePhotoTwo = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
+        val lifePhotoTwoState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
+
+        val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
+        val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
+
+        if (lifePhotoOne != "") {
+            if (lifePhotoTwo != "") {
+                if (lifePhotoThree != "") {
+                    // 有三张图片,全部正常显示
+                    ThreadUtils.runOnUiThread {
+                        Glide.with(activity)
+                            .load(lifePhotoOne)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_one)
+                        if (lifePhotoOneState == "0") {
+                            tv_user_data_life_one.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_one.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_two.visibility = View.VISIBLE
+                        Glide.with(activity)
+                            .load(lifePhotoTwo)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_two)
+                        if (lifePhotoTwoState == "0") {
+                            tv_user_data_life_two.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_two.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_three.visibility = View.VISIBLE
+                        Glide.with(activity)
+                            .load(lifePhotoThree)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_three)
+                        if (lifePhotoThreeState == "0") {
+                            tv_user_data_life_three.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_three.visibility = View.GONE
+                        }
+
+                    }
+                } else {
+                    // 有两张图片，,第一、二张正常显示，第三张显示为添加
+                    ThreadUtils.runOnUiThread {
+                        Glide.with(activity)
+                            .load(lifePhotoOne)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_one)
+                        if (lifePhotoOneState == "0") {
+                            tv_user_data_life_one.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_one.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_two.visibility = View.VISIBLE
+                        Glide.with(activity)
+                            .load(lifePhotoTwo)
+                            .error(R.drawable.ic_data_life_default)
+                            .placeholder(R.drawable.ic_data_life_default)
+                            .into(iv_user_data_life_two)
+                        if (lifePhotoTwoState == "0") {
+                            tv_user_data_life_two.visibility = View.VISIBLE
+                        } else {
+                            tv_user_data_life_two.visibility = View.GONE
+                        }
+
+                        rl_user_data_life_three.visibility = View.VISIBLE
+                        Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_three)
+                    }
+                }
+            } else {
+                // 有一张图片,第一张正常显示，第二张显示为添加
+                ThreadUtils.runOnUiThread {
+                    Glide.with(activity)
+                        .load(lifePhotoOne)
+                        .error(R.drawable.ic_data_life_default)
+                        .placeholder(R.drawable.ic_data_life_default)
+                        .into(iv_user_data_life_one)
+                    if (lifePhotoOneState == "0") {
+                        tv_user_data_life_one.visibility = View.VISIBLE
+                    } else {
+                        tv_user_data_life_one.visibility = View.GONE
+                    }
+
+                    rl_user_data_life_two.visibility = View.VISIBLE
+                    Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
+                    rl_user_data_life_three.visibility = View.GONE
+                }
+            }
+        } else {
+            ThreadUtils.runOnUiThread {
+                Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
+                rl_user_data_life_two.visibility = View.GONE
+                rl_user_data_life_three.visibility = View.GONE
+            }
+        }
     }
 
     // 获取所有数据更新视图

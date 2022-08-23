@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/riv_detail_like_avatar"
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="14dp"
+        android:scaleType="centerCrop"
+        app:riv_oval="true" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="8dp"
+        android:layout_toStartOf="@+id/rl_detail_like_end"
+        android:layout_toEndOf="@+id/riv_detail_like_avatar"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_detail_like_nick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="罐头香菜"
+            android:textColor="#9A9A9A"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_detail_like_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="点赞了您的动态"
+            android:textColor="#101010"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_detail_like_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="17:12"
+            android:textColor="#9A9A9A"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_detail_like_end"
+        android:layout_width="82dp"
+        android:layout_height="82dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginVertical="8dp"
+        android:layout_marginEnd="14dp">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/riv_detail_like_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:riv_corner_radius="8dp" />
+
+        <FrameLayout
+            android:id="@+id/fl_detail_like_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/riv_detail_like_video"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:riv_corner_radius="8dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_base_play" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_detail_like_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ellipsize="end" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

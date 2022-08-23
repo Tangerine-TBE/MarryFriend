@@ -81,14 +81,35 @@ class CommentTipAdapter(private val mList: MutableList<CommentTipList>) :
                 holder.image.visibility = View.VISIBLE
                 holder.video.visibility = View.GONE
                 holder.text.visibility = View.GONE
-                Glide.with(mContext).load(mList[position].image_url).into(holder.image)
+
+                val images: MutableList<String> =
+                    mList[position].image_url.split(",") as MutableList<String>
+
+                if (images.size > 1){
+                    for (i in 0.until(images.size)) {
+                        if (images[i].contains(" ")) {
+                            images[i] = images[i].replace(" ", "")
+                        }
+                    }
+                }
+
+                Glide.with(mContext)
+                    .load(images[0])
+                    .error(R.drawable.ic_dynamic_tip_default)
+                    .placeholder(R.drawable.ic_dynamic_tip_default)
+                    .into(holder.image)
+
             }
             2 -> {
                 // 视频动态
                 holder.image.visibility = View.GONE
                 holder.video.visibility = View.VISIBLE
                 holder.text.visibility = View.GONE
-                Glide.with(mContext).load(mList[position].video_url).into(holder.videoPic)
+                Glide.with(mContext)
+                    .load(mList[position].video_url)
+                    .error(R.drawable.ic_dynamic_tip_default)
+                    .placeholder(R.drawable.ic_dynamic_tip_default)
+                    .into(holder.videoPic)
             }
             3 -> {
                 // 纯文字动态
