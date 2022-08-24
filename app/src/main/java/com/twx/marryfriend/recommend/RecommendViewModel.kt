@@ -201,7 +201,12 @@ class RecommendViewModel():ViewModel() {
                 if (jsonObject.getInt("code")==200) {
                     coroutine.resume(Unit)
                 }else{
-                    coroutine.resumeWithException(Exception(response))
+                    val tip=try {
+                        jsonObject.getString("msg")
+                    }catch (e:Exception){
+                        response
+                    }
+                    coroutine.resumeWithException(Exception(tip))
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

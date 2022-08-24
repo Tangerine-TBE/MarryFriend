@@ -4,22 +4,10 @@ import android.Manifest
 import android.animation.Animator
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.URLSpan
 import android.view.MotionEvent
 import android.view.View
-import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
-import androidx.core.text.inSpans
-import androidx.core.text.italic
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -39,8 +27,8 @@ import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.dialog.OneClickHelloDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
-import com.twx.marryfriend.dialog.createDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
+import com.twx.marryfriend.guide.jumpInfo.JumpActivity
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
@@ -140,28 +128,32 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
         Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
-        //一键打招呼
-        if (OneClickHelloDialog.isSendHello()){
-            viewLifecycleOwner.lifecycleScope.launch {
-                try {
-                    val oneClickHelloBean=recommendViewModel.loadOneClickHelloUserInfo()
-                    val data=oneClickHelloBean.data
-                    if (!data.isNullOrEmpty()){
-                        OneClickHelloDialog(requireContext(),data) {
-                            it?:return@OneClickHelloDialog
-                            viewLifecycleOwner.lifecycleScope.launch {
-                                loadingDialog.show()
-                                try {
-                                    recommendViewModel.sendHello(it)
-                                }catch (e:Exception){
-                                    toast(e.message)
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (UserInfo.getNextNotFillIn(requireContext(),this)!=null&&IntentManager.isOpenOneFillIn()){
+                startActivity(IntentManager.toFillInDialogIntent(requireContext()))
+            }else{
+                //一键打招呼
+                if (OneClickHelloDialog.isSendHello()){
+                    try {
+                        val oneClickHelloBean=recommendViewModel.loadOneClickHelloUserInfo()
+                        val data=oneClickHelloBean.data
+                        if (!data.isNullOrEmpty()){
+                            OneClickHelloDialog(requireContext(),data) {
+                                it?:return@OneClickHelloDialog
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    loadingDialog.show()
+                                    try {
+                                        recommendViewModel.sendHello(it)
+                                    }catch (e:Exception){
+                                        toast(e.message)
+                                    }
+                                    loadingDialog.dismiss()
                                 }
-                                loadingDialog.dismiss()
-                            }
-                        }.show()
+                            }.show()
+                        }
+                    }catch (e:Exception){
+                        iLog("获取失败")
                     }
-                }catch (e:Exception){
-                    iLog("获取失败")
                 }
             }
         }

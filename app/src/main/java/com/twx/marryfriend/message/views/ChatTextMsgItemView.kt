@@ -69,7 +69,12 @@ class ChatTextMsgItemView @JvmOverloads constructor(context: Context,attributeSe
                 }
             }
         }.also {
-            Glide.with(this).load(chatItemModel?.imageHead).placeholder(UserInfo.getDefHeadImage()).into(it.root.findViewById(R.id.userHead))
+            Glide
+                .with(this)
+                .load(chatItemModel?.imageHead)
+                .placeholder(UserInfo.getDefHeadImage())
+                .error(UserInfo.getDefHeadImage())
+                .into(it.root.findViewById(R.id.userHead))
         }
     }
 }

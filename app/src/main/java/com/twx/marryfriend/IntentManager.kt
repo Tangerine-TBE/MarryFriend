@@ -2,31 +2,49 @@ package com.twx.marryfriend
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.baidu.location.BDAbstractLocationListener
-import com.baidu.location.BDLocation
-import com.baidu.location.LocationClient
-import com.baidu.location.LocationClientOption
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.SPStaticUtils
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
-import com.twx.marryfriend.dynamic.send.location.LocationActivity
+import com.twx.marryfriend.guide.jumpInfo.JumpActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
-import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.tools.hobby.HobbyToolActivity
 import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
 import com.xyzz.myutils.show.toast
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object IntentManager {
+    private const val DAY_ONE_FILL_IN="day_one_fill_in"
+    fun isOpenOneFillIn():Boolean{
+        val date=
+            SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
+        return !SPStaticUtils.getBoolean(DAY_ONE_FILL_IN+"_"+date,false)
+    }
+
+    fun onOpenOneFillIn(){
+        val date=
+            SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
+        SPStaticUtils.put(DAY_ONE_FILL_IN+"_"+date,true)
+    }
+
+    fun toFillInDialogIntent(context: Context):Intent?{
+        if (isOpenOneFillIn()){
+            onOpenOneFillIn()
+            return Intent(context, JumpActivity::class.java)
+        }else{
+            return null
+        }
+    }
+
     fun getPhotoPreviewIntent(context: Context, list: List<String>, index:Int):Intent{
         return ImagePreviewActivity.getIntent(context, list.toMutableList(),index)
     }

@@ -70,7 +70,11 @@ class ChatVoiceItemView @JvmOverloads constructor(context: Context, attributeSet
         }else{
             iSendView
         }.also {
-            Glide.with(this).load(chatItemModel?.imageHead).placeholder(UserInfo.getDefHeadImage()).into(it.root.findViewById(R.id.userHead))
+            Glide.with(this)
+                .load(chatItemModel?.imageHead)
+                .placeholder(UserInfo.getDefHeadImage())
+                .error(UserInfo.getDefHeadImage())
+                .into(it.root.findViewById(R.id.userHead))
         }
     }
 }

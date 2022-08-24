@@ -12,6 +12,7 @@ import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.recommend.RecommendViewModel
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
@@ -31,6 +32,9 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
     }
     private val loadingDialog by lazy {
         LoadingDialogManager.createLoadingDialog().create(requireContext())
+    }
+    private val recommendViewModel by lazy {
+        ViewModelProvider(this).get(RecommendViewModel::class.java)
     }
     private val likeAdapter by lazy {
         LikeAdapter(true)
@@ -85,6 +89,18 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
         }
         likeAdapter.chatAction={
             toast("聊天")
+        }
+        likeAdapter.sendFlowerAction={
+            lifecycleScope.launch {
+                loadingDialog.show()
+                try {
+                    recommendViewModel.superLike(it.guest_uid)
+                    toast("送花成功")
+                }catch (e:Exception){
+                    toast(e.message)
+                }
+                loadingDialog.dismiss()
+            }
         }
         likeViewModel.addSuperLikeChangeListener {
             loadData()
