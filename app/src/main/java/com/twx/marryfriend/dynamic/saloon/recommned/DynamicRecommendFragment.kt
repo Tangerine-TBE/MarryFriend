@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ import com.twx.marryfriend.dynamic.saloon.adapter.SaloonAdapter
 import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
@@ -173,10 +175,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
 
         rl_dynamic_tips.setOnClickListener {
-            ToastUtils.showShort("提醒列表")
+
             rl_dynamic_tips.visibility = View.GONE
 
             startActivity(context?.let { it1 -> TipsActivity.getIntent(it1, commentSum, likeSum) })
+
+            Log.i("guo", "commentSum :$commentSum , likeSum :$likeSum")
 
         }
 
@@ -484,11 +488,22 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                         mTrendList[position].user_id)
                 } else {
                     ToastUtils.showShort("消息界面")
+
+                    val identity = mTrendList[position].identity_status == 1
+
+                    startActivity(context?.let {
+                        ChatActivity.getIntent(
+                            it,
+                            mTrendList[position].user_id,
+                            mTrendList[position].nick,
+                            mTrendList[position].headface,
+                            identity
+                        )
+                    })
                 }
                 adapter.notifyDataSetChanged()
             }
         })
-
     }
 
     // 获取消息提醒列表
@@ -557,9 +572,11 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         if (totalCountBean != null) {
             if (totalCountBean.code == 200) {
                 rl_dynamic_tips.visibility = View.VISIBLE
-                tv_dynamic_tips_count.text = "${totalCountBean.data}条新消息"
+                tv_dynamic_tips_count.text =
+                    "${totalCountBean.data.discuss.toInt() + totalCountBean.data.like}条新消息"
 
-
+                commentSum = totalCountBean.data.discuss.toInt()
+                likeSum = totalCountBean.data.like.toInt()
             }
         }
     }
@@ -625,6 +642,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     override fun onGetTrendSaloonSuccess(trendSaloonBean: TrendSaloonBean) {
 
         if (trendSaloonBean.data.list.isNotEmpty()) {
+
+            srl_dynamic_recommend_refresh.visibility = View.VISIBLE
             ll_dynamic_recommend_empty.visibility = View.GONE
 
             val mIdList: MutableList<Int> = arrayListOf()

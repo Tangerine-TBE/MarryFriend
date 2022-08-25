@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".login.retrieve.RetrieveActivity">
 
@@ -53,6 +54,7 @@
         android:layout_below="@+id/tv_retrieve_tv2"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="34dp"
+        android:textColor="#404040"
         android:background="@drawable/shape_bg_common_input"
         android:gravity="center"
         android:hint="请输入姓名"
@@ -67,6 +69,7 @@
         android:layout_below="@+id/et_retrieve_name"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="16dp"
+        android:textColor="#404040"
         android:background="@drawable/shape_bg_common_input"
         android:digits="0123456789 X"
         android:gravity="center"

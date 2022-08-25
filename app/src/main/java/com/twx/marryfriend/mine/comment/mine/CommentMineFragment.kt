@@ -1,11 +1,14 @@
 package com.twx.marryfriend.mine.comment.mine
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -74,10 +77,12 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
         sfl_comment_mime_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_comment_mime_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_comment_mime_refresh.autoRefresh()
+
     }
 
     private fun initData() {
-        getCommentMineData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -87,6 +92,9 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
     private fun initEvent() {
 
         sfl_comment_mime_refresh.setOnRefreshListener {
+
+            Log.i("guo","刷新沙墟")
+
             // 刷新数据
             currentPaper = 1
             getCommentMineData(currentPaper)
@@ -106,6 +114,18 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
         getWhoDiscussMePresent.getWhoDiscussMe(map, page)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == FragmentActivity.RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    currentPaper = 1
+                    getCommentMineData(currentPaper)
+                }
+            }
+        }
+    }
+
     override fun onLoading() {
 
     }
@@ -117,6 +137,8 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
     override fun onGetWhoDiscussMeSuccess(whoDiscussMeBean: WhoDiscussMeBean?) {
         if (whoDiscussMeBean != null) {
             if (whoDiscussMeBean.data.list.isNotEmpty()) {
+
+                ll_comment_mime_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()
@@ -143,12 +165,12 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
     }
 
     override fun onItemClick(v: View?, position: Int) {
-        startActivity(context?.let {
+        startActivityForResult(context?.let {
             DynamicOtherShowActivity.getIntent(
                 it,
                 mList[position].id,
                 mList[position].user_id.toInt())
-        })
+        }, 0)
     }
 
 }

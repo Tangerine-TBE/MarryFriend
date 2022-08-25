@@ -252,6 +252,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
         updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+
     }
 
     // 获取择偶省市要求列表
@@ -773,14 +774,17 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             }"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7)) {
+        when (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)) {
             7 -> income = "未填写"
             0 -> income = "不限"
-            else -> income =
-                "${
-                    mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
-                        7)]
-                }~" + "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}"
+            else ->
+                income = if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0) == 0) {
+                    "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}以下"
+                } else {
+                    "${
+                        mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7)]
+                    }~" + "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}"
+                }
         }
 
 
@@ -935,11 +939,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         moreAdapter.notifyDataSetChanged()
 
 
-
-        update()
-        Log.i("guo", "updata")
-
-
     }
 
     // 加载数据
@@ -1041,11 +1040,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         val house = SPStaticUtils.getInt(Constant.TA_HOUSE, 0)
 
         val incomeList: MutableList<Int> = arrayListOf()
-        if (incomeMin == 0){
+        if (incomeMax == 0) {
             incomeList.add(0)
-        }else{
-            for (i in incomeMin..6){
-                if (i < incomeMax){
+        } else {
+            for (i in incomeMin..6) {
+                if (i < incomeMax) {
                     incomeList.add(i)
                 }
             }
@@ -1053,11 +1052,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         val income = incomeList.toString()
 
 
-
-
         val demandInfo =
-            " {\"user_sex\": $sex, " +
-                    "\"age_min\":       $ageMin," +
+            " {\"age_min\":       $ageMin," +
                     "\"age_max\":       $ageMax," +
                     "\"min_high\":      $heightMin," +
                     "\"max_high\":      $heightMax," +
@@ -1076,6 +1072,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                     "\"buy_house\":     $house}"
 
         return demandInfo
+
 
     }
 

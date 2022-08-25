@@ -26,13 +26,13 @@ class GreetInfoActivity : MainBaseViewActivity() {
         greetInfo = SPStaticUtils.getString(Constant.ME_GREET, "")
 
         if (greetInfo != "") {
-            nsv_greet_info_empty.visibility = View.GONE
+            rl_greet_info_empty.visibility = View.GONE
             ll_greet_info_container.visibility = View.VISIBLE
 
             tv_greet_info_container.text = greetInfo
 
         } else {
-            nsv_greet_info_empty.visibility = View.VISIBLE
+            rl_greet_info_empty.visibility = View.VISIBLE
             ll_greet_info_container.visibility = View.GONE
         }
 
@@ -77,7 +77,7 @@ class GreetInfoActivity : MainBaseViewActivity() {
 
             SPStaticUtils.put(Constant.ME_GREET, "")
 
-            nsv_greet_info_empty.visibility = View.VISIBLE
+            rl_greet_info_empty.visibility = View.VISIBLE
             ll_greet_info_container.visibility = View.GONE
 
         }
@@ -91,7 +91,7 @@ class GreetInfoActivity : MainBaseViewActivity() {
             when (requestCode) {
                 0 -> {
 
-                    nsv_greet_info_empty.visibility = View.GONE
+                    rl_greet_info_empty.visibility = View.GONE
                     ll_greet_info_container.visibility = View.VISIBLE
 
                     greetInfo = data?.getStringExtra("data").toString()

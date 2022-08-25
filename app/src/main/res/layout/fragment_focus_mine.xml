@@ -26,4 +26,38 @@
 
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
+
+    <LinearLayout
+        android:id="@+id/ll_focus_mime_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@mipmap/pic_mine_focus_empty" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="暂时没有关注的人"
+            android:textColor="#404040"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="18dp"
+            android:text="多发发动态吧"
+            android:textColor="#404040"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
 </RelativeLayout>

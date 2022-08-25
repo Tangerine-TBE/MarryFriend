@@ -49,6 +49,7 @@
                             android:id="@+id/iv_user_data_avatar"
                             android:layout_width="82dp"
                             android:layout_height="82dp"
+                            android:scaleType="centerCrop"
                             app:riv_corner_radius="16dp" />
 
                         <TextView
@@ -155,12 +156,11 @@
                         android:id="@+id/tv_user_data_introduce"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@null"
                         android:gravity="center"
-                        android:hint="简单的介绍一下自己，吸引更多人了解你"
+                        android:text="简单的介绍一下自己，吸引更多人了解你"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="22dp"
-                        android:textColor="#9A9A9A"
+                        android:textColor="#101010"
                         android:textSize="15sp" />
 
                 </LinearLayout>
@@ -248,7 +248,7 @@
                         android:layout_marginEnd="20dp"
                         android:background="@null"
                         android:gravity="center"
-                        android:hint="00:52"
+                        android:text="00:52"
                         android:textColor="#101010"
                         android:textSize="15sp" />
 
@@ -297,12 +297,11 @@
                         android:id="@+id/tv_user_data_ideal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@null"
                         android:gravity="center"
-                        android:hint="描绘出你心中理想的ta,说不定ta就在前方..."
+                        android:text="描绘出你心中理想的ta,说不定ta就在前方..."
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="22dp"
-                        android:textColor="#9A9A9A"
+                        android:textColor="#101010"
                         android:textSize="15sp" />
 
                 </LinearLayout>

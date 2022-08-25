@@ -748,17 +748,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 // key值为保存文件名，试用固定的几种格式来命名
 
                 val putObjectFromFileResponse =
-                    client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "13")
-                    }",
-                        FileUtils.getFileName(mPhotoPath), file)
+                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")
+                    }", FileUtils.getFileName(mPhotoPath), file)
 
                 mPhotoUrl = client.generatePresignedUrl("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
                 }", FileUtils.getFileName(mPhotoPath), -1).toString()
-
-                Log.i("guo", "onDoFaceDetectSuccess")
 
                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
@@ -771,7 +766,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
             ll_mine_loading.visibility = View.GONE
 
-            ToastUtils.showShort(faceDetectBean.data[0].msg + faceDetectBean.data[0].conclusion)
+            ToastUtils.showShort(faceDetectBean.data[0].msg)
 
         }
 

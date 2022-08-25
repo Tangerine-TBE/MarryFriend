@@ -1,11 +1,13 @@
 package com.twx.marryfriend.dynamic.saloon.tip.comment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -20,6 +22,7 @@ import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetCommentTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getCommentTipsPresentImpl
 import kotlinx.android.synthetic.main.fragment_comment.*
+import kotlinx.android.synthetic.main.fragment_view_mine.*
 import java.util.*
 
 /**
@@ -74,10 +77,12 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
         sfl_dynamic_tip_comment_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_dynamic_tip_comment_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_dynamic_tip_comment_refresh.autoRefresh()
+
     }
 
     private fun initData() {
-        getCommentData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -102,13 +107,13 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
             override fun onItemClick(v: View?, position: Int) {
                 if (mList[position].user_id == SPStaticUtils.getString(Constant.USER_ID, "13")) {
                     ToastUtils.showShort("本人的动态")
-                    startActivity(context?.let {
+                    startActivityForResult(context?.let {
                         DynamicOtherShowActivity.getIntent(
                             it,
                             mList[position].id,
                             SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
                         )
-                    })
+                    }, 0)
                 } else {
                     ToastUtils.showShort("他人的动态")
                     startActivity(context?.let {
@@ -129,6 +134,18 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
         getCommentTipsPresent.getCommentTips(map, page)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == FragmentActivity.RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    currentPaper = 1
+                    getCommentData(currentPaper)
+                }
+            }
+        }
+    }
+
     override fun onLoading() {
 
     }
@@ -141,7 +158,7 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
         if (commentTipBean != null) {
             if (commentTipBean.data.list.isNotEmpty()) {
 
-//                ll_dynamic_mine_like_empty.visibility = View.GONE
+                ll_dynamic_tip_comment_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()

@@ -464,7 +464,8 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     // 加载更多我的动态列表
     private fun getMoreTrendsList(currentPaper: Int) {
         val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = userId
+        map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.FRIEND_UID] = userId
         map[Contents.TRENDS_TYPE] = trendType.toString()
         getOtherTrendsListPresent.getOtherTrendsList(map, currentPaper, 10)
     }

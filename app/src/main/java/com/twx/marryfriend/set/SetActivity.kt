@@ -20,6 +20,7 @@ import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.message.MessageActivity
 import com.twx.marryfriend.set.safe.SafeActivity
 import com.twx.marryfriend.set.web.SetWebActivity
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.activity_set.*
 
 class SetActivity : MainBaseViewActivity() {
@@ -98,20 +99,30 @@ class SetActivity : MainBaseViewActivity() {
             }
         })
 
+
+
         adapter2.setOnItemClickListener(object : SetSwitchAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 when (position) {
                     0 -> {
-                        ToastUtils.showShort("000")
-                        mSwitchList[0].switch = !mSwitchList[0].switch
-                        SPStaticUtils.put(Constant.HIDE_STATE, mSwitchList[0].switch)
-                        adapter2.notifyDataSetChanged()
+                        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) != 0) {
+                            mSwitchList[0].switch = !mSwitchList[0].switch
+                            SPStaticUtils.put(Constant.HIDE_STATE, mSwitchList[0].switch)
+                            adapter2.notifyDataSetChanged()
+                        } else {
+                            ToastUtils.showShort("您还不是会员，请先前往开通会员")
+                            startActivity(VipActivity.getIntent(this@SetActivity, 0))
+                        }
                     }
                     1 -> {
-                        ToastUtils.showShort("111")
-                        mSwitchList[1].switch = !mSwitchList[1].switch
-                        SPStaticUtils.put(Constant.HIDE_VIP, mSwitchList[1].switch)
-                        adapter2.notifyDataSetChanged()
+                        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) != 0) {
+                            mSwitchList[1].switch = !mSwitchList[1].switch
+                            SPStaticUtils.put(Constant.HIDE_VIP, mSwitchList[1].switch)
+                            adapter2.notifyDataSetChanged()
+                        }else{
+                            ToastUtils.showShort("您还不是会员，请先前往开通会员")
+                            startActivity(VipActivity.getIntent(this@SetActivity, 0))
+                        }
                     }
                 }
             }

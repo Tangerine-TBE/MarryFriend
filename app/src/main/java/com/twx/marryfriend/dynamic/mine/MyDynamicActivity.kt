@@ -40,7 +40,7 @@ import java.util.*
 
 
 class MyDynamicActivity : MainBaseViewActivity(),
-    IGetMyTrendsListCallback, MyDynamicAdapter.OnItemClickListener {
+    IGetMyTrendsListCallback, IDoDeleteTrendCallback, MyDynamicAdapter.OnItemClickListener {
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
@@ -49,6 +49,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
     private var currentPaper = 1
 
+    // 要删除的动态position
+    private var deletePosition = 0
+
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     private var trendList: MutableList<MyTrendsList> = arrayListOf()
@@ -56,6 +59,8 @@ class MyDynamicActivity : MainBaseViewActivity(),
     private lateinit var adapter: MyDynamicAdapter
 
     private lateinit var getMyTrendsListPresent: getMyTrendsListPresentImpl
+
+    private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_my_dynamic
 
@@ -80,6 +85,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         getMyTrendsListPresent = getMyTrendsListPresentImpl.getsInstance()
         getMyTrendsListPresent.registerCallback(this)
+
+        doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
+        doDeleteTrendPresent.registerCallback(this)
 
         adapter = MyDynamicAdapter(trendList)
 
@@ -171,8 +179,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         srl_dynamic_mine_refresh.setOnLoadMoreListener {
 
-            Log.i("guo", "currentPaper : $currentPaper")
-
             getMoreTrendsList(currentPaper)
             srl_dynamic_mine_refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
         }
@@ -185,9 +191,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         adapter.setOnCommentClickListener(object : MyDynamicAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
-                startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                startActivityForResult(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
                     trendList[position].id,
-                    SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+                    SPStaticUtils.getString(Constant.USER_ID, "13").toInt()), 1)
             }
         })
 
@@ -361,8 +367,7 @@ class MyDynamicActivity : MainBaseViewActivity(),
         adapter.setOnVideoClickListener(object : MyDynamicAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
                 startActivity(VideoPreviewActivity.getIntent(this@MyDynamicActivity,
-                    trendList[position].video_url,
-                    ""))
+                    trendList[position].video_url, ""))
             }
         })
 
@@ -389,11 +394,24 @@ class MyDynamicActivity : MainBaseViewActivity(),
         getMyTrendsListPresent.getMyTrendsList(map, currentPaper, 10)
     }
 
+    // 删除我的动态
+    private fun deleteTrends(trendId: Int, userId: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ID] = trendId.toString()
+        map[Contents.USER_ID] = userId
+        doDeleteTrendPresent.doDeleteTrend(map)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 0 -> {
+                    currentPaper = 1
+                    trendType = 0
+                    getFirstTrendsList()
+                }
+                1 -> {
                     currentPaper = 1
                     trendType = 0
                     getFirstTrendsList()
@@ -410,6 +428,24 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
     }
 
+    override fun onDoDeleteTrendSuccess(deleteTrendBean: DeleteTrendBean?) {
+        if (deleteTrendBean != null) {
+            if (deleteTrendBean.code == 200) {
+                ToastUtils.showShort("动态删除完成")
+
+                trendList.removeAt(deletePosition)
+                adapter.notifyDataSetChanged()
+
+            } else {
+                ToastUtils.showShort(deleteTrendBean.msg)
+            }
+        }
+    }
+
+    override fun onDoDeleteTrendError() {
+
+    }
+
     override fun onGetMyTrendsListSuccess(myTrendsListBean: MyTrendsListBean) {
 
         if (myTrendsListBean.data.list.isNotEmpty()) {
@@ -419,8 +455,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
             }
 
             currentPaper++
-
-            srl_dynamic_mine_refresh.finishRefresh();//传入false表示刷新失败
 
             when (trendType) {
                 0 -> {
@@ -476,22 +510,12 @@ class MyDynamicActivity : MainBaseViewActivity(),
     }
 
     inner class DynamicEditDialog(context: Context, val position: Int) :
-        FullScreenPopupView(context),
-        IDoDeleteTrendCallback {
-
-
-        private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
-
-        // 是否删除动态，弹窗消失时结束
-        private var isFinish = false
+        FullScreenPopupView(context) {
 
         override fun getImplLayoutId(): Int = R.layout.dialog_dynamic_delete
 
         override fun onCreate() {
             super.onCreate()
-
-            doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
-            doDeleteTrendPresent.registerCallback(this)
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
             val delete = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_delete)
@@ -502,16 +526,8 @@ class MyDynamicActivity : MainBaseViewActivity(),
             }
 
             delete.setOnClickListener {
-                ToastUtils.showShort("删除动态,百度云图片还未添加删除功能，待添加")
-
-                isFinish = true
+                deleteTrends(trendList[deletePosition].id, trendList[deletePosition].user_id)
                 dismiss()
-
-//                val map: MutableMap<String, String> = TreeMap()
-//                map[Contents.ID] = SPStaticUtils.getString(Constant.USER_ID)
-//                map[Contents.USER_ID] = id.toString()
-//                doDeleteTrendPresent.doDeleteTrend(map)
-
             }
 
             cancel.setOnClickListener {
@@ -522,47 +538,15 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         override fun onDismiss() {
             super.onDismiss()
-            if (isFinish) {
-
-                trendList.removeAt(position)
-                adapter.notifyDataSetChanged()
-
-                ToastUtils.showShort("此处需要删除这个数据(暂时是本地删除)")
-            }
-        }
-
-        override fun onLoading() {
-
-        }
-
-        override fun onError() {
-
-        }
-
-        override fun onDoDeleteTrendSuccess(deleteTrendBean: DeleteTrendBean) {
-
-            if (deleteTrendBean.code == 200) {
-                ToastUtils.showShort("动态删除完成")
-                isFinish = true
-                dismiss()
-            } else {
-                ToastUtils.showShort(deleteTrendBean.msg)
-            }
-
-
-        }
-
-        override fun onDoDeleteTrendError() {
-
         }
 
     }
 
     override fun onItemClick(v: View?, position: Int) {
         if (trendList[position].audit_status == 1) {
-            startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+            startActivityForResult(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
                 trendList[position].id,
-                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()), 1)
 
         } else {
             ToastUtils.showShort("此动态正在审核中")
@@ -571,9 +555,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
     override fun onTextClick(v: View?, position: Int) {
         if (trendList[position].audit_status == 1) {
-            startActivity(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+            startActivityForResult(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
                 trendList[position].id,
-                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()), 1)
 
         } else {
             ToastUtils.showShort("此动态正在审核中")
@@ -581,6 +565,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onItemMoreClick(v: View?, position: Int) {
+
+        deletePosition = position
+
         XPopup.Builder(this@MyDynamicActivity)
             .dismissOnTouchOutside(false)
             .dismissOnBackPressed(false)

@@ -42,6 +42,7 @@
                         android:gravity="center_vertical"
                         android:background="@null"
                         android:textSize="15sp"
+                        android:textColor="#0F0F0F"
                         android:imeOptions="actionSearch"
                         android:singleLine="true"
                         android:layout_width="match_parent"

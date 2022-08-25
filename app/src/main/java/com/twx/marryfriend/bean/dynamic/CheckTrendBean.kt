@@ -57,4 +57,6 @@ data class CheckTrendList(
     val level_high: Int,
     val close_time_high: String,
 
-)
+    val real_face: Int,
+
+    )

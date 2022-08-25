@@ -47,7 +47,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
 
     var mVipPrice = "688"
     var mVipMode = "23"
-    private var mPay = "WX"
+    private var mPay = "ALI"
 
     var mVipPriceList: MutableList<String> = ArrayList()
     var mVipModeList: MutableList<String> = ArrayList()
@@ -312,7 +312,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
 
                 // 刷新视图
                 val activity = activity as VipActivity
-                activity.updateTopView()
+                activity.updateTopView(1)
 
             } else {
                 ToastUtils.showShort(refreshSelfBean.msg)

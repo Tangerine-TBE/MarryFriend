@@ -38,6 +38,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginHorizontal="7dp"
+                android:textColorHint="#9A9A9A"
                 android:layout_toEndOf="@+id/iv_search_school_search"
                 android:background="@null"
                 android:hint="请输入学校名称"

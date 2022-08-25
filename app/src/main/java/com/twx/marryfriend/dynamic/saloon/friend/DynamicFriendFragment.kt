@@ -35,6 +35,7 @@ import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.utils.AnimalUtils
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
@@ -175,6 +176,19 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         adapter.setOnFocusClickListener(object : SaloonFocusAdapter.OnFocusClickListener {
             override fun onFocusClick(v: View?, position: Int) {
                 ToastUtils.showShort("消息，进入消息界面")
+
+                val identity = mTrendList[position].identity_status == 1
+
+                startActivity(context?.let {
+                    ChatActivity.getIntent(
+                        it,
+                        mTrendList[position].user_id,
+                        mTrendList[position].nick,
+                        mTrendList[position].headface,
+                        identity
+                    )
+                })
+
             }
         })
 
@@ -387,7 +401,9 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             override fun onLikeClick(v: View?, position: Int) {
 
                 // 点赞， 此时需要验证是否上传头像
-                if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                ) {
 
                     mLikePosition = position
 
@@ -503,6 +519,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     override fun onGetTrendFocusSuccess(trendFocusBean: TrendFocusBean) {
 
         if (trendFocusBean.data.list.isNotEmpty()) {
+
+            srl_dynamic_focus_refresh.visibility = View.VISIBLE
             ll_dynamic_focus_empty.visibility = View.GONE
 
             val mIdList: MutableList<Int> = arrayListOf()

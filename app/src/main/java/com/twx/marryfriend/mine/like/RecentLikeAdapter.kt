@@ -131,14 +131,12 @@ class RecentLikeAdapter(private val mList: MutableList<WhoLikeMeList>, private v
             holder.content.text = "点赞了她的动态"
         }
 
-
-        holder.time.text = TimeUtil.getCommonTime(mList[position].create_time)
+        holder.time.text = TimeUtil.getCommonTime(mList[position].dianzan_time)
 
     }
 
     override fun getItemCount(): Int {
         return mList.size
     }
-
 
 }

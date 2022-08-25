@@ -87,10 +87,11 @@ class FocusOtherFragment : Fragment(), IGetMeFocusWhoCallback,
         sfl_focus_other_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_focus_other_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_focus_other_refresh.autoRefresh()
     }
 
     private fun initData() {
-        getFocusOtherData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -129,6 +130,8 @@ class FocusOtherFragment : Fragment(), IGetMeFocusWhoCallback,
     override fun onGetMeFocusWhoSuccess(meFocusWhoBean: MeFocusWhoBean?) {
         if (meFocusWhoBean != null) {
             if (meFocusWhoBean.data.list.isNotEmpty()) {
+
+                ll_focus_other_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()
