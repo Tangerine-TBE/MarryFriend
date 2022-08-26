@@ -1,11 +1,13 @@
 package com.twx.marryfriend.dynamic.saloon.tip.like
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -19,6 +21,7 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetTrendTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getTrendTipsPresentImpl
+import kotlinx.android.synthetic.main.fragment_comment.*
 import kotlinx.android.synthetic.main.fragment_like.*
 import java.util.*
 
@@ -72,10 +75,12 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
         sfl_dynamic_tip_like_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_dynamic_tip_like_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_dynamic_tip_like_refresh.autoRefresh()
+
     }
 
     private fun initData() {
-        getLikeData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -100,13 +105,13 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
             override fun onItemClick(v: View?, position: Int) {
                 if (mList[position].user_id == SPStaticUtils.getString(Constant.USER_ID, "13")) {
                     ToastUtils.showShort("本人的动态")
-                    startActivity(context?.let {
+                    startActivityForResult(context?.let {
                         DynamicOtherShowActivity.getIntent(
                             it,
                             mList[position].id,
                             SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
                         )
-                    })
+                    }, 0)
                 } else {
                     ToastUtils.showShort("他人的动态")
                     startActivity(context?.let {
@@ -127,6 +132,18 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
         getTrendTipsPresent.getTrendTips(map, page)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == FragmentActivity.RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    currentPaper = 1
+                    getLikeData(currentPaper)
+                }
+            }
+        }
+    }
+
     override fun onLoading() {
 
     }
@@ -139,7 +156,7 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
         if (likeTipBean != null) {
             if (likeTipBean.data.list.isNotEmpty()) {
 
-//                ll_dynamic_mine_like_empty.visibility = View.GONE
+                ll_dynamic_tip_like_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()

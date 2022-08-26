@@ -24,7 +24,7 @@
         android:textColor="#404040"
         android:textSize="15sp" />
 
-    <Switch
+    <com.twx.marryfriend.utils.weight.NonClickSwitch
         android:id="@+id/sw_detail_set_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,6 +32,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="24dp"
         android:checked="false"
+        android:clickable="false"
         android:thumb="@drawable/selector_switch_thumb"
         android:track="@drawable/selector_switch_trace" />
 

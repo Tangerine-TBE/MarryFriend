@@ -76,10 +76,11 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
         sfl_focus_mime_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_focus_mime_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_focus_mime_refresh.autoRefresh()
     }
 
     private fun initData() {
-        getFocusMineData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -118,6 +119,8 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
     override fun onGetWhoFocusMeSuccess(whoFocusMeBean: WhoFocusMeBean?) {
         if (whoFocusMeBean != null) {
             if (whoFocusMeBean.data.list.isNotEmpty()) {
+
+                ll_focus_mime_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()

@@ -26,6 +26,7 @@ import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.dynamic.show.mine.DynamicMineLikeActivity
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
@@ -41,7 +42,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     IDoCheckTrendCallback, IGetCommentOneCallback, IGetCommentTwoCallback,
     CommentOneAdapter.OnItemClickListener, IDoCommentOneCreateCallback, IDoCommentTwoCreateCallback,
     IDoLikeClickCallback, IDoLikeCancelCallback, IDoPlusFocusCallback,
-    CommentOneAdapter.OnItemLongClickListener, IDoCancelFocusCallback {
+    CommentOneAdapter.OnItemLongClickListener, IDoCancelFocusCallback, IDoDeleteTrendCallback {
 
     private var currentPaper = 1
 
@@ -139,6 +140,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
     private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
     private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
+    private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
 
     companion object {
 
@@ -158,7 +160,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun initView() {
         super.initView()
-
 
         Log.i("guo", "trend : ${intent.getIntExtra("trendId", 0)}")
 
@@ -194,6 +195,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
         doCancelFocusPresent.registerCallback(this)
+
+        doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
+        doDeleteTrendPresent.registerCallback(this)
 
 
         if (SPStaticUtils.getBoolean(Constant.HIDE_REPORT_TIP, false)) {
@@ -251,9 +255,14 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         ll_dynamic_other_show_mode.setOnClickListener {
             if (haveFocus) {
-                // 关注了，需要取消关注
-                ToastUtils.showShort("取消关注")
-                doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                // 关注了，需要跳转到聊天界面
+                ToastUtils.showShort("聊天")
+                val identity = info.identity_status == 1
+                startActivity(ChatActivity.getIntent(this,
+                    info.user_id,
+                    info.nick,
+                    info.headface,
+                    identity))
 
             } else {
                 // 未关注了，需要关注
@@ -613,7 +622,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     }
 
-
     /**
      * mode : 发送接口模式
      *  trends_id ： 动态id
@@ -653,7 +661,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         }
     }
 
-
     // 获取具体动态
     private fun getTrendsList() {
         val map: MutableMap<String, String> = TreeMap()
@@ -687,7 +694,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         map[Contents.PARENT_ID] = parentId.toString()
         getCommentTwoPresent.getCommentTwo(map, page, 10)
     }
-
 
     // 给动态提交子评论
     private fun doCommentTwo(
@@ -745,6 +751,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         doCancelFocusPresent.doCancelFocusOther(map)
     }
 
+    // 删除我的动态
+    private fun deleteTrends(trendId: Int, userId: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ID] = trendId.toString()
+        map[Contents.USER_ID] = userId
+        doDeleteTrendPresent.doDeleteTrend(map)
+    }
 
     override fun onLoading() {
 
@@ -754,20 +767,31 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     }
 
+    override fun onDoDeleteTrendSuccess(deleteTrendBean: DeleteTrendBean?) {
+        ToastUtils.showShort("删除动态成功，返回至上一界面，删除数据")
+
+        val intent = intent
+        setResult(RESULT_OK, intent)
+        this.finish()
+    }
+
+    override fun onDoDeleteTrendError() {
+
+    }
+
     override fun onDoCancelFocusSuccess(cancelFocusBean: CancelFocusBean?) {
 
         if (cancelFocusBean != null) {
             if (cancelFocusBean.code == 200) {
                 haveFocus = false
-                iv_dynamic_other_show_mode.visibility = View.VISIBLE
-                tv_dynamic_other_show_mode.visibility = View.GONE
+
+                iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_focus)
 
                 ToastUtils.showShort("取消关注成功")
             } else {
                 ToastUtils.showShort(cancelFocusBean.msg)
             }
         }
-
 
     }
 
@@ -780,8 +804,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         if (plusFocusBean != null) {
             if (plusFocusBean.code == 200) {
                 haveFocus = true
-                iv_dynamic_other_show_mode.visibility = View.GONE
-                tv_dynamic_other_show_mode.visibility = View.VISIBLE
+
+                iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_chat)
 
                 ToastUtils.showShort("关注成功")
             } else {
@@ -789,10 +813,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
         }
 
-
     }
 
     override fun onDoPlusFocusError() {
+
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
@@ -1084,6 +1108,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     tv_dynamic_other_show_name.text = info.nick
 
 
+                    when (info.real_face) {
+                        1 -> {
+                            iv_detail_dynamic_other_avatar.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            iv_detail_dynamic_other_avatar.visibility = View.GONE
+                        }
+                    }
+
                     when (info.identity_status) {
                         1 -> {
                             iv_detail_dynamic_other_identity.visibility = View.VISIBLE
@@ -1092,8 +1125,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                             iv_detail_dynamic_other_identity.visibility = View.GONE
                         }
                     }
-
-                    iv_detail_dynamic_other_identity
 
                     when (SpUtil.getVipLevel(info.close_time_low, info.close_time_high)) {
                         0 -> {
@@ -1125,13 +1156,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                     if (info.focous_uid != null) {
                         haveFocus = true
-                        iv_dynamic_other_show_mode.visibility = View.GONE
-                        tv_dynamic_other_show_mode.visibility = View.VISIBLE
+
+                        iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_chat)
 
                     } else {
                         haveFocus = false
-                        iv_dynamic_other_show_mode.visibility = View.VISIBLE
-                        tv_dynamic_other_show_mode.visibility = View.GONE
+
+                        iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_focus)
 
                     }
 
@@ -1948,10 +1979,17 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             super.onCreate()
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_other_edit_close)
+            val nonFocus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_nonfocus)
             val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
             val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
 
             close.setOnClickListener {
+                dismiss()
+            }
+
+            nonFocus.setOnClickListener {
+                ToastUtils.showShort("取消关注")
+                doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
                 dismiss()
             }
 
@@ -1990,7 +2028,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
 
             delete.setOnClickListener {
-                ToastUtils.showShort("删除动态,百度云图片还未添加删除功能，待添加")
+                deleteTrends(info.id, info.user_id)
                 dismiss()
             }
 

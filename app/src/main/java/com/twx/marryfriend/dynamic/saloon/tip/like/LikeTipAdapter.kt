@@ -126,7 +126,7 @@ class LikeTipAdapter(private val mList: MutableList<LikeTipList>) :
             }
         }
 
-        holder.time.text = TimeUtil.getCommonTime(mList[position].create_time)
+        holder.time.text = TimeUtil.getCommonTime(mList[position].like_time)
 
     }
 

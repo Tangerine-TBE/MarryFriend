@@ -76,10 +76,10 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
         sfl_comment_other_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_comment_other_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_comment_other_refresh.autoRefresh()
     }
 
     private fun initData() {
-        getCommentOtherData(currentPaper)
     }
 
     private fun initPresent() {
@@ -118,6 +118,8 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
     override fun onGetMeDiscussWhoSuccess(meDiscussWhoBean: MeDiscussWhoBean?) {
         if (meDiscussWhoBean != null) {
             if (meDiscussWhoBean.data.list.isNotEmpty()) {
+
+                ll_comment_other_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()

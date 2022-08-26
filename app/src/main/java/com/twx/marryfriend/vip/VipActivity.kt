@@ -44,6 +44,12 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
     private lateinit var mPagerAdapter: FragmentPagerAdapter<Fragment>
 
+
+    /**
+     *
+     * mode : 0 普通会员 ； 1 超级会员
+     *
+     * */
     companion object {
         private const val VIP_MODE = "vip_mode"
         fun getIntent(context: Context, mode: Int): Intent? {
@@ -84,8 +90,6 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         }
 
         tv_vip_name.text = SPStaticUtils.getString(Constant.ME_NAME, "default")
-
-        updateTopView()
 
         mPagerAdapter = FragmentPagerAdapter(this)
         mPagerAdapter.addFragment(normal, "")
@@ -192,6 +196,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             tv_vip_normal.setTextColor(Color.parseColor("#DF43FC"))
             tv_vip_super.setTextColor(Color.parseColor("#717171"))
 
+            updateTopView(0)
+
             nvp_vip_container.currentItem = 0
 
         } else {
@@ -206,32 +212,71 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             tv_vip_super.setTextColor(Color.parseColor("#DF43FC"))
             tv_vip_normal.setTextColor(Color.parseColor("#717171"))
 
+            updateTopView(1)
+
             nvp_vip_container.currentItem = 1
         }
     }
 
-    // 更新最上方视图数据
-    fun updateTopView() {
 
+    /**
+     * 更新最上方视图数据
+     * mode :
+     *   0 ：刷新普通会员的信息
+     *   1 ：刷新超级会员的信息
+     * */
+    fun updateTopView(mode: Int) {
 
-        when (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)) {
+        when(mode){
             0 -> {
-                tv_vip_level.text = "您还不是会员"
-                tv_vip_time.visibility = View.GONE
+                // 刷新普通会员的信息
+
+                Log.i("guo","刷新普通会员的信息")
+
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0){
+                    tv_vip_level.text = "您还不是会员"
+                    tv_vip_time.visibility = View.GONE
+                }else{
+                    tv_vip_level.text = "您已经是普通会员"
+                    tv_vip_time.visibility = View.VISIBLE
+                    tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_LOW)
+                }
+
             }
+
             1 -> {
-                tv_vip_level.text = "您已经是普通会员"
-                tv_vip_time.visibility = View.VISIBLE
-                tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_LOW)
+                // 刷新超级会员的信息
+
+                Log.i("guo","刷新超级会员的信息")
+
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0){
+                    tv_vip_level.text = "您还不是会员"
+                    tv_vip_time.visibility = View.GONE
+                }else{
+                    tv_vip_level.text = "您已经是超级会员"
+                    tv_vip_time.visibility = View.VISIBLE
+                    tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_HIGH)
+                }
             }
-            2 -> {
-                tv_vip_level.text = "您已经是超级会员"
-                tv_vip_time.visibility = View.VISIBLE
-                tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_HIGH)
-            }
+
         }
 
-
+//        when (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)) {
+//            0 -> {
+//                tv_vip_level.text = "您还不是会员"
+//                tv_vip_time.visibility = View.GONE
+//            }
+//            1 -> {
+//                tv_vip_level.text = "您已经是普通会员"
+//                tv_vip_time.visibility = View.VISIBLE
+//                tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_LOW)
+//            }
+//            2 -> {
+//                tv_vip_level.text = "您已经是超级会员"
+//                tv_vip_time.visibility = View.VISIBLE
+//                tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_HIGH)
+//            }
+//        }
     }
 
 

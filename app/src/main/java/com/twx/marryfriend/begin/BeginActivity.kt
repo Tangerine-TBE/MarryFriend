@@ -33,6 +33,7 @@ import com.twx.marryfriend.begin.custom.config.BaseUIConfig
 import com.twx.marryfriend.begin.custom.utils.ExecutorManager
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.info.GetInfoActivity
 import com.twx.marryfriend.login.LoginActivity
 import com.twx.marryfriend.net.callback.IDoAutoLoginCallback
@@ -41,6 +42,7 @@ import com.twx.marryfriend.net.callback.IGetBanCallback
 import com.twx.marryfriend.net.impl.doAutoLoginPresentImpl
 import com.twx.marryfriend.net.impl.getAccessTokenPresentImpl
 import com.twx.marryfriend.net.impl.getBanPresentImpl
+import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.UnicodeUtils
 import java.util.*
@@ -264,8 +266,9 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         }
 
         override fun onClick(widget: View) {
-            //点击事件
-            ToastUtils.showShort("此处显示隐私政策")
+            startActivity(SetWebActivity.getIntent(this@BeginActivity,
+                "隐私政策",
+                DataProvider.WebUrlData[2].url))
         }
     }
 
@@ -275,8 +278,9 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         }
 
         override fun onClick(widget: View) {
-            //点击事件
-            ToastUtils.showShort("此处显示服务条款")
+            startActivity(SetWebActivity.getIntent(this@BeginActivity,
+                "用户协议",
+                DataProvider.WebUrlData[1].url))
         }
     }
 
@@ -309,7 +313,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 agreePermission = !agreePermission
             }
 
-            val str = "已阅读并同意《隐私政策》 《服务条款》"
+            val str = "已阅读并同意《隐私政策》和《用户协议》"
             val stringBuilder = SpannableStringBuilder(str)
             val span1 = TextViewSpan1()
             stringBuilder.setSpan(span1, 6, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

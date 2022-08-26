@@ -22,6 +22,18 @@
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/tv_dialog_dynamic_other_edit_nonfocus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="取消关注"
+        android:textColor="#404040"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/tv_dialog_dynamic_other_edit_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

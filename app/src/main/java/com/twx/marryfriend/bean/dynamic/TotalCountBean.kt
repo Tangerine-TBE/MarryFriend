@@ -6,6 +6,11 @@ package com.twx.marryfriend.bean.dynamic
  */
 data class TotalCountBean(
     val code: Int,
-    val data: String,
+    val data: TotalCountData,
     val msg: String,
+)
+
+data class TotalCountData(
+    val discuss: String,
+    val like: Int,
 )

@@ -33,11 +33,6 @@ class SetSwitchAdapter(private val mList: MutableList<SetSwitchBean>) :
         this.mOnItemClickListener = listener
     }
 
-    override fun onClick(v: View?) {
-        if (v != null) {
-            mOnItemClickListener?.onItemClick(v, v.tag as Int)
-        }
-    }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val icon: ImageView = view.findViewById(R.id.iv_detail_set_switch_icon)
@@ -64,10 +59,18 @@ class SetSwitchAdapter(private val mList: MutableList<SetSwitchBean>) :
 
         holder.switch.isChecked = mList[position].switch
 
+        holder.switch.setOnClickListener {
+            mOnItemClickListener?.onItemClick(it, position)
+        }
+
     }
 
     override fun getItemCount(): Int {
         return mList.size
+    }
+
+    override fun onClick(v: View?) {
+
     }
 
 }

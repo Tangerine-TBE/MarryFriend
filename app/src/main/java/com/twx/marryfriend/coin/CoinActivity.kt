@@ -251,12 +251,12 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
         tv_coin_one_coin.text = coinPriceBean.data[0].describe
         tv_coin_two_coin.text = coinPriceBean.data[1].describe
-        tv_coin_one_coin.text = coinPriceBean.data[2].describe
+        tv_coin_three_coin.text = coinPriceBean.data[2].describe
         tv_coin_four_coin.text = coinPriceBean.data[3].describe
         tv_coin_five_coin.text = coinPriceBean.data[4].describe
 
         tv_coin_one_price.text = "￥${coinPriceBean.data[0].now_price} "
-        tv_coin_two_price.text = "￥${coinPriceBean.data[4].now_price} "
+        tv_coin_two_price.text = "￥${coinPriceBean.data[1].now_price} "
         tv_coin_three_price.text = "￥${coinPriceBean.data[2].now_price} "
         tv_coin_four_price.text = "￥${coinPriceBean.data[3].now_price} "
         tv_coin_five_price.text = "￥${coinPriceBean.data[4].now_price} "

@@ -250,7 +250,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         sb_user_data_progress.setOnTouchListener(View.OnTouchListener { v, event -> true })
 
 
-        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""){
+        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
@@ -265,8 +265,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     .into(iv_user_data_avatar)
             }
             tv_user_data_avatar_check.visibility = View.VISIBLE
-        }else{
-            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+        } else {
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
+                    Constant.ME_AVATAR_AUDIT,
+                    "") != ""
+            ) {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR))
@@ -281,7 +284,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         .into(iv_user_data_avatar)
                 }
                 tv_user_data_avatar_check.visibility = View.GONE
-            }else{
+            } else {
                 // 先判断性别
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     iv_user_data_avatar.setImageResource(R.mipmap.icon_avatar_upload_male)
@@ -550,7 +553,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         ll_user_data_introduce.setOnClickListener {
-            introduceDialog!!.show()
+//            introduceDialog!!.show()
+
+
+            XPopup.Builder(context)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IntroduceDialog(requireContext()))
+                .show()
         }
 
         ll_user_data_ideal.setOnClickListener {
@@ -1641,7 +1653,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         }
 
                         rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_three)
+                        Glide.with(this).load(R.drawable.ic_data_life_add)
+                            .into(iv_user_data_life_three)
                     }
                 }
             } else {
@@ -1674,7 +1687,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
 
-    fun update111(activity: UserActivity){
+    fun update111(activity: UserActivity) {
         val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
         val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
 
@@ -1752,7 +1765,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         }
 
                         rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_three)
+                        Glide.with(activity).load(R.drawable.ic_data_life_add)
+                            .into(iv_user_data_life_three)
                     }
                 }
             } else {
@@ -1770,7 +1784,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     }
 
                     rl_user_data_life_two.visibility = View.VISIBLE
-                    Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
+                    Glide.with(activity).load(R.drawable.ic_data_life_add)
+                        .into(iv_user_data_life_two)
                     rl_user_data_life_three.visibility = View.GONE
                 }
             }
@@ -1875,20 +1890,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             4 -> target = "没考虑清楚"
         }
 
-        when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 4)) {
-            0 -> haveChild = "没有孩子"
-            1 -> haveChild = "有孩子且住在一起"
-            2 -> haveChild = "有孩子偶尔会住一起"
-            3 -> haveChild = "有但不在身边"
-            4 -> haveChild = "未填写"
+        when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0)) {
+            0 -> haveChild = "未填写"
+            1 -> haveChild = "没有孩子"
+            2 -> haveChild = "有孩子且住在一起"
+            3 -> haveChild = "有孩子偶尔会住一起"
+            4 -> haveChild = "有但不在身边"
+
         }
 
         when (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 4)) {
-            0 -> wantChild = "视情况而定"
-            1 -> wantChild = "想要孩子"
-            2 -> wantChild = "不想要孩子"
-            3 -> wantChild = "以后再告诉你"
-            4 -> wantChild = "未填写"
+            0 -> wantChild = "未填写"
+            1 -> wantChild = "视情况而定"
+            2 -> wantChild = "想要孩子"
+            3 -> wantChild = "不想要孩子"
+            4 -> wantChild = "以后再告诉你"
         }
 
         when (SPStaticUtils.getInt(Constant.ME_HOUSE, 5)) {
@@ -2570,9 +2586,18 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val industryName = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
         val occupationCode = SPStaticUtils.getInt(Constant.ME_OCCUPATION_CODE, 0)
         val occupationName = SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")
+
         val province = SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_CODE, 0)
+        val provinceName = SPStaticUtils.getString(Constant.ME_WORK_PROVINCE_NAME, "")
         val cityCode = SPStaticUtils.getInt(Constant.ME_WORK_CITY_CODE, 0)
         val cityName = SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "")
+
+
+        val homeProvince = SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE, 0)
+        val homeProvinceName = SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
+        val homeCityCode = SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0)
+        val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
+
         val home = SPStaticUtils.getString(Constant.ME_HOME, "")
         val income = SPStaticUtils.getInt(Constant.ME_INCOME, 7)
         val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
@@ -2593,16 +2618,26 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     "\"occupation_num\":    $occupationCode," +     // 岗位编码
                     "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
                     "\"work_province_num\": \"$province\"," +           // 工作省份编码
+                    "\"work_province_str\": \"$provinceName\"," +           // 工作省份编码
                     "\"work_city_num\":     \"$cityCode\"," +           // 工作城市编码
                     "\"work_city_str\":     \"$cityName\"," +           // 工作城市名字
-                    "\"hometown\":          \"$home\"," +               // 故乡
+
+                    "\"hometown_province_num\": \"$homeProvince\"," +           // 家乡省份编码
+                    "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
+                    "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
+                    "\"hometown_city_str\":     \"$homeCityName\"," +           // 家乡城市名字
+
                     "\"salary_range\":      $income," +             // 月薪范围
                     "\"marry_had\":         $marryState," +         // 当前婚育状况
                     "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
                     "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
                     " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
 
+
+        Log.i("guo", "baseInfo : ${baseInfo}")
+
         return baseInfo
+
 
     }
 
@@ -2626,8 +2661,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val marryTime = SPStaticUtils.getInt(Constant.ME_MARRY_TIME, 0)
 
         val moreInfo =
-            " {\"user_sex\": $sex, " +                        // 性别
-                    "\"weight\":       $weight," +            // 体重公斤
+            " {\"weight\":       $weight," +            // 体重公斤
                     "\"figure_nan\":       $body," +          // 身材男
                     "\"figure_nv\":       $body," +           // 身材女
                     "\"blood_type\":   \"$blood\"," +         // 血型，不作筛选条
@@ -2642,6 +2676,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     "\"child_had\":       $haveChild," +         // 是否有娃
                     "\"want_child\":       $wantChild," +        // 想要生娃
                     "\"marry_time\":    $marryTime}"  // 想结婚时间
+
+        Log.i("guo", "moreInfo ； $moreInfo")
 
         return moreInfo
 
@@ -2714,8 +2750,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             FileUtils.delete(mPhotoPath)
 
             photoBitmap?.let { saveBitmap(it, mPhotoPath) }
-
-            Log.i("guo", "path : $mPhotoPath")
 
             Thread {
 
@@ -4151,14 +4185,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 SPStaticUtils.put(Constant.ME_WORK, work)
 
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME,
-                    mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE,
-                    mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_WORK_PROVINCE_PICK, mCityFirstPosition)
                 SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE,
-                    mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_WORK_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true
@@ -4639,22 +4670,23 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0)) {
                 0 -> {
+
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
-                2 -> {
+                3 -> {
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                3 -> {
+                4 ->{
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -4764,22 +4796,23 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0)) {
                 0 -> {
+
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
-                2 -> {
+                3 -> {
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                3 -> {
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -5280,15 +5313,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 SPStaticUtils.put(Constant.ME_HOME, home)
 
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
-                    mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE,
-                    mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_HOME_PROVINCE_PICK, mCityFirstPosition)
-                SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
-                    mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE,
-                    mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, mCitySecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_HOME_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true

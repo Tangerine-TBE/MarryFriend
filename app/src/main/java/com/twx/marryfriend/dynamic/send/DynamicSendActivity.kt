@@ -87,7 +87,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     private var imageUrl = ""
 
     // 视频地址
-    private val videoUrl = ""
+    private var videoUrl = ""
 
     // 视频封面
     private val videoCover = ""
@@ -589,14 +589,18 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
                                     }
+
                                 }
 
-                                val x = xlist.toString().replace("[", "")
+                                if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
+                                    val x = xlist.toString().replace("[", "")
 
-                                imageUrl = x.replace("]", "")
+                                    videoUrl = x.replace("]", "")
+                                } else {
+                                    val x = xlist.toString().replace("[", "")
 
-                                Log.i("guo", "imageUrl : $imageUrl")
-
+                                    imageUrl = x.replace("]", "")
+                                }
 
                                 doTextVerify(content)
 

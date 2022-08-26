@@ -73,7 +73,7 @@ class CommentTipAdapter(private val mList: MutableList<CommentTipList>) :
 
         holder.comment.text = mList[position].content
 
-        holder.time.text = TimeUtil.getCommonTime(mList[position].create_time)
+        holder.time.text = TimeUtil.getCommonTime(mList[position].discuss_time)
 
         when (mList[position].trends_type) {
             1 -> {

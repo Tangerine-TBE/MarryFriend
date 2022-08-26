@@ -26,4 +26,37 @@
 
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_comment_other_empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_mine_comment_empty" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="暂时还没有评论"
+            android:textColor="#404040"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="18dp"
+            android:text="多发发动态吧"
+            android:textColor="#404040"
+            android:textSize="17sp" />
+
+    </LinearLayout>
+
 </RelativeLayout>

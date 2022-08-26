@@ -1,11 +1,13 @@
 package com.twx.marryfriend.mine.like.mine
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -24,6 +26,7 @@ import com.twx.marryfriend.net.callback.mine.IGetWhoLikeMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoDiscussMePresentImpl
 import com.twx.marryfriend.net.impl.mine.getWhoLikeMePresentImpl
 import kotlinx.android.synthetic.main.fragment_comment_mine.*
+import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import kotlinx.android.synthetic.main.fragment_like_mine.*
 import java.util.*
 
@@ -77,10 +80,12 @@ class LikeMineFragment : Fragment(), IGetWhoLikeMeCallback, RecentLikeAdapter.On
         sfl_like_mime_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_like_mime_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_like_mime_refresh.autoRefresh()
+
     }
 
     private fun initData() {
-        getLikeMineData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -109,6 +114,18 @@ class LikeMineFragment : Fragment(), IGetWhoLikeMeCallback, RecentLikeAdapter.On
         getWhoLikeMePresent.getWhoLikeMe(map, page)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == FragmentActivity.RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    currentPaper = 1
+                    getLikeMineData(currentPaper)
+                }
+            }
+        }
+    }
+
     override fun onLoading() {
 
     }
@@ -120,6 +137,8 @@ class LikeMineFragment : Fragment(), IGetWhoLikeMeCallback, RecentLikeAdapter.On
     override fun onGetWhoLikeMeSuccess(whoLikeMeBean: WhoLikeMeBean?) {
         if (whoLikeMeBean != null) {
             if (whoLikeMeBean.data.list.isNotEmpty()) {
+
+                ll_like_mime_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()
@@ -146,13 +165,13 @@ class LikeMineFragment : Fragment(), IGetWhoLikeMeCallback, RecentLikeAdapter.On
     }
 
     override fun onItemClick(v: View?, position: Int) {
-        startActivity(context?.let {
+        startActivityForResult(context?.let {
             DynamicOtherShowActivity.getIntent(
                 it,
                 mList[position].id,
                 mList[position].user_id.toInt()
             )
-        })
+        }, 0)
     }
 
 }

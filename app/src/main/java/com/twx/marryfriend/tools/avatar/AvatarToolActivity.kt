@@ -426,7 +426,6 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
                     }",
                         FileUtils.getFileName(mPhotoPath), -1).toString()
 
-
                     // 这个时候应该上传
                     doUploadAvatar(
                         mPhotoUrl,
@@ -439,7 +438,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
                 ll_avatar_loading.visibility = View.GONE
 
-                ToastUtils.showShort(faceDetectBean.data[0].msg + faceDetectBean.data[0].conclusion)
+                ToastUtils.showShort(faceDetectBean.data[0].msg)
 
             }
         }

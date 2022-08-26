@@ -24,6 +24,7 @@ import com.twx.marryfriend.mine.view.mine.ViewMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetMeSeeWhoCallback
 import com.twx.marryfriend.net.impl.mine.getMeSeeWhoPresentImpl
 import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
+import kotlinx.android.synthetic.main.fragment_like_mine.*
 import kotlinx.android.synthetic.main.fragment_view_mine.*
 import kotlinx.android.synthetic.main.fragment_view_other.*
 import java.util.*
@@ -77,10 +78,13 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
 
         sfl_view_other_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_view_other_refresh.setRefreshFooter(ClassicsFooter(mContext))
+
+        sfl_view_other_refresh.autoRefresh()
+
     }
 
     private fun initData() {
-        getViewOtherData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -119,6 +123,8 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
     override fun onGetMeSeeWhoSuccess(meSeeWhoBean: MeSeeWhoBean?) {
         if (meSeeWhoBean != null) {
             if (meSeeWhoBean.data.list.isNotEmpty()) {
+
+                ll_view_other_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()

@@ -55,6 +55,7 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
 import com.twx.marryfriend.guide.detailInfo.artificial.IdentityActivity
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
@@ -66,6 +67,7 @@ import com.twx.marryfriend.login.retrieve.activity.FaceLivenessExpActivity
 import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.DoubleSlideSeekBar
 import com.yalantis.ucrop.UCrop
@@ -465,7 +467,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         tv_guide_detail_service.movementMethod = LinkMovementMethod.getInstance()
 
 
-        val str2 = "详见《隐私政策》"
+        val str2 = "详见《服务协议》"
         val stringBuilder2 = SpannableStringBuilder(str2)
         val span2 = TextViewSpan2()
         stringBuilder2.setSpan(span2, 3, 7, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -2473,7 +2475,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
 
             } else {
-                ToastUtils.showShort(faceDetectBean.data[0].msg + faceDetectBean.data[0].conclusion)
+                ToastUtils.showShort(faceDetectBean.data[0].msg)
             }
         }
 
@@ -2537,8 +2539,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         override fun onClick(widget: View) {
             //点击事件
-            val intent = Intent(this@DetailInfoActivity, IdentityActivity::class.java)
-            startActivity(intent)
+            startActivity(SetWebActivity.getIntent(this@DetailInfoActivity,
+                "在线客服",
+                DataProvider.WebUrlData[0].url))
         }
     }
 
@@ -2549,7 +2552,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         override fun onClick(widget: View) {
             //点击事件
-            ToastUtils.showShort("此处显示人脸识别的隐私政策")
+            startActivity(SetWebActivity.getIntent(this@DetailInfoActivity,
+                "人脸认证服务协议",
+                DataProvider.WebUrlData[10].url))
         }
     }
 

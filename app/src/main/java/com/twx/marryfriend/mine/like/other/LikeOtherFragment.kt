@@ -21,6 +21,7 @@ import com.twx.marryfriend.mine.like.mine.LikeMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetMeLikeWhoCallback
 import com.twx.marryfriend.net.impl.mine.getMeLikeWhoPresentImpl
 import com.twx.marryfriend.net.impl.mine.getWhoLikeMePresentImpl
+import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import kotlinx.android.synthetic.main.fragment_like_mine.*
 import kotlinx.android.synthetic.main.fragment_like_other.*
 import java.util.*
@@ -75,10 +76,12 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
         sfl_like_other_refresh.setRefreshHeader(ClassicsHeader(mContext))
         sfl_like_other_refresh.setRefreshFooter(ClassicsFooter(mContext))
 
+        sfl_like_other_refresh.autoRefresh()
+
     }
 
     private fun initData() {
-        getLikeOtherData(currentPaper)
+
     }
 
     private fun initPresent() {
@@ -117,6 +120,8 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
     override fun onGetMeLikeWhoSuccess(meLikeWhoBean: MeLikeWhoBean?) {
         if (meLikeWhoBean != null) {
             if (meLikeWhoBean.data.list.isNotEmpty()) {
+
+                ll_like_other_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()

@@ -18,6 +18,8 @@ data class WhoLikeMeData(
 data class WhoLikeMeList(
     val age: Int,
     val audit_status: Int,
+    val close_time_high: String,
+    val close_time_low: String,
     val create_time: String,
     val dianzan_time: String,
     val education: Int,
@@ -27,7 +29,8 @@ data class WhoLikeMeList(
     val image_url: String,
     val jingdu: String,
     val label: String,
-    val level: Any,
+    val level_high: Int,
+    val level_low: Int,
     val nick: String,
     val occupation_str: String,
     val position: String,
@@ -38,11 +41,6 @@ data class WhoLikeMeList(
     val video_cover: String,
     val video_url: String,
     val weidu: String,
-    val work_city_str: String,
-
-    val level_low: Int,
-    val close_time_low: String,
-    val level_high: Int,
-    val close_time_high: String,
+    val work_city_str: String
 
 )
