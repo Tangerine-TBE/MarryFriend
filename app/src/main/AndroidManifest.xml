@@ -238,7 +238,7 @@
         <activity android:name=".search.SearchParamActivity" />
         <activity android:name=".search.AccurateSearchActivity" />
         <activity android:name=".search.SearchResultActivity" />
-        <activity android:name=".ilove.ILikeActivity" /> <!-- <activity android:name="com.twx.marryfriend.search.SearchParamActivity"/> -->
+        <activity android:name=".ilove.ILikeActivity" />
         <activity android:name=".message.ChatActivity" />
         <activity android:name=".mutual.MutualLikeActivity"/>
         <activity android:name=".mutual.MutualLikeDialogActivity"/>

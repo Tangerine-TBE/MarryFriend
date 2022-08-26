@@ -30,6 +30,13 @@ fun iLog(text: String, tag: String = ""){
     Log.i("myLog,$tag", text)
 }
 
+fun Any.wLog(text: String, tag: String = this.javaClass.simpleName){
+//    if (!BuildConfig.DEBUG){
+//        return
+//    }
+    Log.w("myLog,$tag", text)
+}
+
 fun Any.eLog(text: String, tag: String = this.javaClass.simpleName){
 //    if (!BuildConfig.DEBUG){
 //        return

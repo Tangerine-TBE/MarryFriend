@@ -24,6 +24,7 @@ import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
@@ -40,12 +41,16 @@ import kotlinx.coroutines.launch
 class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     companion object{
         private const val USER_ID_KEY="user_id_k"
-        fun getIntent(context: Context,userId:Int?):Intent?{
+        private const val IS_SHOW_LIKE="is_show_like"
+        private const val IS_SHOW_DIS_LIKE="is_show_dis_like"
+        fun getIntent(context: Context,userId:Int?,isShowLike:Boolean=false,isShowDisLike:Boolean=false):Intent?{
             if (userId==null){
                 toast(context,"id 不能为空")
                 return null
             }
             val intent=Intent(context,FriendInfoActivity::class.java)
+            intent.putExtra(IS_SHOW_LIKE,isShowLike)
+            intent.putExtra(IS_SHOW_DIS_LIKE, isShowDisLike)
             intent.putExtra(USER_ID_KEY,userId)
             return intent
         }
@@ -57,6 +62,12 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         }else{
             null
         }
+    }
+    private val isShowLike by lazy {
+        intent?.getBooleanExtra(IS_SHOW_LIKE,false)?:false
+    }
+    private val isShowDisLike by lazy {
+        intent?.getBooleanExtra(IS_SHOW_DIS_LIKE,false)?:false
     }
     private val friendInfoViewModel by lazy {
         ViewModelProvider(this).get(FriendInfoViewModel::class.java)
@@ -70,6 +81,45 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             .setCancelable(false)
             .setMessage("请稍后...")
     }
+    private val followReportDialog by lazy {
+        FollowReportDialog(this).also {
+            if (userItem?.isFollow()==true){
+                it.setFollowText("取消关注")
+            }else{
+                it.setFollowText("关注")
+            }
+            it.setFollowListener{ //关注或者取消关注
+                lifecycleScope.launch {
+                    if (userItem?.isFollow()==true){
+                        try {
+                            friendInfoViewModel.unFollow(userId?:return@launch)
+                            userItem?.clearFollow()
+                            toast("取消关注成功")
+                        }catch (e:Exception){
+                            toast("取消关注失败，${e.message}")
+                        }
+                    }else{
+                        try {
+                            friendInfoViewModel.follow(userId?:return@launch)
+                            userItem?.addFollow()
+                            toast("关注成功")
+                        }catch (e:Exception){
+                            toast("关注失败，${e.message}")
+                        }
+                    }
+                    if (userItem?.isFollow()==true){
+                        it.setFollowText("取消关注")
+                    }else{
+                        it.setFollowText("关注")
+                    }
+                }
+            }
+
+            it.setReportListener { //举报
+                toast("举报")
+            }
+        }
+    }
     private var userItem: RecommendBean?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +127,20 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         loadData()
         isLikeMe.visibility=View.GONE
         Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+        if (isShowLike){
+            care2.visibility=View.VISIBLE
+            care.visibility=View.VISIBLE
+        }else{
+            care2.visibility=View.GONE
+            care.visibility=View.GONE
+        }
+        if (isShowDisLike){
+            dislike2.visibility=View.VISIBLE
+            dislike.visibility=View.VISIBLE
+        }else{
+            dislike2.visibility=View.GONE
+            dislike.visibility=View.GONE
+        }
     }
 
     private fun loadData(){
@@ -100,7 +164,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             //简介模块
             briefIntroduction.apply {
                 itemSetting.setOnClickListener {
-                    toast(it.context,"TODO 设置")
+                    followReportDialog.show()
                 }
                 Glide.with(this).load(item.getHeadImg()).into(recommendPhoto)
                 itemNickname.text=item.getNickname()

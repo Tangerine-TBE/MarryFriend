@@ -69,6 +69,7 @@ data class Base(
 ){
     var like_uid:Int?=null
     var super_uid:Int?=null
+    var focus_uid:Int?=null
 }
 data class Demand(
     val age_max: Int?=null,
@@ -101,6 +102,9 @@ data class Demand(
     val work_province_str: String?=null
 ){
     fun getChild_hadArray():List<Int>{
+        if (child_had.isNullOrBlank()){
+            return emptyList()
+        }
         val ja=JSONArray(child_had)
         if (ja.length()==0){
             return emptyList()
@@ -113,6 +117,9 @@ data class Demand(
         }
     }
     fun getEducationArray():List<Int>{
+        if (education.isNullOrBlank()){
+            return emptyList()
+        }
         val ja=JSONArray(education)
         if (ja.length()==0){
             return emptyList()
@@ -125,6 +132,9 @@ data class Demand(
         }
     }
     fun getMarry_statusArray():List<Int>{
+        if (marry_status.isNullOrBlank()){
+            return emptyList()
+        }
         val ja=JSONArray(marry_status)
         if (ja.length()==0){
             return emptyList()
@@ -137,6 +147,9 @@ data class Demand(
         }
     }
     fun getSalary_rangeArray():List<Int>{
+        if (salary_range.isNullOrBlank()){
+            return emptyList()
+        }
         val ja=JSONArray(salary_range)
         if (ja.length()==0){
             return emptyList()

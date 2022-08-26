@@ -2,6 +2,7 @@ package com.twx.marryfriend.recommend
 
 import android.Manifest
 import android.animation.Animator
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -26,7 +27,9 @@ import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.dialog.OneClickHelloDialog
+import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
+import com.twx.marryfriend.dialog.createDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.guide.jumpInfo.JumpActivity
 import com.twx.marryfriend.ilove.ILikeActivity
@@ -69,6 +72,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             .setCancelable(false)
             .setMessage("请稍后...")
     }
+    private val coinInsufficientDialog by lazy {
+        ReChargeCoinDialog(requireContext())
+    }
     private var touchHelper:ItemTouchHelper?=null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -80,18 +86,23 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         val cardCallback = SlideCardCallback()
         touchHelper = ItemTouchHelper(cardCallback)
         cardCallback.removeItemAction={
-            val e=recommendAdapter.removeAt(0)
-            if (it==ItemTouchHelper.LEFT){
-                guideActionCompleteHandler(HomeCardAction.leftSlide)
-                iLog("不喜欢")
-                disLike(e)
-            }else if (it==ItemTouchHelper.RIGHT){
-                guideActionCompleteHandler(HomeCardAction.rightSlide)
-                iLog("喜欢")
-                like(e)
-            }
-            if (recommendAdapter.getData().isEmpty()){
-                showView(ViewType.notContent)
+            if (recommendViewModel.haveMoreRecommend.value==false){
+                recommendAdapter.notifyDataSetChanged()
+                openVip()
+            }else{
+                val e=recommendAdapter.removeAt(0)
+                if (it==ItemTouchHelper.LEFT){
+                    guideActionCompleteHandler(HomeCardAction.leftSlide)
+                    iLog("不喜欢")
+                    disLike(e)
+                }else if (it==ItemTouchHelper.RIGHT){
+                    guideActionCompleteHandler(HomeCardAction.rightSlide)
+                    iLog("喜欢")
+                    like(e)
+                }
+                if (recommendAdapter.getData().isEmpty()){
+                    showView(ViewType.notContent)
+                }
             }
         }
         cardSwipeView.layoutManager= SlideCardLayoutManager()
@@ -128,6 +139,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
         Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+        recommendViewModel.haveMoreRecommend.observe(viewLifecycleOwner) {
+
+        }
+        showFillInOrOneClickHello()
+    }
+
+    private fun showFillInOrOneClickHello(){
         viewLifecycleOwner.lifecycleScope.launch {
             if (UserInfo.getNextNotFillIn(requireContext(),this)!=null&&IntentManager.isOpenOneFillIn()){
                 startActivity(IntentManager.toFillInDialogIntent(requireContext()))
@@ -257,78 +275,86 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             superLike(it)
         }
         recommendAdapter.likeAction={item,view->
-            view
-                .animate()
-                ?.alpha(0f)
-                ?.rotation(10f)
-                ?.translationX(view.width /2f)
-                ?.setDuration(500)
-                ?.setListener(object : Animator.AnimatorListener{
-                    override fun onAnimationStart(animation: Animator?) {
-                        
-                    }
+            if (recommendViewModel.haveMoreRecommend.value==false){
+                openVip()
+            }else{
+                view
+                    .animate()
+                    ?.alpha(0f)
+                    ?.rotation(10f)
+                    ?.translationX(view.width /2f)
+                    ?.setDuration(500)
+                    ?.setListener(object : Animator.AnimatorListener{
+                        override fun onAnimationStart(animation: Animator?) {
 
-                    override fun onAnimationEnd(animation: Animator?) {
-                        view.apply {
-                            this.alpha=1f
-                            this.rotation=0f
-                            this.translationX=0f
                         }
-                        recommendAdapter.removeAt(0)
-                        iLog("喜欢")
-                        like(item)
-                        if (recommendAdapter.getData().isEmpty()){
-                            showView(ViewType.notContent)
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            view.apply {
+                                this.alpha=1f
+                                this.rotation=0f
+                                this.translationX=0f
+                            }
+                            recommendAdapter.removeAt(0)
+                            iLog("喜欢")
+                            like(item)
+                            if (recommendAdapter.getData().isEmpty()){
+                                showView(ViewType.notContent)
+                            }
                         }
-                    }
 
-                    override fun onAnimationCancel(animation: Animator?) {
-                        
-                    }
+                        override fun onAnimationCancel(animation: Animator?) {
 
-                    override fun onAnimationRepeat(animation: Animator?) {
-                        
-                    }
+                        }
 
-                })
-                ?.start()
+                        override fun onAnimationRepeat(animation: Animator?) {
+
+                        }
+
+                    })
+                    ?.start()
+            }
         }
         recommendAdapter.disLikeAction={item,view->
-            view
-                .animate()
-                ?.alpha(0f)
-                ?.rotation(-10f)
-                ?.translationX(view.width /-2f)
-                ?.setDuration(500)
-                ?.setListener(object : Animator.AnimatorListener{
-                    override fun onAnimationStart(animation: Animator?) {
+            if (recommendViewModel.haveMoreRecommend.value==false){
+                openVip()
+            }else{
+                view
+                    .animate()
+                    ?.alpha(0f)
+                    ?.rotation(-10f)
+                    ?.translationX(view.width /-2f)
+                    ?.setDuration(500)
+                    ?.setListener(object : Animator.AnimatorListener{
+                        override fun onAnimationStart(animation: Animator?) {
 
-                    }
-
-                    override fun onAnimationEnd(animation: Animator?) {
-                        view.apply {
-                            this.alpha=1f
-                            this.rotation=0f
-                            this.translationX=0f
                         }
-                        recommendAdapter.removeAt(0)
-                        iLog("不喜欢")
-                        disLike(item)
-                        if (recommendAdapter.getData().isEmpty()){
-                            showView(ViewType.notContent)
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            view.apply {
+                                this.alpha=1f
+                                this.rotation=0f
+                                this.translationX=0f
+                            }
+                            recommendAdapter.removeAt(0)
+                            iLog("不喜欢")
+                            disLike(item)
+                            if (recommendAdapter.getData().isEmpty()){
+                                showView(ViewType.notContent)
+                            }
                         }
-                    }
 
-                    override fun onAnimationCancel(animation: Animator?) {
+                        override fun onAnimationCancel(animation: Animator?) {
 
-                    }
+                        }
 
-                    override fun onAnimationRepeat(animation: Animator?) {
+                        override fun onAnimationRepeat(animation: Animator?) {
 
-                    }
+                        }
 
-                })
-                ?.start()
+                    })
+                    ?.start()
+            }
         }
         sendMsg.setOnClickListener {
             toast("给她发消息")
@@ -362,7 +388,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
             try {
-                recommendViewModel.disLike(item.getId())
+                recommendViewModel.disLike(item.getId(),{
+                    openVip()
+                })
             }catch (e:Exception){
                 toast(e.message)
             }
@@ -384,14 +412,18 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {
-                val str=recommendViewModel.like(item.getId()) {
+                val str=recommendViewModel.like(item.getId(),{
                     showView(ViewType.mutual)
                     Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
-                }
+                },{
+                    openVip()
+                })
                 ImMessageManager.sendTextMsg(item.getId().toString(), UserInfo.getGreetText())
                 toast(str)
             }catch (e:Exception){
-                toast(e.message)
+                e.message?.also {
+                    toast(it)
+                }
             }
             loadingDialog.dismiss()
         }
@@ -409,7 +441,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             viewLifecycleOwner.lifecycleScope.launch (){
                 loadingDialog.show()
                 try {
-                    recommendViewModel.superLike(item.getId())
+                    recommendViewModel.superLike(item.getId()) {
+                        coinInsufficientDialog.show()
+                    }
                     ImMessageManager.sendFlower(item.getId().toString())
                     toast("送花成功")
                 }catch (e:Exception){
@@ -418,6 +452,19 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 loadingDialog.dismiss()
             }
         }
+    }
+
+    private fun openVip(){
+        startActivity(IntentManager.getVipIntent(requireContext()))
+//        AlertDialog.Builder(requireContext())
+//            .setMessage("需要开通会员解锁更多")
+//            .setPositiveButton("去开通"){_,_->
+//                startActivity(IntentManager.getVipIntent(requireContext()))
+//            }
+//            .setNegativeButton("取消"){_,_->
+//
+//            }
+//            .show()
     }
 
     enum class ViewType{
@@ -437,6 +484,28 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 notContent.visibility=View.GONE
             }
             ViewType.notContent -> {
+                if(UserInfo.isVip()){
+                    moreContent.text="查看更多动态"
+                    moreContent.setOnClickListener {
+                        iLog("查看更多动态")
+                        toast("查看更多动态")
+                    }
+                    val success=recommendViewModel.startCountDownTimer {
+                        loadData()
+                    }
+                    if (success){
+                        recommendViewModel.countDownTimerLiveData.observe(viewLifecycleOwner){
+                            recomendTime.text=it
+                        }
+                    }
+                }else{
+                    moreContent.text="查看更多嘉宾"
+                    moreContent.setOnClickListener {
+                        iLog("查看更多嘉宾")
+                        openVip()
+                    }
+                }
+
                 guideView.onDataChange(false)
                 cardSwipeView.visibility=View.GONE
                 mutualLike.visibility=View.GONE

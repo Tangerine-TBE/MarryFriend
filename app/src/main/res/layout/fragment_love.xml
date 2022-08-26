@@ -5,7 +5,7 @@
     android:background="#FFFFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".likeme.LiveFragment">
+    tools:context=".likeme.LoveFragment">
 
     <TextView
         android:id="@+id/loveCount"
@@ -74,16 +74,17 @@
             android:paddingStart="4dp"
             android:paddingEnd="4dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <TextView
         android:id="@+id/openVip"
+        android:layout_width="277dp"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="31dp"
+        android:background="@drawable/shape_confirm"
+        android:gravity="center"
         android:text="开通【查看谁喜欢我】"
         android:textColor="#FFFFFFFF"
-        android:textSize="17sp"
-        android:gravity="center"
-        android:background="@drawable/shape_confirm"
-        android:layout_width="277dp"
-        android:layout_height="55dp"/>
+        android:textSize="17sp" />
 </RelativeLayout>

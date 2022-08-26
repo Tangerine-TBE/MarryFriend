@@ -20,10 +20,166 @@ data class RecommendBean(
     val verify: Verify?=null,
     val vip_info: VipInfo?=null,
     val zhaohu: Zhaohu?=null,
-    val headface:List<HeadfaceBean>?=null
+    val headface:List<HeadfaceBean>?=null,
+    val zo_place:List<Zo_place>?=null
 ){
     fun getId():Int{
-        return base?.id?:throw IllegalStateException("id为空")
+        return base?.user_id?:throw IllegalStateException("id为空")
+    }
+
+    fun isFollow():Boolean{//是否关注
+        return base?.focus_uid!=null
+    }
+
+    fun clearFollow(){
+        base?.focus_uid=null
+    }
+
+    fun addFollow(){
+        base?.focus_uid=getId()
+    }
+
+    fun getDemandLabel():List<Label>{
+        val list=ArrayList<Label>()
+        getAgeDemand()?.also {
+            list.add(it)
+        }
+        getHeightDemand()?.also {
+            list.add(it)
+        }
+        when (getUserSex()){
+            Sex.male -> {
+                getFigure_nv(demand?.figure_nv)?.also {
+                    list.add(it)
+                }
+            }
+            Sex.female -> {
+                getFigure_nan(demand?.figure_nan?.toIntOrNull())?.also {
+                    list.add(it)
+                }
+            }
+            Sex.unknown -> {
+
+            }
+        }
+        getSalary_range(demand?.salary_range)?.also {
+            list.add(it)
+        }
+
+        getEducationArrStr(demand?.getEducationArray())?.also {
+            list.add(it)
+        }
+        getMarry_hadArrStr(demand?.getMarry_statusArray())?.also {
+            list.add(it)
+        }
+        getChild_hadArrStr(demand?.getChild_hadArray())?.also {
+            list.add(it)
+        }
+        getWant_childStr(demand?.want_child)?.also {
+            list.add(it)
+        }
+        getIs_smoking(demand?.is_smoking)?.also {
+            list.add(it)
+        }
+        getDrink_wine(demand?.drink_wine)?.also {
+            list.add(it)
+        }
+        getIs_headface(demand?.is_headface)?.also {
+            list.add(it)
+        }
+        getIndustry_str(demand?.industry_str)?.also {
+            list.add(it)
+        }
+        getMarry_time(demand?.marry_time)?.also {
+            list.add(it)
+        }
+        getBuy_car(demand?.buy_car)?.also {
+            list.add(it)
+        }
+        getBuy_house(demand?.buy_house)?.also {
+            list.add(it)
+        }
+        getDemandWork_place_str()?.also {
+            list.add(it)
+        }
+
+        return list
+    }
+
+    fun getBaseLabel():List<Label>{
+        val list=ArrayList<Label>()
+        getAge(base?.age)?.also {
+            list.add(it)
+        }
+        getIndustry_str(base?.industry_str)?.also {
+            list.add(it)
+        }
+        getHometown()?.also {
+            list.add(it)
+        }
+        getCurrentResidence()?.also {
+            list.add(it)
+        }
+        getHeight()?.also {
+            list.add(it)
+        }
+        getSalary_range(base?.salary_range)?.also {
+            list.add(it)
+        }
+        getEducationStr(base?.education)?.also {
+            list.add(it)
+        }
+        getMarry_hadStr(base?.marry_had)?.also {
+            list.add(it)
+        }
+        more?.weight?.let {
+            if (it==0){
+                null
+            }else{
+                it.toString()+"kg"
+            }
+        }?.toLabel(R.mipmap.ic_label_weight)?.also {
+            list.add(it)
+        }
+        if (UserInfo.isSexMail(base?.user_sex)){
+            getFigure_nan(more?.figure_nan?.toIntOrNull())
+        }else{
+            getFigure_nv(more?.figure_nv)
+        }?.also {
+            list.add(it)
+        }
+        ConstellationEnum.findConstellation(more?.constellation?.toIntOrNull())?.title?.toLabel(R.mipmap.ic_label_constellation)?.also {
+            list.add(it)
+        }
+        getLove_target(more?.target_show,more?.love_target)?.also {
+            list.add(it)
+        }
+        getNationality(more?.nationality?.toIntOrNull())?.also {
+            list.add(it)
+        }
+        getBuy_car(more?.buy_car)?.also {
+            list.add(it)
+        }
+        getBuy_house(more?.buy_house)?.also {
+            list.add(it)
+        }
+        getIs_smoking(more?.is_smoking)?.also {
+            list.add(it)
+        }
+        getIs_drinking(more?.is_drinking)?.also {
+            list.add(it)
+        }
+        getChild_hadStr(more?.child_had)?.also {
+            list.add(it)
+        }
+        getWant_childStr(more?.want_child)?.also {
+            list.add(it)
+        }
+        getMarry_time(more?.marry_time)?.also {
+            list.add(it)
+        }
+        return list
+//        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
     }
 
     fun isLike():Boolean{
@@ -360,6 +516,9 @@ data class RecommendBean(
             }?.toLabel(R.mipmap.ic_label_income)
         }
         fun getSalary_range(salary_range:String?): Label?{
+            if (salary_range.isNullOrBlank()){
+                return null
+            }
             val jsonArray=JSONArray(salary_range)
             if (jsonArray.length()>0){
                 val first=jsonArray.getInt(0)
@@ -455,16 +614,19 @@ data class RecommendBean(
                     null//"不限"
                 }
                 1->{
-                    "半年"
+                    "闪婚"
                 }
                 2->{
-                    "一年"
+                    "一年内结婚"
                 }
                 3->{
-                    "两年"
+                    "两年内结婚"
                 }
                 4->{
-                    "恋爱后再考虑"
+                    "三年内结婚"
+                }
+                5->{
+                    "时机成熟就结婚"
                 }
                 else->{
                     null
@@ -670,149 +832,17 @@ data class RecommendBean(
     }
 
     fun getDemandWork_place_str(): Label?{
-        return "${demand?.work_place_str}".toLabel(R.mipmap.ic_label_residence)?.also { it.label="${it.label}工作" }
-    }
-
-    fun getDemandLabel():List<Label>{
-        val list=ArrayList<Label>()
-        getAgeDemand()?.also {
-            list.add(it)
-        }
-        getHeightDemand()?.also {
-            list.add(it)
-        }
-        when (getUserSex()){
-            Sex.male -> {
-                getFigure_nv(demand?.figure_nv)?.also {
-                    list.add(it)
-                }
+        val stringBuilder=StringBuilder()
+        zo_place?.forEach {
+            if (!it.work_city_str.isNullOrBlank()) {
+                stringBuilder.append(it.work_city_str)
+                stringBuilder.append("、")
             }
-            Sex.female -> {
-                getFigure_nan(demand?.figure_nan?.toIntOrNull())?.also {
-                    list.add(it)
-                }
-            }
-            Sex.unknown -> {
-
-            }
-        }
-        getSalary_range(demand?.salary_range)?.also {
-            list.add(it)
-        }
-
-        getEducationArrStr(demand?.getEducationArray())?.also {
-            list.add(it)
-        }
-        getMarry_hadArrStr(demand?.getMarry_statusArray())?.also {
-            list.add(it)
-        }
-        getChild_hadArrStr(demand?.getChild_hadArray())?.also {
-            list.add(it)
-        }
-        getWant_childStr(demand?.want_child)?.also {
-            list.add(it)
-        }
-        getIs_smoking(demand?.is_smoking)?.also {
-            list.add(it)
-        }
-        getDrink_wine(demand?.drink_wine)?.also {
-            list.add(it)
-        }
-        getIs_headface(demand?.is_headface)?.also {
-            list.add(it)
-        }
-        getIndustry_str(demand?.industry_str)?.also {
-            list.add(it)
-        }
-        getMarry_time(demand?.marry_time)?.also {
-            list.add(it)
-        }
-        getBuy_car(demand?.buy_car)?.also {
-            list.add(it)
-        }
-        getBuy_house(demand?.buy_house)?.also {
-            list.add(it)
-        }
-        getDemandWork_place_str()?.also {
-            list.add(it)
-        }
-
-        return list
-    }
-
-    fun getBaseLabel():List<Label>{
-        val list=ArrayList<Label>()
-        getAge(base?.age)?.also {
-            list.add(it)
-        }
-        getIndustry_str(base?.industry_str)?.also {
-            list.add(it)
-        }
-        getHometown()?.also {
-            list.add(it)
-        }
-        getCurrentResidence()?.also {
-            list.add(it)
-        }
-        getHeight()?.also {
-            list.add(it)
-        }
-        getSalary_range(base?.salary_range)?.also {
-            list.add(it)
-        }
-        getEducationStr(base?.education)?.also {
-            list.add(it)
-        }
-        getMarry_hadStr(base?.marry_had)?.also {
-            list.add(it)
-        }
-        more?.weight?.let {
-            if (it==0){
-                null
-            }else{
-                it.toString()+"kg"
-            }
-        }?.toLabel(R.mipmap.ic_label_weight)?.also {
-            list.add(it)
-        }
-        if (UserInfo.isSexMail(base?.user_sex)){
-            getFigure_nan(more?.figure_nan?.toIntOrNull())
+        }?:return null
+        return if (stringBuilder.isBlank()){
+            null
         }else{
-            getFigure_nan(more?.figure_nv)
-        }?.also {
-            list.add(it)
-        }
-        ConstellationEnum.findConstellation(more?.constellation?.toIntOrNull())?.title?.toLabel(R.mipmap.ic_label_constellation)?.also {
-            list.add(it)
-        }
-        getLove_target(more?.target_show,more?.love_target)?.also {
-            list.add(it)
-        }
-        getNationality(more?.nationality?.toIntOrNull())?.also {
-            list.add(it)
-        }
-        getBuy_car(more?.buy_car)?.also {
-            list.add(it)
-        }
-        getBuy_house(more?.buy_house)?.also {
-            list.add(it)
-        }
-        getIs_smoking(more?.is_smoking)?.also {
-            list.add(it)
-        }
-        getIs_drinking(more?.is_drinking)?.also {
-            list.add(it)
-        }
-        getChild_hadStr(more?.child_had)?.also {
-            list.add(it)
-        }
-        getWant_childStr(more?.want_child)?.also {
-            list.add(it)
-        }
-        getMarry_time(more?.marry_time)?.also {
-            list.add(it)
-        }
-        return list
-//        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
+            stringBuilder.removeSuffix("、").toString()+"工作"
+        }?.toLabel(R.mipmap.ic_label_residence)
     }
 }

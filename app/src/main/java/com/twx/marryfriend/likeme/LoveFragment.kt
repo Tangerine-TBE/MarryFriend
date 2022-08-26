@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kingja.loadsir.core.LoadSir
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -15,7 +17,7 @@ import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_love.*
 import kotlinx.coroutines.launch
 
-class LiveFragment : Fragment(R.layout.fragment_love) {
+class LoveFragment : Fragment(R.layout.fragment_love) {
     private val loadingDialog by lazy {
         LoadingDialogManager
             .createLoadingDialog()
@@ -36,7 +38,7 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
         ViewModelProvider(this).get(LiveViewModel::class.java)
     }
     private val liveAdapter by lazy {
-        LiveAdapter()
+        LoveAdapter()
     }
     private var pager=1
 
@@ -76,10 +78,18 @@ class LiveFragment : Fragment(R.layout.fragment_love) {
             }
         }
         liveAdapter.itemAction={
-            startActivity(FriendInfoActivity.getIntent(requireContext(),it.host_uid))
+            if (!UserInfo.isVip()){
+                toast("请先开通vip")
+            }else{
+                startActivity(FriendInfoActivity.getIntent(requireContext(),it.host_uid,true,true))
+            }
         }
-        openVip.setOnClickListener {
-            toast("开通会员")
+        if (UserInfo.isVip()){
+            openVip.visibility=View.GONE
+        }else{
+            openVip.setOnClickListener {
+                startActivity(IntentManager.getVipIntent(requireContext()))
+            }
         }
     }
 }

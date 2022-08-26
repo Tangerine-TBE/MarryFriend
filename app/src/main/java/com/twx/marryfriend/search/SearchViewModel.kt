@@ -45,6 +45,17 @@ class SearchViewModel:ViewModel() {
         return searchParameterMap
     }
 
+    fun isNeedVip():Boolean{
+        return HashMap(searchParameterMap).also {
+            it.remove("page")
+            it.remove("size")
+            it.remove("guest_sex")
+
+            it.remove("age_min")
+            it.remove("age_max")
+        }.isNotEmpty()
+    }
+
     suspend fun filtrateSearch()= suspendCoroutine<List<SearchResultItem>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/filtrateSearch"
         val map= mapOf(
@@ -193,7 +204,7 @@ class SearchViewModel:ViewModel() {
 
     fun setBuyCarParameter(listParameter: BuyCarEnum?){
         val key1="buy_car"
-        if (listParameter==null){
+        if (listParameter==null||listParameter==BuyCarEnum.unlimited){
             searchParameterMap.remove(key1)
         }else{
             searchParameterMap[key1] = listParameter.code.toString()
@@ -220,7 +231,7 @@ class SearchViewModel:ViewModel() {
 
     fun setHavePortraitParameter(listParameter: HeadPortraitEnum?){
         val key1="headface"
-        if (listParameter==null){
+        if (listParameter==null||listParameter==HeadPortraitEnum.unlimited){
             searchParameterMap.remove(key1)
         }else{
             searchParameterMap[key1] = listParameter.code.toString()
@@ -229,7 +240,7 @@ class SearchViewModel:ViewModel() {
 
     fun setVipParameter(listParameter: IsVipEnum?){
         val key1="level"
-        if (listParameter==null){
+        if (listParameter==null||listParameter==IsVipEnum.unlimited){
             searchParameterMap.remove(key1)
         }else{
             searchParameterMap[key1] = listParameter.code.toString()
@@ -238,7 +249,7 @@ class SearchViewModel:ViewModel() {
 
     fun setRealNameParameter(listParameter: RealNameEnum?){
         val key1="verify"
-        if (listParameter==null){
+        if (listParameter==null||listParameter==RealNameEnum.unlimited){
             searchParameterMap.remove(key1)
         }else{
             searchParameterMap[key1] = listParameter.code.toString()
@@ -247,7 +258,7 @@ class SearchViewModel:ViewModel() {
 
     fun setOnLineParameter(listParameter: OnLineEnum?){
         val key1="active"
-        if (listParameter==null){
+        if (listParameter==null||listParameter==OnLineEnum.unlimited){
             searchParameterMap.remove(key1)
         }else{
             searchParameterMap[key1] = listParameter.code.toString()

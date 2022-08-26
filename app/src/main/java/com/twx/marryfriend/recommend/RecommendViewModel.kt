@@ -1,5 +1,7 @@
 package com.twx.marryfriend.recommend
 
+import android.os.CountDownTimer
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.twx.marryfriend.UserInfo
@@ -11,14 +13,67 @@ import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.wLog
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.NumberFormat
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class RecommendViewModel():ViewModel() {
     private var preDisLike=0
+    val haveMoreRecommend=MutableLiveData<Boolean>()
+    private var surplusRecommend=3
+        set(value) {
+            if (value>0){
+                if (haveMoreRecommend.value!=true){
+                    haveMoreRecommend.value=true
+                }
+            }else{
+                haveMoreRecommend.value=false
+            }
+            field=value
+        }
+    private var countDownTimer:CountDownTimer?=null
+    val countDownTimerLiveData=MutableLiveData<String>()
+    private val numberFormat by lazy {
+        NumberFormat.getInstance().also {
+            it.minimumIntegerDigits=2
+        }
+    }
+
+    fun startCountDownTimer(finished:()->Unit):Boolean{
+        val currentTime=System.currentTimeMillis()
+        val cal=Calendar.getInstance().also {
+            it.set(Calendar.HOUR_OF_DAY,12)
+            it.set(Calendar.MINUTE,0)
+            it.set(Calendar.SECOND,0)
+            it.set(Calendar.MILLISECOND,0)
+        }
+        val millisInFunction=cal.timeInMillis-currentTime
+        return if (millisInFunction<0){
+            false
+        }else{
+            countDownTimer?.cancel()
+            countDownTimer=object :CountDownTimer(millisInFunction,1000L){
+                override fun onTick(millisUntilFinished: Long) {
+                    val h=millisUntilFinished/1000L/60L/60L
+                    val m=millisUntilFinished/1000L/60L%60L
+                    val s=millisUntilFinished/1000L%60L
+                    countDownTimerLiveData.value="${numberFormat.format(h)}:${numberFormat.format(m)}:${numberFormat.format(s)}"
+                }
+
+                override fun onFinish() {
+                    finished.invoke()
+                }
+            }
+            countDownTimer?.start()
+            true
+        }
+    }
 
     suspend fun loadRecommendUserId()=suspendCoroutine<List<Int>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/commendList"
@@ -104,7 +159,11 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun disLike(guest_uid: Int)=suspendCoroutine<Unit>{coroutine->
+    suspend fun disLike(guest_uid: Int,openVip:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
+        if (surplusRecommend<=0){
+            coroutine.resumeWithException(Exception())
+            return@suspendCoroutine
+        }
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -115,6 +174,10 @@ class RecommendViewModel():ViewModel() {
             try {
                 val jsonObject=JSONObject(response)
                 if (jsonObject.getInt("code")==200) {
+                    surplusRecommend--
+                    if (surplusRecommend<=0){
+                        openVip?.invoke()
+                    }
                     preDisLike=guest_uid
                     coroutine.resume(Unit)
                 }else{
@@ -127,8 +190,13 @@ class RecommendViewModel():ViewModel() {
             coroutine.resumeWithException(Exception(it))
         })
     }
+    
+    suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null,openVip:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
+        if (surplusRecommend<=0){
+            coroutine.resumeWithException(Exception())
+            return@suspendCoroutine
+        }
 
-    suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -142,6 +210,10 @@ class RecommendViewModel():ViewModel() {
                     val code=jsonObject.getJSONArray("data").getInt(0)
                     if (code==2){
                         mutualLikeAction?.invoke()
+                    }
+                    surplusRecommend--
+                    if (surplusRecommend<=0){
+                        openVip?.invoke()
                     }
                     iLog("返回的状态code:${code},2为相互喜欢")
                     coroutine.resume("喜欢成功")
@@ -189,7 +261,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun superLike(guest_uid: Int)=suspendCoroutine<Unit>{coroutine->
+    suspend fun superLike(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusChaojiXihuanOther"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -205,6 +277,13 @@ class RecommendViewModel():ViewModel() {
                         jsonObject.getString("msg")
                     }catch (e:Exception){
                         response
+                    }
+                    try {
+                        if (jsonObject.getInt("code")==444){
+                            coinInsufficient?.invoke()
+                        }
+                    }catch (e:Exception){
+                        wLog(e.stackTraceToString())
                     }
                     coroutine.resumeWithException(Exception(tip))
                 }

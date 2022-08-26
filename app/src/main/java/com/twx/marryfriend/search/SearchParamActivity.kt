@@ -4,14 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.twx.marryfriend.R
+import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
 import com.twx.marryfriend.bean.post.OccupationDataBean
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.*
-import com.twx.marryfriend.getCityData
-import com.twx.marryfriend.getOccupationData
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_search.*
@@ -422,7 +420,11 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             onLineDialog.show()
         }
         startSearch.setOnClickListener {
-            startActivity(SearchResultActivity.getIntent(this@SearchParamActivity,searchViewModel.getParameter()))
+            if (!searchViewModel.isNeedVip()){
+                startActivity(SearchResultActivity.getIntent(this@SearchParamActivity,searchViewModel.getParameter()))
+            }else{
+                startActivity(IntentManager.getVipIntent(this))
+            }
         }
         accurateSearch.setOnClickListener {
             startActivity(Intent(this,AccurateSearchActivity::class.java))

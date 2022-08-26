@@ -16,6 +16,7 @@ import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.tools.hobby.HobbyToolActivity
 import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
+import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.show.toast
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,6 +24,14 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object IntentManager {
+    fun getSuperVipIntent(context: Context):Intent?{
+        return VipActivity.getIntent(context,1)
+    }
+
+    fun getVipIntent(context: Context):Intent?{
+        return VipActivity.getIntent(context,0)
+    }
+
     private const val DAY_ONE_FILL_IN="day_one_fill_in"
     fun isOpenOneFillIn():Boolean{
         val date=

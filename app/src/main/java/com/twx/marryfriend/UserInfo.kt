@@ -56,8 +56,8 @@ object UserInfo {
     }
 
     fun getUserVipLevel():Int{
-        /*return SPStaticUtils.getInt(Constant.USER_VIP_LEVEL,0)*/
-        return 1
+//        return SPStaticUtils.getInt(Constant.USER_VIP_LEVEL,0)
+        return 0
     }
 
     fun isVip():Boolean{

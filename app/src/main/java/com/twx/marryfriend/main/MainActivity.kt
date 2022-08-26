@@ -8,7 +8,6 @@ import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
@@ -17,8 +16,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.dynamic.DynamicFragment
-import com.twx.marryfriend.likeme.LiveFragment
-import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.likeme.LoveFragment
 import com.twx.marryfriend.message.MessageFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.push.help.PushHelper
@@ -36,7 +34,7 @@ class MainActivity : MainBaseViewActivity() {
     }
 
     private var recommend: RecommendFragment? = null
-    private var love: LiveFragment? = null
+    private var love: LoveFragment? = null
     private var dynamic: DynamicFragment? = null
     private var message: MessageFragment? = null
     private var mine: MineFragment? = null
@@ -100,7 +98,7 @@ class MainActivity : MainBaseViewActivity() {
     private fun initLoveFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (love == null) {
-            love = LiveFragment()
+            love = LoveFragment()
             transaction.add(R.id.fl_main_container, love!!)
         }
         hideFragment(transaction)
