@@ -39,4 +39,5 @@ data class LikeTipList(
     val weidu: String,
     val headface: String,
     val work_city_str: String,
+    val like_id: Int,
 )

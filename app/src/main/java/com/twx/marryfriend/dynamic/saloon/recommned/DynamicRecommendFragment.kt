@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.lxj.xpopup.XPopup
@@ -128,6 +129,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         getTotalCountPresent = getTotalCountPresentImpl.getsInstance()
         getTotalCountPresent.registerCallback(this)
+
+        AnimalUtils.getAnimal(iv_like_animal)
 
 
 
@@ -452,7 +455,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                         ) {
                             mDiyList[position].anim = true
 
+
                             AnimalUtils.getAnimal(v as ImageView)
+
 
                             doLikeClick(mTrendList[position].id,
                                 mTrendList[position].user_id,

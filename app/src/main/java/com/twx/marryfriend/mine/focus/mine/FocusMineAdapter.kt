@@ -106,19 +106,19 @@ class FocusMineAdapter(private val mList: MutableList<WhoFocusMeList>) :
 
         if (mList[position].salary_range != "") {
             if (DataProvider.SuperOneCity.contains(mList[position].work_city_str)) {
-                if (mList[position].salary_range.toInt() >= 4) {
+                if (mList[position].salary_range.toInt() >= 5) {
                     holder.income.visibility = View.VISIBLE
                 } else {
                     holder.income.visibility = View.GONE
                 }
             } else if (DataProvider.OneCity.contains(mList[position].work_city_str)) {
-                if (mList[position].salary_range.toInt() >= 3) {
+                if (mList[position].salary_range.toInt() >= 4) {
                     holder.income.visibility = View.VISIBLE
                 } else {
                     holder.income.visibility = View.GONE
                 }
             } else {
-                if (mList[position].salary_range.toInt() >= 2) {
+                if (mList[position].salary_range.toInt() >= 3) {
                     holder.income.visibility = View.VISIBLE
                 } else {
                     holder.income.visibility = View.GONE

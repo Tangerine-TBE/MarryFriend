@@ -98,6 +98,9 @@ object Contents {
     // 谁评论过我的列表
     const val WHO_DISCUSS_ME = "UserCenter/whoDiscussMeList"
 
+    // 获取四个统计数字
+    const val GET_FOUR_TOTAL = "UserCenter/getFourTotal"
+
 
     // ------------------------------- 动态 -------------------------------
 
@@ -172,6 +175,9 @@ object Contents {
 
     const val GET_COMMENT_TIP = "TrendsNotice/discussUnreadList"
 
+    // 未读改成已读
+    const val DO_DELETE_TIPS = "TrendsNotice/UnreadToRead"
+
 
     // 会员价格列表
     const val GET_VIP_PRICE = "MemberCharge/vipList"
@@ -182,11 +188,14 @@ object Contents {
     // 苹果安卓发起支付宝
     const val DO_ALI_PAY = "MemberCharge/alibabaPayment"
 
+    // 预览对方
+    const val DO_PREVIEW_OTHER = "MemberCharge/previewOther"
+
     // 金币收支记录列表
     const val GET_COIN_RECORD = "MemberCharge/jinbiRecordList"
 
     // 刷新金币与会员
-    const val DO_REFRESH_SELF ="MemberCharge/refreshSelf"
+    const val DO_REFRESH_SELF = "MemberCharge/refreshSelf"
 
     // ------------------------------- 高德地图 -------------------------------
 
@@ -325,6 +334,10 @@ object Contents {
     const val MYSELF_UID = "myself_uid"  // 自己的uid
     const val FRIEND_UID = "friend_uid"  // 对方的uid
 
+    // 未读改成已读
+    const val DISCUSS_ID = "discuss_id"  // 评论最大id
+    const val LIKE_ID = "like_id"  // 点赞最大id
+
 
     // ------------------------------------ 支付 ------------------------------------
 
@@ -335,7 +348,6 @@ object Contents {
     const val BUY_ORDER_NUMBER = "buy_order_number" // 订单号
     const val FEE = "fee" // 金额
     const val BODY = "body" // 描述
-
 
 
     // ------------------------------------ 外部的api ------------------------------------

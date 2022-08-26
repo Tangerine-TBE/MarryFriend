@@ -913,35 +913,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 200 -> {
                     ToastUtils.showShort("重新加载数据")
 
-//                    getCommentOne()
-
-//                    val content: String,    // 评论内容
-//                    val create_time: String,     //评论时间，年月日 时分秒
-
-//                    val first_img_url: String,     // 前者头像
-//                    val first_nick: String,        // 前者昵称
-//                    val first_sex: Int,            // 前者性别
-
-//                    val host_read: Int,
-//                    val host_uid: Int,             // 动态主人uid
-//                    val id: Int,                   // 评论列表id
-//                    val last_img_url: String,      // 后者头像
-//                    val last_nick: String,         // 后者性别
-//                    val last_sex: Int,             // 后者昵称
-//                    val one_level_uid: Int,        // 一级评论uid
-//                    val one_read: Int,
-//                    val pid: Int,                  // 父级id
-//                    val trends_id: Int,            // 动态id
-//                    val two_first_uid: Int,        // 前者uid
-//                    val two_last_uid: Int,         // 后者uid
-//                    val two_read: Int,
-
-                    Log.i("guo", "data : ${mCommentOneList[mItem].all}")
-
-
                     when (mCommentOneList[mItem].all) {
                         0 -> {
-
                             // 此时一个数据都没有，不要添加到two里面，直接添加到one里面
 
                             mCommentOneList[mItem].list.content_two = content
@@ -1055,7 +1028,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     val x: MutableList<CommentTwoList> = arrayListOf()
                     val y: MutableList<CommentTwoList> = arrayListOf()
                     val bean = CommentBean(list, x, y, 0, 0)
-                    mCommentOneList.add(bean)
+                    mCommentOneList.add(0,bean)
                     adapter.notifyDataSetChanged()
 
                     mode = 0
@@ -1836,14 +1809,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].list.content_one)
         }
 
     }
@@ -1880,14 +1847,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].list.content_two)
         }
 
     }
@@ -1921,14 +1882,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].twoList[two].content)
+
         }
     }
 
@@ -1960,14 +1916,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].twoLocalList[two].content)
         }
     }
 

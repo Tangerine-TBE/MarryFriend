@@ -318,7 +318,21 @@ class SaloonFocusAdapter(
 
     private fun initPic(holder: ViewHolder, position: Int) {
 
-        Glide.with(mContext).load(mList[position].headface).into(holder.avatar)
+        if (mList[position].user_sex == 1){
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.mipmap.icon_mine_male_default)
+                .placeholder(R.mipmap.icon_mine_male_default)
+                .into(holder.avatar)
+        }else{
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.mipmap.icon_mine_female_default)
+                .placeholder(R.mipmap.icon_mine_female_default)
+                .into(holder.avatar)
+        }
+
+
         holder.name.text = mList[position].nick
 
         when (SpUtil.getVipLevel(mList[position].close_time_low, mList[position].close_time_high)) {

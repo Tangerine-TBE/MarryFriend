@@ -12,6 +12,8 @@ import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
+import com.twx.marryfriend.bean.dynamic.DeleteTipsBean;
+import com.twx.marryfriend.bean.mine.FourTotalBean;
 import com.twx.marryfriend.bean.mine.MeDiscussWhoBean;
 import com.twx.marryfriend.bean.mine.MeFocusWhoBean;
 import com.twx.marryfriend.bean.mine.MeLikeWhoBean;
@@ -62,6 +64,7 @@ import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
 import com.twx.marryfriend.bean.vip.AliPayBean;
 import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
+import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 
@@ -176,6 +179,10 @@ public interface Api {
     @POST("/marryfriend/UserCenter/whoDiscussMeList")
     Call<WhoDiscussMeBean> getWhoDiscussMe(@QueryMap Map<String, Object> params);
 
+
+    // 获取四个统计数字
+    @POST("/marryfriend/UserCenter/getFourTotal")
+    Call<FourTotalBean> getFourTotal(@QueryMap Map<String, Object> params);
 
     // 获取省市县
     @POST("/marryfriend/GetParameter/shengShi")
@@ -324,6 +331,9 @@ public interface Api {
     @POST("/marryfriend/TrendsNotice/discussUnreadList")
     Call<CommentTipBean> getCommentTips(@QueryMap Map<String, Object> params);
 
+    // 未读改成已读
+    @POST("/marryfriend/TrendsNotice/UnreadToRead")
+    Call<DeleteTipsBean> doDeleteTips(@QueryMap Map<String, Object> params);
 
     // 会员价格列表
     @POST("/marryfriend/MemberCharge/vipList")
@@ -337,6 +347,10 @@ public interface Api {
     @POST("/marryfriend/MemberCharge/alibabaPayment")
     Call<AliPayBean> doAliPay(@QueryMap Map<String, Object> params);
 
+    // 预览对方
+    @POST("/marryfriend/MemberCharge/previewOther")
+    Call<PreviewOtherBean> doPreviewOther(@QueryMap Map<String, Object> params);
+
     // 金币收支记录列表
     @POST("/marryfriend/MemberCharge/jinbiRecordList")
     Call<CoinRecordBean> getCoinRecord(@QueryMap Map<String, Object> params);
@@ -345,8 +359,6 @@ public interface Api {
     // 刷新金币与会员
     @POST("/marryfriend/MemberCharge/refreshSelf")
     Call<RefreshSelfBean> doRefreshSelf(@QueryMap Map<String, Object> params);
-
-
 
 
     // 高德地图-地点检索

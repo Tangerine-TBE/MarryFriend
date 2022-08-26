@@ -45,6 +45,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.bean.mine.FourTotalBean
 import com.twx.marryfriend.coin.CoinActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
@@ -62,7 +63,9 @@ import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.callback.mine.IGetFourTotalCallback
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.net.impl.mine.getFourTotalPresentImpl
 import com.twx.marryfriend.set.SetActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.tools.hobby.HobbyToolActivity
@@ -78,7 +81,7 @@ import java.io.*
 import java.util.*
 
 class MineFragment : Fragment(), IDoFaceDetectCallback,
-    IDoUpdateGreetInfoCallback, IDoViewHeadFaceCallback {
+    IDoUpdateGreetInfoCallback, IDoViewHeadFaceCallback, IGetFourTotalCallback {
 
     // 头像暂存bitmap
     private var mBitmap: Bitmap? = null
@@ -120,6 +123,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
     private lateinit var doViewHeadFacePresent: doViewHeadFacePresentImpl
+    private lateinit var getFourTotalPresent: getFourTotalPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -208,6 +212,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         doViewHeadFacePresent = doViewHeadFacePresentImpl.getsInstance()
         doViewHeadFacePresent.registerCallback(this)
+
+        getFourTotalPresent = getFourTotalPresentImpl.getsInstance()
+        getFourTotalPresent.registerCallback(this)
 
         getAvatar()
 
@@ -330,7 +337,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 ToastUtils.showShort("请授予应用所需权限。")
                             }
                         })
-
                 }
             }
         }
@@ -357,7 +363,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         rl_mine_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 5) })
         }
 
         ll_mine_set_dynamic.setOnClickListener {
@@ -371,11 +377,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0) })
         }
 
         ll_mine_set_svip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1, 0) })
         }
 
         ll_mine_set_coin.setOnClickListener {
@@ -451,6 +457,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         doViewHeadFacePresent.doViewHeadFace(map)
+    }
+
+    private fun getFourTotal() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getFourTotalPresent.getFourTotal(map)
     }
 
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
@@ -585,6 +597,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getFourTotal()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -638,6 +655,21 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     }
 
     override fun onError() {
+
+    }
+
+    override fun onGetFourTotalSuccess(fourTotalBean: FourTotalBean?) {
+        if (fourTotalBean != null) {
+            if (fourTotalBean.code == 200) {
+                tv_mine_visit_sum.text = fourTotalBean.data.see.toString()
+                tv_mine_fan_sum.text = fourTotalBean.data.focus.toString()
+                tv_mine_like_sum.text = fourTotalBean.data.like.toString()
+                tv_mine_comment_sum.text = fourTotalBean.data.disc.toString()
+            }
+        }
+    }
+
+    override fun onGetFourTotalError() {
 
     }
 
@@ -748,7 +780,8 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 // key值为保存文件名，试用固定的几种格式来命名
 
                 val putObjectFromFileResponse =
-                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")
+                    client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "13")
                     }", FileUtils.getFileName(mPhotoPath), file)
 
                 mPhotoUrl = client.generatePresignedUrl("user${

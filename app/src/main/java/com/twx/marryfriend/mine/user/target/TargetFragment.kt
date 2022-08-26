@@ -329,7 +329,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                             showPhotoDialog()
                                                         } else {
                                                             if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                    5) == 5
+                                                                    0) == 0
                                                             ) {
                                                                 // 何时结婚
                                                                 showMarryDialog()
@@ -395,7 +395,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                         showPhotoDialog()
                                                     } else {
                                                         if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                5) == 5
+                                                                0) == 0
                                                         ) {
                                                             // 何时结婚
                                                             showMarryDialog()
@@ -454,7 +454,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                     showPhotoDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                            5) == 5
+                                                            0) == 0
                                                     ) {
                                                         // 何时结婚
                                                         showMarryDialog()
@@ -508,7 +508,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                 showPhotoDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                        5) == 5
+                                                        0) == 0
                                                 ) {
                                                     // 何时结婚
                                                     showMarryDialog()
@@ -554,7 +554,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                             // 有无照片
                                             showPhotoDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                                 // 何时结婚
                                                 showMarryDialog()
                                             } else {
@@ -594,7 +594,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                         // 有无照片
                                         showPhotoDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                             // 何时结婚
                                             showMarryDialog()
                                         } else {
@@ -629,7 +629,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                     // 有无照片
                                     showPhotoDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                         // 何时结婚
                                         showMarryDialog()
                                     } else {
@@ -659,7 +659,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                 // 有无照片
                                 showPhotoDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                     // 何时结婚
                                     showMarryDialog()
                                 } else {
@@ -684,7 +684,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                             // 有无照片
                             showPhotoDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                 // 何时结婚
                                 showMarryDialog()
                             } else {
@@ -704,7 +704,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                         // 有无照片
                         showPhotoDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                             // 何时结婚
                             showMarryDialog()
                         } else {
@@ -719,7 +719,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                     // 有无照片
                     showPhotoDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                         // 何时结婚
                         showMarryDialog()
                     } else {
@@ -729,7 +729,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 }
             }
             11 -> {
-                if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                     // 何时结婚
                     showMarryDialog()
                 } else {
@@ -908,13 +908,14 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             3 -> photo = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_MARRY, 5)) {
-            0 -> marry = "认同闪婚"
-            1 -> marry = "一年内"
-            2 -> marry = "两年内"
-            3 -> marry = "三年内"
-            4 -> marry = "实际成熟就结婚"
-            5 -> marry = "未填写"
+        when (SPStaticUtils.getInt(Constant.TA_MARRY, 0)) {
+            0 -> marry = "未填写"
+            1 -> marry = "认同闪婚"
+            2 -> marry = "一年内"
+            3 -> marry = "两年内"
+            4 -> marry = "三年内"
+            5 -> marry = "时机成熟就结婚"
+
         }
 
         baseInfoList.clear()
@@ -3584,7 +3585,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 0)
+                SPStaticUtils.put(Constant.TA_MARRY, 1)
                 dismiss()
             }
 
@@ -3592,7 +3593,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 1)
+                SPStaticUtils.put(Constant.TA_MARRY, 2)
                 dismiss()
             }
 
@@ -3600,7 +3601,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 2)
+                SPStaticUtils.put(Constant.TA_MARRY, 3)
                 dismiss()
             }
 
@@ -3608,7 +3609,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 3)
+                SPStaticUtils.put(Constant.TA_MARRY, 4)
                 dismiss()
             }
 
@@ -3616,7 +3617,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_five.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 4)
+                SPStaticUtils.put(Constant.TA_MARRY, 5)
                 dismiss()
             }
 
@@ -3628,26 +3629,26 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.TA_MARRY, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.TA_MARRY, 0)) {
                 0 -> {
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
-                2 -> {
+                3 -> {
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                3 -> {
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
-                4 -> {
+                5 -> {
                     tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_five.setTextColor(Color.parseColor("#FF4444"))
                 }

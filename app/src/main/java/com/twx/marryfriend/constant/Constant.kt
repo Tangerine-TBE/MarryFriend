@@ -104,6 +104,7 @@ object Constant {
 
     const val ME_LIFE_PHOTO_ONE_AUDIT = "ME_life_photo_one_audit" // 第一张生活照审核状态
 
+
     const val ME_LIFE_PHOTO_TWO = "ME_life_photo_two"// 第二张生活照(url)
 
     const val ME_LIFE_PHOTO_TWO_TEXT = "ME_life_photo_two_text"// 第二张生活照描述
@@ -112,13 +113,32 @@ object Constant {
 
     const val ME_LIFE_PHOTO_TWO_AUDIT = "ME_life_photo_two_audit" // 第二张生活照审核状态
 
+
     const val ME_LIFE_PHOTO_THREE = "ME_life_photo_three"// 第三张生活照(url)
 
     const val ME_LIFE_PHOTO_THREE_TEXT = "ME_life_photo_three_text"// 第三张生活照描述
 
     const val ME_LIFE_PHOTO_THREE_ID = "ME_life_photo_three_id" // 第三张生活照ID
 
-    const val ME_LIFE_PHOTO_THREE_AUDIT = "ME_life_photo_three_audit" // 第二张生活照审核状态
+    const val ME_LIFE_PHOTO_THREE_AUDIT = "ME_life_photo_three_audit" // 第三张生活照审核状态
+
+
+    const val ME_LIFE_PHOTO_FOUR = "ME_life_photo_four"// 第四张生活照(url)
+
+    const val ME_LIFE_PHOTO_FOUR_TEXT = "ME_life_photo_four_text"// 第四张生活照描述
+
+    const val ME_LIFE_PHOTO_FOUR_ID = "ME_life_photo_four_id" // 第四张生活照ID
+
+    const val ME_LIFE_PHOTO_FOUR_AUDIT = "ME_life_photo_four_audit" // 第四张生活照审核状态
+
+
+    const val ME_LIFE_PHOTO_FIVE = "ME_life_photo_five"// 第五张生活照(url)
+
+    const val ME_LIFE_PHOTO_FIVE_TEXT = "ME_life_photo_five_text"// 第五张生活照描述
+
+    const val ME_LIFE_PHOTO_FIVE_ID = "ME_life_photo_five_id" // 第五张生活照ID
+
+    const val ME_LIFE_PHOTO_FIVE_AUDIT = "ME_life_photo_five_audit" // 第五张生活照审核状态
 
 
     const val IS_IDENTITY_VERIFY = "is_identity_verify"    // 是否实名认证

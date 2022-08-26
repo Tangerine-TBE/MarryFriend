@@ -18,6 +18,7 @@ import com.twx.marryfriend.bean.dynamic.CommentTipBean
 import com.twx.marryfriend.bean.dynamic.CommentTipList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetCommentTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getCommentTipsPresentImpl
@@ -162,6 +163,9 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
 
                 if (currentPaper == 1) {
                     mList.clear()
+                    // 更新数据
+                    val activity = activity as TipsActivity
+                    activity.discussId = commentTipBean.data.list[0].discuss_id
                 }
                 currentPaper++
                 for (i in 0.until(commentTipBean.data.list.size)) {

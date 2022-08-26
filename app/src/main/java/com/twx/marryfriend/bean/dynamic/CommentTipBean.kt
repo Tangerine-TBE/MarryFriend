@@ -40,4 +40,5 @@ data class CommentTipList(
     val video_url: String,
     val weidu: String,
     val work_city_str: String,
+    val discuss_id: Int,
 )

@@ -77,6 +77,19 @@ object DataProvider {
     )
 
 
+    val IncomeData = arrayListOf(
+        "保密或者不填",
+        "1.5k及以下",
+        "2.5k-8k",
+        "8k-12k",
+        "12k-16k",
+        "16k-20k",
+        "20k-35k",
+        "35k-50k",
+        "50k-70k",
+        "7k以上",
+    )
+
     val NormalVipData = arrayListOf(
         ItemBean("解锁收件箱", R.mipmap.icon_normal_1),
         ItemBean("解锁消息发送", R.mipmap.icon_normal_2),
