@@ -54,10 +54,6 @@ object ImMessageManager {
                 //收到已读回执
                 iLog("收到消息,已读"+messages?.firstOrNull()?.from+"发给"+messages?.firstOrNull()?.to)
                 messageRead.value=messages
-//                messages?.forEach {
-//                    it.isUnread=false
-//                    updateMessage(it)
-//                }
             }
 
             override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
@@ -211,7 +207,6 @@ object ImMessageManager {
         //如果是群聊，设置chattype，默认是单聊
 //        if (chatType === CHATTYPE_GROUP) message.chatType = ChatType.GroupChat
         //发送消息
-        message.isUnread=true
         updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
@@ -225,7 +220,6 @@ object ImMessageManager {
 
     fun sendImageMsg(username: String,file: String):Message<out EMMessageBody>?{
         val message=EMMessage.createImageSendMessage(file,true,username)
-        message.isUnread=true
         updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
@@ -236,7 +230,6 @@ object ImMessageManager {
         val message = EMMessage.createVoiceSendMessage(voiceUri, length, username)
 //如果是群聊，设置 chattype，默认是单聊
 //        message.chatType = ChatType.GroupChat
-        message.isUnread=true
         updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
@@ -253,7 +246,6 @@ object ImMessageManager {
         customMessage.setTo(username)
 // 如果是群聊，设置chattype，默认是单聊
         customMessage.chatType = EMMessage.ChatType.Chat
-        customMessage.isUnread=true
         updateMessage(customMessage)
         EMClient.getInstance().chatManager().sendMessage(customMessage)
         return Message.toMyMessage(customMessage)

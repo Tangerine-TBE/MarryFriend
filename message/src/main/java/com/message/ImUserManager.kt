@@ -13,6 +13,7 @@ import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.toMd5
 
 //https://docs-im.easemob.com/im/android/basics/message
 object ImUserManager {
@@ -74,7 +75,7 @@ object ImUserManager {
         }
     }
 
-    fun createOrLogin(username: String,pwd: String="123456"){
+    fun createOrLogin(username: String,pwd: String=username.toMd5()){
         iLog("当前登录的用户${EMClient.getInstance().currentUser}")
         if (!EMClient.getInstance().currentUser.isNullOrBlank()){
             if (EMClient.getInstance().currentUser==username){
