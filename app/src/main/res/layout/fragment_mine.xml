@@ -60,7 +60,7 @@
                         android:layout_height="100dp"
                         android:layout_marginStart="16dp"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/icon_mine_male_default"
+                        android:src="@drawable/ic_mine_male_default"
                         app:riv_oval="true" />
 
                     <TextView

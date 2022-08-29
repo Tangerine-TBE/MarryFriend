@@ -17,7 +17,10 @@ import java.util.*
  * @author: Administrator
  * @date: 2022/7/4
  */
-class DynamicMineLikeAdapter(private val mList: MutableList<LikeList>, private val mEduData: MutableList<String>) :
+class DynamicMineLikeAdapter(
+    private val mList: MutableList<LikeList>,
+    private val mEduData: MutableList<String>,
+) :
     RecyclerView.Adapter<DynamicMineLikeAdapter.ViewHolder>(),
     View.OnClickListener {
 
@@ -70,7 +73,8 @@ class DynamicMineLikeAdapter(private val mList: MutableList<LikeList>, private v
         }
 
         holder.time.text = "${
-            mList[position].create_time.subSequence(0, 4)}/${
+            mList[position].create_time.subSequence(0, 4)
+        }/${
             mList[position].create_time.subSequence(5, 7)
         }/${mList[position].create_time.subSequence(8, 10)}"
 
@@ -85,10 +89,10 @@ class DynamicMineLikeAdapter(private val mList: MutableList<LikeList>, private v
 
         val edu = mEduData[mList[position].education]
 
-        val job =  if (mList[position].industry_str == ""){
+        val job = if (mList[position].industry_str == "") {
             "${mList[position].industry_str}"
-        }else{
-            " ${mList[position].industry_str}/${mList[position].industry_str}"
+        } else {
+            " ${mList[position].industry_str}/${mList[position].occupation_str}"
         }
 
         holder.info.text = "${year}年  $city  $edu  $job"

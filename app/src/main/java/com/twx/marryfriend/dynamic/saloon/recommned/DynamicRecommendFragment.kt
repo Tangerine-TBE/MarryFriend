@@ -183,8 +183,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
             startActivity(context?.let { it1 -> TipsActivity.getIntent(it1, commentSum, likeSum) })
 
-            Log.i("guo", "commentSum :$commentSum , likeSum :$likeSum")
-
         }
 
         adapter.setOnVideoClickListener(object : SaloonAdapter.OnVideoClickListener {
@@ -455,13 +453,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                         ) {
                             mDiyList[position].anim = true
 
-
                             AnimalUtils.getAnimal(v as ImageView)
-
 
                             doLikeClick(mTrendList[position].id,
                                 mTrendList[position].user_id,
                                 SPStaticUtils.getString(Constant.USER_ID, "13"))
+
                         } else {
                             ToastUtils.showShort("不能给自己点赞")
                         }
@@ -576,12 +573,16 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     override fun onGetTotalCountSuccess(totalCountBean: TotalCountBean?) {
         if (totalCountBean != null) {
             if (totalCountBean.code == 200) {
-                rl_dynamic_tips.visibility = View.VISIBLE
-                tv_dynamic_tips_count.text =
-                    "${totalCountBean.data.discuss.toInt() + totalCountBean.data.like}条新消息"
 
-                commentSum = totalCountBean.data.discuss.toInt()
-                likeSum = totalCountBean.data.like.toInt()
+                if (totalCountBean.data.discuss.toInt() + totalCountBean.data.like != 0) {
+                    rl_dynamic_tips.visibility = View.VISIBLE
+                    tv_dynamic_tips_count.text =
+                        "${totalCountBean.data.discuss.toInt() + totalCountBean.data.like}条新消息"
+
+                    commentSum = totalCountBean.data.discuss.toInt()
+                    likeSum = totalCountBean.data.like.toInt()
+                }
+
             }
         }
     }
@@ -633,6 +634,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 mDiyList[mLikePosition].like = true
                 mDiyList[mLikePosition].likeCount++
                 adapter.notifyDataSetChanged()
+
             } else {
                 ToastUtils.showShort(likeClickBean.msg)
             }

@@ -28,6 +28,7 @@ data class LikeList(
     val id: Int,
     val image_url: String,
     val industry_str: String,
+    val occupation_str: String,
     val nick: String,
     val num: Int,
     val trends_id: Int,

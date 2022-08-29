@@ -384,10 +384,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             val intent = Intent(this, DynamicMineLikeActivity::class.java)
             intent.putExtra("trendId", trendId)
             intent.putExtra("userId", userId)
-
-            Log.i("guo", "xxxxx------trendId :$trendId")
-            Log.i("guo", "xxxxx------userId :$userId")
-
             startActivity(intent)
         }
 
@@ -1028,7 +1024,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     val x: MutableList<CommentTwoList> = arrayListOf()
                     val y: MutableList<CommentTwoList> = arrayListOf()
                     val bean = CommentBean(list, x, y, 0, 0)
-                    mCommentOneList.add(0,bean)
+                    mCommentOneList.add(0, bean)
                     adapter.notifyDataSetChanged()
 
                     mode = 0
@@ -1076,8 +1072,20 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                     }
 
-                    Glide.with(applicationContext).load(info.headface)
-                        .into(riv_dynamic_other_show_avatar)
+                    if (info.user_sex == 1) {
+                        Glide.with(applicationContext)
+                            .load(info.headface)
+                            .error(R.drawable.ic_mine_male_default)
+                            .placeholder(R.drawable.ic_mine_male_default)
+                            .into(riv_dynamic_other_show_avatar)
+                    } else {
+                        Glide.with(applicationContext)
+                            .load(info.headface)
+                            .error(R.drawable.ic_mine_female_default)
+                            .placeholder(R.drawable.ic_mine_female_default)
+                            .into(riv_dynamic_other_show_avatar)
+                    }
+
                     tv_dynamic_other_show_name.text = info.nick
 
 
@@ -1610,12 +1618,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onItemContentClick(v: View?, positionOne: Int) {
         // 父评论点击评论
-        ToastUtils.showShort("点击父评论的评论内容 ： $positionOne ")
 
         mItem = positionOne
 
         // edittext 获取焦点 模式切换成父评论
-
         eet_emoji_other_edit.hint = "回复${mCommentOneList[positionOne].list.nick_one}"
 
         eet_emoji_other_edit.isFocusable = true
@@ -1652,7 +1658,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onItemChildContentClick(v: View?, positionOne: Int) {
-        ToastUtils.showShort(" 子评论回复内容点击 ${positionOne}/000")
 
         mItem = positionOne
 
@@ -1694,16 +1699,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onChildReplyClick(positionOne: Int, two: Int) {
         // 子评论回复内容点击事件
-        ToastUtils.showShort(" 子评论回复内容点击 ${positionOne}/${two}")
 
         mItem = positionOne
         mChildItem = two
 
-
         childAvatar = mCommentOneList[positionOne].twoList[two].last_img_url
         childNick = mCommentOneList[positionOne].twoList[two].last_nick
         childSex = mCommentOneList[positionOne].twoList[two].last_sex
-
 
         // edittext 获取焦点 模式切换成父评论
 
@@ -1744,7 +1746,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onLocalChildReplyClick(positionOne: Int, two: Int) {
         // 子评论回复内容点击事件
-        ToastUtils.showShort("子评论回复内容点击 ${positionOne}/${two}")
 
         mItem = positionOne
 
@@ -1753,7 +1754,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         childAvatar = mCommentOneList[positionOne].twoLocalList[two].last_img_url
         childNick = mCommentOneList[positionOne].twoLocalList[two].last_nick
         childSex = mCommentOneList[positionOne].twoLocalList[two].last_sex
-
 
         // edittext 获取焦点 模式切换成父评论
 
@@ -1929,26 +1929,32 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             super.onCreate()
 
             val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_other_edit_close)
-            val nonFocus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_nonfocus)
+            val focus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_focus)
             val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
-            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
+
+            if (haveFocus) {
+                focus.text = "取消关注"
+            } else {
+                focus.text = "关注"
+            }
 
             close.setOnClickListener {
                 dismiss()
             }
 
-            nonFocus.setOnClickListener {
-                ToastUtils.showShort("取消关注")
-                doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+            focus.setOnClickListener {
+                if (haveFocus) {
+                    ToastUtils.showShort("取消关注")
+                    doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                } else {
+                    ToastUtils.showShort("关注")
+                    doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                }
                 dismiss()
             }
 
             report.setOnClickListener {
                 ToastUtils.showShort("举报该动态")
-                dismiss()
-            }
-
-            cancel.setOnClickListener {
                 dismiss()
             }
 
@@ -1959,7 +1965,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         }
 
     }
-
 
     inner class DynamicDeleteDialog(context: Context) :
         FullScreenPopupView(context) {

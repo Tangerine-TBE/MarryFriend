@@ -4,18 +4,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import kotlinx.android.synthetic.main.activity_common_question.*
+import kotlinx.android.synthetic.main.activity_suggestion.*
 
-class CommonQuestionActivity : MainBaseViewActivity() {
+class SuggestionActivity : MainBaseViewActivity() {
 
-    override fun getLayoutView(): Int = R.layout.activity_common_question
+    override fun getLayoutView(): Int = R.layout.activity_suggestion
 
     override fun initView() {
         super.initView()
-
-
-
-
     }
 
     override fun initLoadData() {
@@ -29,7 +25,7 @@ class CommonQuestionActivity : MainBaseViewActivity() {
     override fun initEvent() {
         super.initEvent()
 
-        iv_common_question_finish.setOnClickListener {
+        iv_suggestion_finish.setOnClickListener {
             finish()
         }
 

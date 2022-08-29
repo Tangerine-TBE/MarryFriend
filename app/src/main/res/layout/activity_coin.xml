@@ -488,7 +488,8 @@
                         android:id="@+id/rl_coin_wx"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:visibility="gone">
 
                         <ImageView
                             android:id="@+id/iv_coin_wx_icon"
@@ -550,7 +551,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_marginEnd="16dp"
-                            android:src="@drawable/ic_vip_check_non" />
+                            android:src="@drawable/ic_vip_check" />
 
                     </RelativeLayout>
 

@@ -70,14 +70,14 @@ class MyDynamicActivity : MainBaseViewActivity(),
         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
             Glide.with(this)
                 .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
                 .into(iv_dynamic_mine_avatar)
         } else {
             Glide.with(this)
                 .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                .error(R.mipmap.icon_mine_female_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
                 .into(iv_dynamic_mine_avatar)
         }
 

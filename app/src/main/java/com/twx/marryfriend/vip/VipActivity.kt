@@ -20,14 +20,8 @@ import com.twx.marryfriend.bean.vip.VipPriceBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
-import com.twx.marryfriend.net.callback.vip.IDoPreviewOtherCallback
-import com.twx.marryfriend.net.callback.vip.IDoRefreshSelfCallback
-import com.twx.marryfriend.net.callback.vip.IGetSVipPriceCallback
-import com.twx.marryfriend.net.callback.vip.IGetVipPriceCallback
-import com.twx.marryfriend.net.impl.vip.doPreviewOtherPresentImpl
-import com.twx.marryfriend.net.impl.vip.doRefreshSelfPresentImpl
-import com.twx.marryfriend.net.impl.vip.getSVipPricePresentImpl
-import com.twx.marryfriend.net.impl.vip.getVipPricePresentImpl
+import com.twx.marryfriend.net.callback.vip.*
+import com.twx.marryfriend.net.impl.vip.*
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.weight.FragmentPagerAdapter
 import com.twx.marryfriend.utils.weight.XCollapsingToolbarLayout
@@ -41,7 +35,7 @@ import java.util.*
 
 class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsListener,
     OnPageChangeListener, IGetVipPriceCallback, IGetSVipPriceCallback, IDoPreviewOtherCallback,
-    IDoRefreshSelfCallback {
+    IDoSVipRefreshSelfCallback {
 
     private lateinit var normal: VipFragment
     private lateinit var svip: SVipFragment
@@ -55,10 +49,13 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     // 查看预览用户的id
     private var targetId = 0
 
+    // 初次进入时选择的会员界面    0 普通会员 ； 1 超级会员
+    private var mode = 0
+
     private lateinit var getVipPricePresent: getVipPricePresentImpl
     private lateinit var getSVipPricePresent: getSVipPricePresentImpl
     private lateinit var doPreviewOtherPresent: doPreviewOtherPresentImpl
-    private lateinit var doRefreshSelfPresent: doRefreshSelfPresentImpl
+    private lateinit var doRefreshSelfPresent: doSVipRefreshSelfPresentImpl
 
     private lateinit var mPagerAdapter: FragmentPagerAdapter<Fragment>
 
@@ -96,25 +93,23 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         doPreviewOtherPresent = doPreviewOtherPresentImpl.getsInstance()
         doPreviewOtherPresent.registerCallback(this)
 
-        doRefreshSelfPresent = doRefreshSelfPresentImpl.getsInstance()
+        doRefreshSelfPresent = doSVipRefreshSelfPresentImpl.getsInstance()
         doRefreshSelfPresent.registerCallback(this)
 
         normal = VipFragment().newInstance(this)
         svip = SVipFragment().newInstance(this)
 
-
-
         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
             Glide.with(this)
                 .load(SPStaticUtils.getString(Constant.ME_AVATAR))
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
                 .into(riv_vip_avatar)
         } else {
             Glide.with(this)
                 .load(SPStaticUtils.getString(Constant.ME_AVATAR))
-                .error(R.mipmap.icon_mine_female_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
                 .into(riv_vip_avatar)
         }
 
@@ -130,7 +125,9 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
         xctl.setOnScrimsListener(this)
 
-        when (intent.getIntExtra("vip_mode", 0)) {
+        mode = intent.getIntExtra("vip_mode", 0)
+
+        when (mode) {
             0 -> {
                 if (!isLoadVip) {
                     getVipPrice()
@@ -216,7 +213,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private fun updateCoin() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doRefreshSelfPresent.doRefreshSelf(map)
+        doRefreshSelfPresent.doSVipRefreshSelf(map)
     }
 
     private fun getVipPrice() {
@@ -335,14 +332,14 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         if (base.user_sex == 1) {
             Glide.with(applicationContext)
                 .load(base.image_url)
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
                 .into(riv_vip_dialog_avatar)
         } else {
             Glide.with(applicationContext)
                 .load(base.image_url)
-                .error(R.mipmap.icon_mine_female_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
                 .into(riv_vip_dialog_avatar)
         }
 
@@ -475,15 +472,18 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
     }
 
-    override fun onDoRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
+    override fun onDoSVipRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
         if (refreshSelfBean != null) {
             if (refreshSelfBean.code == 200) {
                 SpUtil.refreshUserInfo(refreshSelfBean)
+
+                updateTopView(mode)
+
             }
         }
     }
 
-    override fun onDoRefreshSelfError() {
+    override fun onDoSVipRefreshSelfError() {
 
     }
 

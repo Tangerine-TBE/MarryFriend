@@ -1,5 +1,6 @@
 package com.twx.marryfriend.coin
 
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -93,9 +94,15 @@ class CoinRecordActivity : MainBaseViewActivity(), IGetCoinRecordCallback {
     override fun onGetCoinRecordSuccess(coinRecordBean: CoinRecordBean?) {
         if (coinRecordBean != null) {
             if (coinRecordBean.code == 200) {
+
+                if (coinRecordBean.data.list.isNotEmpty()) {
+                    ll_coin_record_empty.visibility = View.GONE
+                }
+
                 if (currentPaper == 1) {
                     mList.clear()
                 }
+
                 currentPaper++
                 for (i in 0.until(coinRecordBean.data.list.size)) {
                     mList.add(coinRecordBean.data.list[i])

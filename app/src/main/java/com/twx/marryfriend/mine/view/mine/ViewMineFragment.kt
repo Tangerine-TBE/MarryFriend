@@ -131,6 +131,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
                 if (currentPaper == 1) {
                     mList.clear()
                 }
+
                 currentPaper++
                 for (i in 0.until(whoSeeMeBean.data.list.size)) {
                     mList.add(whoSeeMeBean.data.list[i])

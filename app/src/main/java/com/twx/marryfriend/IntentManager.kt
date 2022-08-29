@@ -62,7 +62,7 @@ object IntentManager {
      *
      */
     fun getDynamicIntent(context: Context,userId:Int?,sex:Int,nickname:String,avatar:String?):Intent{
-        return OtherDynamicActivity.getIntent(context,nickname,sex,avatar?:"",userId.toString())
+        return OtherDynamicActivity.getIntent(context,nickname,sex,avatar?:"",userId.toString(),true)
     }
 
     /**

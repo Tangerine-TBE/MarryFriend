@@ -313,12 +313,12 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 agreePermission = !agreePermission
             }
 
-            val str = "已阅读并同意《隐私政策》和《用户协议》"
+            val str = "已阅读并同意 《隐私政策》 和 《用户协议》 "
             val stringBuilder = SpannableStringBuilder(str)
             val span1 = TextViewSpan1()
-            stringBuilder.setSpan(span1, 6, 12, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            stringBuilder.setSpan(span1, 6, 14, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
             val span2 = TextViewSpan2()
-            stringBuilder.setSpan(span2, 13, 19, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            stringBuilder.setSpan(span2, 15, 23, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
             permission.text = stringBuilder
             permission.movementMethod = LinkMovementMethod.getInstance()

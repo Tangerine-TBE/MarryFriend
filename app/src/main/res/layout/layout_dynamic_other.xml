@@ -19,7 +19,6 @@
             android:id="@+id/riv_detail_dynamic_other_avatar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             app:riv_oval="true" />
 
@@ -63,8 +62,8 @@
                     android:id="@+id/iv_detail_dynamic_other_vip"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginStart="4dp"
                     android:layout_gravity="center"
+                    android:layout_marginStart="4dp"
                     android:src="@drawable/ic_svip" />
 
             </LinearLayout>

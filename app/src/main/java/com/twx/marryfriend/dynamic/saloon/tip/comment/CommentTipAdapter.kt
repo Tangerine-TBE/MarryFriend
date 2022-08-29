@@ -65,9 +65,19 @@ class CommentTipAdapter(private val mList: MutableList<CommentTipList>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
 
-        Glide.with(mContext)
-            .load(mList[position].headface)
-            .into(holder.avatar)
+        if (mList[position].user_sex == 1) {
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
+                .into(holder.avatar)
+        } else {
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
+                .into(holder.avatar)
+        }
 
         holder.nick.text = mList[position].nick
 

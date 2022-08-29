@@ -146,14 +146,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
-                    .placeholder(R.mipmap.icon_mine_male_default)
-                    .error(R.mipmap.icon_mine_male_default)
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .error(R.drawable.ic_mine_male_default)
                     .into(iv_mine_avatar)
             } else {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
-                    .placeholder(R.mipmap.icon_mine_female_default)
-                    .error(R.mipmap.icon_mine_female_default)
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .error(R.drawable.ic_mine_female_default)
                     .into(iv_mine_avatar)
             }
             tv_mine_avatar_check.visibility = View.VISIBLE
@@ -165,25 +165,25 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                        .placeholder(R.mipmap.icon_mine_male_default)
-                        .error(R.mipmap.icon_mine_male_default)
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                        .placeholder(R.mipmap.icon_mine_male_default)
-                        .error(R.mipmap.icon_mine_male_default)
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 }
                 tv_mine_avatar_check.visibility = View.GONE
             } else {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
-                        .load(R.mipmap.icon_mine_male_default)
+                        .load(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
-                        .load(R.mipmap.icon_mine_female_default)
+                        .load(R.drawable.ic_mine_female_default)
                         .into(iv_mine_avatar)
                 }
                 tv_mine_avatar_check.visibility = View.GONE
@@ -609,23 +609,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             when (requestCode) {
                 // 更新审核头像
                 0 -> {
-//                    if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
-//                        Glide.with(requireContext())
-//                            .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-//                            .into(iv_mine_avatar)
-//                        tv_mine_avatar_check.visibility = View.VISIBLE
-//                    } else {
-//                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-//                            Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
-//                                .into(iv_mine_avatar)
-//                        } else {
-//                            Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
-//                                .into(iv_mine_avatar)
-//                        }
-//                    }
-
                     getAvatar()
-
                 }
                 // 上传生活照
                 1 -> {
@@ -681,11 +665,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     0 -> {
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
-                                .load(R.mipmap.icon_mine_male_default)
+                                .load(R.drawable.ic_mine_male_default)
                                 .into(iv_mine_avatar)
                         } else {
                             Glide.with(requireContext())
-                                .load(R.mipmap.icon_mine_female_default)
+                                .load(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
                         tv_mine_avatar_check.visibility = View.GONE
@@ -695,14 +679,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[0].image_url)
-                                .error(R.mipmap.icon_mine_male_default)
-                                .placeholder(R.mipmap.icon_mine_male_default)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_mine_avatar)
                         } else {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[0].image_url)
-                                .error(R.mipmap.icon_mine_female_default)
-                                .placeholder(R.mipmap.icon_mine_female_default)
+                                .error(R.drawable.ic_mine_female_default)
+                                .placeholder(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
 
@@ -724,14 +708,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[1].image_url)
-                                .error(R.mipmap.icon_mine_male_default)
-                                .placeholder(R.mipmap.icon_mine_male_default)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_mine_avatar)
                         } else {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[1].image_url)
-                                .error(R.mipmap.icon_mine_female_default)
-                                .placeholder(R.mipmap.icon_mine_female_default)
+                                .error(R.drawable.ic_mine_female_default)
+                                .placeholder(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
 

@@ -179,7 +179,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
         map[Contents.BODY] = "会员"
         map[Contents.USER_SYSTEM] = "1"
         doAliPayPresent.doAliPay(map)
-        ll_vip_super_loading.visibility = View.VISIBLE
+        ll_vip_super_loading?.visibility = View.VISIBLE
     }
 
     private fun doUpdate() {
@@ -277,19 +277,19 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
                     doUpdate()
                 }
                 "6001" -> {
-                    ll_vip_super_loading.visibility = View.GONE
+                    ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("用户取消支付")
                 }
                 "6002" -> {
-                    ll_vip_super_loading.visibility = View.GONE
+                    ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("网络连接出错")
                 }
                 "4000" -> {
-                    ll_vip_super_loading.visibility = View.GONE
+                    ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("订单支付失败")
                 }
                 else -> {
-                    ll_vip_super_loading.visibility = View.GONE
+                    ll_vip_super_loading?.visibility = View.GONE
 //                    ToastUtils.showShort("支付失败，请稍后再试")
                 }
             }
@@ -305,23 +305,25 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
     }
 
     override fun onDoRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
-        ll_vip_super_loading.visibility = View.GONE
-        if (refreshSelfBean != null) {
-            if (refreshSelfBean.code == 200) {
-                SpUtil.refreshUserInfo(refreshSelfBean)
-
-                // 刷新视图
-                val activity = activity as VipActivity
-                activity.updateTopView(1)
-
-            } else {
-                ToastUtils.showShort(refreshSelfBean.msg)
-            }
-        }
+//            ll_vip_super_loading?.visibility = View.GONE
+//            if (refreshSelfBean != null) {
+//                if (refreshSelfBean.code == 200) {
+//                    SpUtil.refreshUserInfo(refreshSelfBean)
+//
+//                    // 刷新视图
+//                    if (isAdded){
+//                        val activity = requireActivity() as VipActivity
+//                        activity.updateTopView(1)
+//                    }
+//
+//                } else {
+//                    ToastUtils.showShort(refreshSelfBean.msg)
+//                }
+//            }
     }
 
     override fun onDoRefreshSelfError() {
-        ll_vip_super_loading.visibility = View.GONE
+        ll_vip_super_loading?.visibility = View.GONE
     }
 
     override fun onDoAliPaySuccess(aliPayBean: AliPayBean?) {
@@ -330,7 +332,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
                 if (aliPayBean.code == "200") {
                     toBuy(aliPayBean.data.str)
                 } else {
-                    ll_vip_super_loading.visibility = View.GONE
+                    ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("支付信息拉起失败，请稍后重试")
                 }
             }
@@ -338,7 +340,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoRefreshSelfCallback {
     }
 
     override fun onDoAliPayError() {
-        ll_vip_super_loading.visibility = View.GONE
+        ll_vip_super_loading?.visibility = View.GONE
     }
 
 

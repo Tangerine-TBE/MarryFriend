@@ -143,7 +143,9 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
                 if (currentPaper == 1) {
                     mList.clear()
                 }
+
                 currentPaper++
+
                 for (i in 0.until(whoDiscussMeBean.data.list.size)) {
                     mList.add(whoDiscussMeBean.data.list[i])
                 }

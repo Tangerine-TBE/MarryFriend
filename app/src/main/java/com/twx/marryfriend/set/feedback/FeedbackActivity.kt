@@ -1,5 +1,6 @@
 package com.twx.marryfriend.set.feedback
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -50,6 +51,7 @@ class FeedbackActivity : MainBaseViewActivity() {
 
         ll_feedback_feedback.setOnClickListener {
             ToastUtils.showShort("意见反馈")
+            startActivity(Intent(this, SuggestionActivity::class.java))
         }
 
     }
