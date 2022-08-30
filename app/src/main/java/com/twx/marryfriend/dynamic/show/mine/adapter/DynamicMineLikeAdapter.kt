@@ -62,13 +62,25 @@ class DynamicMineLikeAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
 
-        Glide.with(mContext).load(mList[position].image_url).into(holder.avatar)
-
         holder.name.text = mList[position].nick
 
         if (mList[position].user_sex == 1) {
+
+            Glide.with(mContext)
+                .load(mList[position].image_url)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
+                .into(holder.avatar)
+
             holder.sex.setImageResource(R.drawable.ic_male)
         } else {
+
+            Glide.with(mContext)
+                .load(mList[position].image_url)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
+                .into(holder.avatar)
+
             holder.sex.setImageResource(R.drawable.ic_female)
         }
 

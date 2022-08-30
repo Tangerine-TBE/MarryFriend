@@ -144,9 +144,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private var mCityIdFirstList: MutableList<Int> = arrayListOf()
     private var mCitySecondList: MutableList<String> = arrayListOf()
     private var mCityIdSecondList: MutableList<Int> = arrayListOf()
-    private var mCityThirdList: MutableList<String> = arrayListOf()
-    private var mCityIdThirdList: MutableList<String> = arrayListOf()
-
 
     private var mWeightList: MutableList<String> = arrayListOf()
     private var mBodyList: MutableList<String> = arrayListOf()
@@ -317,13 +314,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         mIncomeList.add("保密")
-        mIncomeList.add("五千及以下")
-        mIncomeList.add("五千~一万")
-        mIncomeList.add("一万~两万")
-        mIncomeList.add("两万~四万")
-        mIncomeList.add("四万~七万")
-        mIncomeList.add("七万及以上")
-
+        mIncomeList.add("5k及以下")
+        mIncomeList.add("5k~8k")
+        mIncomeList.add("8k~12k")
+        mIncomeList.add("12k~16k")
+        mIncomeList.add("16k~20k")
+        mIncomeList.add("20k~35k")
+        mIncomeList.add("35k~50k")
+        mIncomeList.add("50k~70k")
+        mIncomeList.add("70k及以上")
 
         val size = SPStaticUtils.getInt(Constant.INDUSTRY_SUM, 0)
         for (i in 0.until(size)) {
@@ -734,7 +733,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -808,7 +807,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 身高
                             showHeightDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                                 // 月收入
                                 showIncomeDialog()
                             } else {
@@ -876,7 +875,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -939,7 +938,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                         // 月收入
                         showIncomeDialog()
                     } else {
@@ -997,7 +996,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             3 -> {
-                if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -1850,15 +1849,18 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
         }
 
-        when (SPStaticUtils.getInt(Constant.ME_INCOME, 7)) {
+        when (SPStaticUtils.getInt(Constant.ME_INCOME, 10)) {
             0 -> income = "保密"
-            1 -> income = "五千及以下"
-            2 -> income = "五千~一万"
-            3 -> income = "一万~两万"
-            4 -> income = "两万~四万"
-            5 -> income = "四万~七万"
-            6 -> income = "七万及以上"
-            7 -> income = "未填写"
+            1 -> income = "5k及以下"
+            2 -> income = "5k~8k"
+            3 -> income = "8k~12k"
+            4 -> income = "12k~16k"
+            5 -> income = "16k~20k"
+            6 -> income = "20k~35k"
+            7 -> income = "35k~50k"
+            8 -> income = "50k~70k"
+            9 -> income = "70k及以上"
+            10 -> income = "未填写"
         }
 
         workPlace = when (SPStaticUtils.getString(Constant.ME_WORK, "")) {
@@ -1908,12 +1910,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         when (SPStaticUtils.getInt(Constant.ME_HOUSE, 5)) {
-            0 -> house = "和家人同住"
-            1 -> house = "已购房"
-            2 -> house = "租房"
-            3 -> house = "打算婚后购房"
-            4 -> house = "住在单位宿舍"
-            5 -> house = "未填写"
+            0 -> house = "未填写"
+            1 -> house = "和家人同住"
+            2 -> house = "已购房"
+            3 -> house = "租房"
+            4 -> house = "打算婚后购房"
+            5 -> house = "住在单位宿舍"
         }
 
         when (SPStaticUtils.getInt(Constant.ME_CAR, 0)) {
@@ -2533,7 +2535,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         return result
     }
 
-
     // ---------------------------------- 上传信息 ----------------------------------
 
     // 开始上传信息
@@ -2599,7 +2600,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
 
         val home = SPStaticUtils.getString(Constant.ME_HOME, "")
-        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 7)
+        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 10)
         val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
         val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
         val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
@@ -2704,7 +2705,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         return greetInfo
 
     }
-
 
     override fun onLoading() {
 
@@ -3088,7 +3088,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
                 haveBanText = false
@@ -3420,7 +3420,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_ideal_content).setText("")
                 haveBanText = false
@@ -3529,7 +3529,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedJump = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 name1 = ""
                 findViewById<EditText>(R.id.et_user_data_name_name).setText("")
                 haveBanText = false
@@ -4185,11 +4185,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 SPStaticUtils.put(Constant.ME_WORK, work)
 
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_WORK_PROVINCE_PICK, mCityFirstPosition)
                 SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_WORK_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true
@@ -4686,7 +4689,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                4 ->{
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -5066,26 +5069,27 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.ME_HOUSE, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.ME_HOUSE, 0)) {
                 0 -> {
+
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
-                2 -> {
+                3 -> {
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                3 -> {
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
-                4 -> {
+                5 -> {
                     tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_five.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -5313,11 +5317,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 SPStaticUtils.put(Constant.ME_HOME, home)
 
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_HOME_PROVINCE_PICK, mCityFirstPosition)
                 SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_HOME_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true

@@ -1,5 +1,6 @@
 package com.twx.marryfriend.dynamic.saloon.recommned
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ThreadUtils
@@ -41,7 +43,7 @@ import java.io.Serializable
 import java.util.*
 
 class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback, IDoPlusFocusCallback, IDoCancelFocusCallback, IGetTotalCountCallback,
+    IDoLikeCancelCallback, IDoPlusFocusCallback, IGetTotalCountCallback,
     SaloonAdapter.OnItemClickListener {
 
     // 上次点击时间
@@ -86,7 +88,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     private lateinit var doLikeClickPresent: doLikeClickPresentImpl
     private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
     private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
-    private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
     private lateinit var getTotalCountPresent: getTotalCountPresentImpl
 
     override fun onCreateView(
@@ -124,15 +125,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         doPlusFocusPresent = doPlusFocusPresentImpl.getsInstance()
         doPlusFocusPresent.registerCallback(this)
 
-        doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
-        doCancelFocusPresent.registerCallback(this)
-
         getTotalCountPresent = getTotalCountPresentImpl.getsInstance()
         getTotalCountPresent.registerCallback(this)
 
         AnimalUtils.getAnimal(iv_like_animal)
-
-
 
         adapter = SaloonAdapter(mTrendList, mDiyList)
         adapter.setOnItemClickListener(this)
@@ -229,7 +225,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                     0
                 }
                 intent.putExtra("mode", mode)
-                startActivity(intent)
+                startActivityForResult(intent, 0)
             }
         })
 
@@ -554,12 +550,19 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         doPlusFocusPresent.doPlusFocusOther(map)
     }
 
-    // 取消关注
-    private fun doCancelFocus(hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doCancelFocusPresent.doCancelFocusOther(map)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    mode = "first"
+                    max = 3
+                    min = 2
+                    getTrendSaloon(mode, max, min)
+                }
+            }
+        }
+
     }
 
     override fun onLoading() {
@@ -594,19 +597,18 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     override fun onDoPlusFocusSuccess(plusFocusBean: PlusFocusBean?) {
         if (plusFocusBean != null) {
             if (plusFocusBean.code == 200) {
-                ToastUtils.showShort("关注成功")
+
+                mode = "first"
+                max = 3
+                min = 2
+
+                getTrendSaloon(mode, max, min)
 
             }
         }
     }
 
     override fun onDoPlusFocusError() {
-    }
-
-    override fun onDoCancelFocusSuccess(cancelFocusBean: CancelFocusBean?) {
-    }
-
-    override fun onDoCancelFocusError() {
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
@@ -650,7 +652,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         if (trendSaloonBean.data.list.isNotEmpty()) {
 
-            srl_dynamic_recommend_refresh.visibility = View.VISIBLE
             ll_dynamic_recommend_empty.visibility = View.GONE
 
             val mIdList: MutableList<Int> = arrayListOf()
@@ -726,7 +727,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             0
         }
         intent.putExtra("mode", mode)
-        startActivity(intent)
+        startActivityForResult(intent, 0)
     }
 
     override fun onTextClick(v: View?, position: Int) {
@@ -739,7 +740,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             0
         }
         intent.putExtra("mode", mode)
-        startActivity(intent)
+        startActivityForResult(intent, 0)
     }
 
 }

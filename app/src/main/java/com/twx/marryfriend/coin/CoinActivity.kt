@@ -304,7 +304,6 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
     }
 
-
     private fun toBuy(orderInfo: String) {
         Thread {
             val alipay = PayTask(this)

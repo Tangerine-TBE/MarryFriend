@@ -325,6 +325,9 @@ object Constant {
 
     // --------------------------------------  设置模块  ------------------------------------
 
+
+    const val LAST_TIME_REQUEST = "last_time_request" // 上次去请求“我的”界面四个数据的时间
+
     const val HIDE_STATE = "hide_state" // 是否隐藏在线状态
 
     const val HIDE_VIP = "hide_vip"  // 是否隐藏会员标识

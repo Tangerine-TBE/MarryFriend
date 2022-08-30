@@ -242,7 +242,7 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
         iv_normal_ali_check.setImageResource(R.drawable.ic_vip_check_non)
     }
 
-    private fun toBuy(orderInfo: String) {
+    private fun toBuy(orderInfo: String, activity: VipActivity) {
         Thread {
             val alipay = PayTask(activity)
             val result: Map<String, String> = alipay.payV2(orderInfo, true)
@@ -319,7 +319,9 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
         if (mode == "vip") {
             if (aliPayBean != null) {
                 if (aliPayBean.code == "200") {
-                    toBuy(aliPayBean.data.str)
+                    if (isAdded) {
+                        toBuy(aliPayBean.data.str, requireActivity() as VipActivity)
+                    }
                 } else {
                     ll_vip_normal_loading?.visibility = View.GONE
                     ToastUtils.showShort("支付信息拉起失败，请稍后重试")

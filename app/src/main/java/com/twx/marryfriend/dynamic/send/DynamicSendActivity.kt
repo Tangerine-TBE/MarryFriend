@@ -7,8 +7,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
+import android.text.*
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -46,6 +47,7 @@ import com.twx.marryfriend.bean.TextVerifyBean
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.send.adapter.OnNineGridViewListener
@@ -57,6 +59,7 @@ import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
 import com.twx.marryfriend.net.callback.dynamic.IDoUploadTrendCallback
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl
+import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.DynamicFileProvider
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.utils.UnicodeUtils
@@ -151,6 +154,15 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         rv_emoji_send_container.adapter = emojiAdapter
         rv_emoji_send_container.layoutManager = GridLayoutManager(this, 8)
+
+
+        val str = "已阅读同意佳偶婚恋交友的《个人动态服务协议》"
+        val stringBuilder = SpannableStringBuilder(str)
+        val span1 = TextViewSpan()
+        stringBuilder.setSpan(span1, 12, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        tv_send_agree.text = stringBuilder
+        tv_send_agree.movementMethod = LinkMovementMethod.getInstance()
 
     }
 
@@ -602,14 +614,23 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                     imageUrl = x.replace("]", "")
                                 }
 
-                                doTextVerify(content)
+                                if (content != "") {
+                                    doTextVerify(content)
+                                } else {
+                                    uploadTrend()
+                                }
+
 
                             }.start()
 
                         } else {
                             // 不需要上传图片，直接上传文字即可
 
-                            doTextVerify(content)
+                            if (content != "") {
+                                doTextVerify(content)
+                            } else {
+                                ToastUtils.showShort("请输入动态内容")
+                            }
 
                         }
 
@@ -782,7 +803,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 // 上传动态
                 uploadTrend()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 ll_send_loading.visibility = View.GONE
             }
         }
@@ -1079,4 +1100,15 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
     }
 
+    inner class TextViewSpan : ClickableSpan() {
+        override fun updateDrawState(ds: TextPaint) {
+            ds.color = resources.getColor(R.color.service_color)
+        }
+
+        override fun onClick(widget: View) {
+            startActivity(SetWebActivity.getIntent(this@DynamicSendActivity,
+                "个人动态服务协议",
+                DataProvider.WebUrlData[8].url))
+        }
+    }
 }

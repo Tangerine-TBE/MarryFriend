@@ -2,6 +2,7 @@ package com.twx.marryfriend.mine.focus.mine
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.twx.marryfriend.mine.comment.RecentCommentAdapter
 import com.twx.marryfriend.mine.comment.mine.CommentMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetWhoFocusMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoFocusMePresentImpl
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_comment_mine.*
 import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import java.util.*
@@ -147,7 +149,16 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
     }
 
     override fun onItemClick(v: View?, position: Int) {
-        startActivity(context?.let { FriendInfoActivity.getIntent(it, mList[position].guest_uid) })
+
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+        } else {
+            startActivity(context?.let {
+                FriendInfoActivity.getIntent(it,
+                    mList[position].guest_uid)
+            })
+        }
+
     }
 
 }

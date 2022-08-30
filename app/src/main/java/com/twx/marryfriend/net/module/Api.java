@@ -9,6 +9,7 @@ import com.twx.marryfriend.bean.DeletePhotoBean;
 import com.twx.marryfriend.bean.DemandAddressBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
+import com.twx.marryfriend.bean.FiveInfoBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
@@ -118,6 +119,12 @@ public interface Api {
     // 获取择偶省市要求列表
     @POST("/marryfriend/LoginRegister/demandShengshiList")
     Call<DemandAddressBean> getDemandAddress(@QueryMap Map<String, Object> params);
+
+
+    // 五个一起获取
+    @POST("/marryfriend/LoginRegister/getFive")
+    Call<FiveInfoBean> getFiveInfo(@QueryMap Map<String, Object> params);
+
 
 
     // 查看列表(头像,三张,相册)

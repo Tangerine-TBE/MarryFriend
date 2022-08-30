@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentActivity
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
+import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.*
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
@@ -645,10 +646,62 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     override fun onGetFourTotalSuccess(fourTotalBean: FourTotalBean?) {
         if (fourTotalBean != null) {
             if (fourTotalBean.code == 200) {
+
+                val lastTime =
+                    SPStaticUtils.getString(Constant.LAST_TIME_REQUEST, "1970-01-01 00:00:00")
+
+
+                if (TimeUtils.getTimeSpan(fourTotalBean.data.likeTime,
+                        lastTime,
+                        TimeConstants.SEC) > 0
+                ) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_like_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_like_point.visibility = View.INVISIBLE
+                }
+
+                if (TimeUtils.getTimeSpan(fourTotalBean.data.focusTime,
+                        lastTime,
+                        TimeConstants.SEC) > 0
+                ) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_fan_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_fan_point.visibility = View.INVISIBLE
+                }
+
+                if (TimeUtils.getTimeSpan(fourTotalBean.data.seeTime,
+                        lastTime,
+                        TimeConstants.SEC) > 0
+                ) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_visit_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_visit_point.visibility = View.INVISIBLE
+                }
+
+                if (TimeUtils.getTimeSpan(fourTotalBean.data.discTime,
+                        lastTime,
+                        TimeConstants.SEC) > 0
+                ) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_comment_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_comment_point.visibility = View.INVISIBLE
+                }
+
                 tv_mine_visit_sum.text = fourTotalBean.data.see.toString()
                 tv_mine_fan_sum.text = fourTotalBean.data.focus.toString()
                 tv_mine_like_sum.text = fourTotalBean.data.like.toString()
                 tv_mine_comment_sum.text = fourTotalBean.data.disc.toString()
+
+                SPStaticUtils.put(Constant.LAST_TIME_REQUEST, fourTotalBean.data.server)
+
             }
         }
     }
@@ -1009,7 +1062,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 ToastUtils.showShort("输入中存在敏感字，请重新输入")
                 findViewById<EditText>(R.id.et_user_data_name_name).setText("")
                 haveBanText = false
@@ -1149,7 +1202,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_hobby_content).setText("")
                 haveBanText = false
@@ -1289,7 +1342,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_greet_content).setText("")
                 haveBanText = false
@@ -1430,7 +1483,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
                 haveBanText = false

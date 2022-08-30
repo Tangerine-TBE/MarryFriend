@@ -12,8 +12,12 @@ data class FourTotalBean(
 
 data class FourTotalData(
     val disc: Int,
+    val discTime: String,
     val focus: Int,
+    val focusTime: String,
     val like: Int,
+    val likeTime: String,
     val see: Int,
+    val seeTime: String,
     val server: String,
 )

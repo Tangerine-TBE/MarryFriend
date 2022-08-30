@@ -24,6 +24,7 @@ import com.twx.marryfriend.mine.focus.mine.FocusMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetWhoSeeMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoFocusMePresentImpl
 import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import kotlinx.android.synthetic.main.fragment_like_mine.*
 import kotlinx.android.synthetic.main.fragment_view_mine.*
@@ -159,16 +160,27 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
     }
 
     override fun onChatClick(v: View?, position: Int) {
-        ToastUtils.showShort("聊天界面跳转")
-        val identity = mList[position].identity_status == 1
-        startActivity(context?.let {
-            ChatActivity.getIntent(
-                it,
-                mList[position].guest_uid.toString(),
-                mList[position].nick,
-                mList[position].image_url,
-                identity)
-        })
+
+
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+
+            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+
+        } else {
+
+            val identity = mList[position].identity_status == 1
+            startActivity(context?.let {
+                ChatActivity.getIntent(
+                    it,
+                    mList[position].guest_uid.toString(),
+                    mList[position].nick,
+                    mList[position].image_url,
+                    identity)
+            })
+
+        }
+
+
     }
 
 }

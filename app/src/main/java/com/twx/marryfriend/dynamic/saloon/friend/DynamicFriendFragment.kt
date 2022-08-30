@@ -1,5 +1,6 @@
 package com.twx.marryfriend.dynamic.saloon.friend
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
@@ -65,7 +66,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
 
-
     private var mTrendList: MutableList<TrendFocusList> = arrayListOf()
 
     private lateinit var adapter: SaloonFocusAdapter
@@ -105,7 +105,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
         doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
-
 
 
         adapter = SaloonFocusAdapter(mTrendList, mDiyList)
@@ -159,7 +158,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 intent.putExtra("trendId", mTrendList[position].id)
                 intent.putExtra("usersId", mTrendList[position].user_id.toInt())
                 intent.putExtra("mode", 1)
-                startActivity(intent)
+                startActivityForResult(intent, 0)
             }
         })
 
@@ -472,6 +471,19 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         doLikeCancelPresent.doLikeCancel(map)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    mode = "first"
+                    max = 3
+                    min = 2
+                    getTrendFocus(mode, max, min)
+                }
+            }
+        }
+    }
 
     override fun onLoading() {
 
@@ -520,7 +532,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
         if (trendFocusBean.data.list.isNotEmpty()) {
 
-            srl_dynamic_focus_refresh.visibility = View.VISIBLE
             ll_dynamic_focus_empty.visibility = View.GONE
 
             val mIdList: MutableList<Int> = arrayListOf()

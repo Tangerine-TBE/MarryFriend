@@ -54,6 +54,9 @@ object Contents {
     // 增加择偶省市要求列表
     const val GET_DEMAND_ADDRESS = "LoginRegister/demandShengshiList"
 
+    // 五个一起获取
+    const val GET_FIVE_INFO = "LoginRegister/getFive"
+
     //查看列表(头像,三张,相册)
     const val PHOTO_LIST = "LoginRegister/photoList"
 

@@ -9,6 +9,7 @@ import com.twx.marryfriend.bean.DeletePhotoBean;
 import com.twx.marryfriend.bean.DemandAddressBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
+import com.twx.marryfriend.bean.FiveInfoBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
@@ -233,6 +234,19 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_DEMAND_ADDRESS + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_DEMAND_ADDRESS, currentTimeMillis, random, checkCode, map);
         mApi.getDemandAddress(map1).enqueue(callback);
+    }
+
+
+    // 增加择偶省市要求列表
+    public void getFiveInfo(Map<String, String> map, Callback<FiveInfoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_FIVE_INFO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_FIVE_INFO, currentTimeMillis, random, checkCode, map);
+        mApi.getFiveInfo(map1).enqueue(callback);
     }
 
 

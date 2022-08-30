@@ -2289,7 +2289,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
 
                     } else {
-                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        ToastUtils.showShort(textVerifyBean.error_msg)
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         isFinishIntroduce = false
                         haveBanText = false
@@ -2310,7 +2310,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         tsb_guide_detail_guide.setPercent(0.88f, "88")
                         SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
                     } else {
-                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        ToastUtils.showShort(textVerifyBean.error_msg)
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         isFinishHobby = false
                         haveBanText = false
@@ -2339,7 +2339,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     } else {
 
-                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        ToastUtils.showShort(textVerifyBean.error_msg)
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
 
                         isFinishIdeal = false

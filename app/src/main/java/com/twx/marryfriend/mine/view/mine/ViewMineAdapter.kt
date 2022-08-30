@@ -1,6 +1,10 @@
 package com.twx.marryfriend.mine.view.mine
 
 import android.content.Context
+import android.graphics.BlurMaskFilter
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.MaskFilterSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +12,19 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.makeramen.roundedimageview.RoundedImageView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.CommentTipList
 import com.twx.marryfriend.bean.mine.WhoSeeMeList
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.TimeUtil.getViewTime
+import jp.wasabeef.glide.transformations.BlurTransformation
 import java.util.*
 
 class ViewMineAdapter(private val mList: MutableList<WhoSeeMeList>) :
@@ -94,20 +102,48 @@ class ViewMineAdapter(private val mList: MutableList<WhoSeeMeList>) :
     private fun initView(holder: ViewHolder, position: Int) {
 
         if (mList[position].user_sex == 1) {
-            Glide.with(mContext)
-                .load(mList[position].image_url)
-                .error(R.drawable.ic_mine_male_default)
-                .placeholder(R.drawable.ic_mine_male_default)
-                .into(holder.avatar)
+            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_male_default)
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .apply(RequestOptions.bitmapTransform(BlurTransformation(25)))
+                    .into(holder.avatar)
+            } else {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_male_default)
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .into(holder.avatar)
+            }
         } else {
-            Glide.with(mContext)
-                .load(mList[position].image_url)
-                .error(R.drawable.ic_mine_male_default)
-                .placeholder(R.drawable.ic_mine_female_default)
-                .into(holder.avatar)
+            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_female_default)
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .apply(RequestOptions.bitmapTransform(BlurTransformation(25)))
+                    .into(holder.avatar)
+            } else {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_female_default)
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .into(holder.avatar)
+            }
         }
 
-        holder.name.text = mList[position].nick
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+            val stringBuilder: SpannableString = SpannableString(mList[position].nick)
+            stringBuilder.setSpan(MaskFilterSpan(BlurMaskFilter(15f, BlurMaskFilter.Blur.NORMAL)),
+                0,
+                stringBuilder.length,
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+            holder.name.text = stringBuilder
+        } else {
+            holder.name.text = mList[position].nick
+        }
 
 
         if (mList[position].identity_status == 1) {
@@ -122,7 +158,8 @@ class ViewMineAdapter(private val mList: MutableList<WhoSeeMeList>) :
             holder.trueAvatar.visibility = View.GONE
         }
 
-        when (SpUtil.getVipLevel(mList[position].close_time_low, mList[position].close_time_high)) {
+        when (SpUtil.getVipLevel(mList[position].close_time_low,
+            mList[position].close_time_high)) {
             0 -> {
                 holder.vip.visibility = View.GONE
             }

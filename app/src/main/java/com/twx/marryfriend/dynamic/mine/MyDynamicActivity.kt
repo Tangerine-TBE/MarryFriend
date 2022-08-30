@@ -448,6 +448,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
     override fun onGetMyTrendsListSuccess(myTrendsListBean: MyTrendsListBean) {
 
+        srl_dynamic_mine_refresh.finishRefresh(true)
+        srl_dynamic_mine_refresh.finishLoadMore(true)
+
         if (myTrendsListBean.data.list.isNotEmpty()) {
 
             if (currentPaper == 1) {
@@ -499,12 +502,10 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         }
 
-        srl_dynamic_mine_refresh.finishRefresh(true)
-        srl_dynamic_mine_refresh.finishLoadMore(true)
-
     }
 
     override fun onGetMyTrendsListCodeError() {
+
         srl_dynamic_mine_refresh.finishRefresh(false)
         srl_dynamic_mine_refresh.finishLoadMore(false)
     }

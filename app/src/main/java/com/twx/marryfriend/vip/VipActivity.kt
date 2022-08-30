@@ -35,7 +35,7 @@ import java.util.*
 
 class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsListener,
     OnPageChangeListener, IGetVipPriceCallback, IGetSVipPriceCallback, IDoPreviewOtherCallback,
-    IDoSVipRefreshSelfCallback {
+    IDoRefreshSelfCallback {
 
     private lateinit var normal: VipFragment
     private lateinit var svip: SVipFragment
@@ -55,7 +55,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private lateinit var getVipPricePresent: getVipPricePresentImpl
     private lateinit var getSVipPricePresent: getSVipPricePresentImpl
     private lateinit var doPreviewOtherPresent: doPreviewOtherPresentImpl
-    private lateinit var doRefreshSelfPresent: doSVipRefreshSelfPresentImpl
+    private lateinit var doRefreshSelfPresent: doRefreshSelfPresentImpl
 
     private lateinit var mPagerAdapter: FragmentPagerAdapter<Fragment>
 
@@ -93,7 +93,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         doPreviewOtherPresent = doPreviewOtherPresentImpl.getsInstance()
         doPreviewOtherPresent.registerCallback(this)
 
-        doRefreshSelfPresent = doSVipRefreshSelfPresentImpl.getsInstance()
+        doRefreshSelfPresent = doRefreshSelfPresentImpl.getsInstance()
         doRefreshSelfPresent.registerCallback(this)
 
         normal = VipFragment().newInstance(this)
@@ -213,7 +213,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private fun updateCoin() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doRefreshSelfPresent.doSVipRefreshSelf(map)
+        doRefreshSelfPresent.doRefreshSelf(map)
     }
 
     private fun getVipPrice() {
@@ -472,7 +472,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
     }
 
-    override fun onDoSVipRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
+    override fun onDoRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
         if (refreshSelfBean != null) {
             if (refreshSelfBean.code == 200) {
                 SpUtil.refreshUserInfo(refreshSelfBean)
@@ -483,7 +483,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         }
     }
 
-    override fun onDoSVipRefreshSelfError() {
+    override fun onDoRefreshSelfError() {
 
     }
 

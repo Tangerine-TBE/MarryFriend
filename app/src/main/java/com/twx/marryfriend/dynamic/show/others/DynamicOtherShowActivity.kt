@@ -126,6 +126,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     // 删除dialog 对应的position
     private var twoPosition = 0
 
+    private var isBackFresh = false
+
     var emojiList: MutableList<String> = arrayListOf()
     private lateinit var emojiAdapter: EmojiDetailAdapter
 
@@ -160,8 +162,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun initView() {
         super.initView()
-
-        Log.i("guo", "trend : ${intent.getIntExtra("trendId", 0)}")
 
         trendId = intent.getIntExtra("trendId", 0)
         userId = intent.getIntExtra("usersId", 0)
@@ -221,6 +221,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         sfl_dynamic_other_show_refresh.setRefreshFooter(ClassicsFooter(this))
 
+        isBackFresh = false
+
     }
 
     override fun initLoadData() {
@@ -250,7 +252,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         super.initEvent()
 
         iv_dynamic_other_show_finish.setOnClickListener {
-            finish()
+
+            if (isBackFresh) {
+                val intent = intent
+                setResult(RESULT_OK, intent)
+                finish()
+            } else {
+                finish()
+            }
+
         }
 
         ll_dynamic_other_show_mode.setOnClickListener {
@@ -753,6 +763,19 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         map[Contents.ID] = trendId.toString()
         map[Contents.USER_ID] = userId
         doDeleteTrendPresent.doDeleteTrend(map)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isBackFresh) {
+                val intent = intent
+                setResult(RESULT_OK, intent)
+                finish()
+            } else {
+                finish()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
     }
 
     override fun onLoading() {
@@ -1560,7 +1583,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         1 -> {
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
+                            Glide.with(applicationContext)
+                                .load(image[0].image_url)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_dynamic_other_show_like1)
 
                             iv_dynamic_other_show_like2.visibility = View.GONE
@@ -1569,7 +1595,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         2 -> {
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
+                            Glide.with(applicationContext)
+                                .load(image[0].image_url)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_dynamic_other_show_like1)
 
                             iv_dynamic_other_show_like2.visibility = View.VISIBLE
@@ -1580,7 +1609,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         3 -> {
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
+                            Glide.with(applicationContext)
+                                .load(image[0].image_url)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_dynamic_other_show_like1)
 
                             iv_dynamic_other_show_like2.visibility = View.VISIBLE
@@ -1943,6 +1975,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
 
             focus.setOnClickListener {
+                isBackFresh = true
                 if (haveFocus) {
                     ToastUtils.showShort("取消关注")
                     doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)

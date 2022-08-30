@@ -9,8 +9,7 @@
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/srl_dynamic_focus_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
         <com.scwang.smart.refresh.header.ClassicsHeader
             android:layout_width="match_parent"
@@ -26,7 +25,6 @@
             android:layout_height="wrap_content" />
 
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-
 
     <LinearLayout
         android:id="@+id/ll_dynamic_focus_empty"
