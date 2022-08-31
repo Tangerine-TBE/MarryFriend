@@ -269,4 +269,6 @@ dependencies {
     api 'com.umeng.umsdk:vivo-push:3.0.0.4'
 
 
+    implementation 'com.huangyz0918:androidwm:0.2.3'
+
 }

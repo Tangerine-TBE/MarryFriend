@@ -59,7 +59,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="50dp"
                 android:layout_marginTop="24dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/ll_life_photo_default"
@@ -94,7 +94,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="35dp"
                 android:layout_marginTop="24dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -105,7 +105,7 @@
                         android:id="@+id/rl_life_photo_pic_one"
                         android:layout_width="match_parent"
                         android:layout_height="145dp"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/iv_life_photo_pic_one"
@@ -175,7 +175,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="145dp"
                         android:layout_marginTop="8dp"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/iv_life_photo_pic_two"
@@ -245,7 +245,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="145dp"
                         android:layout_marginTop="8dp"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/iv_life_photo_pic_three"
@@ -310,13 +310,12 @@
 
                     </RelativeLayout>
 
-
                     <RelativeLayout
                         android:id="@+id/rl_life_photo_pic_four"
                         android:layout_width="match_parent"
                         android:layout_height="145dp"
                         android:layout_marginTop="8dp"
-                        android:visibility="visible">
+                        android:visibility="gone">
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/iv_life_photo_pic_four"
@@ -381,13 +380,13 @@
 
                     </RelativeLayout>
 
-
                     <RelativeLayout
                         android:id="@+id/rl_life_photo_pic_five"
                         android:layout_width="match_parent"
                         android:layout_height="145dp"
                         android:layout_marginTop="8dp"
-                        android:visibility="visible">
+                        android:layout_marginBottom="100dp"
+                        android:visibility="gone">
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/iv_life_photo_pic_five"
@@ -452,13 +451,13 @@
 
                     </RelativeLayout>
 
-
                     <RelativeLayout
                         android:id="@+id/rl_life_photo_pic_more"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
                         android:layout_marginTop="18dp"
+                        android:layout_marginBottom="100dp"
                         android:background="@mipmap/icon_life_three"
                         android:visibility="gone" />
 

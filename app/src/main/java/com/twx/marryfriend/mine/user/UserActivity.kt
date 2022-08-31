@@ -145,6 +145,17 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
+
                     }
                     1 -> {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
@@ -165,6 +176,16 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
                     }
                     2 -> {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
@@ -189,6 +210,16 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID, "")
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
                     }
                     3 -> {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
@@ -214,9 +245,107 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback {
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT,
                             photoListBean.data[2].content)
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID,
-                            photoListBean.data[1].id.toString())
+                            photoListBean.data[2].id.toString())
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT,
+                            photoListBean.data[2].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
+                    }
+                    4 -> {
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
+                            photoListBean.data[0].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT,
+                            photoListBean.data[0].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID,
+                            photoListBean.data[0].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT,
+                            photoListBean.data[0].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO,
+                            photoListBean.data[1].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT,
+                            photoListBean.data[1].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID,
+                            photoListBean.data[1].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT,
                             photoListBean.data[1].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE,
+                            photoListBean.data[2].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT,
+                            photoListBean.data[2].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID,
+                            photoListBean.data[2].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT,
+                            photoListBean.data[2].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR,
+                            photoListBean.data[3].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_TEXT,
+                            photoListBean.data[3].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_ID,
+                            photoListBean.data[3].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT,
+                            photoListBean.data[3].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_TEXT, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_ID, "")
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
+                    }
+                    5 -> {
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE,
+                            photoListBean.data[0].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_TEXT,
+                            photoListBean.data[0].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_ID,
+                            photoListBean.data[0].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT,
+                            photoListBean.data[0].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO,
+                            photoListBean.data[1].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_TEXT,
+                            photoListBean.data[1].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_ID,
+                            photoListBean.data[1].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT,
+                            photoListBean.data[1].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE,
+                            photoListBean.data[2].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_TEXT,
+                            photoListBean.data[2].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_ID,
+                            photoListBean.data[2].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT,
+                            photoListBean.data[2].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR,
+                            photoListBean.data[3].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_TEXT,
+                            photoListBean.data[3].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_ID,
+                            photoListBean.data[3].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT,
+                            photoListBean.data[3].status.toString())
+
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE,
+                            photoListBean.data[4].image_url)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_TEXT,
+                            photoListBean.data[4].content)
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_ID,
+                            photoListBean.data[4].id.toString())
+                        SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT,
+                            photoListBean.data[4].status.toString())
                     }
                 }
             }

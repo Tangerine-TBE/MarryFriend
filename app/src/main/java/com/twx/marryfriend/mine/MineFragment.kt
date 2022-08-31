@@ -71,6 +71,7 @@ import com.twx.marryfriend.set.SetActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.tools.hobby.HobbyToolActivity
 import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
+import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.twx.marryfriend.vip.VipActivity
@@ -805,9 +806,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             iv_mine_avatar.setImageBitmap(mBitmap)
             tv_mine_avatar_check.visibility = View.VISIBLE
 
+            val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                BitmapUtil.createWaterMarkBitmap(mBitmap, it)
+            }
 
             FileUtils.delete(mPhotoPath)
-            mBitmap?.let { saveBitmap(it, mPhotoPath) }
+            bitmap?.let { saveBitmap(it, mPhotoPath) }
 
             Thread {
 
@@ -817,9 +821,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 // key值为保存文件名，试用固定的几种格式来命名
 
                 val putObjectFromFileResponse =
-                    client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "13")
-                    }", FileUtils.getFileName(mPhotoPath), file)
+                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}",
+                        FileUtils.getFileName(mPhotoPath),
+                        file)
 
                 mPhotoUrl = client.generatePresignedUrl("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")

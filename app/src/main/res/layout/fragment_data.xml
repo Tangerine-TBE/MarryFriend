@@ -157,9 +157,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="简单的介绍一下自己，吸引更多人了解你"
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="22dp"
+                        android:text="简单的介绍一下自己，吸引更多人了解你"
                         android:textColor="#101010"
                         android:textSize="15sp" />
 
@@ -298,9 +298,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="描绘出你心中理想的ta,说不定ta就在前方..."
                         android:paddingHorizontal="16dp"
                         android:paddingVertical="22dp"
+                        android:text="描绘出你心中理想的ta,说不定ta就在前方..."
                         android:textColor="#101010"
                         android:textSize="15sp" />
 
@@ -363,99 +363,14 @@
                     android:textColor="#101010"
                     android:textSize="15sp" />
 
-                <LinearLayout
-                    android:id="@+id/ll_user_data_life"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_user_data_life_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="14dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="33dp"
-                    android:gravity="start">
-
-                    <RelativeLayout
-                        android:id="@+id/rl_user_data_life_one"
-                        android:layout_width="83dp"
-                        android:layout_height="83dp">
-
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:id="@+id/iv_user_data_life_one"
-                            android:layout_width="83dp"
-                            android:layout_height="83dp"
-                            android:scaleType="centerCrop"
-                            app:riv_corner_radius="8dp" />
-
-                        <TextView
-                            android:id="@+id/tv_user_data_life_one"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/shape_bg_audit_data"
-                            android:gravity="center"
-                            android:text="审核中..."
-                            android:textColor="@color/white"
-                            android:textSize="13sp"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="5dp"
-                        android:layout_height="0dp" />
-
-                    <RelativeLayout
-                        android:id="@+id/rl_user_data_life_two"
-                        android:layout_width="83dp"
-                        android:layout_height="83dp">
-
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:id="@+id/iv_user_data_life_two"
-                            android:layout_width="83dp"
-                            android:layout_height="83dp"
-                            android:scaleType="centerCrop"
-                            app:riv_corner_radius="8dp" />
-
-                        <TextView
-                            android:id="@+id/tv_user_data_life_two"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/shape_bg_audit_data"
-                            android:gravity="center"
-                            android:text="审核中..."
-                            android:textColor="@color/white"
-                            android:textSize="13sp"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="5dp"
-                        android:layout_height="0dp" />
-
-                    <RelativeLayout
-                        android:id="@+id/rl_user_data_life_three"
-                        android:layout_width="83dp"
-                        android:layout_height="83dp">
-
-                        <com.makeramen.roundedimageview.RoundedImageView
-                            android:id="@+id/iv_user_data_life_three"
-                            android:layout_width="83dp"
-                            android:layout_height="83dp"
-                            android:scaleType="centerCrop"
-                            app:riv_corner_radius="8dp" />
-
-                        <TextView
-                            android:id="@+id/tv_user_data_life_three"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/shape_bg_audit_data"
-                            android:gravity="center"
-                            android:text="审核中..."
-                            android:textColor="@color/white"
-                            android:textSize="13sp"
-                            android:visibility="gone" />
-
-                    </RelativeLayout>
-
-                </LinearLayout>
+                    android:gravity="start" />
 
             </LinearLayout>
 

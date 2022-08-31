@@ -28,7 +28,6 @@ import com.baidubce.services.bos.BosClientConfiguration
 import com.blankj.utilcode.util.*
 import com.blankj.utilcode.util.FileUtils
 import com.bumptech.glide.Glide
-import com.google.android.exoplayer2.util.NalUnitUtil
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -50,24 +49,28 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
-import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
+import com.twx.marryfriend.mine.user.data.adapter.DataLifePhotoAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
+import com.watermark.androidwm.WatermarkBuilder
+import com.watermark.androidwm.bean.WatermarkText
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.fragment_data.*
 import java.io.*
 import java.util.*
 
+
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
-    IDoFaceDetectCallback, IDoUploadPhotoCallback, IDoUpdateProportionCallback,
-    IDoUpdateGreetInfoCallback {
+    IDoFaceDetectCallback, IDoUpdateProportionCallback,
+    IDoUpdateGreetInfoCallback, IDoUploadAvatarCallback {
 
     // 敏感字
     private var banTextList: MutableList<String> = arrayListOf()
@@ -112,6 +115,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private lateinit var mediaPlayer: MediaPlayer
 
+    // 水印工具
+    private lateinit var watermarkText: WatermarkText
+
 
     // 时间选择器数据
     // 年
@@ -148,9 +154,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private var mWeightList: MutableList<String> = arrayListOf()
     private var mBodyList: MutableList<String> = arrayListOf()
 
+    private var lifeInfoList: MutableList<DataLifeBean> = arrayListOf()
     private var baseInfoList: MutableList<String> = arrayListOf()
     private var moreInfoList: MutableList<String> = arrayListOf()
 
+
+    private lateinit var lifeAdapter: DataLifePhotoAdapter
     private lateinit var baseAdapter: DataBaseAdapter
     private lateinit var moreAdapter: DataMoreAdapter
 
@@ -158,9 +167,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private lateinit var doUpdateMoreInfoPresent: doUpdateMoreInfoPresentImpl
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
+    private lateinit var doUploadAvatarPresent: doUploadAvatarPresentImpl
 
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
-    private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
     private lateinit var updateProportionPresent: doUpdateProportionPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
@@ -195,11 +204,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         doUpdateBaseInfoPresent = doUpdateBaseInfoPresentImpl.getsInstance()
         doUpdateBaseInfoPresent.registerCallback(this)
 
+        doUploadAvatarPresent = doUploadAvatarPresentImpl.getsInstance()
+        doUploadAvatarPresent.registerCallback(this)
+
         doFaceDetectPresent = doFaceDetectPresentImpl.getsInstance()
         doFaceDetectPresent.registerCallback(this)
-
-        uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
-        uploadPhotoPresent.registerCallback(this)
 
         updateProportionPresent = doUpdateProportionPresentImpl.getsInstance()
         updateProportionPresent.registerCallback(this)
@@ -222,8 +231,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         initInfo()
 
+        lifeAdapter = DataLifePhotoAdapter(lifeInfoList)
         baseAdapter = DataBaseAdapter(DataProvider.dataBaseData, baseInfoList)
         moreAdapter = DataMoreAdapter(DataProvider.dataMoreData, moreInfoList)
+
+        val lifeManager = LinearLayoutManager(context)
+        lifeManager.orientation = LinearLayoutManager.HORIZONTAL
 
         val baseScrollManager: LinearLayoutManager = object : LinearLayoutManager(context) {
             override fun canScrollVertically(): Boolean {
@@ -236,6 +249,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 return false
             }
         }
+
+
+
+        rv_user_data_life_container.layoutManager = lifeManager
+        rv_user_data_life_container.adapter = lifeAdapter
 
         rv_user_data_base.layoutManager = baseScrollManager
         rv_user_data_base.adapter = baseAdapter
@@ -404,6 +422,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //        for (i in 0.until(aa.data.size)) {
 //            banTextList.add(aa.data[i])
 //        }
+
+
+        watermarkText = WatermarkText("佳偶婚恋交友")
+            .setPositionX(0.8)
+            .setPositionY(1.0)
+            .setTextColor(Color.WHITE)
+            .setTextAlpha(150)
+            .setTextSize(16.0)
+            .setTextAlpha(200)
+            .setBackgroundColor(Color.BLACK)
 
     }
 
@@ -588,11 +616,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             startActivityForResult(intent, 0)
         }
 
-        ll_user_data_life.setOnClickListener {
-            val intent = Intent(context, LifePhotoActivity::class.java)
-            intent.putExtra("activity", "data")
-            startActivityForResult(intent, 0)
-        }
+        lifeAdapter.setOnItemClickListener(object : DataLifePhotoAdapter.OnItemClickListener {
+            override fun onItemClick(v: View?, position: Int) {
+                val intent = Intent(context, LifePhotoActivity::class.java)
+                intent.putExtra("activity", "data")
+                startActivityForResult(intent, 0)
+            }
+        })
 
         baseAdapter.setOnItemClickListener(object : DataBaseAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
@@ -1571,6 +1601,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 获取、更新生活照
     fun updateLife() {
+
+        lifeInfoList.clear()
+
         val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
         val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
 
@@ -1580,221 +1613,30 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
         val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
 
-        tv_user_data_life_one.visibility = View.GONE
-        tv_user_data_life_two.visibility = View.GONE
-        tv_user_data_life_three.visibility = View.GONE
+        val lifePhotoFour = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FOUR, "")
+        val lifePhotoFourState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
+
+        val lifePhotoFive = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FIVE, "")
+        val lifePhotoFiveState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
 
         if (lifePhotoOne != "") {
-            if (lifePhotoTwo != "") {
-                if (lifePhotoThree != "") {
-                    // 有三张图片,全部正常显示
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(this)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(lifePhotoThree)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_three)
-                        if (lifePhotoThreeState == "0") {
-                            tv_user_data_life_three.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_three.visibility = View.GONE
-                        }
-
-                    }
-                } else {
-                    // 有两张图片，,第一、二张正常显示，第三张显示为添加
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(this)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this).load(R.drawable.ic_data_life_add)
-                            .into(iv_user_data_life_three)
-                    }
-                }
-            } else {
-                // 有一张图片,第一张正常显示，第二张显示为添加
-                ThreadUtils.runOnUiThread {
-                    Glide.with(this)
-                        .load(lifePhotoOne)
-                        .error(R.drawable.ic_data_life_default)
-                        .placeholder(R.drawable.ic_data_life_default)
-                        .into(iv_user_data_life_one)
-                    if (lifePhotoOneState == "0") {
-                        tv_user_data_life_one.visibility = View.VISIBLE
-                    } else {
-                        tv_user_data_life_one.visibility = View.GONE
-                    }
-
-                    rl_user_data_life_two.visibility = View.VISIBLE
-                    Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
-                    rl_user_data_life_three.visibility = View.GONE
-                }
-            }
-        } else {
-            ThreadUtils.runOnUiThread {
-                Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
-                rl_user_data_life_two.visibility = View.GONE
-                rl_user_data_life_three.visibility = View.GONE
-            }
+            lifeInfoList.add(DataLifeBean(lifePhotoOne, lifePhotoOneState))
+        }
+        if (lifePhotoTwo != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoTwo, lifePhotoTwoState))
+        }
+        if (lifePhotoThree != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoThree, lifePhotoThreeState))
+        }
+        if (lifePhotoFour != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoFour, lifePhotoFourState))
+        }
+        if (lifePhotoFive != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoFive, lifePhotoFiveState))
         }
 
-    }
+        lifeAdapter.notifyDataSetChanged()
 
-
-    fun update111(activity: UserActivity) {
-        val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
-        val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
-
-        val lifePhotoTwo = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
-        val lifePhotoTwoState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
-
-        val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
-        val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
-
-        if (lifePhotoOne != "") {
-            if (lifePhotoTwo != "") {
-                if (lifePhotoThree != "") {
-                    // 有三张图片,全部正常显示
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(activity)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(activity)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(activity)
-                            .load(lifePhotoThree)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_three)
-                        if (lifePhotoThreeState == "0") {
-                            tv_user_data_life_three.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_three.visibility = View.GONE
-                        }
-
-                    }
-                } else {
-                    // 有两张图片，,第一、二张正常显示，第三张显示为添加
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(activity)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(activity)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(activity).load(R.drawable.ic_data_life_add)
-                            .into(iv_user_data_life_three)
-                    }
-                }
-            } else {
-                // 有一张图片,第一张正常显示，第二张显示为添加
-                ThreadUtils.runOnUiThread {
-                    Glide.with(activity)
-                        .load(lifePhotoOne)
-                        .error(R.drawable.ic_data_life_default)
-                        .placeholder(R.drawable.ic_data_life_default)
-                        .into(iv_user_data_life_one)
-                    if (lifePhotoOneState == "0") {
-                        tv_user_data_life_one.visibility = View.VISIBLE
-                    } else {
-                        tv_user_data_life_one.visibility = View.GONE
-                    }
-
-                    rl_user_data_life_two.visibility = View.VISIBLE
-                    Glide.with(activity).load(R.drawable.ic_data_life_add)
-                        .into(iv_user_data_life_two)
-                    rl_user_data_life_three.visibility = View.GONE
-                }
-            }
-        } else {
-            ThreadUtils.runOnUiThread {
-                Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
-                rl_user_data_life_two.visibility = View.GONE
-                rl_user_data_life_three.visibility = View.GONE
-            }
-        }
     }
 
     // 获取所有数据更新视图
@@ -2551,25 +2393,25 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
         doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
-        // 上传头像
-        if (mPhotoUrl != "") {
-            val uploadPhotoMap: MutableMap<String, String> = TreeMap()
-            uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
-            uploadPhotoMap[Contents.FILE_TYPE] = "png"
-            uploadPhotoMap[Contents.FILE_NAME] = "head.png"
-            uploadPhotoMap[Contents.CONTENT] = "0"
-            uploadPhotoMap[Contents.KIND] = 1.toString()
-            uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
-        } else {
-            Log.i("guo", "getBaseInfo")
-        }
 
         // 更新资料完善度
         val proportionMap: MutableMap<String, String> = TreeMap()
         proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         proportionMap[Contents.PROPORTION] = proportion.toString()
         updateProportionPresent.doUpdateProportion(proportionMap)
+
+    }
+
+    // 需要上传的基础信息
+    private fun updateAvatar(photoUrl: String, type: String, name: String) {
+
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
     }
 
@@ -2714,6 +2556,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
+        if (uploadAvatarBean != null) {
+            if (uploadAvatarBean.code == 200) {
+                ToastUtils.showShort("上传成功")
+            } else {
+                ToastUtils.showShort(uploadAvatarBean.msg)
+            }
+        }
+
+    }
+
+    override fun onDoUploadAvatarError() {
+        ToastUtils.showShort("上传失败")
+    }
+
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
     }
 
@@ -2743,13 +2600,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 iv_user_data_avatar.setImageDrawable(null)
             }
 
+
+            val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
+            }
+
+
             iv_user_data_avatar.setImageBitmap(photoBitmap)
 
             tv_user_data_avatar_check.visibility = View.VISIBLE
 
             FileUtils.delete(mPhotoPath)
 
-            photoBitmap?.let { saveBitmap(it, mPhotoPath) }
+            if (bitmap != null) {
+                saveBitmap(bitmap, mPhotoPath)
+            }
 
             Thread {
 
@@ -2770,10 +2635,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     SPStaticUtils.getString(Constant.USER_ID, "default")
                 }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
-
                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
                 Log.i("guo", mPhotoUrl)
+
+                updateAvatar(mPhotoUrl,
+                    FileUtils.getFileExtension(mPhotoPath),
+                    FileUtils.getFileNameNoExtension(mPhotoPath))
 
             }.start()
 
@@ -2791,15 +2659,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
         ImageUtils.save(bitmap, targetPath, Bitmap.CompressFormat.PNG)
         return targetPath
-    }
-
-    override fun onDoUploadPhotoSuccess(uploadPhotoBean: UploadPhotoBean?) {
-        lastBaseInfo = getBaseInfo()
-        lastMoreInfo = getMoreInfo()
-    }
-
-    override fun onDoUploadPhotoError() {
-
     }
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
