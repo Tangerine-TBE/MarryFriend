@@ -43,6 +43,15 @@ sealed class Message<BODY: EMMessageBody>(val emMessage: EMMessage){
                             iLog("未定义的类型,${event}")
                             null
                         }
+                        CustomMessage.CustomEvent.security -> {
+                            SendFlowerMessage(emMessage)
+                        }
+                        CustomMessage.CustomEvent.openVip -> {
+                            SendFlowerMessage(emMessage)
+                        }
+                        CustomMessage.CustomEvent.upload_head -> {
+                            SendFlowerMessage(emMessage)
+                        }
                     }
 
                 }

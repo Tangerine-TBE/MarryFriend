@@ -246,7 +246,7 @@ data class RecommendBean(
         return photos?.find { it.kind==2 }?.image_url
     }
     fun getLifePhoto():List<Photo>{
-        return photos?.filter { it.kind == 3 }?: emptyList()
+        return photos?.filter { /*it.kind == 3*/true }?: emptyList()
     }
 
     fun getUserSex(): Sex {

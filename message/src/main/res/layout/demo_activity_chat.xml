@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.xyzz.myutils.action.ActionBarNoPadding
+        android:id="@+id/myActionBar"
+        android:background="#FFF"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/chatSetting"
+            android:paddingStart="25dp"
+            android:paddingEnd="25dp"
+            android:layout_gravity="end"
+            android:layout_width="wrap_content"
+            android:src="@mipmap/ic_chat_setting"
+            android:layout_height="match_parent"/>
+    </com.xyzz.myutils.action.ActionBarNoPadding>
+    <FrameLayout
+        android:id="@+id/friendRealName"
+        android:background="#FFFFF5F5"
+        android:layout_width="match_parent"
+        android:layout_height="38dp">
+        <TextView
+            android:textColor="#FFFF4444"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            android:text="对方尚未认证,请不要有经济往来,请他TA认证"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_gravity="end|center_vertical"
+            android:background="@drawable/shape_msg_authentication"
+            android:text="邀请认证"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="6dp"
+            android:includeFontPadding="false"
+            android:layout_marginEnd="8dp"
+            android:textColor="#FFFF4444"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </FrameLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fl_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

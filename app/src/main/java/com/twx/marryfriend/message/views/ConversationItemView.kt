@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
-import com.message.ImMessageManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.databinding.ItemListSessionMessageBinding
 import com.twx.marryfriend.message.ChatActivity
@@ -27,7 +26,7 @@ class ConversationItemView  @JvmOverloads constructor(context: Context, attribut
         this.addView(dataBindingView.root)
         initListener()
     }
-    private var conversationsItemModel:ConversationsItemModel?=null
+    private var conversationsItemModel: ConversationsItemModel?=null
 
     fun setData(data: ConversationsItemModel?) {
         conversationsItemModel=data

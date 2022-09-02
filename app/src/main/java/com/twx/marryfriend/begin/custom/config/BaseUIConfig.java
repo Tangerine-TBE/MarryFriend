@@ -23,12 +23,10 @@ public abstract class BaseUIConfig {
     public int mScreenHeightDp;
 
     public static BaseUIConfig init(int type, Activity activity, PhoneNumberAuthHelper authHelper) {
-        switch (type) {
-            case 0:
-                return new DialogBottomConfig(activity, authHelper);
-            default:
-                return null;
+        if (type == 0) {
+            return new DialogBottomConfig(activity, authHelper);
         }
+        return null;
     }
     public BaseUIConfig(Activity activity, PhoneNumberAuthHelper authHelper) {
 
@@ -61,24 +59,40 @@ public abstract class BaseUIConfig {
                 || authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
                 || authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE) {
             rotation = Surface.ROTATION_90;
-        } else if (authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                || authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
-                || authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT) {
-            rotation = Surface.ROTATION_180;
-        }
-        switch (rotation) {
-            case Surface.ROTATION_0:
-            case Surface.ROTATION_180:
-                mScreenWidthDp = screenWidthDp;
-                mScreenHeightDp = screenHeightDp;
-                break;
-            case Surface.ROTATION_90:
-            case Surface.ROTATION_270:
-                mScreenWidthDp = screenHeightDp;
-                mScreenHeightDp = screenWidthDp;
-                break;
-            default:
-                break;
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_180:
+                    mScreenWidthDp = screenWidthDp;
+                    mScreenHeightDp = screenHeightDp;
+                    break;
+                case Surface.ROTATION_90:
+                case Surface.ROTATION_270:
+                    mScreenWidthDp = screenHeightDp;
+                    mScreenHeightDp = screenWidthDp;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            if (authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    || authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                    || authPageScreenOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT) {
+                rotation = Surface.ROTATION_180;
+            }
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_180:
+                    mScreenWidthDp = screenWidthDp;
+                    mScreenHeightDp = screenHeightDp;
+                    break;
+                case Surface.ROTATION_90:
+                case Surface.ROTATION_270:
+                    mScreenWidthDp = screenHeightDp;
+                    mScreenHeightDp = screenWidthDp;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

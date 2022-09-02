@@ -79,23 +79,20 @@ class RecommendViewModel():ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/commendList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "user_sex" to UserInfo.getUserSex().toString())
+            "user_sex" to UserInfo.getUserSex().toString(),
+            "province_code" to "9",
+            "city_code" to "10")
         /**
          * {"code":200,"msg":"success","data":[{"5":5}]}
          */
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-                val data=JSONObject(response).getJSONArray("data")
-                if (data.toString().trim()=="[[]]"){
-                    coroutine.resume(emptyList())
-                }else{
-                    val jsonObject= data.getJSONObject(0)
-                    val idList=ArrayList<Int>()
-                    jsonObject.keys().forEach {
-                        idList.add(it.toInt())
-                    }
-                    coroutine.resume(idList)
+                val data=JSONObject(response).getJSONObject("data")
+                val idList=ArrayList<Int>()
+                data.keys().forEach {
+                    idList.add(it.toInt())
                 }
+                coroutine.resume(idList)
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
@@ -190,7 +187,7 @@ class RecommendViewModel():ViewModel() {
             coroutine.resumeWithException(Exception(it))
         })
     }
-    
+
     suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null,openVip:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
         if (surplusRecommend<=0){
             coroutine.resumeWithException(Exception())

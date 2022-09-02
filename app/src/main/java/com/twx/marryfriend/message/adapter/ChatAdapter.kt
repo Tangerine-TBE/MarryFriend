@@ -34,9 +34,9 @@ class ChatAdapter(val friendId:String?,val nickname:String?,val headImage:String
         private const val FIRST_MESSAGE_TYPE=11
     }
     enum class SysTipTyp(val viewType: Int,val layoutId:Int){
-        securityTip(SECURITY_TIP_TYPE, R.layout.item_sys_chat_tip_msg),
-        uploadHead(UPLOAD_HEAD_TYPE, R.layout.item_upload_head),
-        firstMessage(FIRST_MESSAGE_TYPE, R.layout.item_first_msg_vip);
+        securityTip(SECURITY_TIP_TYPE, com.hyphenate.easeim.R.layout.item_sys_chat_tip_msg),
+        uploadHead(UPLOAD_HEAD_TYPE, com.hyphenate.easeim.R.layout.item_upload_head),
+        firstMessage(FIRST_MESSAGE_TYPE, com.hyphenate.easeim.R.layout.item_first_msg_vip);
     }
 
     private val listData=ArrayList<ChatItemModel<Message<out EMMessageBody>>>()

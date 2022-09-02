@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="12dp"
+    tools:background="#FFF5F5F5"
+    android:layout_marginBottom="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/chatMsgTime"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        tools:text="上午  06:58"
+        android:textColor="#FF9A9A9A"
+        android:textSize="13sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <com.hyphenate.easeui.widget.EaseImageView
+        android:id="@+id/userHead"
+        app:layout_constraintTop_toBottomOf="@id/chatMsgTime"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="12dp"
+        style="@style/ease_row_sent_iv_userhead_style" />
+    <TextView
+        android:id="@+id/tv_userid"
+        app:layout_constraintTop_toTopOf="@id/userHead"
+        app:layout_constraintStart_toEndOf="@id/userHead"
+        android:includeFontPadding="false"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="8dp"
+        tools:text="Breda Bell"
+        android:textColor="#FF0D0D0D"
+        android:textSize="13sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/flowerContent"
+        app:layout_constraintStart_toStartOf="@id/tv_userid"
+        app:layout_constraintTop_toBottomOf="@id/tv_userid"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_width="184dp"
+        android:background="@drawable/shape_chat_text"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_marginTop="8dp"
+            android:src="@mipmap/ic_item_send_flowers"
+            android:layout_width="59dp"
+            android:layout_height="59dp"/>
+        <TextView
+            android:textColor="#FF404040"
+            android:textSize="15sp"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="送你1朵小红花，很高兴认识你~"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <ImageView
+        android:id="@+id/msg_status"
+        app:layout_constraintStart_toEndOf="@id/flowerContent"
+        app:layout_constraintTop_toTopOf="@id/flowerContent"
+        app:layout_constraintBottom_toBottomOf="@id/flowerContent"
+        style="@style/ease_row_sent_iv_fail_style"/>
+    <TextView
+        android:id="@+id/tv_ack"
+        style="@style/chat_text_name_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        app:layout_constraintStart_toEndOf="@id/flowerContent"
+        app:layout_constraintTop_toTopOf="@id/flowerContent"
+        app:layout_constraintBottom_toBottomOf="@id/flowerContent"
+        android:layout_marginStart="@dimen/ease_chat_ack_margin_bubble"
+        android:text="@string/text_ack_msg"
+        android:textSize="12sp"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tv_delivered"
+        style="@style/chat_text_name_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        app:layout_constraintStart_toEndOf="@id/flowerContent"
+        app:layout_constraintTop_toTopOf="@id/flowerContent"
+        app:layout_constraintBottom_toBottomOf="@id/flowerContent"
+        android:layout_marginStart="@dimen/ease_chat_ack_margin_bubble"
+        android:text="@string/text_delivered_msg"
+        android:textSize="12sp"
+        android:visibility="invisible" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:indeterminateDrawable="@drawable/ease_chat_loading_progress_bar"
+        app:layout_constraintStart_toEndOf="@id/flowerContent"
+        app:layout_constraintTop_toTopOf="@id/flowerContent"
+        app:layout_constraintBottom_toBottomOf="@id/flowerContent"
+        android:visibility="invisible" />
+</androidx.constraintlayout.widget.ConstraintLayout>

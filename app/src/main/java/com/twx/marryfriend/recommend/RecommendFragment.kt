@@ -2,7 +2,6 @@ package com.twx.marryfriend.recommend
 
 import android.Manifest
 import android.animation.Animator
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -18,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.hyphenate.easeim.MainActivity
 import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.BuildConfig
@@ -25,21 +25,18 @@ import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
-import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.dialog.OneClickHelloDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
-import com.twx.marryfriend.dialog.createDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
-import com.twx.marryfriend.guide.jumpInfo.JumpActivity
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.setExpandableText
-import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
+import com.xyzz.myutils.show.wLog
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_recommend_not_content.*
@@ -80,7 +77,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         test.setOnClickListener {
-            startActivity(Intent(requireContext(),BeginActivity::class.java))
+//            startActivity(Intent(requireContext(),BeginActivity::class.java))
+            startActivity(Intent(requireContext(), MainActivity::class.java))
+//            startActivity(Intent(requireContext(), LoginActivity::class.java))
         }
         cardSwipeView.adapter=recommendAdapter
         val cardCallback = SlideCardCallback()
@@ -216,7 +215,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 }
                 swipeRefreshLayout.isRefreshing=false
             }catch (e:Exception){
-                eLog(e.stackTraceToString())
+                wLog(e.stackTraceToString())
                 swipeRefreshLayout.isRefreshing=false
                 showView(ViewType.notContent)
                 toast(e.message)
@@ -233,7 +232,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     toast("最后一条动态")
                 }
             }catch (e:Exception){
-                eLog(e.stackTraceToString())
+                wLog(e.stackTraceToString())
             }
         }
     }

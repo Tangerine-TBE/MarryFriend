@@ -1,11 +1,10 @@
 package com.twx.marryfriend.message.model
 
-import androidx.databinding.BaseObservable
 import com.message.conversations.ConversationType
 import com.twx.marryfriend.R
 import com.xyzz.myutils.display.DateDisplayManager
 
-class ConversationsItemModel constructor(val conversationId:String, val conversationsType: ConversationType) :BaseObservable(){
+class ConversationsItemModel constructor(val conversationId:String, val conversationsType: ConversationType) {
     private val messageDataDisplay by lazy {
         DateDisplayManager.getMessageDataImpl()
     }

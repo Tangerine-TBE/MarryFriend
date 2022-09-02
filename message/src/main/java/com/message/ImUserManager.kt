@@ -11,11 +11,14 @@ import com.hyphenate.EMError
 import com.hyphenate.chat.BuildConfig
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
+import com.hyphenate.easeim.HxInit
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.toMd5
 
+
 //https://docs-im.easemob.com/im/android/basics/message
+//https://docs-im.easemob.com/ccim/android/easeimkit
 object ImUserManager {
     fun init(application: Application){
         val pid = Process.myPid()
@@ -24,6 +27,8 @@ object ImUserManager {
         if (processAppName == null ||processAppName!=application.packageName) {
             return
         }
+        HxInit.initIm(application)
+        return
         val options = EMOptions()
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.acceptInvitationAlways = false
@@ -111,6 +116,7 @@ object ImUserManager {
     }
 
     fun login(userName:String,password:String){
+        return
         iLog("用户:${userName},正在登录")
         EMClient.getInstance().login(userName, password, object : EMCallBack {
             //回调
@@ -150,6 +156,7 @@ object ImUserManager {
     }
 
     fun logout(success:()->Unit,fail:(code: Int, message: String)->Unit){
+        return
         iLog("退出当前账户")
         EMClient.getInstance().logout(true, object : EMCallBack {
             override fun onSuccess() {

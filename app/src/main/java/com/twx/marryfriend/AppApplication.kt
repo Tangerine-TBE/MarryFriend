@@ -2,6 +2,7 @@ package com.twx.marryfriend
 
 import android.app.Application
 import com.kingja.loadsir.core.LoadSir
+import com.message.ImInit
 import com.message.ImUserManager
 import com.xyzz.myutils.MyUtils
 
@@ -25,6 +26,6 @@ class AppApplication:Application() {
 //            .addCallback(CustomCallback())
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
             .commit()
-        ImUserManager.init(this)
+       ImInit.init(this)
     }
 }

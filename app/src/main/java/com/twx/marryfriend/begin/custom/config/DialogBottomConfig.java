@@ -54,16 +54,11 @@ public class DialogBottomConfig extends BaseUIConfig {
                 } catch (JSONException e) {
                     jsonObj = new JSONObject();
                 }
-                switch (code) {
-                    //点击授权页默认样式的返回按钮
-                    case ResultCode.CODE_ERROR_USER_CANCEL:
-                        //点击授权页默认样式的切换其他登录方式 会关闭授权页
-                    case ResultCode.CODE_ERROR_USER_SWITCH:
-                        Intent intent = new Intent(mActivity, LoginActivity.class);
-                        mActivity.startActivity(intent);
-                        break;
-                    default:
-                        break;
+                //点击授权页默认样式的返回按钮
+                if (ResultCode.CODE_ERROR_USER_CANCEL.equals(code) || ResultCode.CODE_ERROR_USER_SWITCH.equals(code)) {//点击授权页默认样式的切换其他登录方式 会关闭授权页
+
+                    Intent intent = new Intent(mActivity, LoginActivity.class);
+                    mActivity.startActivity(intent);
                 }
             }
         });

@@ -242,6 +242,7 @@
         <activity android:name=".message.ChatActivity" />
         <activity android:name=".mutual.MutualLikeActivity" />
         <activity android:name=".mutual.MutualLikeDialogActivity" />
+        <activity android:name=".message.ImChatActivity"/>
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -276,7 +277,8 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" /> <!-- 华为应用推送的AppID -->
+            android:process=":remote" />
+        <!-- 华为应用推送的AppID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="appid=106852163" />

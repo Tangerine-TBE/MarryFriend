@@ -182,68 +182,46 @@ public class DoubleSlideSeekBar extends View {
         int size = typedArray.getIndexCount();
         for (int i = 0; i < size; i++) {
             int type = typedArray.getIndex(i);
-            switch (type) {
-                case R.styleable.DoubleSlideSeekBar_inColor:
-                    inColor = typedArray.getColor(type, Color.BLACK);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_lineHeight:
-                    lineWidth = (int) typedArray.getDimension(type, dip2px(getContext(), 10));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_outColor:
-                    outColor = typedArray.getColor(type, Color.YELLOW);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_textColor:
-                    textColor = typedArray.getColor(type, Color.BLUE);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_textSize:
-                    textSize = typedArray.getDimensionPixelSize(type, (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics()));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_imageLow:
-                    bitmapLow = BitmapFactory.decodeResource(getResources(), typedArray.getResourceId(type, 0));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_imageBig:
-                    bitmapBig = BitmapFactory.decodeResource(getResources(), typedArray.getResourceId(type, 0));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_imageheight:
-                    imageHeight = (int) typedArray.getDimension(type, dip2px(getContext(), 20));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_imagewidth:
-                    imageWidth = (int) typedArray.getDimension(type, dip2px(getContext(), 20));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_hasRule:
-                    hasRule = typedArray.getBoolean(type, false);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_ruleColor:
-                    ruleColor = typedArray.getColor(type, Color.BLUE);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_ruleTextColor:
-                    ruleTextColor = typedArray.getColor(type, Color.BLUE);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_unit:
-                    unit = typedArray.getString(type);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_equal:
-                    equal = typedArray.getInt(type, 10);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_ruleUnit:
-                    ruleUnit = typedArray.getString(type);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_ruleTextSize:
-                    ruleTextSize = typedArray.getDimensionPixelSize(type, (int) TypedValue.applyDimension(
-                            TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics()));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_ruleLineHeight:
-                    ruleLineHeight = (int) typedArray.getDimension(type, dip2px(getContext(), 10));
-                    break;
-                case R.styleable.DoubleSlideSeekBar_bigValue:
-                    bigValue = typedArray.getInteger(type, 100);
-                    break;
-                case R.styleable.DoubleSlideSeekBar_smallValue:
-                    smallValue = typedArray.getInteger(type, 100);
-                    break;
-                default:
-                    break;
+            if (type == R.styleable.DoubleSlideSeekBar_inColor) {
+                inColor = typedArray.getColor(type, Color.BLACK);
+            } else if (type == R.styleable.DoubleSlideSeekBar_lineHeight) {
+                lineWidth = (int) typedArray.getDimension(type, dip2px(getContext(), 10));
+            } else if (type == R.styleable.DoubleSlideSeekBar_outColor) {
+                outColor = typedArray.getColor(type, Color.YELLOW);
+            } else if (type == R.styleable.DoubleSlideSeekBar_textColor) {
+                textColor = typedArray.getColor(type, Color.BLUE);
+            } else if (type == R.styleable.DoubleSlideSeekBar_textSize) {
+                textSize = typedArray.getDimensionPixelSize(type, (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics()));
+            } else if (type == R.styleable.DoubleSlideSeekBar_imageLow) {
+                bitmapLow = BitmapFactory.decodeResource(getResources(), typedArray.getResourceId(type, 0));
+            } else if (type == R.styleable.DoubleSlideSeekBar_imageBig) {
+                bitmapBig = BitmapFactory.decodeResource(getResources(), typedArray.getResourceId(type, 0));
+            } else if (type == R.styleable.DoubleSlideSeekBar_imageheight) {
+                imageHeight = (int) typedArray.getDimension(type, dip2px(getContext(), 20));
+            } else if (type == R.styleable.DoubleSlideSeekBar_imagewidth) {
+                imageWidth = (int) typedArray.getDimension(type, dip2px(getContext(), 20));
+            } else if (type == R.styleable.DoubleSlideSeekBar_hasRule) {
+                hasRule = typedArray.getBoolean(type, false);
+            } else if (type == R.styleable.DoubleSlideSeekBar_ruleColor) {
+                ruleColor = typedArray.getColor(type, Color.BLUE);
+            } else if (type == R.styleable.DoubleSlideSeekBar_ruleTextColor) {
+                ruleTextColor = typedArray.getColor(type, Color.BLUE);
+            } else if (type == R.styleable.DoubleSlideSeekBar_unit) {
+                unit = typedArray.getString(type);
+            } else if (type == R.styleable.DoubleSlideSeekBar_equal) {
+                equal = typedArray.getInt(type, 10);
+            } else if (type == R.styleable.DoubleSlideSeekBar_ruleUnit) {
+                ruleUnit = typedArray.getString(type);
+            } else if (type == R.styleable.DoubleSlideSeekBar_ruleTextSize) {
+                ruleTextSize = typedArray.getDimensionPixelSize(type, (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics()));
+            } else if (type == R.styleable.DoubleSlideSeekBar_ruleLineHeight) {
+                ruleLineHeight = (int) typedArray.getDimension(type, dip2px(getContext(), 10));
+            } else if (type == R.styleable.DoubleSlideSeekBar_bigValue) {
+                bigValue = typedArray.getInteger(type, 100);
+            } else if (type == R.styleable.DoubleSlideSeekBar_smallValue) {
+                smallValue = typedArray.getInteger(type, 100);
             }
         }
         typedArray.recycle();
@@ -396,62 +374,55 @@ public class DoubleSlideSeekBar extends View {
         super.onTouchEvent(event);
         float nowX = event.getX();
         float nowY = event.getY();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                //按下 在线（进度条）范围上
-                boolean rightY = Math.abs(nowY - lineY) < bitmapHeight / 2;
-                //按下 在左边游标上
-                boolean lowSlide = Math.abs(nowX - slideLowX) < bitmapWidth / 2;
-                //按下 在右边游标上
-                boolean bigSlide = Math.abs(nowX - slideBigX) < bitmapWidth / 2;
-                if (rightY && lowSlide) {
-                    isLowerMoving = true;
-                } else if (rightY && bigSlide) {
-                    isUpperMoving = true;
-                    //点击了游标外部 的线上
-                } else if (nowX >= lineStart && nowX <= slideLowX - bitmapWidth / 2 && rightY) {
+        int action = event.getAction();
+        if (action == MotionEvent.ACTION_DOWN) {//按下 在线（进度条）范围上
+            boolean rightY = Math.abs(nowY - lineY) < bitmapHeight / 2;
+            //按下 在左边游标上
+            boolean lowSlide = Math.abs(nowX - slideLowX) < bitmapWidth / 2;
+            //按下 在右边游标上
+            boolean bigSlide = Math.abs(nowX - slideBigX) < bitmapWidth / 2;
+            if (rightY && lowSlide) {
+                isLowerMoving = true;
+            } else if (rightY && bigSlide) {
+                isUpperMoving = true;
+                //点击了游标外部 的线上
+            } else if (nowX >= lineStart && nowX <= slideLowX - bitmapWidth / 2 && rightY) {
+                slideLowX = (int) nowX;
+                updateRange();
+                postInvalidate();
+            } else if (nowX <= lineEnd && nowX >= slideBigX + bitmapWidth / 2 && rightY) {
+                slideBigX = (int) nowX;
+                updateRange();
+                postInvalidate();
+            }
+        } else if (action == MotionEvent.ACTION_MOVE) {//左边游标是运动状态
+            if (isLowerMoving) {
+                //当前 X坐标在线上 且在右边游标的左边
+                if (nowX <= slideBigX - bitmapWidth && nowX >= lineStart - bitmapWidth / 2) {
                     slideLowX = (int) nowX;
+                    if (slideLowX < lineStart) {
+                        slideLowX = lineStart;
+                    }
+                    //更新进度
                     updateRange();
                     postInvalidate();
-                } else if (nowX <= lineEnd && nowX >= slideBigX + bitmapWidth / 2 && rightY) {
+                }
+            } else if (isUpperMoving) {
+                //当前 X坐标在线上 且在左边游标的右边
+                if (nowX >= slideLowX + bitmapWidth && nowX <= lineEnd + bitmapWidth / 2) {
                     slideBigX = (int) nowX;
+                    if (slideBigX > lineEnd) {
+                        slideBigX = lineEnd;
+                    }
+                    //更新进度
                     updateRange();
                     postInvalidate();
                 }
-                break;
-            case MotionEvent.ACTION_MOVE:
-                //左边游标是运动状态
-                if (isLowerMoving) {
-                    //当前 X坐标在线上 且在右边游标的左边
-                    if (nowX <= slideBigX - bitmapWidth && nowX >= lineStart - bitmapWidth / 2) {
-                        slideLowX = (int) nowX;
-                        if (slideLowX < lineStart) {
-                            slideLowX = lineStart;
-                        }
-                        //更新进度
-                        updateRange();
-                        postInvalidate();
-                    }
-                } else if (isUpperMoving) {
-                    //当前 X坐标在线上 且在左边游标的右边
-                    if (nowX >= slideLowX + bitmapWidth && nowX <= lineEnd + bitmapWidth / 2) {
-                        slideBigX = (int) nowX;
-                        if (slideBigX > lineEnd) {
-                            slideBigX = lineEnd;
-                        }
-                        //更新进度
-                        updateRange();
-                        postInvalidate();
-                    }
-                }
-                break;
+            }
             //手指抬起
-            case MotionEvent.ACTION_UP:
-                isUpperMoving = false;
-                isLowerMoving = false;
-                break;
-            default:
-                break;
+        } else if (action == MotionEvent.ACTION_UP) {
+            isUpperMoving = false;
+            isLowerMoving = false;
         }
         return true;
     }

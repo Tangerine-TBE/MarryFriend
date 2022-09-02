@@ -378,22 +378,16 @@ public class FaceDetectActivity extends Activity implements
 
         int rotation = windowManager.getDefaultDisplay().getRotation();
         int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-            default:
-                degrees = 0;
-                break;
+        if (rotation == Surface.ROTATION_0) {
+            degrees = 0;
+        } else if (rotation == Surface.ROTATION_90) {
+            degrees = 90;
+        } else if (rotation == Surface.ROTATION_180) {
+            degrees = 180;
+        } else if (rotation == Surface.ROTATION_270) {
+            degrees = 270;
+        } else {
+            degrees = 0;
         }
         int result = (0 - degrees + 360) % 360;
         if (APIUtils.hasGingerbread()) {
@@ -473,24 +467,18 @@ public class FaceDetectActivity extends Activity implements
     }
 
     private void onRefreshView(FaceStatusNewEnum status, String message) {
-        switch (status) {
-            case OK:
-                mFaceDetectRoundView.setTipTopText(message);
-                // onRefreshSuccessView(true);
-                // onRefreshTipsView(false, message);
-                break;
-            case DetectRemindCodePitchOutofUpRange:
-            case DetectRemindCodePitchOutofDownRange:
-            case DetectRemindCodeYawOutofLeftRange:
-            case DetectRemindCodeYawOutofRightRange:
-                mFaceDetectRoundView.setTipTopText(message);
-                // onRefreshTipsView(true, message);
-                // onRefreshSuccessView(false);
-                break;
-            default:
-                mFaceDetectRoundView.setTipTopText(message);
-                // onRefreshTipsView(false, message);
-                // onRefreshSuccessView(false);
+        if (status == FaceStatusNewEnum.OK) {
+            mFaceDetectRoundView.setTipTopText(message);
+            // onRefreshSuccessView(true);
+            // onRefreshTipsView(false, message);
+        } else if (status == FaceStatusNewEnum.DetectRemindCodePitchOutofUpRange || status == FaceStatusNewEnum.DetectRemindCodePitchOutofDownRange || status == FaceStatusNewEnum.DetectRemindCodeYawOutofLeftRange || status == FaceStatusNewEnum.DetectRemindCodeYawOutofRightRange) {
+            mFaceDetectRoundView.setTipTopText(message);
+            // onRefreshTipsView(true, message);
+            // onRefreshSuccessView(false);
+        } else {
+            mFaceDetectRoundView.setTipTopText(message);
+            // onRefreshTipsView(false, message);
+            // onRefreshSuccessView(false);
         }
     }
 

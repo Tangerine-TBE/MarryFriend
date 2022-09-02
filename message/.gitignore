@@ -1,1 +1,5 @@
 /build
+*.bak
+/schemas
+/src/androidTest/
+/src/test/

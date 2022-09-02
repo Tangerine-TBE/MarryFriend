@@ -19,9 +19,12 @@ import com.xyzz.myutils.show.iLog
 //https://docs-im.easemob.com/im/android/basics/message
 //http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
-    private val newMessageLiveData=MutableLiveData<List<Message<out EMMessageBody>>>()
+
+    val newMessageLiveData=MutableLiveData<List<Message<out EMMessageBody>>>()//收到新消息
     private val fromConversationRead=MutableLiveData<String>()
     private val messageRead=MutableLiveData<List<EMMessage>>()
+
+    private val messageDelivered=MutableLiveData< MutableList<EMMessage>?>()
 
     fun observeMessageRead(owner: LifecycleOwner,observer: Observer<List<EMMessage>>){
         messageRead.value=null
@@ -37,6 +40,15 @@ object ImMessageManager {
         newMessageLiveData.value=null
         newMessageLiveData.observe(owner,observer)
     }
+
+    /**
+     * 已送达
+     */
+    private fun observeMessageDelivered(owner: LifecycleOwner,observer: Observer<MutableList<EMMessage>?>){
+        messageDelivered.value=null
+        messageDelivered.observe(owner,observer)
+    }
+
     private val msgListener by lazy {
         object : EMMessageListener {
             override fun onMessageReceived(messages: MutableList<EMMessage>?) {
@@ -59,6 +71,7 @@ object ImMessageManager {
             override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
                 //收到已送达回执
                 iLog(messages?.firstOrNull()?.from,"收到消息,已送达")
+                messageDelivered.value=messages
             }
 
             override fun onMessageRecalled(messages: MutableList<EMMessage>?) {
@@ -128,10 +141,10 @@ object ImMessageManager {
         return conversationsBeanList
     }
 
-    fun getHistoryMessage(toChatUsername:String, chatType: EMConversation.EMConversationType, pageSize:Int, msgId:String?=null):List<Message<out EMMessageBody>>{
+    fun getHistoryMessage(toChatUsername: String, pageSize: Int, msgId: String? = null):List<Message<out EMMessageBody>>{
         val resultList=ArrayList<EMMessage>()
         try {
-            val conversation = EMClient.getInstance().chatManager().getConversation(toChatUsername)
+            val conversation = EMClient.getInstance().chatManager().getConversation(toChatUsername)?:return emptyList()
             val ramMsg = conversation.allMessages.asReversed()
             if (msgId!=null&&msgId.isNotBlank()){
                 val index=ramMsg.indexOfFirst {
@@ -207,7 +220,6 @@ object ImMessageManager {
         //如果是群聊，设置chattype，默认是单聊
 //        if (chatType === CHATTYPE_GROUP) message.chatType = ChatType.GroupChat
         //发送消息
-        updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
     }
@@ -220,7 +232,6 @@ object ImMessageManager {
 
     fun sendImageMsg(username: String,file: String):Message<out EMMessageBody>?{
         val message=EMMessage.createImageSendMessage(file,true,username)
-        updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
     }
@@ -230,7 +241,6 @@ object ImMessageManager {
         val message = EMMessage.createVoiceSendMessage(voiceUri, length, username)
 //如果是群聊，设置 chattype，默认是单聊
 //        message.chatType = ChatType.GroupChat
-        updateMessage(message)
         EMClient.getInstance().chatManager().sendMessage(message)
         return Message.toMyMessage(message)
     }
@@ -246,7 +256,33 @@ object ImMessageManager {
         customMessage.setTo(username)
 // 如果是群聊，设置chattype，默认是单聊
         customMessage.chatType = EMMessage.ChatType.Chat
-        updateMessage(customMessage)
+        EMClient.getInstance().chatManager().sendMessage(customMessage)
+        return Message.toMyMessage(customMessage)
+    }
+
+    fun getCustomMessage(username: String, type:CustomMessage.CustomEvent):EMMessage?{
+        val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
+        val customBody = EMCustomMessageBody(type.code)
+        customMessage.addBody(customBody)
+        customMessage.to = username
+        customMessage.chatType = EMMessage.ChatType.Chat
+        return customMessage
+    }
+
+    fun insertMessage(message: EMMessage){
+        // 将消息插入到指定会话中。
+        val conversation = EMClient.getInstance().chatManager().getConversation(message.to)
+        conversation.insertMessage(message)
+        // 直接插入消息。
+        EMClient.getInstance().chatManager().saveMessage(message)
+    }
+
+    fun sendSecurityTip(username: String):Message<out EMMessageBody>?{
+        val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
+        val customBody = EMCustomMessageBody(CustomMessage.CustomEvent.security.code)
+        customMessage.addBody(customBody)
+        customMessage.setTo(username)
+        customMessage.chatType = EMMessage.ChatType.Chat
         EMClient.getInstance().chatManager().sendMessage(customMessage)
         return Message.toMyMessage(customMessage)
     }

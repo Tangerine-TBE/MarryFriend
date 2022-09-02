@@ -3,13 +3,11 @@ package com.twx.marryfriend.message
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hyphenate.chat.EMConversation
 import com.hyphenate.chat.EMMessageBody
 import com.message.ImMessageManager
 import com.message.chat.*
 import com.twx.marryfriend.base.BaseConstant
 import com.twx.marryfriend.message.model.ChatItemModel
-import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.toUri
 import com.xyzz.myutils.MyRecorderUtil
 import kotlinx.coroutines.Dispatchers
@@ -63,8 +61,10 @@ class ChatViewModel:ViewModel() {
     suspend fun getHistoryMessage(username:String)= suspendCoroutine<List<ChatItemModel<Message<out EMMessageBody>>>>{continuation->
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                ImMessageManager.getHistoryMessage(username,EMConversation.EMConversationType.Chat,
-                    PAGE_SIZE,msgId).also { list ->
+                ImMessageManager.getHistoryMessage(
+                    username, PAGE_SIZE,
+                    msgId
+                ).also { list ->
                     msgId=list.lastOrNull()?.msgId
                     continuation.resume(list.map {
                         ChatItemModel(it)

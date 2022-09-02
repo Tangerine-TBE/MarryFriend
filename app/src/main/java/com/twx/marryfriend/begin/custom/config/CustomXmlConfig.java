@@ -85,18 +85,12 @@ public class CustomXmlConfig extends BaseUIConfig {
                 } catch (JSONException e) {
                     jsonObj = new JSONObject();
                 }
-                switch (code) {
-                    //点击授权页默认样式的返回按钮
-                    case ResultCode.CODE_ERROR_USER_CANCEL:
-                        mAuthHelper.quitLoginPage();
-                        break;
+                //点击授权页默认样式的返回按钮
+                if (ResultCode.CODE_ERROR_USER_CANCEL.equals(code)) {
+                    mAuthHelper.quitLoginPage();
                     //点击授权页默认样式的切换其他登录方式 会关闭授权页
-                    case ResultCode.CODE_ERROR_USER_SWITCH:
-//                        Intent intent = new Intent(mActivity, LoginActivity.class);
+                } else if (ResultCode.CODE_ERROR_USER_SWITCH.equals(code)) {//                        Intent intent = new Intent(mActivity, LoginActivity.class);
 //                        mActivity.startActivity(intent);
-                        break;
-                    default:
-                        break;
                 }
             }
         });

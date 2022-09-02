@@ -2,23 +2,24 @@ package com.twx.marryfriend
 
 import android.content.Context
 import android.content.Intent
+import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.SPStaticUtils
-import com.google.gson.Gson
-import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.eLog
-import kotlinx.android.synthetic.main.item_recommend_not_content.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import kotlin.random.Random
 
 object UserInfo {
+    val userInfo=MutableLiveData<Data>()
+    class Data(val userId:String){
+        var isVip=false
+        var headImage:String?=null
+    }
+
     fun updateUserInfo(){
         val url="${Contents.USER_URL}/marryfriend/LoginRegister/getFive"
         val map= mapOf(
@@ -27,7 +28,6 @@ object UserInfo {
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-
                 eLog("成功","更新用户信息")
             }catch (e:Exception){
                 eLog(e.stackTraceToString(),"更新用户信息")
@@ -39,12 +39,18 @@ object UserInfo {
 
 
     fun getUserId():String?{
-        if(BuildConfig.DEBUG){//3是男的
-            return "3"//3,4,6,11,16//
+        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
+
+        val userId=if(BuildConfig.DEBUG&&
+            (phone=="15270318482"||phone=="17370452215")){//3是男的
+            return "2"//3,4,6,11,16//
+        }else{
+            SPStaticUtils.getString(Constant.USER_ID, null)
         }
-        return SPStaticUtils.getString(
-            Constant.USER_ID,
-            null)
+        if (userId!=null){
+            userInfo.value=Data(userId)
+        }
+        return userId
     }
 
     fun getImgHead():String{

@@ -426,22 +426,16 @@ public class FaceLivenessActivity extends Activity implements
 
         int rotation = windowManager.getDefaultDisplay().getRotation();
         int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-            default:
-                degrees = 0;
-                break;
+        if (rotation == Surface.ROTATION_0) {
+            degrees = 0;
+        } else if (rotation == Surface.ROTATION_90) {
+            degrees = 90;
+        } else if (rotation == Surface.ROTATION_180) {
+            degrees = 180;
+        } else if (rotation == Surface.ROTATION_270) {
+            degrees = 270;
+        } else {
+            degrees = 0;
         }
         int result = (0 - degrees + 360) % 360;
         if (APIUtils.hasGingerbread()) {
@@ -521,100 +515,70 @@ public class FaceLivenessActivity extends Activity implements
     }
 
     private void onRefreshView(FaceStatusNewEnum status, String message, int currentLivenessCount) {
-        switch (status) {
-            case OK:
-            case FaceLivenessActionComplete:
-            case DetectRemindCodeTooClose:
-            case DetectRemindCodeTooFar:
-            case DetectRemindCodeBeyondPreviewFrame:
-            case DetectRemindCodeNoFaceDetected:
-                // onRefreshTipsView(false, message);
-                mFaceDetectRoundView.setTipTopText(message);
-                mFaceDetectRoundView.setTipSecondText("");
-                mFaceDetectRoundView.setProcessCount(currentLivenessCount,
-                        mFaceConfig.getLivenessTypeList().size());
-                // onRefreshSuccessView(true);
-                stopAnim();
-                break;
-            case FaceLivenessActionTypeLiveEye:
-            case FaceLivenessActionTypeLiveMouth:
-            case FaceLivenessActionTypeLivePitchUp:
-            case FaceLivenessActionTypeLivePitchDown:
-            case FaceLivenessActionTypeLiveYawLeft:
-            case FaceLivenessActionTypeLiveYawRight:
-            case FaceLivenessActionTypeLiveYaw:
-                mFaceDetectRoundView.setTipTopText(message);
-                mFaceDetectRoundView.setTipSecondText("");
-                mFaceDetectRoundView.setProcessCount(currentLivenessCount,
-                        mFaceConfig.getLivenessTypeList().size());
-                // onRefreshTipsView(false, message);
-                // onRefreshSuccessView(false);
-                break;
-            case DetectRemindCodePitchOutofUpRange:
-            case DetectRemindCodePitchOutofDownRange:
-            case DetectRemindCodeYawOutofLeftRange:
-            case DetectRemindCodeYawOutofRightRange:
-                mFaceDetectRoundView.setTipTopText("请保持正脸");
-                mFaceDetectRoundView.setTipSecondText(message);
-                mFaceDetectRoundView.setProcessCount(currentLivenessCount,
-                        mFaceConfig.getLivenessTypeList().size());
-                // onRefreshSuccessView(false);
-                // onRefreshTipsView(true, message);
-                break;
-            case FaceLivenessActionCodeTimeout:    // 动作超时，播放教程动画
-                mFaceDetectRoundView.setProcessCount(currentLivenessCount,
-                        mFaceConfig.getLivenessTypeList().size());
-                // 帧动画开启
-                if (mRelativeAddImageView.getVisibility() == View.INVISIBLE) {
-                    mRelativeAddImageView.setVisibility(View.VISIBLE);
-                }
-                loadAnimSource();
-                // 监听帧动画时间
-                int duration = 0;
-                for (int i = 0; i < mAnimationDrawable.getNumberOfFrames(); i++) {
-                    // 计算动画播放的时间
-                    duration += mAnimationDrawable.getDuration(i);
-                }
-                TimeManager.getInstance().setActiveAnimTime(duration);
-                break;
-            default:
-                mFaceDetectRoundView.setTipTopText("请保持正脸");
-                mFaceDetectRoundView.setTipSecondText(message);
-                mFaceDetectRoundView.setProcessCount(currentLivenessCount,
-                        mFaceConfig.getLivenessTypeList().size());
-                // onRefreshSuccessView(false);
-                // onRefreshTipsView(false, message);
-                break;
+        if (status == FaceStatusNewEnum.OK || status == FaceStatusNewEnum.FaceLivenessActionComplete || status == FaceStatusNewEnum.DetectRemindCodeTooClose || status == FaceStatusNewEnum.DetectRemindCodeTooFar || status == FaceStatusNewEnum.DetectRemindCodeBeyondPreviewFrame || status == FaceStatusNewEnum.DetectRemindCodeNoFaceDetected) {// onRefreshTipsView(false, message);
+            mFaceDetectRoundView.setTipTopText(message);
+            mFaceDetectRoundView.setTipSecondText("");
+            mFaceDetectRoundView.setProcessCount(currentLivenessCount,
+                    mFaceConfig.getLivenessTypeList().size());
+            // onRefreshSuccessView(true);
+            stopAnim();
+        } else if (status == FaceStatusNewEnum.FaceLivenessActionTypeLiveEye || status == FaceStatusNewEnum.FaceLivenessActionTypeLiveMouth || status == FaceStatusNewEnum.FaceLivenessActionTypeLivePitchUp || status == FaceStatusNewEnum.FaceLivenessActionTypeLivePitchDown || status == FaceStatusNewEnum.FaceLivenessActionTypeLiveYawLeft || status == FaceStatusNewEnum.FaceLivenessActionTypeLiveYawRight || status == FaceStatusNewEnum.FaceLivenessActionTypeLiveYaw) {
+            mFaceDetectRoundView.setTipTopText(message);
+            mFaceDetectRoundView.setTipSecondText("");
+            mFaceDetectRoundView.setProcessCount(currentLivenessCount,
+                    mFaceConfig.getLivenessTypeList().size());
+            // onRefreshTipsView(false, message);
+            // onRefreshSuccessView(false);
+        } else if (status == FaceStatusNewEnum.DetectRemindCodePitchOutofUpRange || status == FaceStatusNewEnum.DetectRemindCodePitchOutofDownRange || status == FaceStatusNewEnum.DetectRemindCodeYawOutofLeftRange || status == FaceStatusNewEnum.DetectRemindCodeYawOutofRightRange) {
+            mFaceDetectRoundView.setTipTopText("请保持正脸");
+            mFaceDetectRoundView.setTipSecondText(message);
+            mFaceDetectRoundView.setProcessCount(currentLivenessCount,
+                    mFaceConfig.getLivenessTypeList().size());
+            // onRefreshSuccessView(false);
+            // onRefreshTipsView(true, message);
+        } else if (status == FaceStatusNewEnum.FaceLivenessActionCodeTimeout) {    // 动作超时，播放教程动画
+            mFaceDetectRoundView.setProcessCount(currentLivenessCount,
+                    mFaceConfig.getLivenessTypeList().size());
+            // 帧动画开启
+            if (mRelativeAddImageView.getVisibility() == View.INVISIBLE) {
+                mRelativeAddImageView.setVisibility(View.VISIBLE);
+            }
+            loadAnimSource();
+            // 监听帧动画时间
+            int duration = 0;
+            for (int i = 0; i < mAnimationDrawable.getNumberOfFrames(); i++) {
+                // 计算动画播放的时间
+                duration += mAnimationDrawable.getDuration(i);
+            }
+            TimeManager.getInstance().setActiveAnimTime(duration);
+        } else {
+            mFaceDetectRoundView.setTipTopText("请保持正脸");
+            mFaceDetectRoundView.setTipSecondText(message);
+            mFaceDetectRoundView.setProcessCount(currentLivenessCount,
+                    mFaceConfig.getLivenessTypeList().size());
+            // onRefreshSuccessView(false);
+            // onRefreshTipsView(false, message);
         }
     }
 
     // 加载动画
     private void loadAnimSource() {
         if (mLivenessType != null) {
-            switch (mLivenessType) {
-                case Eye:
-                    mImageAnim.setBackgroundResource(R.drawable.anim_eye);
-                    break;
-//                case HeadLeftOrRight:
+            if (mLivenessType == LivenessTypeEnum.Eye) {
+                mImageAnim.setBackgroundResource(R.drawable.anim_eye);
+                //                case HeadLeftOrRight:
 //                    mImageAnim.setBackgroundResource(R.drawable.anim_shake);
 //                    break;
-                case HeadLeft:
-                    mImageAnim.setBackgroundResource(R.drawable.anim_left);
-                    break;
-                case HeadRight:
-                    mImageAnim.setBackgroundResource(R.drawable.anim_right);
-                    break;
-                case HeadDown:
-                    mImageAnim.setBackgroundResource(R.drawable.anim_down);
-                    break;
-                case HeadUp:
-                    mImageAnim.setBackgroundResource(R.drawable.anim_up);
-                    break;
-                case Mouth:
-                    mImageAnim.setBackgroundResource(R.drawable.anim_mouth);
-                    break;
-                default:
-                    break;
+            } else if (mLivenessType == LivenessTypeEnum.HeadLeft) {
+                mImageAnim.setBackgroundResource(R.drawable.anim_left);
+            } else if (mLivenessType == LivenessTypeEnum.HeadRight) {
+                mImageAnim.setBackgroundResource(R.drawable.anim_right);
+            } else if (mLivenessType == LivenessTypeEnum.HeadDown) {
+                mImageAnim.setBackgroundResource(R.drawable.anim_down);
+            } else if (mLivenessType == LivenessTypeEnum.HeadUp) {
+                mImageAnim.setBackgroundResource(R.drawable.anim_up);
+            } else if (mLivenessType == LivenessTypeEnum.Mouth) {
+                mImageAnim.setBackgroundResource(R.drawable.anim_mouth);
             }
             mAnimationDrawable = (AnimationDrawable) mImageAnim.getBackground();
             mAnimationDrawable.start();

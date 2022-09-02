@@ -4,6 +4,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.wLog
 import java.util.*
 
 object NetworkUtil {
@@ -16,7 +17,7 @@ object NetworkUtil {
             iLog("${it}","网络,响应")
             success.invoke(it)
         }, {
-            eLog("${it.networkResponse?.statusCode?.toString()?:""}","网络,响应")
+            wLog("${it.networkResponse?.statusCode?.toString()?:""}","网络,响应")
             fail.invoke(it.networkResponse?.statusCode.toString())
         }){
             override fun getParams(): MutableMap<String, String> {

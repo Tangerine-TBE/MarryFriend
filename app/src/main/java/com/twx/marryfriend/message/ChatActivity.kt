@@ -31,7 +31,7 @@ import com.message.ImMessageManager
 import com.message.chat.*
 import com.twx.marryfriend.R
 import com.twx.marryfriend.databinding.ActivityChatBinding
-import com.twx.marryfriend.dialog.createDialog
+import com.xyzz.myutils.createDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.adapter.ChatAdapter
 import com.twx.marryfriend.message.adapter.ChatEmojiAdapter
@@ -58,14 +58,15 @@ class ChatActivity:AppCompatActivity(/*R.layout.activity_chat*/) {
          * @param isRealName 是否实名
          */
         fun getIntent(context: Context, conversationId: String, nickname:String?, headImage:String?, isRealName:Boolean):Intent{
-            val intent=Intent(context,ChatActivity::class.java)
-            intent.putExtra(FRIEND_ID_KEY,conversationId)
-            intent.putExtra(NICKNAME_KEY,nickname?:conversationId)
-            intent.putExtra(HEAD_IMAGE_KEY,headImage)
-            intent.putExtra(IS_REAL_NAME_KEY,isRealName)
-
-            ImMessageManager.ackConversationRead(conversationId)
-            return intent
+//            val intent=Intent(context,ChatActivity::class.java)
+//            intent.putExtra(FRIEND_ID_KEY,conversationId)
+//            intent.putExtra(NICKNAME_KEY,nickname?:conversationId)
+//            intent.putExtra(HEAD_IMAGE_KEY,headImage)
+//            intent.putExtra(IS_REAL_NAME_KEY,isRealName)
+//
+//            ImMessageManager.ackConversationRead(conversationId)
+//            return intent
+            return ImChatActivity.getIntent(context,conversationId,nickname,headImage,isRealName)
         }
 
         private const val PICK_IMAGE_CODE=1
