@@ -96,18 +96,18 @@ object UserInfo {
     fun getDefHeadImage():Int{
         val sex= getUserSex()
         return if (sex==1){
-            R.mipmap.icon_mine_male_default
+            R.drawable.ic_mine_male_default
         }else{
-            R.mipmap.icon_mine_female_default
+            R.drawable.ic_mine_female_default
         }
     }
 
     fun getReversedDefHeadImage():Int{
         val sex= reversalSex(getUserSex())
         return if (sex==1){
-            R.mipmap.icon_mine_male_default
+            R.drawable.ic_mine_male_default
         }else{
-            R.mipmap.icon_mine_female_default
+            R.drawable.ic_mine_female_default
         }
     }
 

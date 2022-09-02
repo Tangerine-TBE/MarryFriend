@@ -34,7 +34,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
     private var mPrice = "10"
     private var mMode = "1"
-    private var mPay = "WX"
+    private var mPay = "ALI"
 
     private var mPriceList: MutableList<String> = arrayListOf()
     private var mModeList: MutableList<String> = arrayListOf()
@@ -303,7 +303,6 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
 
     }
-
 
     private fun toBuy(orderInfo: String) {
         Thread {

@@ -35,6 +35,7 @@
                     android:background="@drawable/ic_month_super"
                     android:gravity="center"
                     android:text="12"
+                    android:textStyle="bold"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
@@ -52,7 +53,7 @@
                         android:layout_height="wrap_content"
                         android:text="12个月"
                         android:textColor="#101010"
-                        android:textSize="12sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/tv_super_12_day"
@@ -107,6 +108,7 @@
                     android:background="@drawable/ic_month_super"
                     android:gravity="center"
                     android:text="3"
+                    android:textStyle="bold"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
@@ -124,7 +126,7 @@
                         android:layout_height="wrap_content"
                         android:text="3个月"
                         android:textColor="#101010"
-                        android:textSize="12sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/tv_super_3_day"
@@ -179,6 +181,7 @@
                     android:background="@drawable/ic_month_super"
                     android:gravity="center"
                     android:text="1"
+                    android:textStyle="bold"
                     android:textColor="@color/white"
                     android:textSize="15sp" />
 
@@ -196,7 +199,7 @@
                         android:layout_height="wrap_content"
                         android:text="1个月"
                         android:textColor="#101010"
-                        android:textSize="12sp" />
+                        android:textSize="17sp" />
 
                     <TextView
                         android:id="@+id/tv_super_1_day"

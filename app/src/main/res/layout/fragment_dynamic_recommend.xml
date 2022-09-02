@@ -9,8 +9,7 @@
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/srl_dynamic_recommend_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="match_parent">
 
         <com.scwang.smart.refresh.header.ClassicsHeader
             android:layout_width="match_parent"
@@ -26,9 +25,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="14dp"
-                android:layout_marginVertical="8dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/shape_bg_dialog"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_dynamic_tips_count"
@@ -53,7 +52,8 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_dynamic_recommend_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
 
 
         </LinearLayout>
@@ -97,6 +97,12 @@
             android:text="快去发布一条吧！"
             android:textColor="#404040"
             android:textSize="17sp" />
+
+        <ImageView
+            android:id="@+id/iv_like_animal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

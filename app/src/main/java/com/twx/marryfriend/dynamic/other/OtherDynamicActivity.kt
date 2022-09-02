@@ -2,6 +2,7 @@ package com.twx.marryfriend.dynamic.other
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -39,7 +40,8 @@ import java.util.*
 
 class OtherDynamicActivity : MainBaseViewActivity(),
     IGetOtherTrendsListCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback, OtherDynamicAdapter.OnItemClickListener {
+    IDoLikeCancelCallback, IDoPlusFocusCallback, IDoCancelFocusCallback,
+    OtherDynamicAdapter.OnItemClickListener {
 
     companion object {
 
@@ -47,6 +49,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         private const val TA_SEX = "ta_sex"
         private const val TA_AVATAR = "ta_avatar"
         private const val TA_ID = "ta_id"
+        private const val HAVE_FOCUS = "have_focus"
 
         fun getIntent(
             context: Context,
@@ -54,18 +57,23 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             sex: Int,
             avatar: String,
             user: String,
+            haveFocus: Boolean,
         ): Intent {
             val intent = Intent(context, OtherDynamicActivity::class.java)
             intent.putExtra(TA_NAME, name)
             intent.putExtra(TA_SEX, sex)
             intent.putExtra(TA_AVATAR, avatar)
             intent.putExtra(TA_ID, user)
+            intent.putExtra(HAVE_FOCUS, haveFocus)
             return intent
         }
 
     }
 
     private var userId = ""
+
+    // 我是否关注此用户
+    private var haveFocus = false
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
@@ -90,6 +98,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     private lateinit var doLikeClickPresent: doLikeClickPresentImpl
     private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
 
+    private lateinit var doPlusFocusPresent: doPlusFocusPresentImpl
+    private lateinit var doCancelFocusPresent: doCancelFocusPresentImpl
+
     override fun getLayoutView(): Int = R.layout.activity_other_dynamic
 
     override fun initView() {
@@ -99,20 +110,21 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         val sex = intent.getIntExtra("ta_sex", 1)
         val avatar = intent.getStringExtra("ta_avatar")
         userId = intent.getStringExtra("ta_id").toString()
+        haveFocus = intent.getBooleanExtra("have_focus", false)
 
         if (sex == 1) {
             tv_dynamic_other_title.text = "他的动态"
             Glide.with(this)
                 .load(avatar)
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
                 .into(iv_dynamic_other_avatar)
         } else {
             tv_dynamic_other_title.text = "她的动态"
             Glide.with(this)
                 .load(avatar)
-                .error(R.mipmap.icon_mine_female_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
                 .into(iv_dynamic_other_avatar)
         }
 
@@ -126,6 +138,12 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
         doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
+
+        doPlusFocusPresent = doPlusFocusPresentImpl.getsInstance()
+        doPlusFocusPresent.registerCallback(this)
+
+        doCancelFocusPresent = doCancelFocusPresentImpl.getsInstance()
+        doCancelFocusPresent.registerCallback(this)
 
         adapter = OtherDynamicAdapter(trendList, mDiyList)
         adapter.setOnItemClickListener(this)
@@ -220,50 +238,6 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             getMoreTrendsList(currentPaper)
             srl_dynamic_other_refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
         }
-
-        adapter.setOnLikeClickListener(object : OtherDynamicAdapter.OnLikeClickListener {
-            override fun onLikeClick(v: View?, position: Int) {
-
-                // 点赞， 此时需要验证是否上传头像
-                if (SPStaticUtils.getString(Constant.ME_AVATAR,
-                        "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
-                ) {
-//                    mLikePosition = position
-
-                    if (!mDiyList[position].like) {
-                        // 点赞
-                        if (trendList[position].user_id != SPStaticUtils.getString(Constant.USER_ID,
-                                "13")
-                        ) {
-                            mDiyList[position].anim = true
-
-                            AnimalUtils.getAnimal(v as ImageView)
-
-                            doLikeClick(trendList[position].id, trendList[position].user_id,
-                                SPStaticUtils.getString(Constant.USER_ID, "13"))
-                        } else {
-                            ToastUtils.showShort("不能给自己点赞")
-                        }
-
-                    } else {
-                        // 取消赞
-                        doLikeCancelClick(
-                            trendList[position].id,
-                            trendList[position].user_id,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"))
-                    }
-                } else {
-                    XPopup.Builder(this@OtherDynamicActivity)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
-                        .isDestroyOnDismiss(true)
-                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(AvatarDialog(this@OtherDynamicActivity))
-                        .show()
-                }
-
-            }
-        })
 
         adapter.setOnCommentClickListener(object : OtherDynamicAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
@@ -452,7 +426,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
     }
 
-    // 初次加载我的动态列表
+    // 初次加载动态列表
     private fun getFirstTrendsList() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
@@ -490,6 +464,22 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         doLikeCancelPresent.doLikeCancel(map)
     }
 
+    // 关注
+    private fun doPlusFocus(hostUid: String, guestUid: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doPlusFocusPresent.doPlusFocusOther(map)
+    }
+
+    // 取消关注
+    private fun doCancelFocus(hostUid: String, guestUid: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = hostUid.toString()
+        map[Contents.GUEST_UID] = guestUid.toString()
+        doCancelFocusPresent.doCancelFocusOther(map)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -508,6 +498,33 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onError() {
+
+    }
+
+    override fun onDoPlusFocusSuccess(plusFocusBean: PlusFocusBean?) {
+        if (plusFocusBean != null) {
+            if (plusFocusBean.code == 200) {
+                haveFocus = true
+                ToastUtils.showShort("关注成功")
+
+            }
+        }
+    }
+
+    override fun onDoPlusFocusError() {
+
+    }
+
+    override fun onDoCancelFocusSuccess(cancelFocusBean: CancelFocusBean?) {
+        if (cancelFocusBean != null) {
+            if (cancelFocusBean.code == 200) {
+                haveFocus = false
+                ToastUtils.showShort("取消关注成功")
+            }
+        }
+    }
+
+    override fun onDoCancelFocusError() {
 
     }
 
@@ -610,8 +627,10 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         // 点赞
         if (likeClickBean != null) {
             if (likeClickBean.code == 200) {
+
                 mDiyList[mLikePosition].like = true
                 mDiyList[mLikePosition].likeCount++
+
                 adapter.notifyDataSetChanged()
             } else {
                 ToastUtils.showShort(likeClickBean.msg)
@@ -641,11 +660,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     inner class DynamicEditDialog(context: Context, val position: Int) :
-        FullScreenPopupView(context),
-        IDoDeleteTrendCallback {
-
-
-        private lateinit var doDeleteTrendPresent: doDeleteTrendPresentImpl
+        FullScreenPopupView(context) {
 
         // 是否删除动态，弹窗消失时结束
         private var isFinish = false
@@ -655,31 +670,36 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         override fun onCreate() {
             super.onCreate()
 
-            doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
-            doDeleteTrendPresent.registerCallback(this)
+            val close = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
+            val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
+            val focus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_focus)
 
-            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_mine_edit_close)
-            val delete = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_delete)
-            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_mine_edit_cancel)
+            if (haveFocus) {
+                focus.text = "取消关注"
+                focus.setTextColor(Color.parseColor("#FF4444"))
+            } else {
+                focus.text = "关注"
+                focus.setTextColor(Color.parseColor("#101010"))
+            }
 
             close.setOnClickListener {
                 dismiss()
             }
 
-            delete.setOnClickListener {
-                ToastUtils.showShort("删除动态,百度云图片还未添加删除功能，待添加")
+            report.setOnClickListener {
+                ToastUtils.showShort("举报动态，待添加")
 
                 isFinish = true
                 dismiss()
 
-//                val map: MutableMap<String, String> = TreeMap()
-//                map[Contents.ID] = SPStaticUtils.getString(Constant.USER_ID)
-//                map[Contents.USER_ID] = id.toString()
-//                doDeleteTrendPresent.doDeleteTrend(map)
-
             }
 
-            cancel.setOnClickListener {
+            focus.setOnClickListener {
+                if (haveFocus) {
+                    doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                } else {
+                    doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                }
                 dismiss()
             }
 
@@ -687,40 +707,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
         override fun onDismiss() {
             super.onDismiss()
-            if (isFinish) {
-
-                trendList.removeAt(position)
-                adapter.notifyDataSetChanged()
-
-                ToastUtils.showShort("此处需要删除这个数据(暂时是本地删除)")
-            }
         }
-
-        override fun onLoading() {
-
-        }
-
-        override fun onError() {
-
-        }
-
-        override fun onDoDeleteTrendSuccess(deleteTrendBean: DeleteTrendBean) {
-
-            if (deleteTrendBean.code == 200) {
-                ToastUtils.showShort("动态删除完成")
-                isFinish = true
-                dismiss()
-            } else {
-                ToastUtils.showShort(deleteTrendBean.msg)
-            }
-
-
-        }
-
-        override fun onDoDeleteTrendError() {
-
-        }
-
     }
 
 
@@ -773,6 +760,42 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(DynamicEditDialog(this@OtherDynamicActivity, position))
             .show()
+    }
+
+    override fun onLikeClick(v: View?, position: Int) {
+        // 点赞， 此时需要验证是否上传头像
+        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
+                Constant.ME_AVATAR_AUDIT,
+                "") != ""
+        ) {
+            mLikePosition = position
+            if (!mDiyList[mLikePosition].like) {
+                // 点赞
+
+                mDiyList[mLikePosition].anim = true
+                AnimalUtils.getAnimal(v as ImageView)
+
+                doLikeClick(
+                    trendList[mLikePosition].id,
+                    trendList[mLikePosition].user_id,
+                    SPStaticUtils.getString(Constant.USER_ID, "13"))
+
+            } else {
+                // 取消赞
+                doLikeCancelClick(
+                    trendList[mLikePosition].id,
+                    trendList[mLikePosition].user_id,
+                    SPStaticUtils.getString(Constant.USER_ID, "13"))
+            }
+        } else {
+            XPopup.Builder(this@OtherDynamicActivity)
+                .dismissOnTouchOutside(false)
+                .dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true)
+                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(AvatarDialog(this@OtherDynamicActivity))
+                .show()
+        }
     }
 
 }

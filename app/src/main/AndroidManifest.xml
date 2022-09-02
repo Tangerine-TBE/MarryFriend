@@ -52,6 +52,9 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".set.feedback.SuggestionActivity"
+            android:exported="false" />
+        <activity
             android:name=".set.web.SetWebActivity"
             android:exported="false" />
         <activity
@@ -101,9 +104,6 @@
             android:name=".dynamic.other.OtherDynamicActivity"
             android:exported="false" />
         <activity
-            android:name=".set.feedback.CommonQuestionActivity"
-            android:exported="false" />
-        <activity
             android:name=".set.logoff.LogoffActivity"
             android:exported="false" />
         <activity
@@ -123,7 +123,7 @@
             android:exported="false" />
         <activity
             android:name=".vip.VipActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".mine.greet.GreetEditActivity"
             android:exported="false" />
@@ -184,23 +184,23 @@
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".main.MainActivity"
             android:exported="true"
             android:launchMode="singleTask">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"

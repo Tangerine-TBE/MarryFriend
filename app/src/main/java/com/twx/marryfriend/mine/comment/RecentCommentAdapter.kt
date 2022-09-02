@@ -1,19 +1,29 @@
 package com.twx.marryfriend.mine.comment
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.constant.TimeConstants
+import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.DiscussList
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.utils.TimeUtil
 
-class RecentCommentAdapter(private val mList: MutableList<DiscussList>) :
+class RecentCommentAdapter(
+    private val mList: MutableList<DiscussList>,
+    private val mode: String,
+    private val lastTime: MutableList<String>,
+) :
     RecyclerView.Adapter<RecentCommentAdapter.ViewHolder>(), View.OnClickListener {
 
     private lateinit var mContext: Context
@@ -39,6 +49,10 @@ class RecentCommentAdapter(private val mList: MutableList<DiscussList>) :
         val avatar: RoundedImageView = view.findViewById(R.id.riv_detail_comment_avatar)
 
         val nick: TextView = view.findViewById(R.id.tv_detail_comment_nick)
+
+        val unread: ImageView = view.findViewById(R.id.iv_detail_comment_unread)
+        val read: TextView = view.findViewById(R.id.tv_detail_comment_read)
+
         val time: TextView = view.findViewById(R.id.tv_detail_comment_time)
 
         val comment: TextView = view.findViewById(R.id.tv_detail_comment_content)
@@ -64,18 +78,50 @@ class RecentCommentAdapter(private val mList: MutableList<DiscussList>) :
         if (mList[position].user_sex == 1) {
             Glide.with(mContext)
                 .load(mList[position].headface)
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
                 .into(holder.avatar)
         } else {
             Glide.with(mContext)
                 .load(mList[position].headface)
-                .error(R.mipmap.icon_mine_female_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
                 .into(holder.avatar)
         }
 
         holder.nick.text = mList[position].nick
+
+        if (mode == "mine") {
+
+            if (TimeUtils.getTimeSpan(mList[position].create_time,
+                    lastTime[0],
+                    TimeConstants.SEC) > 0
+            ) {
+                // 最后一条点赞时间晚于上次请求时间，显示红点
+                holder.unread.visibility = View.VISIBLE
+                holder.read.visibility = View.GONE
+            } else {
+                // 不显示红点
+                holder.unread.visibility = View.GONE
+                holder.read.visibility = View.VISIBLE
+            }
+
+        } else {
+
+            if (TimeUtils.getTimeSpan(mList[position].create_time,
+                    lastTime[0],
+                    TimeConstants.SEC) > 0
+            ) {
+                // 最后一条点赞时间晚于上次请求时间，显示红点
+                holder.unread.visibility = View.GONE
+                holder.read.visibility = View.GONE
+            } else {
+                // 不显示红点
+                holder.unread.visibility = View.GONE
+                holder.read.visibility = View.VISIBLE
+            }
+
+        }
 
         holder.comment.text = mList[position].content
 

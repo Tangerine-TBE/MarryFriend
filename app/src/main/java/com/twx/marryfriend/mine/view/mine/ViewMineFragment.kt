@@ -2,6 +2,7 @@ package com.twx.marryfriend.mine.view.mine
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import com.twx.marryfriend.mine.focus.mine.FocusMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetWhoSeeMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoFocusMePresentImpl
 import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import kotlinx.android.synthetic.main.fragment_like_mine.*
 import kotlinx.android.synthetic.main.fragment_view_mine.*
@@ -126,11 +128,14 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         if (whoSeeMeBean != null) {
             if (whoSeeMeBean.data.list.isNotEmpty()) {
 
+                SPStaticUtils.put(Constant.LAST_VIEW_TIME_REQUEST, whoSeeMeBean.data.server_time)
+
                 ll_view_mime_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
                     mList.clear()
                 }
+
                 currentPaper++
                 for (i in 0.until(whoSeeMeBean.data.list.size)) {
                     mList.add(whoSeeMeBean.data.list[i])
@@ -154,20 +159,44 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
     override fun onItemClick(v: View?, position: Int) {
         ToastUtils.showShort("资料详情界面")
-        startActivity(context?.let { FriendInfoActivity.getIntent(it, mList[position].guest_uid) })
+
+        Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
+
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+        } else {
+            startActivity(context?.let {
+                FriendInfoActivity.getIntent(it,
+                    mList[position].guest_uid)
+            })
+        }
+
     }
 
     override fun onChatClick(v: View?, position: Int) {
-        ToastUtils.showShort("聊天界面跳转")
-        val identity = mList[position].identity_status == 1
-        startActivity(context?.let {
-            ChatActivity.getIntent(
-                it,
-                mList[position].guest_uid.toString(),
-                mList[position].nick,
-                mList[position].image_url,
-                identity)
-        })
+
+
+        Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
+
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+
+            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+
+        } else {
+
+            val identity = mList[position].identity_status == 1
+            startActivity(context?.let {
+                ChatActivity.getIntent(
+                    it,
+                    mList[position].guest_uid.toString(),
+                    mList[position].nick,
+                    mList[position].image_url,
+                    identity)
+            })
+
+        }
+
+
     }
 
 }

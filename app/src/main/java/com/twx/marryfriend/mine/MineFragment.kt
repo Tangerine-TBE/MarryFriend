@@ -26,6 +26,7 @@ import androidx.fragment.app.FragmentActivity
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
+import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.*
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
@@ -45,6 +46,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.bean.mine.FourTotalBean
 import com.twx.marryfriend.coin.CoinActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
@@ -62,11 +64,14 @@ import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.callback.mine.IGetFourTotalCallback
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.net.impl.mine.getFourTotalPresentImpl
 import com.twx.marryfriend.set.SetActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.tools.hobby.HobbyToolActivity
 import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
+import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.twx.marryfriend.vip.VipActivity
@@ -78,7 +83,7 @@ import java.io.*
 import java.util.*
 
 class MineFragment : Fragment(), IDoFaceDetectCallback,
-    IDoUpdateGreetInfoCallback, IDoViewHeadFaceCallback {
+    IDoUpdateGreetInfoCallback, IDoViewHeadFaceCallback, IGetFourTotalCallback {
 
     // 头像暂存bitmap
     private var mBitmap: Bitmap? = null
@@ -120,6 +125,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
     private lateinit var doViewHeadFacePresent: doViewHeadFacePresentImpl
+    private lateinit var getFourTotalPresent: getFourTotalPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -142,14 +148,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
-                    .placeholder(R.mipmap.icon_mine_male_default)
-                    .error(R.mipmap.icon_mine_male_default)
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .error(R.drawable.ic_mine_male_default)
                     .into(iv_mine_avatar)
             } else {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
-                    .placeholder(R.mipmap.icon_mine_female_default)
-                    .error(R.mipmap.icon_mine_female_default)
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .error(R.drawable.ic_mine_female_default)
                     .into(iv_mine_avatar)
             }
             tv_mine_avatar_check.visibility = View.VISIBLE
@@ -161,25 +167,25 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                        .placeholder(R.mipmap.icon_mine_male_default)
-                        .error(R.mipmap.icon_mine_male_default)
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                        .placeholder(R.mipmap.icon_mine_male_default)
-                        .error(R.mipmap.icon_mine_male_default)
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 }
                 tv_mine_avatar_check.visibility = View.GONE
             } else {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
-                        .load(R.mipmap.icon_mine_male_default)
+                        .load(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
-                        .load(R.mipmap.icon_mine_female_default)
+                        .load(R.drawable.ic_mine_female_default)
                         .into(iv_mine_avatar)
                 }
                 tv_mine_avatar_check.visibility = View.GONE
@@ -208,6 +214,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         doViewHeadFacePresent = doViewHeadFacePresentImpl.getsInstance()
         doViewHeadFacePresent.registerCallback(this)
+
+        getFourTotalPresent = getFourTotalPresentImpl.getsInstance()
+        getFourTotalPresent.registerCallback(this)
 
         getAvatar()
 
@@ -330,7 +339,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 ToastUtils.showShort("请授予应用所需权限。")
                             }
                         })
-
                 }
             }
         }
@@ -357,7 +365,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         rl_mine_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 5) })
         }
 
         ll_mine_set_dynamic.setOnClickListener {
@@ -371,11 +379,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0) })
         }
 
         ll_mine_set_svip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1, 0) })
         }
 
         ll_mine_set_coin.setOnClickListener {
@@ -451,6 +459,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         doViewHeadFacePresent.doViewHeadFace(map)
+    }
+
+    fun getFourTotal() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getFourTotalPresent.getFourTotal(map)
     }
 
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
@@ -585,6 +599,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getFourTotal()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -592,23 +611,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             when (requestCode) {
                 // 更新审核头像
                 0 -> {
-//                    if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
-//                        Glide.with(requireContext())
-//                            .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-//                            .into(iv_mine_avatar)
-//                        tv_mine_avatar_check.visibility = View.VISIBLE
-//                    } else {
-//                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-//                            Glide.with(requireContext()).load(R.mipmap.icon_mine_male_default)
-//                                .into(iv_mine_avatar)
-//                        } else {
-//                            Glide.with(requireContext()).load(R.mipmap.icon_mine_female_default)
-//                                .into(iv_mine_avatar)
-//                        }
-//                    }
-
                     getAvatar()
-
                 }
                 // 上传生活照
                 1 -> {
@@ -641,6 +644,85 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     }
 
+    override fun onGetFourTotalSuccess(fourTotalBean: FourTotalBean?) {
+        if (fourTotalBean != null) {
+            if (fourTotalBean.code == 200) {
+
+                val lastLikeTime =
+                    SPStaticUtils.getString(Constant.LAST_LIKE_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastFocusTime =
+                    SPStaticUtils.getString(Constant.LAST_FOCUS_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastSeeTime =
+                    SPStaticUtils.getString(Constant.LAST_VIEW_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastDiscTime = SPStaticUtils.getString(Constant.LAST_COMMENT_TIME_REQUEST,
+                    "1970-01-01 00:00:00")
+
+                var likeTime = fourTotalBean.data.likeTime
+                var focusTime = fourTotalBean.data.focusTime
+                var seeTime = fourTotalBean.data.seeTime
+                var discTime = fourTotalBean.data.discTime
+
+                if (likeTime == null) {
+                    likeTime = "1970-01-01 00:00:00"
+                }
+
+                if (focusTime == null) {
+                    focusTime = "1970-01-01 00:00:00"
+                }
+
+                if (seeTime == null) {
+                    seeTime = "1970-01-01 00:00:00"
+                }
+
+                if (discTime == null) {
+                    discTime = "1970-01-01 00:00:00"
+                }
+
+                if (TimeUtils.getTimeSpan(likeTime, lastLikeTime, TimeConstants.SEC) > 0) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_like_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_like_point.visibility = View.INVISIBLE
+                }
+
+                if (TimeUtils.getTimeSpan(focusTime, lastFocusTime, TimeConstants.SEC) > 0) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_fan_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_fan_point.visibility = View.INVISIBLE
+                }
+
+                if (TimeUtils.getTimeSpan(seeTime, lastSeeTime, TimeConstants.SEC) > 0) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_visit_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_visit_point.visibility = View.INVISIBLE
+                }
+
+                if (TimeUtils.getTimeSpan(discTime, lastDiscTime, TimeConstants.SEC) > 0) {
+                    // 最后一条点赞时间晚于上次请求时间，显示红点
+                    iv_mine_comment_point.visibility = View.VISIBLE
+                } else {
+                    // 不显示红点
+                    iv_mine_comment_point.visibility = View.INVISIBLE
+                }
+
+                tv_mine_visit_sum.text = fourTotalBean.data.see.toString()
+                tv_mine_fan_sum.text = fourTotalBean.data.focus.toString()
+                tv_mine_like_sum.text = fourTotalBean.data.like.toString()
+                tv_mine_comment_sum.text = fourTotalBean.data.disc.toString()
+
+            }
+        }
+    }
+
+    override fun onGetFourTotalError() {
+
+    }
+
     override fun onDoViewHeadFaceSuccess(viewHeadfaceBean: ViewHeadfaceBean?) {
 
         if (viewHeadfaceBean != null) {
@@ -649,11 +731,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     0 -> {
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
-                                .load(R.mipmap.icon_mine_male_default)
+                                .load(R.drawable.ic_mine_male_default)
                                 .into(iv_mine_avatar)
                         } else {
                             Glide.with(requireContext())
-                                .load(R.mipmap.icon_mine_female_default)
+                                .load(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
                         tv_mine_avatar_check.visibility = View.GONE
@@ -663,14 +745,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[0].image_url)
-                                .error(R.mipmap.icon_mine_male_default)
-                                .placeholder(R.mipmap.icon_mine_male_default)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_mine_avatar)
                         } else {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[0].image_url)
-                                .error(R.mipmap.icon_mine_female_default)
-                                .placeholder(R.mipmap.icon_mine_female_default)
+                                .error(R.drawable.ic_mine_female_default)
+                                .placeholder(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
 
@@ -692,14 +774,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[1].image_url)
-                                .error(R.mipmap.icon_mine_male_default)
-                                .placeholder(R.mipmap.icon_mine_male_default)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_mine_avatar)
                         } else {
                             Glide.with(requireContext())
                                 .load(viewHeadfaceBean.data[1].image_url)
-                                .error(R.mipmap.icon_mine_female_default)
-                                .placeholder(R.mipmap.icon_mine_female_default)
+                                .error(R.drawable.ic_mine_female_default)
+                                .placeholder(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
 
@@ -736,9 +818,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             iv_mine_avatar.setImageBitmap(mBitmap)
             tv_mine_avatar_check.visibility = View.VISIBLE
 
+            val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                BitmapUtil.createWaterMarkBitmap(mBitmap, it)
+            }
 
             FileUtils.delete(mPhotoPath)
-            mBitmap?.let { saveBitmap(it, mPhotoPath) }
+            bitmap?.let { saveBitmap(it, mPhotoPath) }
 
             Thread {
 
@@ -748,8 +833,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 // key值为保存文件名，试用固定的几种格式来命名
 
                 val putObjectFromFileResponse =
-                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")
-                    }", FileUtils.getFileName(mPhotoPath), file)
+                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}",
+                        FileUtils.getFileName(mPhotoPath),
+                        file)
 
                 mPhotoUrl = client.generatePresignedUrl("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
@@ -992,7 +1078,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 ToastUtils.showShort("输入中存在敏感字，请重新输入")
                 findViewById<EditText>(R.id.et_user_data_name_name).setText("")
                 haveBanText = false
@@ -1132,7 +1218,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_hobby_content).setText("")
                 haveBanText = false
@@ -1272,7 +1358,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_greet_content).setText("")
                 haveBanText = false
@@ -1413,7 +1499,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
                 haveBanText = false

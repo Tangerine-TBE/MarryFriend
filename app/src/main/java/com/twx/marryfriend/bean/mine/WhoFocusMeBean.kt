@@ -13,6 +13,7 @@ data class WhoFocusMeBean(
 data class WhoFocusMeData(
     val list: List<WhoFocusMeList>,
     val total: Int,
+    val server_time: String,
 )
 
 data class WhoFocusMeList(

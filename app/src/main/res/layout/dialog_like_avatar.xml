@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
-        android:src="@mipmap/icon_dialog_avatar_male" />
+        android:src="@drawable/ic_dialog_avatar_male" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -57,6 +57,7 @@
         android:layout_marginBottom="27dp"
         android:background="@drawable/shape_base_next"
         android:gravity="center"
+
         android:paddingVertical="20dp"
         android:text="前往上传你的真实头像"
         android:textColor="#FFFFFF"

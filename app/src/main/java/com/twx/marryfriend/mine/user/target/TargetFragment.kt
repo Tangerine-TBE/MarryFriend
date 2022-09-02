@@ -38,7 +38,7 @@ import com.twx.marryfriend.net.impl.doUpdateDemandInfoPresentImpl
 import kotlinx.android.synthetic.main.fragment_target.*
 import java.util.*
 
-class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddressCallback,
+class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
     IDoPlusDemandAddressCallback {
 
     private var mAgeMinList: MutableList<Int> = arrayListOf()
@@ -76,7 +76,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
     private lateinit var jobAddressAdapter: JobAddressAdapter
 
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
-    private lateinit var doGetDemandAddressPresent: doGetDemandAddressPresentImpl
     private lateinit var doPlusDemandAddressPresent: doPlusDemandAddressPresentImpl
 
     override fun onCreateView(
@@ -123,9 +122,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         updateDemandInfoPresent = doUpdateDemandInfoPresentImpl.getsInstance()
         updateDemandInfoPresent.registerCallback(this)
 
-        doGetDemandAddressPresent = doGetDemandAddressPresentImpl.getsInstance()
-        doGetDemandAddressPresent.registerCallback(this)
-
         doPlusDemandAddressPresent = doPlusDemandAddressPresentImpl.getsInstance()
         doPlusDemandAddressPresent.registerCallback(this)
 
@@ -148,9 +144,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
         mIncomeList.add("不限")
         mIncomeList.add("5000元")
-        mIncomeList.add("10000元")
+        mIncomeList.add("8000元")
+        mIncomeList.add("12000元")
+        mIncomeList.add("16000元")
         mIncomeList.add("20000元")
-        mIncomeList.add("40000元")
+        mIncomeList.add("35000元")
+        mIncomeList.add("50000元")
         mIncomeList.add("70000元")
 
         // 先判断性别
@@ -255,18 +254,16 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
     }
 
-    // 获取择偶省市要求列表
-    private fun getDemandAddress() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
-    }
+
 
     // 修改择偶省市要求列表
     private fun uploadDemandAddress() {
         val demandInfoMap: MutableMap<String, String> = TreeMap()
         demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
+
+        Log.i("guo", "jobAddressInfoList_updata : ${getDemandAddressInfo()}")
+
         doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
     }
 
@@ -329,7 +326,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                             showPhotoDialog()
                                                         } else {
                                                             if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                    5) == 5
+                                                                    0) == 0
                                                             ) {
                                                                 // 何时结婚
                                                                 showMarryDialog()
@@ -395,7 +392,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                         showPhotoDialog()
                                                     } else {
                                                         if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                5) == 5
+                                                                0) == 0
                                                         ) {
                                                             // 何时结婚
                                                             showMarryDialog()
@@ -454,7 +451,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                     showPhotoDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                            5) == 5
+                                                            0) == 0
                                                     ) {
                                                         // 何时结婚
                                                         showMarryDialog()
@@ -508,7 +505,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                                 showPhotoDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                        5) == 5
+                                                        0) == 0
                                                 ) {
                                                     // 何时结婚
                                                     showMarryDialog()
@@ -554,7 +551,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                             // 有无照片
                                             showPhotoDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                                 // 何时结婚
                                                 showMarryDialog()
                                             } else {
@@ -594,7 +591,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                         // 有无照片
                                         showPhotoDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                             // 何时结婚
                                             showMarryDialog()
                                         } else {
@@ -629,7 +626,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                     // 有无照片
                                     showPhotoDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                         // 何时结婚
                                         showMarryDialog()
                                     } else {
@@ -659,7 +656,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                                 // 有无照片
                                 showPhotoDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                                if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                     // 何时结婚
                                     showMarryDialog()
                                 } else {
@@ -684,7 +681,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                             // 有无照片
                             showPhotoDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                                 // 何时结婚
                                 showMarryDialog()
                             } else {
@@ -704,7 +701,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                         // 有无照片
                         showPhotoDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                             // 何时结婚
                             showMarryDialog()
                         } else {
@@ -719,7 +716,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                     // 有无照片
                     showPhotoDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                         // 何时结婚
                         showMarryDialog()
                     } else {
@@ -729,7 +726,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 }
             }
             11 -> {
-                if (SPStaticUtils.getInt(Constant.TA_MARRY, 5) == 5) {
+                if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
                     // 何时结婚
                     showMarryDialog()
                 } else {
@@ -774,17 +771,26 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             }"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)) {
-            7 -> income = "未填写"
-            0 -> income = "不限"
+        income = when (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 9)) {
+            9 -> "未填写"
+            0 -> "不限"
             else ->
-                income = if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0) == 0) {
-                    "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}以下"
-                } else {
-                    "${
-                        mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7)]
-                    }~" + "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}"
+                when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)) {
+                    0 -> {
+                        "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}以下"
+                    }
+                    else ->
+                        if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8) ==
+                            SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 8)
+                        ) {
+                            "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8)]}以上"
+                        } else {
+                            "${
+                                mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8)]
+                            }~" + mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 8)]
+                        }
                 }
+
         }
 
 
@@ -908,13 +914,14 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             3 -> photo = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_MARRY, 5)) {
-            0 -> marry = "认同闪婚"
-            1 -> marry = "一年内"
-            2 -> marry = "两年内"
-            3 -> marry = "三年内"
-            4 -> marry = "实际成熟就结婚"
-            5 -> marry = "未填写"
+        when (SPStaticUtils.getInt(Constant.TA_MARRY, 0)) {
+            0 -> marry = "未填写"
+            1 -> marry = "认同闪婚"
+            2 -> marry = "一年内"
+            3 -> marry = "两年内"
+            4 -> marry = "三年内"
+            5 -> marry = "时机成熟就结婚"
+
         }
 
         baseInfoList.clear()
@@ -958,8 +965,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
         if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
 
-            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
-                .split(",") as MutableList<String>
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").split(",") as MutableList<String>
             x.removeAt(0)
 
             for (i in 0.until(x.size)) {
@@ -1043,14 +1049,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         if (incomeMax == 0) {
             incomeList.add(0)
         } else {
-            for (i in incomeMin..6) {
-                if (i < incomeMax) {
-                    incomeList.add(i)
-                }
+            for (i in incomeMin..incomeMax) {
+                incomeList.add(i)
             }
         }
         val income = incomeList.toString()
-
 
         val demandInfo =
             " {\"age_min\":       $ageMin," +
@@ -1563,7 +1566,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             // 设置滚轮选择器数据项的对齐方式
             wheelOne.itemAlign = WheelPicker.ALIGN_CENTER
 
-
             // 是否为循环状态
             wheelTwo.isCyclic = false
             // 当前选中的数据项文本颜色
@@ -1611,6 +1613,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 SPStaticUtils.put(Constant.TA_INCOME_MAX, mIncomeMax)
                 isNeedJump = true
                 dismiss()
+
             }
 
             close.setOnClickListener {
@@ -2535,10 +2538,21 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             if (jobAddressInfoList.size == 0) {
                 if (SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "") != "") {
                     jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, ""))
+
+                    provinceInfo.add(SPStaticUtils.getString(Constant.ME_WORK_PROVINCE_NAME, ""))
+                    provinceCodeInfo.add(SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_CODE, 0))
+                    cityInfo.add(SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, ""))
+                    cityCodeInfo.add(SPStaticUtils.getInt(Constant.ME_WORK_CITY_CODE, 0))
+
                 } else {
                     if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") != "") {
-                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
-                            ""))
+                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
+
+                        provinceInfo.add(SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, ""))
+                        provinceCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE, 0))
+                        cityInfo.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
+                        cityCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0))
+
                     } else {
                         wheel.visibility = View.VISIBLE
                         info.visibility = View.GONE
@@ -2645,9 +2659,21 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             jobAddressAdapter.setOnItemCloseClickListener(object :
                 JobAddressAdapter.OnItemCloseClickListener {
                 override fun onItemCloseClick(v: View?, position: Int) {
+
+                    Log.i("guo", "jobAddressInfoList : ${jobAddressInfoList}")
+
                     ToastUtils.showShort("第${position}个数据需要删除")
                     jobAddressInfoList.removeAt(position)
+
+                    provinceInfo.removeAt(position)
+                    provinceCodeInfo.removeAt(position)
+                    cityInfo.removeAt(position)
+                    cityCodeInfo.removeAt(position)
+
                     jobAddressAdapter.notifyDataSetChanged()
+
+                    Log.i("guo", "jobAddressInfoList_delet : $jobAddressInfoList")
+
                     sum.text = jobAddressInfoList.size.toString()
 
                     if (jobAddressInfoList.size < 5) {
@@ -3584,7 +3610,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 0)
+                SPStaticUtils.put(Constant.TA_MARRY, 1)
                 dismiss()
             }
 
@@ -3592,7 +3618,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 1)
+                SPStaticUtils.put(Constant.TA_MARRY, 2)
                 dismiss()
             }
 
@@ -3600,7 +3626,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 2)
+                SPStaticUtils.put(Constant.TA_MARRY, 3)
                 dismiss()
             }
 
@@ -3608,7 +3634,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 3)
+                SPStaticUtils.put(Constant.TA_MARRY, 4)
                 dismiss()
             }
 
@@ -3616,7 +3642,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
                 clearChoose()
                 tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_five.setTextColor(Color.parseColor("#FF4444"))
-                SPStaticUtils.put(Constant.TA_MARRY, 4)
+                SPStaticUtils.put(Constant.TA_MARRY, 5)
                 dismiss()
             }
 
@@ -3628,26 +3654,26 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.TA_MARRY, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.TA_MARRY, 0)) {
                 0 -> {
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
-                2 -> {
+                3 -> {
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                3 -> {
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
-                4 -> {
+                5 -> {
                     tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_five.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -3699,14 +3725,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
     override fun onDoPlusDemandAddressError() {
         ToastUtils.showShort("工作地区上传失败，请重新选择工作地区")
-    }
-
-    override fun onDoGetDemandAddressSuccess(demandAddressBean: DemandAddressBean?) {
-
-    }
-
-    override fun onDoGetDemandAddressError() {
-
     }
 
     override fun onDoUpdateDemandInfoSuccess(updateDemandInfoBean: UpdateDemandInfoBean?) {

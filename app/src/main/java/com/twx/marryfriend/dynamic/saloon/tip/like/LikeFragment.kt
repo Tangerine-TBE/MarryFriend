@@ -18,9 +18,11 @@ import com.twx.marryfriend.bean.dynamic.LikeTipBean
 import com.twx.marryfriend.bean.dynamic.LikeTipList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetTrendTipsCallback
 import com.twx.marryfriend.net.impl.dynamic.getTrendTipsPresentImpl
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_comment.*
 import kotlinx.android.synthetic.main.fragment_like.*
 import java.util.*
@@ -160,6 +162,9 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
 
                 if (currentPaper == 1) {
                     mList.clear()
+                    // 更新数据
+                    val activity = activity as TipsActivity
+                    activity.likeId = likeTipBean.data.list[0].like_id
                 }
                 currentPaper++
                 for (i in 0.until(likeTipBean.data.list.size)) {

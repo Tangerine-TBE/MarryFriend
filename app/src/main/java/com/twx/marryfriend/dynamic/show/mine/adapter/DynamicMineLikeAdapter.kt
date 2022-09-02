@@ -17,7 +17,10 @@ import java.util.*
  * @author: Administrator
  * @date: 2022/7/4
  */
-class DynamicMineLikeAdapter(private val mList: MutableList<LikeList>, private val mEduData: MutableList<String>) :
+class DynamicMineLikeAdapter(
+    private val mList: MutableList<LikeList>,
+    private val mEduData: MutableList<String>,
+) :
     RecyclerView.Adapter<DynamicMineLikeAdapter.ViewHolder>(),
     View.OnClickListener {
 
@@ -59,18 +62,31 @@ class DynamicMineLikeAdapter(private val mList: MutableList<LikeList>, private v
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
 
-        Glide.with(mContext).load(mList[position].image_url).into(holder.avatar)
-
         holder.name.text = mList[position].nick
 
         if (mList[position].user_sex == 1) {
+
+            Glide.with(mContext)
+                .load(mList[position].image_url)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
+                .into(holder.avatar)
+
             holder.sex.setImageResource(R.drawable.ic_male)
         } else {
+
+            Glide.with(mContext)
+                .load(mList[position].image_url)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
+                .into(holder.avatar)
+
             holder.sex.setImageResource(R.drawable.ic_female)
         }
 
         holder.time.text = "${
-            mList[position].create_time.subSequence(0, 4)}/${
+            mList[position].create_time.subSequence(0, 4)
+        }/${
             mList[position].create_time.subSequence(5, 7)
         }/${mList[position].create_time.subSequence(8, 10)}"
 
@@ -85,10 +101,10 @@ class DynamicMineLikeAdapter(private val mList: MutableList<LikeList>, private v
 
         val edu = mEduData[mList[position].education]
 
-        val job =  if (mList[position].industry_str == ""){
+        val job = if (mList[position].industry_str == "") {
             "${mList[position].industry_str}"
-        }else{
-            " ${mList[position].industry_str}/${mList[position].industry_str}"
+        } else {
+            " ${mList[position].industry_str}/${mList[position].occupation_str}"
         }
 
         holder.info.text = "${year}年  $city  $edu  $job"

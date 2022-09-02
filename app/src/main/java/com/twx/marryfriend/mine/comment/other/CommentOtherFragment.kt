@@ -35,7 +35,12 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
 
     private lateinit var mContext: Context
 
+    private var isRequest = true
+
     private var mList: MutableList<DiscussList> = arrayListOf()
+
+    // 上一次请求的时间，用来判断是否已读
+    private var mLastTime: MutableList<String> = arrayListOf()
 
     private lateinit var adapter: RecentCommentAdapter
 
@@ -67,7 +72,7 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
         getMeDiscussWhoPresent = getMeDiscussWhoPresentImpl.getsInstance()
         getMeDiscussWhoPresent.registerCallback(this)
 
-        adapter = RecentCommentAdapter(mList)
+        adapter = RecentCommentAdapter(mList, "other", mLastTime)
         adapter.setOnItemClickListener(this)
 
         rv_comment_other_container.layoutManager = LinearLayoutManager(mContext)
@@ -102,6 +107,7 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
     }
 
     private fun getCommentOtherData(page: Int) {
+        isRequest = true
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getMeDiscussWhoPresent.getMeDiscussWho(map, page)
@@ -119,16 +125,33 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
         if (meDiscussWhoBean != null) {
             if (meDiscussWhoBean.data.list.isNotEmpty()) {
 
-                ll_comment_other_empty?.visibility = View.GONE
+                if (isRequest) {
+                    isRequest = false
 
-                if (currentPaper == 1) {
-                    mList.clear()
+                    ll_comment_other_empty?.visibility = View.GONE
+
+                    if (currentPaper == 1) {
+                        mList.clear()
+                    }
+
+                    currentPaper++
+
+                    for (i in 0.until(meDiscussWhoBean.data.list.size)) {
+                        mList.add(meDiscussWhoBean.data.list[i])
+                    }
+
+                    mLastTime.clear()
+                    mLastTime.add(SPStaticUtils.getString(Constant.LAST_COMMENT_OTHER_TIME_REQUEST,
+                        "1970-01-01 00:00:00"))
+
+                    adapter.notifyDataSetChanged()
+
+                    SPStaticUtils.put(Constant.LAST_COMMENT_OTHER_TIME_REQUEST,
+                        meDiscussWhoBean.data.server_time)
+
                 }
-                currentPaper++
-                for (i in 0.until(meDiscussWhoBean.data.list.size)) {
-                    mList.add(meDiscussWhoBean.data.list[i])
-                }
-                adapter.notifyDataSetChanged()
+
+
             }
         }
 

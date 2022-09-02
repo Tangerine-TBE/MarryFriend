@@ -97,7 +97,7 @@
                             android:gravity="center"
                             android:paddingVertical="15dp"
                             android:text="普通会员"
-                            android:textColor="#DF43FC"
+                            android:textColor="#FF4444"
                             android:textSize="17sp" />
 
                         <View
@@ -117,7 +117,7 @@
                             android:gravity="center"
                             android:paddingVertical="11dp"
                             android:text="超级会员"
-                            android:textColor="#717171"
+                            android:textColor="#101010"
                             android:textSize="17sp" />
 
                     </RelativeLayout>
@@ -137,7 +137,6 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
     <LinearLayout
         android:id="@+id/ll_vip_top"
@@ -200,6 +199,229 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_vip_dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80101010"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="32dp"
+            android:background="@drawable/shape_bg_dialog"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="16dp">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/riv_vip_dialog_avatar"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"
+                    app:riv_oval="true" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/tv_vip_dialog_nick"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="阿桂"
+                            android:textColor="#404040"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/iv_vip_dialog_close"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@mipmap/icon_dialog_close" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tv_vip_dialog_detail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="上海·27岁·销售·1.2-2w·163cm"
+                        android:textColor="#9A9A9A"
+                        android:textSize="13sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp">
+
+                        <ImageView
+                            android:id="@+id/iv_vip_dialog_identity"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@mipmap/icon_identify_success" />
+
+                        <ImageView
+                            android:id="@+id/iv_vip_dialog_avatar_true"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:src="@mipmap/icon_avatar_true" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_vip_dialog_photo_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="她上传了18张照片"
+                android:textColor="#101010"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rl_vip_dialog_photo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/tv_vip_dialog_dynamic_sum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="14dp"
+                android:text="她上传了2条动态"
+                android:textColor="#101010"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_vip_dialog_dynamic_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/shape_bg_button_add"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:padding="14dp"
+                    android:text="疫情期间不能乱跑，待在家里，不添..."
+                    android:textColor="#717171"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_vip_dialog_dynamic_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <FrameLayout
+                    android:id="@+id/fl_vip_dialog_dynamic_video"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp">
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/iv_vip_dialog_dynamic_video"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:scaleType="centerCrop"
+                        app:riv_corner_radius="8dp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_base_play" />
+
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_vip_dialog_dynamic_introduce0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="14dp"
+                android:text="关于我"
+                android:textColor="#101010"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_vip_dialog_dynamic_introduce"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/shape_bg_button_add"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:padding="14dp"
+                android:text="情绪稳定的成熟的女生，比我年纪大，样貌端正，不要太胖，身高178+不抽烟不喝酒不赌博...(共389字）"
+                android:textColor="#9A9A9A"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="14dp"
+                android:text="赶快与对方联系吧,你还没有回复对方"
+                android:textColor="#FF4444"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tv_vip_dialog_dynamic_buy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="17dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/shape_bg_common_next"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="购买会员，查看他的消息"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </RelativeLayout>
 

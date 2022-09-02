@@ -35,7 +35,12 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
 
     private lateinit var mContext: Context
 
+    private var isRequest = true
+
     private var mList: MutableList<WhoLikeMeList> = arrayListOf()
+
+    // 上一次请求的时间，用来判断是否已读
+    private var mLastTime: MutableList<String> = arrayListOf()
 
     private lateinit var adapter: RecentLikeAdapter
 
@@ -67,7 +72,7 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
         getMeLikeWhoPresent = getMeLikeWhoPresentImpl.getsInstance()
         getMeLikeWhoPresent.registerCallback(this)
 
-        adapter = RecentLikeAdapter(mList, "other")
+        adapter = RecentLikeAdapter(mList, "other", mLastTime)
         adapter.setOnItemClickListener(this)
 
         rv_like_other_container.layoutManager = LinearLayoutManager(mContext)
@@ -104,6 +109,7 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
     }
 
     private fun getLikeOtherData(page: Int) {
+        isRequest = true
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getMeLikeWhoPresent.getMeLikeWho(map, page)
@@ -121,16 +127,30 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
         if (meLikeWhoBean != null) {
             if (meLikeWhoBean.data.list.isNotEmpty()) {
 
-                ll_like_other_empty?.visibility = View.GONE
+                if (isRequest) {
+                    isRequest = false
 
-                if (currentPaper == 1) {
-                    mList.clear()
+                    ll_like_other_empty?.visibility = View.GONE
+
+                    if (currentPaper == 1) {
+                        mList.clear()
+                    }
+                    currentPaper++
+                    for (i in 0.until(meLikeWhoBean.data.list.size)) {
+                        mList.add(meLikeWhoBean.data.list[i])
+                    }
+
+                    mLastTime.clear()
+                    mLastTime.add(SPStaticUtils.getString(Constant.LAST_LIKE_OTHER_TIME_REQUEST,
+                        "1970-01-01 00:00:00"))
+
+                    adapter.notifyDataSetChanged()
+
+                    SPStaticUtils.put(Constant.LAST_LIKE_OTHER_TIME_REQUEST,
+                        meLikeWhoBean.data.server_time)
+
                 }
-                currentPaper++
-                for (i in 0.until(meLikeWhoBean.data.list.size)) {
-                    mList.add(meLikeWhoBean.data.list[i])
-                }
-                adapter.notifyDataSetChanged()
+
             }
         }
 

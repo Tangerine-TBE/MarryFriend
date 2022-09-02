@@ -1,5 +1,6 @@
 package com.twx.marryfriend.dynamic.saloon.friend
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
@@ -65,7 +66,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
 
-
     private var mTrendList: MutableList<TrendFocusList> = arrayListOf()
 
     private lateinit var adapter: SaloonFocusAdapter
@@ -105,7 +105,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
         doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
         doLikeCancelPresent.registerCallback(this)
-
 
 
         adapter = SaloonFocusAdapter(mTrendList, mDiyList)
@@ -159,7 +158,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 intent.putExtra("trendId", mTrendList[position].id)
                 intent.putExtra("usersId", mTrendList[position].user_id.toInt())
                 intent.putExtra("mode", 1)
-                startActivity(intent)
+                startActivityForResult(intent, 0)
             }
         })
 
@@ -472,6 +471,19 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         doLikeCancelPresent.doLikeCancel(map)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    mode = "first"
+                    max = 3
+                    min = 2
+                    getTrendFocus(mode, max, min)
+                }
+            }
+        }
+    }
 
     override fun onLoading() {
 
@@ -516,43 +528,59 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
     }
 
-    override fun onGetTrendFocusSuccess(trendFocusBean: TrendFocusBean) {
+    override fun onGetTrendFocusSuccess(trendFocusBean: TrendFocusBean?) {
 
-        if (trendFocusBean.data.list.isNotEmpty()) {
+        srl_dynamic_focus_refresh.finishRefresh(true)
+        srl_dynamic_focus_refresh.finishLoadMore(true)
 
-            srl_dynamic_focus_refresh.visibility = View.VISIBLE
-            ll_dynamic_focus_empty.visibility = View.GONE
+        if (trendFocusBean != null) {
+            if (trendFocusBean.code == 200) {
 
-            val mIdList: MutableList<Int> = arrayListOf()
+                if (trendFocusBean.data.list.isNotEmpty()) {
 
-            if (mode == "first") {
-                mTrendList.clear()
-                mDiyList.clear()
+                    ll_dynamic_focus_empty.visibility = View.GONE
+
+                    val mIdList: MutableList<Int> = arrayListOf()
+
+                    if (mode == "first") {
+                        mTrendList.clear()
+                        mDiyList.clear()
+                    }
+
+                    for (i in 0.until(trendFocusBean.data.list.size)) {
+                        mTrendList.add(trendFocusBean.data.list[i])
+                        mIdList.add(trendFocusBean.data.list[i].id)
+
+                        val focus = true
+                        val like = trendFocusBean.data.list[i].guest_uid != null
+
+                        mDiyList.add(LikeBean(focus, like, trendFocusBean.data.list[i].like_count))
+
+                    }
+
+                    max = Collections.max(mIdList)
+                    min = Collections.min(mIdList)
+
+                    adapter.notifyDataSetChanged()
+
+                } else {
+
+                    if (mode == "first") {
+                        mTrendList.clear()
+                        mDiyList.clear()
+
+                        ll_dynamic_focus_empty.visibility = View.VISIBLE
+
+                    }
+
+                    adapter.notifyDataSetChanged()
+
+                }
+            } else {
+                ToastUtils.showShort(trendFocusBean.msg)
             }
-
-            for (i in 0.until(trendFocusBean.data.list.size)) {
-                mTrendList.add(trendFocusBean.data.list[i])
-                mIdList.add(trendFocusBean.data.list[i].id)
-
-                val focus = true
-                val like = trendFocusBean.data.list[i].guest_uid != null
-
-                mDiyList.add(LikeBean(focus, like, trendFocusBean.data.list[i].like_count))
-
-            }
-
-            max = Collections.max(mIdList)
-            min = Collections.min(mIdList)
-
-            adapter.notifyDataSetChanged()
-
-            srl_dynamic_focus_refresh.finishRefresh(true)
-            srl_dynamic_focus_refresh.finishLoadMore(true)
-
-        } else {
-            srl_dynamic_focus_refresh.finishRefresh(true)
-            srl_dynamic_focus_refresh.finishLoadMore(true)
         }
+
 
     }
 

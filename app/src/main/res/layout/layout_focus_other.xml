@@ -40,7 +40,7 @@
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@+id/ll_detail_focus_other_icon"
                     android:ellipsize="end"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:maxLines="1"
                     android:text="湖北人,在深圳做程序员"
                     android:textColor="#404040"

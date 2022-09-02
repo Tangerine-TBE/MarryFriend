@@ -36,7 +36,12 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
 
     private lateinit var mContext: Context
 
+    private var isRequest = true
+
     private var mList: MutableList<DiscussList> = arrayListOf()
+
+    // 上一次请求的时间，用来判断是否已读
+    private var mLastTime: MutableList<String> = arrayListOf()
 
     private lateinit var adapter: RecentCommentAdapter
 
@@ -68,7 +73,7 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
         getWhoDiscussMePresent = getWhoDiscussMePresentImpl.getsInstance()
         getWhoDiscussMePresent.registerCallback(this)
 
-        adapter = RecentCommentAdapter(mList)
+        adapter = RecentCommentAdapter(mList, "mine", mLastTime)
         adapter.setOnItemClickListener(this)
 
         rv_comment_mime_container.layoutManager = LinearLayoutManager(mContext)
@@ -93,8 +98,7 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
 
         sfl_comment_mime_refresh.setOnRefreshListener {
 
-            Log.i("guo","刷新沙墟")
-
+            Log.i("guo", "刷新沙墟")
             // 刷新数据
             currentPaper = 1
             getCommentMineData(currentPaper)
@@ -109,6 +113,7 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
     }
 
     private fun getCommentMineData(page: Int) {
+        isRequest = true
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getWhoDiscussMePresent.getWhoDiscussMe(map, page)
@@ -138,16 +143,35 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
         if (whoDiscussMeBean != null) {
             if (whoDiscussMeBean.data.list.isNotEmpty()) {
 
-                ll_comment_mime_empty?.visibility = View.GONE
+                if (isRequest) {
+                    isRequest = false
+                    SPStaticUtils.put(Constant.LAST_COMMENT_TIME_REQUEST,
+                        whoDiscussMeBean.data.server_time)
 
-                if (currentPaper == 1) {
-                    mList.clear()
+                    ll_comment_mime_empty?.visibility = View.GONE
+
+                    if (currentPaper == 1) {
+                        mList.clear()
+                    }
+
+                    currentPaper++
+
+                    for (i in 0.until(whoDiscussMeBean.data.list.size)) {
+                        mList.add(whoDiscussMeBean.data.list[i])
+                    }
+
+                    mLastTime.clear()
+                    mLastTime.add(SPStaticUtils.getString(Constant.LAST_COMMENT_ME_TIME_REQUEST,
+                        "1970-01-01 00:00:00"))
+
+                    adapter.notifyDataSetChanged()
+
+                    SPStaticUtils.put(Constant.LAST_COMMENT_ME_TIME_REQUEST,
+                        whoDiscussMeBean.data.server_time)
+
                 }
-                currentPaper++
-                for (i in 0.until(whoDiscussMeBean.data.list.size)) {
-                    mList.add(whoDiscussMeBean.data.list[i])
-                }
-                adapter.notifyDataSetChanged()
+
+
             }
         }
 

@@ -37,8 +37,6 @@ class OtherDynamicAdapter(
 
     private var mOnItemClickListener: OnItemClickListener? = null
 
-    private var mOnLikeClickListener: OnLikeClickListener? = null
-
     private var mOnCommentClickListener: OnCommentClickListener? = null
 
     private var mOnOneClickListener: OnOneClickListener? = null
@@ -65,9 +63,6 @@ class OtherDynamicAdapter(
         fun onItemClick(v: View?, position: Int)
         fun onTextClick(v: View?, position: Int)
         fun onItemMoreClick(v: View?, position: Int)
-    }
-
-    interface OnLikeClickListener {
         fun onLikeClick(v: View?, position: Int)
     }
 
@@ -117,10 +112,6 @@ class OtherDynamicAdapter(
 
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.mOnItemClickListener = listener
-    }
-
-    fun setOnLikeClickListener(listener: OnLikeClickListener) {
-        this.mOnLikeClickListener = listener
     }
 
     fun setOnCommentClickListener(listener: OnCommentClickListener) {
@@ -236,7 +227,7 @@ class OtherDynamicAdapter(
         }
 
         holder.ivLike.setOnClickListener {
-            mOnLikeClickListener?.onLikeClick(it, position)
+            mOnItemClickListener?.onLikeClick(it, position)
         }
 
         holder.ivComment.setOnClickListener {
@@ -303,6 +294,7 @@ class OtherDynamicAdapter(
         } else if (!mLikeList[position].like) {
             holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
         }
+
 
         if (mLikeList[position].likeCount != 0) {
             holder.tvLike.text = mLikeList[position].likeCount.toString()

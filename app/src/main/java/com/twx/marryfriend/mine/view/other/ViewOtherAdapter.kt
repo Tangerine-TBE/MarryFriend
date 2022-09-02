@@ -93,14 +93,14 @@ class ViewOtherAdapter(private val mList: MutableList<MeSeeWhoList>) :
         if (mList[position].user_sex == 1) {
             Glide.with(mContext)
                 .load(mList[position].image_url)
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
                 .into(holder.avatar)
         } else {
             Glide.with(mContext)
                 .load(mList[position].image_url)
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
                 .into(holder.avatar)
         }
 
@@ -144,7 +144,7 @@ class ViewOtherAdapter(private val mList: MutableList<MeSeeWhoList>) :
         holder.info.text = "$city  ${year}岁  $job  $edu"
 
         holder.act.text =
-            "第${mList[position].count_total}次查看你的资料  ${TimeUtil.getViewTime(mList[position].update_time)}访问过你"
+            "第${mList[position].count_total}次查看他的资料  ${TimeUtil.getViewTime(mList[position].update_time)}访问过他"
 
     }
 

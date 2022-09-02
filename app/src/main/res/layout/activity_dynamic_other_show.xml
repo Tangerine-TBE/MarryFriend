@@ -63,7 +63,6 @@
                     android:id="@+id/riv_dynamic_other_show_avatar"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_centerVertical="true"
                     android:scaleType="centerCrop"
                     app:riv_oval="true" />
 
@@ -154,7 +153,7 @@
                     android:id="@+id/tv_dynamic_other_show_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="24dp"
                     android:text=""
                     android:textColor="#101010"
@@ -625,12 +624,12 @@
                 android:layout_marginVertical="8dp"
                 android:layout_toStartOf="@+id/iv_dynamic_other_show_like"
                 android:background="@drawable/shape_bg_comment"
-                android:textColor="#0F0F0F"
-                android:textColorHint="#9A9A9A"
                 android:hint="走心,说点好听的"
                 android:maxLength="300"
                 android:paddingHorizontal="16dp"
                 android:paddingVertical="11dp"
+                android:textColor="#0F0F0F"
+                android:textColorHint="#9A9A9A"
                 android:textSize="15sp" />
 
             <ImageView

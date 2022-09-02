@@ -60,7 +60,7 @@
                         android:layout_height="100dp"
                         android:layout_marginStart="16dp"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/icon_mine_male_default"
+                        android:src="@drawable/ic_mine_male_default"
                         app:riv_oval="true" />
 
                     <TextView
@@ -178,6 +178,7 @@
                             android:textStyle="bold" />
 
                         <ImageView
+                            android:id="@+id/iv_mine_visit_point"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/tv_mine_visit_sum"
@@ -218,6 +219,7 @@
                             android:textStyle="bold" />
 
                         <ImageView
+                            android:id="@+id/iv_mine_fan_point"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/tv_mine_fan_sum"
@@ -258,6 +260,7 @@
                             android:textStyle="bold" />
 
                         <ImageView
+                            android:id="@+id/iv_mine_like_point"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/tv_mine_like_sum"
@@ -298,6 +301,7 @@
                             android:textStyle="bold" />
 
                         <ImageView
+                            android:id="@+id/iv_mine_comment_point"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/tv_mine_comment_sum"

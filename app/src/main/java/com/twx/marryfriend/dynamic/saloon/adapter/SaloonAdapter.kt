@@ -327,7 +327,21 @@ class SaloonAdapter(
     private fun initPic(holder: ViewHolder, position: Int) {
 
 
-        Glide.with(mContext).load(mList[position].headface).into(holder.avatar)
+        if (mList[position].user_sex == 1) {
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
+                .into(holder.avatar)
+        } else {
+            Glide.with(mContext)
+                .load(mList[position].headface)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
+                .into(holder.avatar)
+        }
+
+
         holder.name.text = mList[position].nick
 
         when (getVipLevel(mList[position].close_time_low, mList[position].close_time_high)) {
@@ -700,7 +714,7 @@ class SaloonAdapter(
             holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
         }
 
-        if (mDiyList[position].focus) {
+        if (mList[position].focus_uid != null) {
             holder.focus.setImageResource(R.drawable.ic_base_chat)
         } else {
             holder.focus.setImageResource(R.drawable.ic_base_focus)
@@ -711,7 +725,6 @@ class SaloonAdapter(
         } else {
             holder.tvLike.text = "抢首赞"
         }
-
 
         if (mList[position].discuss_count != 0) {
             holder.tvComment.text = mList[position].discuss_count.toString()

@@ -10,11 +10,13 @@ import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.makeramen.roundedimageview.RoundedImageView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.WhoFocusMeList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.DataProvider
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 class FocusMineAdapter(private val mList: MutableList<WhoFocusMeList>) :
     RecyclerView.Adapter<FocusMineAdapter.ViewHolder>(), View.OnClickListener {
@@ -64,17 +66,35 @@ class FocusMineAdapter(private val mList: MutableList<WhoFocusMeList>) :
         holder.itemView.tag = position
 
         if (mList[position].user_sex == 1) {
-            Glide.with(mContext)
-                .load(mList[position].image_url)
-                .error(R.mipmap.icon_mine_female_default)
-                .placeholder(R.mipmap.icon_mine_female_default)
-                .into(holder.avatar)
+            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_male_default)
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .apply(bitmapTransform(BlurTransformation(25)))
+                    .into(holder.avatar)
+            } else {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_male_default)
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .into(holder.avatar)
+            }
         } else {
-            Glide.with(mContext)
-                .load(mList[position].image_url)
-                .error(R.mipmap.icon_mine_male_default)
-                .placeholder(R.mipmap.icon_mine_male_default)
-                .into(holder.avatar)
+            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_female_default)
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .apply(bitmapTransform(BlurTransformation(25)))
+                    .into(holder.avatar)
+            } else {
+                Glide.with(mContext)
+                    .load(mList[position].image_url)
+                    .error(R.drawable.ic_mine_female_default)
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .into(holder.avatar)
+            }
         }
 
         if (mList[position].hometown_province_str != "" &&
@@ -95,7 +115,7 @@ class FocusMineAdapter(private val mList: MutableList<WhoFocusMeList>) :
         holder.day.text =
             "关注你${
                 (-TimeUtils.getTimeSpanByNow(mList[position].create_time,
-                    TimeConstants.DAY))
+                    TimeConstants.DAY)) + 1
             }天"
 
         if (mList[position].education >= 3) {
@@ -106,19 +126,19 @@ class FocusMineAdapter(private val mList: MutableList<WhoFocusMeList>) :
 
         if (mList[position].salary_range != "") {
             if (DataProvider.SuperOneCity.contains(mList[position].work_city_str)) {
-                if (mList[position].salary_range.toInt() >= 4) {
+                if (mList[position].salary_range.toInt() >= 5) {
                     holder.income.visibility = View.VISIBLE
                 } else {
                     holder.income.visibility = View.GONE
                 }
             } else if (DataProvider.OneCity.contains(mList[position].work_city_str)) {
-                if (mList[position].salary_range.toInt() >= 3) {
+                if (mList[position].salary_range.toInt() >= 4) {
                     holder.income.visibility = View.VISIBLE
                 } else {
                     holder.income.visibility = View.GONE
                 }
             } else {
-                if (mList[position].salary_range.toInt() >= 2) {
+                if (mList[position].salary_range.toInt() >= 3) {
                     holder.income.visibility = View.VISIBLE
                 } else {
                     holder.income.visibility = View.GONE

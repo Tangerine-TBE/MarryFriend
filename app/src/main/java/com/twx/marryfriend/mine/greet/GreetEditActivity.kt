@@ -112,7 +112,7 @@ class GreetEditActivity : MainBaseViewActivity(), IDoTextVerifyCallback {
 
         } else {
 
-            ToastUtils.showShort(textVerifyBean.data[0].msg)
+            ToastUtils.showShort(textVerifyBean.error_msg)
             greet = ""
 
             et_greet_edit_container.setText("")

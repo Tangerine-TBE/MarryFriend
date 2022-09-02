@@ -111,7 +111,7 @@ class SetActivity : MainBaseViewActivity() {
                             adapter2.notifyDataSetChanged()
                         } else {
                             ToastUtils.showShort("您还不是会员，请先前往开通会员")
-                            startActivity(VipActivity.getIntent(this@SetActivity, 0))
+                            startActivity(VipActivity.getIntent(this@SetActivity, 0, 0))
                         }
                     }
                     1 -> {
@@ -119,9 +119,9 @@ class SetActivity : MainBaseViewActivity() {
                             mSwitchList[1].switch = !mSwitchList[1].switch
                             SPStaticUtils.put(Constant.HIDE_VIP, mSwitchList[1].switch)
                             adapter2.notifyDataSetChanged()
-                        }else{
+                        } else {
                             ToastUtils.showShort("您还不是会员，请先前往开通会员")
-                            startActivity(VipActivity.getIntent(this@SetActivity, 0))
+                            startActivity(VipActivity.getIntent(this@SetActivity, 0, 0))
                         }
                     }
                 }
@@ -137,9 +137,10 @@ class SetActivity : MainBaseViewActivity() {
                     }
                     1 -> {
                         ToastUtils.showShort("帮助反馈")
-                        startActivity(SetWebActivity.getIntent(this@SetActivity,
-                            "在线客服",
-                            DataProvider.WebUrlData[0].url))
+//                        startActivity(SetWebActivity.getIntent(this@SetActivity,
+//                            "在线客服",
+//                            DataProvider.WebUrlData[0].url))
+                        startActivity(Intent(this@SetActivity, FeedbackActivity::class.java))
                     }
                     2 -> {
                         ToastUtils.showShort("账户与安全")

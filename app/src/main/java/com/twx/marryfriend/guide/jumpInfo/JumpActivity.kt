@@ -152,23 +152,25 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                 1 -> {
                     if (isHomeReady) {
 
-                        val home =
-                            "${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}}"
-
-                        Log.i("guo", home)
-
-                        SPStaticUtils.put(Constant.ME_HOME, home)
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE,
+                            mCityIdFirstList[mCityFirstPosition])
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                            mCityFirstList[mCityFirstPosition])
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_CODE,
+                            mCityIdSecondList[mCitySecondPosition])
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
+                            mCitySecondList[mCitySecondPosition])
 
                         vf_guide_jump_container.showNext()
 
                         ll_guide_jump_next.visibility = View.GONE
 
-                    }else{
-                        val home = "${mCityFirstList[0]}-${mCitySecondList[0]}]}"
+                    } else {
 
-                        Log.i("guo", home)
-
-                        SPStaticUtils.put(Constant.ME_HOME, home)
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, mCityIdFirstList[0])
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, mCityFirstList[0])
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_CODE, mCityIdSecondList[0])
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, mCitySecondList[0])
 
                         vf_guide_jump_container.showNext()
 
@@ -178,8 +180,10 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                 5 -> {
                     if (isJobReady) {
 
-                        Log.i("guo", "${mJobFirstList[mFirstJobPosition]} : ${mJobIdFirstList[mFirstJobPosition]}")
-                        Log.i("guo", "${mJobSecondList[mSecondJobPosition]} : ${mJobIdSecondList[mSecondJobPosition]}")
+                        Log.i("guo",
+                            "${mJobFirstList[mFirstJobPosition]} : ${mJobIdFirstList[mFirstJobPosition]}")
+                        Log.i("guo",
+                            "${mJobSecondList[mSecondJobPosition]} : ${mJobIdSecondList[mSecondJobPosition]}")
 
                         SPStaticUtils.put(Constant.ME_INDUSTRY_CODE,
                             mJobIdFirstList[mFirstJobPosition])
@@ -194,7 +198,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
                         ll_guide_jump_next.visibility = View.GONE
 
-                    }else{
+                    } else {
 
                         Log.i("guo", "${mJobFirstList[0]} : ${mJobIdFirstList[0]}")
                         Log.i("guo", "${mJobSecondList[0]} : ${mJobIdSecondList[0]}")
@@ -554,48 +558,25 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     // 需要上传的基础信息
     private fun getBaseInfo(): String {
 
-        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 0)
-        val nick = SPStaticUtils.getString(Constant.ME_NAME, "")
-        val age = SPStaticUtils.getInt(Constant.ME_AGE, 0)
-        val birthday = SPStaticUtils.getString(Constant.ME_BIRTH, "")
-        val height = SPStaticUtils.getInt(Constant.ME_HEIGHT, 0)
-        val school = SPStaticUtils.getString(Constant.ME_SCHOOL, "")
-        val edu = SPStaticUtils.getInt(Constant.ME_EDU, 0)
         val industryCode = SPStaticUtils.getInt(Constant.ME_INDUSTRY_CODE, 0)
         val industryName = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
         val occupationCode = SPStaticUtils.getInt(Constant.ME_OCCUPATION_CODE, 0)
         val occupationName = SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")
-        val province = SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_CODE, 0)
-        val cityCode = SPStaticUtils.getInt(Constant.ME_WORK_CITY_CODE, 0)
-        val cityName = SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "")
-        val home = SPStaticUtils.getString(Constant.ME_HOME, "")
-        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 0)
-        val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
-        val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
-        val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
-        val ta = SPStaticUtils.getString(Constant.ME_TA, "")
+
+        val homeProvinceCode = SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE, 0)
+        val homeProvinceName = SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
+        val homeCityCode = SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0)
+        val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
 
         val baseInfo =
-            " {\"user_sex\":                $sex, " +               // 性别
-                    "\"nick\":              \"$nick\"," +           // 昵称
-                    "\"age\":               $age," +                // 年龄
-                    "\"birthday\":          \"$birthday\"," +       // 出生年月日
-                    "\"height\":            $height," +             // 身高厘米
-                    "\"school_name\":       \"$school\"," +         // 学校名字
-                    "\"education\":         $edu," +                // 学历
-                    "\"industry_num\":      $industryCode," +       // 行业编码
+            " {\"industry_num\":      $industryCode," +       // 行业编码
                     "\"industry_str\":      \"$industryName\"," +       // 行业名字
                     "\"occupation_num\":    $occupationCode," +     // 岗位编码
                     "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
-                    "\"work_province_num\": \"$province\"," +           // 工作省份编码
-                    "\"work_city_num\":     \"$cityCode\"," +           // 工作城市编码
-                    "\"work_city_str\":     \"$cityName\"," +           // 工作城市名字
-                    "\"hometown\":          \"$home\"," +               // 故乡
-                    "\"salary_range\":      $income," +             // 月薪范围
-                    "\"marry_had\":         $marryState," +         // 当前婚育状况
-                    "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
-                    "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
-                    " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
+                    "\"hometown_province_num\": \"$homeProvinceCode\"," +           // 家乡省份编码
+                    "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
+                    "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
+                    "\"hometown_city_str\":     \"$homeCityName\"}"                   // 我心目中的Ta
 
         return baseInfo
 
@@ -604,39 +585,18 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     // 需要上传的更多信息
     private fun getMoreInfo(): String {
 
-        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 0)
-        val weight = SPStaticUtils.getInt(Constant.ME_WEIGHT, 0)
-        val body = SPStaticUtils.getInt(Constant.ME_BODY, 0)
-        val blood = SPStaticUtils.getString(Constant.ME_BLOOD, "")
-        val constellation = SPStaticUtils.getString(Constant.ME_CONSTELLATION, "")
-        val nationality = SPStaticUtils.getString(Constant.ME_NATIONALITY, "")
-        val loveTarget = SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0)
-        val loveTargetShow = SPStaticUtils.getInt(Constant.ME_LOVE_TARGET_SHOW, 0)
         val car = SPStaticUtils.getInt(Constant.ME_CAR, 0)
         val house = SPStaticUtils.getInt(Constant.ME_HOUSE, 0)
         val smoke = SPStaticUtils.getInt(Constant.ME_SMOKE, 0)
-        val drink = SPStaticUtils.getInt(Constant.ME_DRINK, 0)
         val haveChild = SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0)
         val wantChild = SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0)
-        val marryTime = SPStaticUtils.getInt(Constant.ME_MARRY_TIME, 0)
 
         val moreInfo =
-            " {\"user_sex\": $sex, " +                        // 性别
-                    "\"weight\":       $weight," +            // 体重公斤
-                    "\"figure_nan\":       $body," +          // 身材男
-                    "\"figure_nv\":       $body," +           // 身材女
-                    "\"blood_type\":   \"$blood\"," +         // 血型，不作筛选条
-                    "\"constellation\":   \"$constellation\"," +     // 星座，不作筛选条件
-                    "\"nationality\":   \"$nationality\"," +       // 民族，不作筛选条件
-                    "\"love_target\":       $loveTarget," +       // 恋爱目标
-                    "\"target_show\":       $loveTargetShow," +       // 是否展示目标
-                    "\"buy_car\":       $car," +           // 是否买车
+            " {\"buy_car\":       $car," +           // 是否买车
                     "\"buy_house\":       $house," +         // 是否买房
                     "\"is_smoking\":       $smoke," +        // 是否抽烟
-                    "\"is_drinking\":       $drink," +       // 是否喝酒
                     "\"child_had\":       $haveChild," +         // 是否有娃
-                    "\"want_child\":       $wantChild," +        // 想要生娃
-                    "\"marry_time\":    $marryTime}"  // 想结婚时间
+                    "\"want_child\":       $wantChild}"  // 想结婚时间
 
         return moreInfo
 

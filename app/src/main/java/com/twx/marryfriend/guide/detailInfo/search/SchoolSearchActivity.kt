@@ -332,7 +332,7 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
                 finish()
 
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
 
                 diySchool = ""
                 findViewById<EditText>(R.id.et_dialog_school_name).setText("")

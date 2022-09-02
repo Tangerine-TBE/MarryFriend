@@ -2,6 +2,7 @@ package com.twx.marryfriend.dynamic.show.others
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Rect
 import android.util.Log
 import android.view.KeyEvent
@@ -126,6 +127,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     // 删除dialog 对应的position
     private var twoPosition = 0
 
+    private var isBackFresh = false
+
     var emojiList: MutableList<String> = arrayListOf()
     private lateinit var emojiAdapter: EmojiDetailAdapter
 
@@ -160,8 +163,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun initView() {
         super.initView()
-
-        Log.i("guo", "trend : ${intent.getIntExtra("trendId", 0)}")
 
         trendId = intent.getIntExtra("trendId", 0)
         userId = intent.getIntExtra("usersId", 0)
@@ -221,6 +222,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         sfl_dynamic_other_show_refresh.setRefreshFooter(ClassicsFooter(this))
 
+        isBackFresh = false
+
     }
 
     override fun initLoadData() {
@@ -250,7 +253,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         super.initEvent()
 
         iv_dynamic_other_show_finish.setOnClickListener {
-            finish()
+
+            if (isBackFresh) {
+                val intent = intent
+                setResult(RESULT_OK, intent)
+                finish()
+            } else {
+                finish()
+            }
+
         }
 
         ll_dynamic_other_show_mode.setOnClickListener {
@@ -384,10 +395,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             val intent = Intent(this, DynamicMineLikeActivity::class.java)
             intent.putExtra("trendId", trendId)
             intent.putExtra("userId", userId)
-
-            Log.i("guo", "xxxxx------trendId :$trendId")
-            Log.i("guo", "xxxxx------userId :$userId")
-
             startActivity(intent)
         }
 
@@ -759,6 +766,19 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         doDeleteTrendPresent.doDeleteTrend(map)
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (isBackFresh) {
+                val intent = intent
+                setResult(RESULT_OK, intent)
+                finish()
+            } else {
+                finish()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     override fun onLoading() {
 
     }
@@ -913,35 +933,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 200 -> {
                     ToastUtils.showShort("重新加载数据")
 
-//                    getCommentOne()
-
-//                    val content: String,    // 评论内容
-//                    val create_time: String,     //评论时间，年月日 时分秒
-
-//                    val first_img_url: String,     // 前者头像
-//                    val first_nick: String,        // 前者昵称
-//                    val first_sex: Int,            // 前者性别
-
-//                    val host_read: Int,
-//                    val host_uid: Int,             // 动态主人uid
-//                    val id: Int,                   // 评论列表id
-//                    val last_img_url: String,      // 后者头像
-//                    val last_nick: String,         // 后者性别
-//                    val last_sex: Int,             // 后者昵称
-//                    val one_level_uid: Int,        // 一级评论uid
-//                    val one_read: Int,
-//                    val pid: Int,                  // 父级id
-//                    val trends_id: Int,            // 动态id
-//                    val two_first_uid: Int,        // 前者uid
-//                    val two_last_uid: Int,         // 后者uid
-//                    val two_read: Int,
-
-                    Log.i("guo", "data : ${mCommentOneList[mItem].all}")
-
-
                     when (mCommentOneList[mItem].all) {
                         0 -> {
-
                             // 此时一个数据都没有，不要添加到two里面，直接添加到one里面
 
                             mCommentOneList[mItem].list.content_two = content
@@ -1055,7 +1048,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     val x: MutableList<CommentTwoList> = arrayListOf()
                     val y: MutableList<CommentTwoList> = arrayListOf()
                     val bean = CommentBean(list, x, y, 0, 0)
-                    mCommentOneList.add(bean)
+                    mCommentOneList.add(0, bean)
                     adapter.notifyDataSetChanged()
 
                     mode = 0
@@ -1103,8 +1096,20 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                     }
 
-                    Glide.with(applicationContext).load(info.headface)
-                        .into(riv_dynamic_other_show_avatar)
+                    if (info.user_sex == 1) {
+                        Glide.with(applicationContext)
+                            .load(info.headface)
+                            .error(R.drawable.ic_mine_male_default)
+                            .placeholder(R.drawable.ic_mine_male_default)
+                            .into(riv_dynamic_other_show_avatar)
+                    } else {
+                        Glide.with(applicationContext)
+                            .load(info.headface)
+                            .error(R.drawable.ic_mine_female_default)
+                            .placeholder(R.drawable.ic_mine_female_default)
+                            .into(riv_dynamic_other_show_avatar)
+                    }
+
                     tv_dynamic_other_show_name.text = info.nick
 
 
@@ -1579,7 +1584,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         1 -> {
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
+                            Glide.with(applicationContext)
+                                .load(image[0].image_url)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_dynamic_other_show_like1)
 
                             iv_dynamic_other_show_like2.visibility = View.GONE
@@ -1588,7 +1596,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         2 -> {
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
+                            Glide.with(applicationContext)
+                                .load(image[0].image_url)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_dynamic_other_show_like1)
 
                             iv_dynamic_other_show_like2.visibility = View.VISIBLE
@@ -1599,7 +1610,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         }
                         3 -> {
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
+                            Glide.with(applicationContext)
+                                .load(image[0].image_url)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
                                 .into(iv_dynamic_other_show_like1)
 
                             iv_dynamic_other_show_like2.visibility = View.VISIBLE
@@ -1637,12 +1651,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onItemContentClick(v: View?, positionOne: Int) {
         // 父评论点击评论
-        ToastUtils.showShort("点击父评论的评论内容 ： $positionOne ")
 
         mItem = positionOne
 
         // edittext 获取焦点 模式切换成父评论
-
         eet_emoji_other_edit.hint = "回复${mCommentOneList[positionOne].list.nick_one}"
 
         eet_emoji_other_edit.isFocusable = true
@@ -1679,7 +1691,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onItemChildContentClick(v: View?, positionOne: Int) {
-        ToastUtils.showShort(" 子评论回复内容点击 ${positionOne}/000")
 
         mItem = positionOne
 
@@ -1721,16 +1732,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onChildReplyClick(positionOne: Int, two: Int) {
         // 子评论回复内容点击事件
-        ToastUtils.showShort(" 子评论回复内容点击 ${positionOne}/${two}")
 
         mItem = positionOne
         mChildItem = two
 
-
         childAvatar = mCommentOneList[positionOne].twoList[two].last_img_url
         childNick = mCommentOneList[positionOne].twoList[two].last_nick
         childSex = mCommentOneList[positionOne].twoList[two].last_sex
-
 
         // edittext 获取焦点 模式切换成父评论
 
@@ -1771,7 +1779,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onLocalChildReplyClick(positionOne: Int, two: Int) {
         // 子评论回复内容点击事件
-        ToastUtils.showShort("子评论回复内容点击 ${positionOne}/${two}")
 
         mItem = positionOne
 
@@ -1780,7 +1787,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         childAvatar = mCommentOneList[positionOne].twoLocalList[two].last_img_url
         childNick = mCommentOneList[positionOne].twoLocalList[two].last_nick
         childSex = mCommentOneList[positionOne].twoLocalList[two].last_sex
-
 
         // edittext 获取焦点 模式切换成父评论
 
@@ -1836,14 +1842,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].list.content_one)
         }
 
     }
@@ -1880,14 +1880,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
             }
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].list.content_two)
         }
 
     }
@@ -1921,14 +1915,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].twoList[two].content)
+
         }
     }
 
@@ -1960,14 +1949,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
 
         } else {
-            ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            ToastUtils.showShort("已复制此评论")
+            ClipboardUtils.copyText(mCommentOneList[positionOne].twoLocalList[two].content)
         }
     }
 
@@ -1978,27 +1961,36 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         override fun onCreate() {
             super.onCreate()
 
-            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_other_edit_close)
-            val nonFocus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_nonfocus)
+            val close = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
+            val focus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_focus)
             val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
-            val cancel = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
+
+            if (haveFocus) {
+                focus.text = "取消关注"
+                focus.setTextColor(Color.parseColor("#FF4444"))
+            } else {
+                focus.text = "关注"
+                focus.setTextColor(Color.parseColor("#101010"))
+            }
 
             close.setOnClickListener {
                 dismiss()
             }
 
-            nonFocus.setOnClickListener {
-                ToastUtils.showShort("取消关注")
-                doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+            focus.setOnClickListener {
+                isBackFresh = true
+                if (haveFocus) {
+                    ToastUtils.showShort("取消关注")
+                    doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                } else {
+                    ToastUtils.showShort("关注")
+                    doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                }
                 dismiss()
             }
 
             report.setOnClickListener {
                 ToastUtils.showShort("举报该动态")
-                dismiss()
-            }
-
-            cancel.setOnClickListener {
                 dismiss()
             }
 
@@ -2009,7 +2001,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         }
 
     }
-
 
     inner class DynamicDeleteDialog(context: Context) :
         FullScreenPopupView(context) {

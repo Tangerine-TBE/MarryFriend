@@ -42,6 +42,7 @@ import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
 import com.twx.marryfriend.net.callback.IDoUploadAvatarCallback
 import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doUploadAvatarPresentImpl
+import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_avatar_tool.*
@@ -406,8 +407,12 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
                 ToastUtils.showShort("头像上传成功")
 
+                val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                    BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
+                }
+
                 FileUtils.delete(mPhotoPath)
-                photoBitmap?.let { saveBitmap(it, mPhotoPath) }
+                bitmap?.let { saveBitmap(it, mPhotoPath) }
 
                 Thread {
 

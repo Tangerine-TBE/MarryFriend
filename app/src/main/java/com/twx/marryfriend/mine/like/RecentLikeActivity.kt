@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.blankj.utilcode.util.SPStaticUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.mine.comment.mine.CommentMineFragment
 import com.twx.marryfriend.mine.comment.other.CommentOtherFragment
 import com.twx.marryfriend.mine.like.mine.LikeMineFragment
@@ -23,6 +25,7 @@ class RecentLikeActivity : MainBaseViewActivity() {
 
     override fun initView() {
         super.initView()
+
 
         mine = LikeMineFragment().newInstance(this)
         other = LikeOtherFragment().newInstance(this)

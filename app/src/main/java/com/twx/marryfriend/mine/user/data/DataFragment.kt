@@ -28,7 +28,6 @@ import com.baidubce.services.bos.BosClientConfiguration
 import com.blankj.utilcode.util.*
 import com.blankj.utilcode.util.FileUtils
 import com.bumptech.glide.Glide
-import com.google.android.exoplayer2.util.NalUnitUtil
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -50,14 +49,14 @@ import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
-import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
-import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
+import com.twx.marryfriend.mine.user.data.adapter.DataLifePhotoAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.yalantis.ucrop.UCrop
@@ -65,9 +64,10 @@ import kotlinx.android.synthetic.main.fragment_data.*
 import java.io.*
 import java.util.*
 
+
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
-    IDoFaceDetectCallback, IDoUploadPhotoCallback, IDoUpdateProportionCallback,
-    IDoUpdateGreetInfoCallback {
+    IDoFaceDetectCallback, IDoUpdateProportionCallback,
+    IDoUpdateGreetInfoCallback, IDoUploadAvatarCallback {
 
     // 敏感字
     private var banTextList: MutableList<String> = arrayListOf()
@@ -112,7 +112,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private lateinit var mediaPlayer: MediaPlayer
 
-
     // 时间选择器数据
     // 年
     var year = 0
@@ -144,16 +143,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private var mCityIdFirstList: MutableList<Int> = arrayListOf()
     private var mCitySecondList: MutableList<String> = arrayListOf()
     private var mCityIdSecondList: MutableList<Int> = arrayListOf()
-    private var mCityThirdList: MutableList<String> = arrayListOf()
-    private var mCityIdThirdList: MutableList<String> = arrayListOf()
-
 
     private var mWeightList: MutableList<String> = arrayListOf()
     private var mBodyList: MutableList<String> = arrayListOf()
 
+    private var lifeInfoList: MutableList<DataLifeBean> = arrayListOf()
     private var baseInfoList: MutableList<String> = arrayListOf()
     private var moreInfoList: MutableList<String> = arrayListOf()
 
+
+    private lateinit var lifeAdapter: DataLifePhotoAdapter
     private lateinit var baseAdapter: DataBaseAdapter
     private lateinit var moreAdapter: DataMoreAdapter
 
@@ -161,9 +160,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private lateinit var doUpdateMoreInfoPresent: doUpdateMoreInfoPresentImpl
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
+    private lateinit var doUploadAvatarPresent: doUploadAvatarPresentImpl
 
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
-    private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
     private lateinit var updateProportionPresent: doUpdateProportionPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
@@ -198,11 +197,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         doUpdateBaseInfoPresent = doUpdateBaseInfoPresentImpl.getsInstance()
         doUpdateBaseInfoPresent.registerCallback(this)
 
+        doUploadAvatarPresent = doUploadAvatarPresentImpl.getsInstance()
+        doUploadAvatarPresent.registerCallback(this)
+
         doFaceDetectPresent = doFaceDetectPresentImpl.getsInstance()
         doFaceDetectPresent.registerCallback(this)
-
-        uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
-        uploadPhotoPresent.registerCallback(this)
 
         updateProportionPresent = doUpdateProportionPresentImpl.getsInstance()
         updateProportionPresent.registerCallback(this)
@@ -225,8 +224,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         initInfo()
 
+        lifeAdapter = DataLifePhotoAdapter(lifeInfoList)
         baseAdapter = DataBaseAdapter(DataProvider.dataBaseData, baseInfoList)
         moreAdapter = DataMoreAdapter(DataProvider.dataMoreData, moreInfoList)
+
+        val lifeManager = LinearLayoutManager(context)
+        lifeManager.orientation = LinearLayoutManager.HORIZONTAL
 
         val baseScrollManager: LinearLayoutManager = object : LinearLayoutManager(context) {
             override fun canScrollVertically(): Boolean {
@@ -239,6 +242,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 return false
             }
         }
+
+
+
+        rv_user_data_life_container.layoutManager = lifeManager
+        rv_user_data_life_container.adapter = lifeAdapter
 
         rv_user_data_base.layoutManager = baseScrollManager
         rv_user_data_base.adapter = baseAdapter
@@ -317,13 +325,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         mIncomeList.add("保密")
-        mIncomeList.add("五千及以下")
-        mIncomeList.add("五千~一万")
-        mIncomeList.add("一万~两万")
-        mIncomeList.add("两万~四万")
-        mIncomeList.add("四万~七万")
-        mIncomeList.add("七万及以上")
-
+        mIncomeList.add("5k及以下")
+        mIncomeList.add("5k~8k")
+        mIncomeList.add("8k~12k")
+        mIncomeList.add("12k~16k")
+        mIncomeList.add("16k~20k")
+        mIncomeList.add("20k~35k")
+        mIncomeList.add("35k~50k")
+        mIncomeList.add("50k~70k")
+        mIncomeList.add("70k及以上")
 
         val size = SPStaticUtils.getInt(Constant.INDUSTRY_SUM, 0)
         for (i in 0.until(size)) {
@@ -405,6 +415,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //        for (i in 0.until(aa.data.size)) {
 //            banTextList.add(aa.data[i])
 //        }
+
 
     }
 
@@ -589,11 +600,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             startActivityForResult(intent, 0)
         }
 
-        ll_user_data_life.setOnClickListener {
-            val intent = Intent(context, LifePhotoActivity::class.java)
-            intent.putExtra("activity", "data")
-            startActivityForResult(intent, 0)
-        }
+        lifeAdapter.setOnItemClickListener(object : DataLifePhotoAdapter.OnItemClickListener {
+            override fun onItemClick(v: View?, position: Int) {
+                val intent = Intent(context, LifePhotoActivity::class.java)
+                intent.putExtra("activity", "data")
+                startActivityForResult(intent, 0)
+            }
+        })
 
         baseAdapter.setOnItemClickListener(object : DataBaseAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
@@ -734,7 +747,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -760,7 +773,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 // 购车情况
                                                 showCarDialog()
                                             } else {
-                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                         "") == ""
                                                 ) {
                                                     // 籍贯
@@ -808,7 +821,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 身高
                             showHeightDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                                 // 月收入
                                 showIncomeDialog()
                             } else {
@@ -834,7 +847,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                     // 购车情况
                                                     showCarDialog()
                                                 } else {
-                                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                             "") == ""
                                                     ) {
                                                         // 籍贯
@@ -876,7 +889,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -902,7 +915,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 // 购车情况
                                                 showCarDialog()
                                             } else {
-                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                         "") == ""
                                                 ) {
                                                     // 籍贯
@@ -939,7 +952,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                         // 月收入
                         showIncomeDialog()
                     } else {
@@ -965,7 +978,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             // 购车情况
                                             showCarDialog()
                                         } else {
-                                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                     "") == ""
                                             ) {
                                                 // 籍贯
@@ -997,7 +1010,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             3 -> {
-                if (SPStaticUtils.getInt(Constant.ME_INCOME, 7) == 7) {
+                if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -1025,7 +1038,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         // 购车情况
                                         showCarDialog()
                                     } else {
-                                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                 "") == ""
                                         ) {
                                             // 籍贯
@@ -1094,7 +1107,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                     // 购车情况
                                                     showCarDialog()
                                                 } else {
-                                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                             "") == ""
                                                     ) {
                                                         // 籍贯
@@ -1162,7 +1175,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 // 购车情况
                                                 showCarDialog()
                                             } else {
-                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                         "") == ""
                                                 ) {
                                                     // 籍贯
@@ -1225,7 +1238,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             // 购车情况
                                             showCarDialog()
                                         } else {
-                                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                     "") == ""
                                             ) {
                                                 // 籍贯
@@ -1283,7 +1296,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         // 购车情况
                                         showCarDialog()
                                     } else {
-                                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                 "") == ""
                                         ) {
                                             // 籍贯
@@ -1336,7 +1349,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                     // 购车情况
                                     showCarDialog()
                                 } else {
-                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                             "") == ""
                                     ) {
                                         // 籍贯
@@ -1384,7 +1397,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                 // 购车情况
                                 showCarDialog()
                             } else {
-                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                         "") == ""
                                 ) {
                                     // 籍贯
@@ -1425,7 +1438,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 购车情况
                             showCarDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                     "") == ""
                             ) {
                                 // 籍贯
@@ -1461,7 +1474,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 购车情况
                         showCarDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                 "") == ""
                         ) {
                             // 籍贯
@@ -1492,7 +1505,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 购车情况
                     showCarDialog()
                 } else {
-                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                             "") == ""
                     ) {
                         // 籍贯
@@ -1518,7 +1531,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             13 -> {
-                if (SPStaticUtils.getString(Constant.ME_HOME, "") == "") {
+                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") == "") {
                     // 籍贯
                     showHomeDialog()
                 } else {
@@ -1572,6 +1585,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 获取、更新生活照
     fun updateLife() {
+
+        lifeInfoList.clear()
+
         val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
         val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
 
@@ -1581,221 +1597,30 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
         val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
 
-        tv_user_data_life_one.visibility = View.GONE
-        tv_user_data_life_two.visibility = View.GONE
-        tv_user_data_life_three.visibility = View.GONE
+        val lifePhotoFour = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FOUR, "")
+        val lifePhotoFourState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
+
+        val lifePhotoFive = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FIVE, "")
+        val lifePhotoFiveState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
 
         if (lifePhotoOne != "") {
-            if (lifePhotoTwo != "") {
-                if (lifePhotoThree != "") {
-                    // 有三张图片,全部正常显示
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(this)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(lifePhotoThree)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_three)
-                        if (lifePhotoThreeState == "0") {
-                            tv_user_data_life_three.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_three.visibility = View.GONE
-                        }
-
-                    }
-                } else {
-                    // 有两张图片，,第一、二张正常显示，第三张显示为添加
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(this)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(this)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(this).load(R.drawable.ic_data_life_add)
-                            .into(iv_user_data_life_three)
-                    }
-                }
-            } else {
-                // 有一张图片,第一张正常显示，第二张显示为添加
-                ThreadUtils.runOnUiThread {
-                    Glide.with(this)
-                        .load(lifePhotoOne)
-                        .error(R.drawable.ic_data_life_default)
-                        .placeholder(R.drawable.ic_data_life_default)
-                        .into(iv_user_data_life_one)
-                    if (lifePhotoOneState == "0") {
-                        tv_user_data_life_one.visibility = View.VISIBLE
-                    } else {
-                        tv_user_data_life_one.visibility = View.GONE
-                    }
-
-                    rl_user_data_life_two.visibility = View.VISIBLE
-                    Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_two)
-                    rl_user_data_life_three.visibility = View.GONE
-                }
-            }
-        } else {
-            ThreadUtils.runOnUiThread {
-                Glide.with(this).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
-                rl_user_data_life_two.visibility = View.GONE
-                rl_user_data_life_three.visibility = View.GONE
-            }
+            lifeInfoList.add(DataLifeBean(lifePhotoOne, lifePhotoOneState))
+        }
+        if (lifePhotoTwo != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoTwo, lifePhotoTwoState))
+        }
+        if (lifePhotoThree != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoThree, lifePhotoThreeState))
+        }
+        if (lifePhotoFour != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoFour, lifePhotoFourState))
+        }
+        if (lifePhotoFive != "") {
+            lifeInfoList.add(DataLifeBean(lifePhotoFive, lifePhotoFiveState))
         }
 
-    }
+        lifeAdapter.notifyDataSetChanged()
 
-
-    fun update111(activity: UserActivity) {
-        val lifePhotoOne = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "")
-        val lifePhotoOneState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
-
-        val lifePhotoTwo = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO, "")
-        val lifePhotoTwoState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
-
-        val lifePhotoThree = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE, "")
-        val lifePhotoThreeState = SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
-
-        if (lifePhotoOne != "") {
-            if (lifePhotoTwo != "") {
-                if (lifePhotoThree != "") {
-                    // 有三张图片,全部正常显示
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(activity)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(activity)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(activity)
-                            .load(lifePhotoThree)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_three)
-                        if (lifePhotoThreeState == "0") {
-                            tv_user_data_life_three.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_three.visibility = View.GONE
-                        }
-
-                    }
-                } else {
-                    // 有两张图片，,第一、二张正常显示，第三张显示为添加
-                    ThreadUtils.runOnUiThread {
-                        Glide.with(activity)
-                            .load(lifePhotoOne)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_one)
-                        if (lifePhotoOneState == "0") {
-                            tv_user_data_life_one.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_one.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_two.visibility = View.VISIBLE
-                        Glide.with(activity)
-                            .load(lifePhotoTwo)
-                            .error(R.drawable.ic_data_life_default)
-                            .placeholder(R.drawable.ic_data_life_default)
-                            .into(iv_user_data_life_two)
-                        if (lifePhotoTwoState == "0") {
-                            tv_user_data_life_two.visibility = View.VISIBLE
-                        } else {
-                            tv_user_data_life_two.visibility = View.GONE
-                        }
-
-                        rl_user_data_life_three.visibility = View.VISIBLE
-                        Glide.with(activity).load(R.drawable.ic_data_life_add)
-                            .into(iv_user_data_life_three)
-                    }
-                }
-            } else {
-                // 有一张图片,第一张正常显示，第二张显示为添加
-                ThreadUtils.runOnUiThread {
-                    Glide.with(activity)
-                        .load(lifePhotoOne)
-                        .error(R.drawable.ic_data_life_default)
-                        .placeholder(R.drawable.ic_data_life_default)
-                        .into(iv_user_data_life_one)
-                    if (lifePhotoOneState == "0") {
-                        tv_user_data_life_one.visibility = View.VISIBLE
-                    } else {
-                        tv_user_data_life_one.visibility = View.GONE
-                    }
-
-                    rl_user_data_life_two.visibility = View.VISIBLE
-                    Glide.with(activity).load(R.drawable.ic_data_life_add)
-                        .into(iv_user_data_life_two)
-                    rl_user_data_life_three.visibility = View.GONE
-                }
-            }
-        } else {
-            ThreadUtils.runOnUiThread {
-                Glide.with(activity).load(R.drawable.ic_data_life_add).into(iv_user_data_life_one)
-                rl_user_data_life_two.visibility = View.GONE
-                rl_user_data_life_three.visibility = View.GONE
-            }
-        }
     }
 
     // 获取所有数据更新视图
@@ -1845,20 +1670,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         job = when (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")) {
             "" -> "未填写"
             else -> "${
-                SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                    "")
-            }-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
+                SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")}-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
         }
 
-        when (SPStaticUtils.getInt(Constant.ME_INCOME, 7)) {
+        when (SPStaticUtils.getInt(Constant.ME_INCOME, 10)) {
             0 -> income = "保密"
-            1 -> income = "五千及以下"
-            2 -> income = "五千~一万"
-            3 -> income = "一万~两万"
-            4 -> income = "两万~四万"
-            5 -> income = "四万~七万"
-            6 -> income = "七万及以上"
-            7 -> income = "未填写"
+            1 -> income = "5k及以下"
+            2 -> income = "5k~8k"
+            3 -> income = "8k~12k"
+            4 -> income = "12k~16k"
+            5 -> income = "16k~20k"
+            6 -> income = "20k~35k"
+            7 -> income = "35k~50k"
+            8 -> income = "50k~70k"
+            9 -> income = "70k及以上"
+            10 -> income = "未填写"
         }
 
         workPlace = when (SPStaticUtils.getString(Constant.ME_WORK, "")) {
@@ -1908,12 +1734,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         when (SPStaticUtils.getInt(Constant.ME_HOUSE, 5)) {
-            0 -> house = "和家人同住"
-            1 -> house = "已购房"
-            2 -> house = "租房"
-            3 -> house = "打算婚后购房"
-            4 -> house = "住在单位宿舍"
-            5 -> house = "未填写"
+            0 -> house = "未填写"
+            1 -> house = "和家人同住"
+            2 -> house = "已购房"
+            3 -> house = "租房"
+            4 -> house = "打算婚后购房"
+            5 -> house = "住在单位宿舍"
         }
 
         when (SPStaticUtils.getInt(Constant.ME_CAR, 0)) {
@@ -1922,9 +1748,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             2 -> car = "没买"
         }
 
-        home = when (SPStaticUtils.getString(Constant.ME_HOME, "")) {
+        home = when (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")) {
             "" -> "未填写"
-            else -> SPStaticUtils.getString(Constant.ME_HOME, "")
+            else -> "${
+                SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME,
+                    "")
+            }-${SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")}"
+
         }
 
         weight = when (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0)) {
@@ -2533,7 +2363,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         return result
     }
 
-
     // ---------------------------------- 上传信息 ----------------------------------
 
     // 开始上传信息
@@ -2550,25 +2379,25 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
         doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
-        // 上传头像
-        if (mPhotoUrl != "") {
-            val uploadPhotoMap: MutableMap<String, String> = TreeMap()
-            uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            uploadPhotoMap[Contents.IMAGE_URL] = mPhotoUrl
-            uploadPhotoMap[Contents.FILE_TYPE] = "png"
-            uploadPhotoMap[Contents.FILE_NAME] = "head.png"
-            uploadPhotoMap[Contents.CONTENT] = "0"
-            uploadPhotoMap[Contents.KIND] = 1.toString()
-            uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
-        } else {
-            Log.i("guo", "getBaseInfo")
-        }
 
         // 更新资料完善度
         val proportionMap: MutableMap<String, String> = TreeMap()
         proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         proportionMap[Contents.PROPORTION] = proportion.toString()
         updateProportionPresent.doUpdateProportion(proportionMap)
+
+    }
+
+    // 需要上传的基础信息
+    private fun updateAvatar(photoUrl: String, type: String, name: String) {
+
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
     }
 
@@ -2598,8 +2427,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val homeCityCode = SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0)
         val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
 
-        val home = SPStaticUtils.getString(Constant.ME_HOME, "")
-        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 7)
+        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 10)
         val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
         val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
         val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
@@ -2705,13 +2533,27 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
-
     override fun onLoading() {
 
     }
 
     override fun onError() {
 
+    }
+
+    override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
+        if (uploadAvatarBean != null) {
+            if (uploadAvatarBean.code == 200) {
+                ToastUtils.showShort("上传成功")
+            } else {
+                ToastUtils.showShort(uploadAvatarBean.msg)
+            }
+        }
+
+    }
+
+    override fun onDoUploadAvatarError() {
+        ToastUtils.showShort("上传失败")
     }
 
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
@@ -2743,13 +2585,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 iv_user_data_avatar.setImageDrawable(null)
             }
 
+
+            val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
+            }
+
+
             iv_user_data_avatar.setImageBitmap(photoBitmap)
 
             tv_user_data_avatar_check.visibility = View.VISIBLE
 
             FileUtils.delete(mPhotoPath)
 
-            photoBitmap?.let { saveBitmap(it, mPhotoPath) }
+            if (bitmap != null) {
+                saveBitmap(bitmap, mPhotoPath)
+            }
 
             Thread {
 
@@ -2770,10 +2620,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     SPStaticUtils.getString(Constant.USER_ID, "default")
                 }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
-
                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
                 Log.i("guo", mPhotoUrl)
+
+                updateAvatar(mPhotoUrl,
+                    FileUtils.getFileExtension(mPhotoPath),
+                    FileUtils.getFileNameNoExtension(mPhotoPath))
 
             }.start()
 
@@ -2791,15 +2644,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
         ImageUtils.save(bitmap, targetPath, Bitmap.CompressFormat.PNG)
         return targetPath
-    }
-
-    override fun onDoUploadPhotoSuccess(uploadPhotoBean: UploadPhotoBean?) {
-        lastBaseInfo = getBaseInfo()
-        lastMoreInfo = getMoreInfo()
-    }
-
-    override fun onDoUploadPhotoError() {
-
     }
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
@@ -2826,45 +2670,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     inner class PhotoGuideDialog(context: Context) : FullScreenPopupView(context) {
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_photo_guide
+        override fun getImplLayoutId(): Int = R.layout.dialog_data_avatar
 
         override fun onCreate() {
             super.onCreate()
 
-            val assetManager = context.assets
-
-            val goodOne: InputStream = assetManager.open("pic/pic_guide_photo_good_one.png")
-            val goodTwo: InputStream = assetManager.open("pic/pic_guide_photo_good_two.png")
-            val goodThree: InputStream = assetManager.open("pic/pic_guide_photo_good_three.png")
-
-            val badOne: InputStream = assetManager.open("pic/pic_guide_photo_bad_one.png")
-            val badTwo: InputStream = assetManager.open("pic/pic_guide_photo_bad_two.png")
-            val badThree: InputStream = assetManager.open("pic/pic_guide_photo_bad_three.png")
-            val badFour: InputStream = assetManager.open("pic/pic_guide_photo_bad_four.png")
-            val badFive: InputStream = assetManager.open("pic/pic_guide_photo_bad_five.png")
-
-            findViewById<ImageView>(R.id.iv_dialog_photo_good_one).background =
-                BitmapDrawable(BitmapFactory.decodeStream(goodOne))
-            findViewById<ImageView>(R.id.iv_dialog_photo_good_two).background =
-                BitmapDrawable(BitmapFactory.decodeStream(goodTwo))
-            findViewById<ImageView>(R.id.iv_dialog_photo_good_three).background =
-                BitmapDrawable(BitmapFactory.decodeStream(goodThree))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_one).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badOne))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_two).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badTwo))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_three).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badThree))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_four).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badFour))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_five).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badFive))
-
-            findViewById<ImageView>(R.id.iv_dialog_photo_close).setOnClickListener {
+            findViewById<TextView>(R.id.tv_dialog_data_avatar_cancel).setOnClickListener {
                 dismiss()
             }
 
-            findViewById<TextView>(R.id.tv_dialog_photo_confirm).setOnClickListener {
+            findViewById<TextView>(R.id.tv_dialog_data_avatar_album).setOnClickListener {
                 ToastUtils.showShort("打开相册")
 
                 dismiss()
@@ -2907,7 +2722,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             }
 
-            findViewById<TextView>(R.id.tv_dialog_photo_camera).setOnClickListener {
+            findViewById<TextView>(R.id.tv_dialog_data_avatar_photo).setOnClickListener {
                 ToastUtils.showShort("打开相机")
 
                 dismiss()
@@ -3088,7 +2903,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
                 haveBanText = false
@@ -3420,7 +3235,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_ideal_content).setText("")
                 haveBanText = false
@@ -3529,7 +3344,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedJump = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                ToastUtils.showShort(textVerifyBean.error_msg)
                 name1 = ""
                 findViewById<EditText>(R.id.et_user_data_name_name).setText("")
                 haveBanText = false
@@ -4185,11 +4000,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 SPStaticUtils.put(Constant.ME_WORK, work)
 
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_WORK_PROVINCE_PICK, mCityFirstPosition)
                 SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_WORK_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true
@@ -4686,7 +4504,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                4 ->{
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -5066,26 +4884,27 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         private fun initChoose() {
-            when (SPStaticUtils.getInt(Constant.ME_HOUSE, 5)) {
-                5 -> {
-                }
+            when (SPStaticUtils.getInt(Constant.ME_HOUSE, 0)) {
                 0 -> {
+
+                }
+                1 -> {
                     tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_one.setTextColor(Color.parseColor("#FF4444"))
                 }
-                1 -> {
+                2 -> {
                     tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_two.setTextColor(Color.parseColor("#FF4444"))
                 }
-                2 -> {
+                3 -> {
                     tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_three.setTextColor(Color.parseColor("#FF4444"))
                 }
-                3 -> {
+                4 -> {
                     tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_four.setTextColor(Color.parseColor("#FF4444"))
                 }
-                4 -> {
+                5 -> {
                     tv_five.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                     tv_five.setTextColor(Color.parseColor("#FF4444"))
                 }
@@ -5311,13 +5130,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 ToastUtils.showShort(home)
 
-                SPStaticUtils.put(Constant.ME_HOME, home)
-
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                    mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE,
+                    mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_HOME_PROVINCE_PICK, mCityFirstPosition)
                 SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_HOME_CITY_CODE,
+                    mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_HOME_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true

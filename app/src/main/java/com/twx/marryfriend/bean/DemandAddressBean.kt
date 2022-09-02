@@ -6,6 +6,15 @@ package com.twx.marryfriend.bean
  */
 data class DemandAddressBean(
     val code: Int,
-    val data: List<Any>,
-    val msg: String
+    val data: List<DemandAddressData>,
+    val msg: String,
+)
+
+data class DemandAddressData(
+    val id: Int,
+    val user_id: Int,
+    val work_city_code: Int,
+    val work_city_str: String,
+    val work_province_code: Int,
+    val work_province_str: String,
 )

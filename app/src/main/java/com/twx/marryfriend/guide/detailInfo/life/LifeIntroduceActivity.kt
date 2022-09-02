@@ -214,8 +214,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
                             }
 
-                        val putObjectFromFileResponse =
-                            client.putObject("user${name}", FileUtils.getFileName(picPath), file)
+                        val putObjectFromFileResponse = client.putObject("user${name}", FileUtils.getFileName(picPath), file)
 
                         picUrl = client.generatePresignedUrl("user${name}",
                             FileUtils.getFileName(picPath), -1).toString()
@@ -274,7 +273,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
             // 进行图片审核
             doFaceDetect()
         } else {
-            ToastUtils.showShort(textVerifyBean.data[0].msg)
+            ToastUtils.showShort(textVerifyBean.error_msg)
             et_life_introduce_introduce.setText("")
         }
 

@@ -6,55 +6,45 @@
     android:background="@drawable/shape_bg_dialog_bottom"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/iv_dialog_dynamic_other_edit_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="21dp"
-            android:layout_marginEnd="21dp"
-            android:src="@mipmap/icon_base_dialog_close" />
-
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/tv_dialog_dynamic_other_edit_nonfocus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:paddingVertical="10dp"
-        android:text="取消关注"
-        android:textColor="#404040"
-        android:textSize="17sp"
-        android:textStyle="bold" />
-
     <TextView
         android:id="@+id/tv_dialog_dynamic_other_edit_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="12dp"
         android:gravity="center"
-        android:paddingVertical="10dp"
+        android:paddingVertical="12dp"
         android:text="举报"
-        android:textColor="#404040"
+        android:textColor="#101010"
         android:textSize="17sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_dialog_dynamic_other_edit_focus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="取消关注"
+        android:textColor="#FF4444"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="#F5F5F5" />
 
     <TextView
         android:id="@+id/tv_dialog_dynamic_other_edit_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="30dp"
         android:gravity="center"
-        android:paddingVertical="10dp"
+        android:paddingVertical="24dp"
         android:text="取消"
-        android:textColor="#101010"
-        android:textSize="17sp" />
+        android:textColor="#9A9A9A"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
 
 </LinearLayout>

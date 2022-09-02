@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context=".mine.life.LifePhotoActivity">
 
     <RelativeLayout
@@ -311,11 +311,153 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:id="@+id/rl_life_photo_pic_four"
+                        android:layout_width="match_parent"
+                        android:layout_height="145dp"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/iv_life_photo_pic_four"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="15dp"
+                            android:layout_marginTop="15dp"
+                            android:scaleType="centerCrop"
+                            app:riv_corner_radius="16dp" />
+
+                        <ImageView
+                            android:id="@+id/iv_life_photo_pic_four_delete"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_photo_delete" />
+
+                        <TextView
+                            android:id="@+id/tv_life_photo_pic_four_audit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/ll_life_photo_pic_four"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginBottom="6dp"
+                            android:background="@drawable/shape_bg_audit"
+                            android:paddingHorizontal="20dp"
+                            android:paddingVertical="10dp"
+                            android:text="审核中..."
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_life_photo_pic_four"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginHorizontal="15dp"
+                            android:background="@drawable/shape_bg_describe"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/iv_life_photo_pic_four_icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_life_photo_edit" />
+
+                            <TextView
+                                android:id="@+id/tv_life_photo_pic_four"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="12dp"
+                                android:layout_marginVertical="16dp"
+                                android:ellipsize="end"
+                                android:singleLine="true"
+                                android:text="添加描述"
+                                android:textColor="#FFFFFF"
+                                android:textSize="15sp" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_life_photo_pic_five"
+                        android:layout_width="match_parent"
+                        android:layout_height="145dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="100dp"
+                        android:visibility="gone">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/iv_life_photo_pic_five"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginHorizontal="15dp"
+                            android:layout_marginTop="15dp"
+                            android:scaleType="centerCrop"
+                            app:riv_corner_radius="16dp" />
+
+                        <ImageView
+                            android:id="@+id/iv_life_photo_pic_five_delete"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/ic_photo_delete" />
+
+                        <TextView
+                            android:id="@+id/tv_life_photo_pic_five_audit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/ll_life_photo_pic_five"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginBottom="6dp"
+                            android:background="@drawable/shape_bg_audit"
+                            android:paddingHorizontal="20dp"
+                            android:paddingVertical="10dp"
+                            android:text="审核中..."
+                            android:textColor="@color/white"
+                            android:textSize="16sp" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_life_photo_pic_five"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginHorizontal="15dp"
+                            android:background="@drawable/shape_bg_describe"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/iv_life_photo_pic_five_icon"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_life_photo_edit" />
+
+                            <TextView
+                                android:id="@+id/tv_life_photo_pic_five"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginHorizontal="12dp"
+                                android:layout_marginVertical="16dp"
+                                android:ellipsize="end"
+                                android:singleLine="true"
+                                android:text="添加描述"
+                                android:textColor="#FFFFFF"
+                                android:textSize="15sp" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
                         android:id="@+id/rl_life_photo_pic_more"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="15dp"
                         android:layout_marginTop="18dp"
+                        android:layout_marginBottom="100dp"
                         android:background="@mipmap/icon_life_three"
                         android:visibility="gone" />
 

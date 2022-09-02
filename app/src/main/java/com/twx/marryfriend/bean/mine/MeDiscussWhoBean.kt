@@ -13,6 +13,7 @@ data class MeDiscussWhoBean(
 data class MeDiscussWhoData(
     val list: List<DiscussList>,
     val total: Int,
+    val server_time: String,
 )
 
 //data class DiscussList(
