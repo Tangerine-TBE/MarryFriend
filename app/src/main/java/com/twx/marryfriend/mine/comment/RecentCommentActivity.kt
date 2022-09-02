@@ -2,9 +2,11 @@ package com.twx.marryfriend.mine.comment
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.blankj.utilcode.util.SPStaticUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.mine.comment.mine.CommentMineFragment
 import com.twx.marryfriend.mine.comment.other.CommentOtherFragment
 import kotlinx.android.synthetic.main.activity_recent_comment.*
@@ -19,6 +21,7 @@ class RecentCommentActivity : MainBaseViewActivity() {
 
     override fun initView() {
         super.initView()
+
 
         mine = CommentMineFragment().newInstance(this)
         other = CommentOtherFragment().newInstance(this)

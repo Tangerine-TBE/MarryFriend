@@ -38,7 +38,7 @@ import com.twx.marryfriend.net.impl.doUpdateDemandInfoPresentImpl
 import kotlinx.android.synthetic.main.fragment_target.*
 import java.util.*
 
-class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddressCallback,
+class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
     IDoPlusDemandAddressCallback {
 
     private var mAgeMinList: MutableList<Int> = arrayListOf()
@@ -76,7 +76,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
     private lateinit var jobAddressAdapter: JobAddressAdapter
 
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
-    private lateinit var doGetDemandAddressPresent: doGetDemandAddressPresentImpl
     private lateinit var doPlusDemandAddressPresent: doPlusDemandAddressPresentImpl
 
     override fun onCreateView(
@@ -122,9 +121,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
         updateDemandInfoPresent = doUpdateDemandInfoPresentImpl.getsInstance()
         updateDemandInfoPresent.registerCallback(this)
-
-        doGetDemandAddressPresent = doGetDemandAddressPresentImpl.getsInstance()
-        doGetDemandAddressPresent.registerCallback(this)
 
         doPlusDemandAddressPresent = doPlusDemandAddressPresentImpl.getsInstance()
         doPlusDemandAddressPresent.registerCallback(this)
@@ -258,18 +254,16 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
     }
 
-    // 获取择偶省市要求列表
-    private fun getDemandAddress() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
-    }
+
 
     // 修改择偶省市要求列表
     private fun uploadDemandAddress() {
         val demandInfoMap: MutableMap<String, String> = TreeMap()
         demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
+
+        Log.i("guo", "jobAddressInfoList_updata : ${getDemandAddressInfo()}")
+
         doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
     }
 
@@ -971,8 +965,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
         if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
 
-            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
-                .split(",") as MutableList<String>
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").split(",") as MutableList<String>
             x.removeAt(0)
 
             for (i in 0.until(x.size)) {
@@ -2553,13 +2546,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
                 } else {
                     if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") != "") {
-                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
-                            ""))
+                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
 
-                        provinceInfo.add(SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME,
-                            ""))
-                        provinceCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE,
-                            0))
+                        provinceInfo.add(SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, ""))
+                        provinceCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE, 0))
                         cityInfo.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
                         cityCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0))
 
@@ -2669,9 +2659,21 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
             jobAddressAdapter.setOnItemCloseClickListener(object :
                 JobAddressAdapter.OnItemCloseClickListener {
                 override fun onItemCloseClick(v: View?, position: Int) {
+
+                    Log.i("guo", "jobAddressInfoList : ${jobAddressInfoList}")
+
                     ToastUtils.showShort("第${position}个数据需要删除")
                     jobAddressInfoList.removeAt(position)
+
+                    provinceInfo.removeAt(position)
+                    provinceCodeInfo.removeAt(position)
+                    cityInfo.removeAt(position)
+                    cityCodeInfo.removeAt(position)
+
                     jobAddressAdapter.notifyDataSetChanged()
+
+                    Log.i("guo", "jobAddressInfoList_delet : $jobAddressInfoList")
+
                     sum.text = jobAddressInfoList.size.toString()
 
                     if (jobAddressInfoList.size < 5) {
@@ -3723,14 +3725,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoGetDemandAddr
 
     override fun onDoPlusDemandAddressError() {
         ToastUtils.showShort("工作地区上传失败，请重新选择工作地区")
-    }
-
-    override fun onDoGetDemandAddressSuccess(demandAddressBean: DemandAddressBean?) {
-
-    }
-
-    override fun onDoGetDemandAddressError() {
-
     }
 
     override fun onDoUpdateDemandInfoSuccess(updateDemandInfoBean: UpdateDemandInfoBean?) {

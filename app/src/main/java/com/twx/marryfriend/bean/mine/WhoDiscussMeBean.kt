@@ -13,6 +13,7 @@ data class WhoDiscussMeBean(
 data class WhoDiscussMeData(
     val list: List<DiscussList>,
     val total: Int,
+    val server_time: String,
 )
 
 data class DiscussList(

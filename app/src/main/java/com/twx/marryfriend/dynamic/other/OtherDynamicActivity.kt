@@ -2,6 +2,7 @@ package com.twx.marryfriend.dynamic.other
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -669,14 +670,16 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         override fun onCreate() {
             super.onCreate()
 
-            val close = findViewById<ImageView>(R.id.iv_dialog_dynamic_other_edit_close)
+            val close = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_cancel)
             val report = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_report)
             val focus = findViewById<TextView>(R.id.tv_dialog_dynamic_other_edit_focus)
 
             if (haveFocus) {
                 focus.text = "取消关注"
+                focus.setTextColor(Color.parseColor("#FF4444"))
             } else {
                 focus.text = "关注"
+                focus.setTextColor(Color.parseColor("#101010"))
             }
 
             close.setOnClickListener {

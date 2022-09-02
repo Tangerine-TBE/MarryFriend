@@ -122,6 +122,8 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
         if (whoFocusMeBean != null) {
             if (whoFocusMeBean.data.list.isNotEmpty()) {
 
+                SPStaticUtils.put(Constant.LAST_FOCUS_TIME_REQUEST, whoFocusMeBean.data.server_time)
+
                 ll_focus_mime_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
@@ -155,7 +157,7 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
         } else {
             startActivity(context?.let {
                 FriendInfoActivity.getIntent(it,
-                    mList[position].guest_uid)
+                    mList[position].host_uid)
             })
         }
 

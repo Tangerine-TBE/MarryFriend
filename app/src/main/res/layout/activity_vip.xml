@@ -97,7 +97,7 @@
                             android:gravity="center"
                             android:paddingVertical="15dp"
                             android:text="普通会员"
-                            android:textColor="#DF43FC"
+                            android:textColor="#FF4444"
                             android:textSize="17sp" />
 
                         <View
@@ -117,7 +117,7 @@
                             android:gravity="center"
                             android:paddingVertical="11dp"
                             android:text="超级会员"
-                            android:textColor="#717171"
+                            android:textColor="#101010"
                             android:textSize="17sp" />
 
                     </RelativeLayout>

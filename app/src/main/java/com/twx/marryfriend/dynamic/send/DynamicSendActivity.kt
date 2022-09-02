@@ -845,7 +845,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         override fun onCreate() {
             super.onCreate()
 
-            val close: ImageView = findViewById(R.id.iv_dialog_add_choose_close)
+            val close: TextView = findViewById(R.id.tv_dialog_add_choose_cancel)
             val album: TextView = findViewById(R.id.tv_dialog_add_choose_album)
             val photo: TextView = findViewById(R.id.tv_dialog_add_choose_photo)
             val video: TextView = findViewById(R.id.tv_dialog_add_choose_video)

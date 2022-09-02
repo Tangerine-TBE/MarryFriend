@@ -33,7 +33,7 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoTextVerifyCallback{
+class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoTextVerifyCallback {
 
     private var mStepOne: StepOne? = null
     private var mStepTwo: StepTwo? = null
@@ -194,18 +194,19 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 //                            }
 //                        }
 
-                        if (SPStaticUtils.getString(Constant.ACCESS_TOKEN,"") !=null){
+                        if (SPStaticUtils.getString(Constant.ACCESS_TOKEN, "") != null) {
 
-                            Log.i("guo",SPStaticUtils.getString(Constant.ACCESS_TOKEN,""))
+                            Log.i("guo", SPStaticUtils.getString(Constant.ACCESS_TOKEN, ""))
 
                             val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN,"")
+                            map[Contents.ACCESS_TOKEN] =
+                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                             map[Contents.TEXT] = name
                             isTextVerify = true
                             doTextVerifyPresent.doTextVerify(map)
 
-                        }else{
+                        } else {
                             ToastUtils.showShort("数据加载失败，请重新打开应用")
                         }
 
@@ -300,6 +301,8 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
             sex = 1
 
+            iv_guide_sex_male.setImageResource(R.mipmap.icon_guide_sex_male)
+            iv_guide_sex_female.setImageResource(R.mipmap.icon_guide_sex_female_non)
             iv_guide_sex_male_check.setImageResource(R.drawable.ic_sex_check)
             iv_guide_sex_female_check.setImageResource(R.drawable.ic_sex_uncheck)
 
@@ -313,6 +316,8 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
             sex = 2
 
+            iv_guide_sex_male.setImageResource(R.mipmap.icon_guide_sex_male_non)
+            iv_guide_sex_female.setImageResource(R.mipmap.icon_guide_sex_female)
             iv_guide_sex_male_check.setImageResource(R.drawable.ic_sex_uncheck)
             iv_guide_sex_female_check.setImageResource(R.drawable.ic_sex_check)
 

@@ -648,43 +648,59 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     }
 
-    override fun onGetTrendSaloonSuccess(trendSaloonBean: TrendSaloonBean) {
+    override fun onGetTrendSaloonSuccess(trendSaloonBean: TrendSaloonBean?) {
 
-        if (trendSaloonBean.data.list.isNotEmpty()) {
 
-            ll_dynamic_recommend_empty.visibility = View.GONE
+        srl_dynamic_recommend_refresh.finishRefresh(true)
+        srl_dynamic_recommend_refresh.finishLoadMore(true)
 
-            val mIdList: MutableList<Int> = arrayListOf()
 
-            if (mode == "first") {
-                mTrendList.clear()
-                mDiyList.clear()
+        if (trendSaloonBean != null) {
+            if (trendSaloonBean.code == 200) {
+                if (trendSaloonBean.data.list.isNotEmpty()) {
+
+                    ll_dynamic_recommend_empty.visibility = View.GONE
+
+                    val mIdList: MutableList<Int> = arrayListOf()
+
+                    if (mode == "first") {
+                        mTrendList.clear()
+                        mDiyList.clear()
+                    }
+
+                    for (i in 0.until(trendSaloonBean.data.list.size)) {
+                        mTrendList.add(trendSaloonBean.data.list[i])
+                        mIdList.add(trendSaloonBean.data.list[i].id)
+
+                        val focus = trendSaloonBean.data.list[i].focus_uid != null
+
+                        val like = trendSaloonBean.data.list[i].guest_uid != null
+
+                        mDiyList.add(LikeBean(focus, like, trendSaloonBean.data.list[i].like_count))
+
+                    }
+
+                    max = Collections.max(mIdList)
+                    min = Collections.min(mIdList)
+
+                    adapter.notifyDataSetChanged()
+
+                } else {
+
+                    if (mode == "first") {
+                        ll_dynamic_recommend_empty.visibility = View.VISIBLE
+                        mTrendList.clear()
+                        mDiyList.clear()
+                    }
+
+                    adapter.notifyDataSetChanged()
+
+                }
+            } else {
+                ToastUtils.showShort(trendSaloonBean.msg)
             }
-
-            for (i in 0.until(trendSaloonBean.data.list.size)) {
-                mTrendList.add(trendSaloonBean.data.list[i])
-                mIdList.add(trendSaloonBean.data.list[i].id)
-
-                val focus = trendSaloonBean.data.list[i].focus_uid != null
-
-                val like = trendSaloonBean.data.list[i].guest_uid != null
-
-                mDiyList.add(LikeBean(focus, like, trendSaloonBean.data.list[i].like_count))
-
-            }
-
-            max = Collections.max(mIdList)
-            min = Collections.min(mIdList)
-
-            adapter.notifyDataSetChanged()
-
-            srl_dynamic_recommend_refresh.finishRefresh(true)
-            srl_dynamic_recommend_refresh.finishLoadMore(true)
-
-        } else {
-            srl_dynamic_recommend_refresh.finishRefresh(true)
-            srl_dynamic_recommend_refresh.finishLoadMore(true)
         }
+
     }
 
     override fun onGetTrendSaloonError() {

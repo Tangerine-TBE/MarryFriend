@@ -252,8 +252,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
             tv_vip_normal.setPadding(0, 30, 0, 30)
             tv_vip_super.setPadding(0, 20, 0, 20)
-            tv_vip_normal.setTextColor(Color.parseColor("#DF43FC"))
-            tv_vip_super.setTextColor(Color.parseColor("#717171"))
+            tv_vip_normal.setTextColor(Color.parseColor("#FF4444"))
+            tv_vip_super.setTextColor(Color.parseColor("#101010"))
 
             updateTopView(0)
 
@@ -268,8 +268,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
             tv_vip_super.setPadding(0, 30, 0, 30)
             tv_vip_normal.setPadding(0, 20, 0, 20)
-            tv_vip_super.setTextColor(Color.parseColor("#DF43FC"))
-            tv_vip_normal.setTextColor(Color.parseColor("#717171"))
+            tv_vip_super.setTextColor(Color.parseColor("#FF4444"))
+            tv_vip_normal.setTextColor(Color.parseColor("#101010"))
 
             updateTopView(1)
 
@@ -292,7 +292,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
                 Log.i("guo", "刷新普通会员的信息")
 
-                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) != 1) {
                     tv_vip_level.text = "您还不是会员"
                     tv_vip_time.visibility = View.GONE
                 } else {
@@ -308,7 +308,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
                 Log.i("guo", "刷新超级会员的信息")
 
-                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) != 2) {
                     tv_vip_level.text = "您还不是会员"
                     tv_vip_time.visibility = View.GONE
                 } else {
@@ -475,6 +475,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     override fun onDoRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
         if (refreshSelfBean != null) {
             if (refreshSelfBean.code == 200) {
+
                 SpUtil.refreshUserInfo(refreshSelfBean)
 
                 updateTopView(mode)

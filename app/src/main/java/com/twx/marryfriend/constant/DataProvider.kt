@@ -96,7 +96,7 @@ object DataProvider {
         ItemBean("搜索想看的人", R.mipmap.icon_normal_3),
         ItemBean("消息突出", R.mipmap.icon_normal_4),
         ItemBean("隐私访问", R.mipmap.icon_normal_5),
-        ItemBean("无限喜欢次数", R.mipmap.icon_normal_6),
+        ItemBean("20次喜欢次数", R.mipmap.icon_normal_6),
         ItemBean("尊贵会员标识", R.mipmap.icon_normal_7),
         ItemBean("无限次数评论", R.mipmap.icon_normal_8),
     )
@@ -107,7 +107,7 @@ object DataProvider {
         ItemBean("搜索想看的人", R.mipmap.icon_super_3),
         ItemBean("消息突出", R.mipmap.icon_super_4),
         ItemBean("隐私访问", R.mipmap.icon_super_5),
-        ItemBean("无限喜欢次数", R.mipmap.icon_super_6),
+        ItemBean("30次喜欢次数", R.mipmap.icon_super_6),
         ItemBean("尊贵会员标识", R.mipmap.icon_super_7),
         ItemBean("无限次数评论", R.mipmap.icon_super_8),
         ItemBean("消息置顶", R.mipmap.icon_super_9),

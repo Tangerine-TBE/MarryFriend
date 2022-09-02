@@ -214,8 +214,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
                             }
 
-                        val putObjectFromFileResponse =
-                            client.putObject("user${name}", FileUtils.getFileName(picPath), file)
+                        val putObjectFromFileResponse = client.putObject("user${name}", FileUtils.getFileName(picPath), file)
 
                         picUrl = client.generatePresignedUrl("user${name}",
                             FileUtils.getFileName(picPath), -1).toString()

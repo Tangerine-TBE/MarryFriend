@@ -189,7 +189,6 @@ object Constant {
     const val ME_WORK_CITY_NAME = "ME_work_city_name"  // 工作城市名字
     const val ME_WORK_CITY_PICK = "ME_work_city_pick"      // 籍贯城市滚轮选择选项
 
-    const val ME_HOME = "ME_home"  // 故乡
 
     const val ME_HOME_PROVINCE_CODE = "ME_home_province_code"  // 籍贯省份编码
     const val ME_HOME_PROVINCE_NAME = "ME_home_province_name"  // 籍贯省份名字
@@ -326,7 +325,26 @@ object Constant {
     // --------------------------------------  设置模块  ------------------------------------
 
 
-    const val LAST_TIME_REQUEST = "last_time_request" // 上次去请求“我的”界面四个数据的时间
+    // “我的”界面  红点相关
+    const val LAST_VIEW_TIME_REQUEST = "last_view_time_request" // 上次去请求"看过"数据的时间
+
+    const val LAST_FOCUS_TIME_REQUEST = "last_focus_time_request" // 上次去请求"关注"数据的时间
+
+    const val LAST_LIKE_TIME_REQUEST = "last_like_time_request" // 上次去请求"点赞"数据的时间
+
+    const val LAST_COMMENT_TIME_REQUEST = "last_comment_time_request" // 上次去请求"评论"数据的时间
+
+
+    // 界面内显示 是否已读 相关
+
+    const val LAST_LIKE_ME_TIME_REQUEST = "last_like_me_time_request" // 上次去请求"谁点赞我"数据的时间
+
+    const val LAST_LIKE_OTHER_TIME_REQUEST = "last_like_other_time_request" // 上次去请求"我点赞谁"数据的时间
+
+    const val LAST_COMMENT_ME_TIME_REQUEST = "last_comment_me_time_request" // 上次去请求"谁评论我"数据的时间
+
+    const val LAST_COMMENT_OTHER_TIME_REQUEST = "last_comment_other_time_request" // 上次去请求"我评论谁"数据的时间
+
 
     const val HIDE_STATE = "hide_state" // 是否隐藏在线状态
 

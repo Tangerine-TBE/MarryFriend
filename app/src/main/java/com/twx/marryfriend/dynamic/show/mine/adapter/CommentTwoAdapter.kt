@@ -93,10 +93,6 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.tag = position
 
-        Glide.with(mContext).load(mList[position].last_img_url).error(R.drawable.ic_pic_default)
-            .placeholder(R.drawable.ic_pic_default).into(holder.avatar)
-
-
         if (mList[position].first_nick != "") {
             holder.reply.text = "${mList[position].first_nick}"
         } else {
@@ -108,8 +104,22 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
         holder.name.text = mList[position].last_nick
 
         if (mList[position].last_sex == 1) {
+
+            Glide.with(mContext)
+                .load(mList[position].last_img_url)
+                .error(R.drawable.ic_mine_male_default)
+                .placeholder(R.drawable.ic_mine_male_default)
+                .into(holder.avatar)
+
             Glide.with(mContext).load(R.drawable.ic_male).into(holder.sex)
         } else {
+
+            Glide.with(mContext)
+                .load(mList[position].last_img_url)
+                .error(R.drawable.ic_mine_female_default)
+                .placeholder(R.drawable.ic_mine_female_default)
+                .into(holder.avatar)
+
             Glide.with(mContext).load(R.drawable.ic_female).into(holder.sex)
         }
 
@@ -141,7 +151,7 @@ class CommentTwoAdapter(private var mList: List<CommentTwoList>) :
 
     override fun getItemCount(): Int {
 
-        Log.i("guo","adapterSize :  ${mList.size}")
+        Log.i("guo", "adapterSize :  ${mList.size}")
 
         return mList.size
     }

@@ -51,7 +51,6 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
-import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataLifePhotoAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
@@ -60,8 +59,6 @@ import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
-import com.watermark.androidwm.WatermarkBuilder
-import com.watermark.androidwm.bean.WatermarkText
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.fragment_data.*
 import java.io.*
@@ -114,10 +111,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var audioRecorder: AudioRecorder
 
     private lateinit var mediaPlayer: MediaPlayer
-
-    // 水印工具
-    private lateinit var watermarkText: WatermarkText
-
 
     // 时间选择器数据
     // 年
@@ -423,15 +416,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //            banTextList.add(aa.data[i])
 //        }
 
-
-        watermarkText = WatermarkText("佳偶婚恋交友")
-            .setPositionX(0.8)
-            .setPositionY(1.0)
-            .setTextColor(Color.WHITE)
-            .setTextAlpha(150)
-            .setTextSize(16.0)
-            .setTextAlpha(200)
-            .setBackgroundColor(Color.BLACK)
 
     }
 
@@ -789,7 +773,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 // 购车情况
                                                 showCarDialog()
                                             } else {
-                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                         "") == ""
                                                 ) {
                                                     // 籍贯
@@ -863,7 +847,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                     // 购车情况
                                                     showCarDialog()
                                                 } else {
-                                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                             "") == ""
                                                     ) {
                                                         // 籍贯
@@ -931,7 +915,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 // 购车情况
                                                 showCarDialog()
                                             } else {
-                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                         "") == ""
                                                 ) {
                                                     // 籍贯
@@ -994,7 +978,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             // 购车情况
                                             showCarDialog()
                                         } else {
-                                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                     "") == ""
                                             ) {
                                                 // 籍贯
@@ -1054,7 +1038,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         // 购车情况
                                         showCarDialog()
                                     } else {
-                                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                 "") == ""
                                         ) {
                                             // 籍贯
@@ -1123,7 +1107,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                     // 购车情况
                                                     showCarDialog()
                                                 } else {
-                                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                             "") == ""
                                                     ) {
                                                         // 籍贯
@@ -1191,7 +1175,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                                 // 购车情况
                                                 showCarDialog()
                                             } else {
-                                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                         "") == ""
                                                 ) {
                                                     // 籍贯
@@ -1254,7 +1238,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             // 购车情况
                                             showCarDialog()
                                         } else {
-                                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                     "") == ""
                                             ) {
                                                 // 籍贯
@@ -1312,7 +1296,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         // 购车情况
                                         showCarDialog()
                                     } else {
-                                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                                 "") == ""
                                         ) {
                                             // 籍贯
@@ -1365,7 +1349,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                     // 购车情况
                                     showCarDialog()
                                 } else {
-                                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                             "") == ""
                                     ) {
                                         // 籍贯
@@ -1413,7 +1397,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                 // 购车情况
                                 showCarDialog()
                             } else {
-                                if (SPStaticUtils.getString(Constant.ME_HOME,
+                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                         "") == ""
                                 ) {
                                     // 籍贯
@@ -1454,7 +1438,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 购车情况
                             showCarDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.ME_HOME,
+                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                     "") == ""
                             ) {
                                 // 籍贯
@@ -1490,7 +1474,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 购车情况
                         showCarDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.ME_HOME,
+                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                                 "") == ""
                         ) {
                             // 籍贯
@@ -1521,7 +1505,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 购车情况
                     showCarDialog()
                 } else {
-                    if (SPStaticUtils.getString(Constant.ME_HOME,
+                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
                             "") == ""
                     ) {
                         // 籍贯
@@ -1547,7 +1531,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             13 -> {
-                if (SPStaticUtils.getString(Constant.ME_HOME, "") == "") {
+                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") == "") {
                     // 籍贯
                     showHomeDialog()
                 } else {
@@ -1686,9 +1670,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         job = when (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")) {
             "" -> "未填写"
             else -> "${
-                SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                    "")
-            }-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
+                SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")}-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
         }
 
         when (SPStaticUtils.getInt(Constant.ME_INCOME, 10)) {
@@ -1766,9 +1748,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             2 -> car = "没买"
         }
 
-        home = when (SPStaticUtils.getString(Constant.ME_HOME, "")) {
+        home = when (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")) {
             "" -> "未填写"
-            else -> SPStaticUtils.getString(Constant.ME_HOME, "")
+            else -> "${
+                SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME,
+                    "")
+            }-${SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")}"
+
         }
 
         weight = when (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0)) {
@@ -2441,7 +2427,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val homeCityCode = SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0)
         val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
 
-        val home = SPStaticUtils.getString(Constant.ME_HOME, "")
         val income = SPStaticUtils.getInt(Constant.ME_INCOME, 10)
         val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
         val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
@@ -2685,45 +2670,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     inner class PhotoGuideDialog(context: Context) : FullScreenPopupView(context) {
 
-        override fun getImplLayoutId(): Int = R.layout.dialog_photo_guide
+        override fun getImplLayoutId(): Int = R.layout.dialog_data_avatar
 
         override fun onCreate() {
             super.onCreate()
 
-            val assetManager = context.assets
-
-            val goodOne: InputStream = assetManager.open("pic/pic_guide_photo_good_one.png")
-            val goodTwo: InputStream = assetManager.open("pic/pic_guide_photo_good_two.png")
-            val goodThree: InputStream = assetManager.open("pic/pic_guide_photo_good_three.png")
-
-            val badOne: InputStream = assetManager.open("pic/pic_guide_photo_bad_one.png")
-            val badTwo: InputStream = assetManager.open("pic/pic_guide_photo_bad_two.png")
-            val badThree: InputStream = assetManager.open("pic/pic_guide_photo_bad_three.png")
-            val badFour: InputStream = assetManager.open("pic/pic_guide_photo_bad_four.png")
-            val badFive: InputStream = assetManager.open("pic/pic_guide_photo_bad_five.png")
-
-            findViewById<ImageView>(R.id.iv_dialog_photo_good_one).background =
-                BitmapDrawable(BitmapFactory.decodeStream(goodOne))
-            findViewById<ImageView>(R.id.iv_dialog_photo_good_two).background =
-                BitmapDrawable(BitmapFactory.decodeStream(goodTwo))
-            findViewById<ImageView>(R.id.iv_dialog_photo_good_three).background =
-                BitmapDrawable(BitmapFactory.decodeStream(goodThree))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_one).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badOne))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_two).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badTwo))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_three).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badThree))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_four).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badFour))
-            findViewById<ImageView>(R.id.iv_dialog_photo_bad_five).background =
-                BitmapDrawable(BitmapFactory.decodeStream(badFive))
-
-            findViewById<ImageView>(R.id.iv_dialog_photo_close).setOnClickListener {
+            findViewById<TextView>(R.id.tv_dialog_data_avatar_cancel).setOnClickListener {
                 dismiss()
             }
 
-            findViewById<TextView>(R.id.tv_dialog_photo_confirm).setOnClickListener {
+            findViewById<TextView>(R.id.tv_dialog_data_avatar_album).setOnClickListener {
                 ToastUtils.showShort("打开相册")
 
                 dismiss()
@@ -2766,7 +2722,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             }
 
-            findViewById<TextView>(R.id.tv_dialog_photo_camera).setOnClickListener {
+            findViewById<TextView>(R.id.tv_dialog_data_avatar_photo).setOnClickListener {
                 ToastUtils.showShort("打开相机")
 
                 dismiss()
@@ -5173,8 +5129,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
 
                 ToastUtils.showShort(home)
-
-                SPStaticUtils.put(Constant.ME_HOME, home)
 
                 SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
                     mCityFirstList[mCityFirstPosition])

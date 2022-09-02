@@ -27,8 +27,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : MainBaseViewActivity() {
     init {
-        val id= UserInfo.getUserId()
-        if (id!=null) {
+        val id = UserInfo.getUserId()
+        if (id != null) {
             ImUserManager.createOrLogin(id)
         }
     }

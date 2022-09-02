@@ -5,16 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.constant.TimeConstants
+import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
 import com.makeramen.roundedimageview.RoundedImageView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.CommentTipList
 import com.twx.marryfriend.bean.mine.WhoLikeMeList
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.utils.TimeUtil
+import kotlinx.android.synthetic.main.fragment_mine.*
 
-class RecentLikeAdapter(private val mList: MutableList<WhoLikeMeList>, private val mode: String) :
+class RecentLikeAdapter(
+    private val mList: MutableList<WhoLikeMeList>,
+    private val mode: String,
+    private val lastTime: MutableList<String>,
+) :
     RecyclerView.Adapter<RecentLikeAdapter.ViewHolder>(), View.OnClickListener {
 
     private lateinit var mContext: Context
@@ -40,6 +50,10 @@ class RecentLikeAdapter(private val mList: MutableList<WhoLikeMeList>, private v
         val avatar: RoundedImageView = view.findViewById(R.id.riv_detail_like_avatar)
 
         val nick: TextView = view.findViewById(R.id.tv_detail_like_nick)
+
+        val unread: ImageView = view.findViewById(R.id.iv_detail_like_unread)
+        val read: TextView = view.findViewById(R.id.tv_detail_like_read)
+
         val content: TextView = view.findViewById(R.id.tv_detail_like_content)
 
         val time: TextView = view.findViewById(R.id.tv_detail_like_time)
@@ -127,11 +141,40 @@ class RecentLikeAdapter(private val mList: MutableList<WhoLikeMeList>, private v
 
         if (mode == "mine") {
             holder.content.text = "点赞了您的动态"
+
+            if (TimeUtils.getTimeSpan(mList[position].create_time,
+                    lastTime[0],
+                    TimeConstants.SEC) > 0
+            ) {
+                // 最后一条点赞时间晚于上次请求时间，显示红点
+                holder.unread.visibility = View.VISIBLE
+                holder.read.visibility = View.GONE
+            } else {
+                // 不显示红点
+                holder.unread.visibility = View.GONE
+                holder.read.visibility = View.VISIBLE
+            }
+
         } else {
             holder.content.text = "点赞了她的动态"
+
+            if (TimeUtils.getTimeSpan(mList[position].create_time,
+                    lastTime[0],
+                    TimeConstants.SEC) > 0
+            ) {
+                // 最后一条点赞时间晚于上次请求时间，显示红点
+                holder.unread.visibility = View.GONE
+                holder.read.visibility = View.GONE
+            } else {
+                // 不显示红点
+                holder.unread.visibility = View.GONE
+                holder.read.visibility = View.VISIBLE
+            }
+
         }
 
         holder.time.text = TimeUtil.getCommonTime(mList[position].dianzan_time)
+
 
     }
 

@@ -7,12 +7,13 @@ package com.twx.marryfriend.bean.mine
 data class WhoLikeMeBean(
     val code: Int,
     val `data`: WhoLikeMeData,
-    val msg: String
+    val msg: String,
 )
 
 data class WhoLikeMeData(
     val list: List<WhoLikeMeList>,
-    val total: Int
+    val total: Int,
+    val server_time: String,
 )
 
 data class WhoLikeMeList(
@@ -41,6 +42,6 @@ data class WhoLikeMeList(
     val video_cover: String,
     val video_url: String,
     val weidu: String,
-    val work_city_str: String
+    val work_city_str: String,
 
-)
+    )

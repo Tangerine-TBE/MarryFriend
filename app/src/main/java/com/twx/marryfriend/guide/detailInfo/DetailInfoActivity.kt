@@ -67,6 +67,7 @@ import com.twx.marryfriend.login.retrieve.activity.FaceLivenessExpActivity
 import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
@@ -594,9 +595,19 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         getJobCityFirstList()
         getJobCitySecondList(0)
 
-        var minAge = SPStaticUtils.getInt(Constant.ME_AGE, 18) - 8
-        var maxAge = SPStaticUtils.getInt(Constant.ME_AGE, 18) + 4
 
+        var minAge = if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+            SPStaticUtils.getInt(Constant.ME_AGE, 18) - 8
+        } else {
+            SPStaticUtils.getInt(Constant.ME_AGE, 18) - 4
+        }
+
+        var maxAge = if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+            SPStaticUtils.getInt(Constant.ME_AGE, 18) + 4
+        } else {
+            SPStaticUtils.getInt(Constant.ME_AGE, 18) + 8
+        }
+        
         if (minAge < 18) {
             minAge = 18
         }
@@ -804,8 +815,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, jobCityCode)
                             SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, jobCityName)
                         }
-
-                        SPStaticUtils.put(Constant.ME_HOME, home)
 
                         SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, homeProvinceCode)
                         SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, homeProvinceName)
@@ -3163,9 +3172,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         override fun onClick(widget: View) {
             //点击事件
-            startActivity(SetWebActivity.getIntent(this@DetailInfoActivity,
-                "在线客服",
-                DataProvider.WebUrlData[0].url))
+//            startActivity(SetWebActivity.getIntent(this@DetailInfoActivity, "在线客服", DataProvider.WebUrlData[0].url))
+            startActivity(Intent(this@DetailInfoActivity, FeedbackActivity::class.java))
         }
     }
 

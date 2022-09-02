@@ -144,7 +144,7 @@ class ViewOtherAdapter(private val mList: MutableList<MeSeeWhoList>) :
         holder.info.text = "$city  ${year}岁  $job  $edu"
 
         holder.act.text =
-            "第${mList[position].count_total}次查看你的资料  ${TimeUtil.getViewTime(mList[position].update_time)}访问过你"
+            "第${mList[position].count_total}次查看他的资料  ${TimeUtil.getViewTime(mList[position].update_time)}访问过他"
 
     }
 

@@ -2,6 +2,7 @@ package com.twx.marryfriend.mine.view.mine
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -127,6 +128,8 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         if (whoSeeMeBean != null) {
             if (whoSeeMeBean.data.list.isNotEmpty()) {
 
+                SPStaticUtils.put(Constant.LAST_VIEW_TIME_REQUEST, whoSeeMeBean.data.server_time)
+
                 ll_view_mime_empty?.visibility = View.GONE
 
                 if (currentPaper == 1) {
@@ -156,11 +159,24 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
     override fun onItemClick(v: View?, position: Int) {
         ToastUtils.showShort("资料详情界面")
-        startActivity(context?.let { FriendInfoActivity.getIntent(it, mList[position].guest_uid) })
+
+        Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
+
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+        } else {
+            startActivity(context?.let {
+                FriendInfoActivity.getIntent(it,
+                    mList[position].guest_uid)
+            })
+        }
+
     }
 
     override fun onChatClick(v: View?, position: Int) {
 
+
+        Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 

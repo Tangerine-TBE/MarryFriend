@@ -12,7 +12,8 @@ data class MeLikeWhoBean(
 
 data class MeLikeWhoData(
     val list: List<WhoLikeMeList>,
-    val total: Int
+    val total: Int,
+    val server_time: String,
 )
 
 data class MeLikeWhoList(

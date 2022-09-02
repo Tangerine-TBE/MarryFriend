@@ -461,7 +461,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         doViewHeadFacePresent.doViewHeadFace(map)
     }
 
-    private fun getFourTotal() {
+    fun getFourTotal() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getFourTotalPresent.getFourTotal(map)
@@ -648,14 +648,37 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         if (fourTotalBean != null) {
             if (fourTotalBean.code == 200) {
 
-                val lastTime =
-                    SPStaticUtils.getString(Constant.LAST_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastLikeTime =
+                    SPStaticUtils.getString(Constant.LAST_LIKE_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastFocusTime =
+                    SPStaticUtils.getString(Constant.LAST_FOCUS_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastSeeTime =
+                    SPStaticUtils.getString(Constant.LAST_VIEW_TIME_REQUEST, "1970-01-01 00:00:00")
+                val lastDiscTime = SPStaticUtils.getString(Constant.LAST_COMMENT_TIME_REQUEST,
+                    "1970-01-01 00:00:00")
 
+                var likeTime = fourTotalBean.data.likeTime
+                var focusTime = fourTotalBean.data.focusTime
+                var seeTime = fourTotalBean.data.seeTime
+                var discTime = fourTotalBean.data.discTime
 
-                if (TimeUtils.getTimeSpan(fourTotalBean.data.likeTime,
-                        lastTime,
-                        TimeConstants.SEC) > 0
-                ) {
+                if (likeTime == null) {
+                    likeTime = "1970-01-01 00:00:00"
+                }
+
+                if (focusTime == null) {
+                    focusTime = "1970-01-01 00:00:00"
+                }
+
+                if (seeTime == null) {
+                    seeTime = "1970-01-01 00:00:00"
+                }
+
+                if (discTime == null) {
+                    discTime = "1970-01-01 00:00:00"
+                }
+
+                if (TimeUtils.getTimeSpan(likeTime, lastLikeTime, TimeConstants.SEC) > 0) {
                     // 最后一条点赞时间晚于上次请求时间，显示红点
                     iv_mine_like_point.visibility = View.VISIBLE
                 } else {
@@ -663,10 +686,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     iv_mine_like_point.visibility = View.INVISIBLE
                 }
 
-                if (TimeUtils.getTimeSpan(fourTotalBean.data.focusTime,
-                        lastTime,
-                        TimeConstants.SEC) > 0
-                ) {
+                if (TimeUtils.getTimeSpan(focusTime, lastFocusTime, TimeConstants.SEC) > 0) {
                     // 最后一条点赞时间晚于上次请求时间，显示红点
                     iv_mine_fan_point.visibility = View.VISIBLE
                 } else {
@@ -674,10 +694,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     iv_mine_fan_point.visibility = View.INVISIBLE
                 }
 
-                if (TimeUtils.getTimeSpan(fourTotalBean.data.seeTime,
-                        lastTime,
-                        TimeConstants.SEC) > 0
-                ) {
+                if (TimeUtils.getTimeSpan(seeTime, lastSeeTime, TimeConstants.SEC) > 0) {
                     // 最后一条点赞时间晚于上次请求时间，显示红点
                     iv_mine_visit_point.visibility = View.VISIBLE
                 } else {
@@ -685,10 +702,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     iv_mine_visit_point.visibility = View.INVISIBLE
                 }
 
-                if (TimeUtils.getTimeSpan(fourTotalBean.data.discTime,
-                        lastTime,
-                        TimeConstants.SEC) > 0
-                ) {
+                if (TimeUtils.getTimeSpan(discTime, lastDiscTime, TimeConstants.SEC) > 0) {
                     // 最后一条点赞时间晚于上次请求时间，显示红点
                     iv_mine_comment_point.visibility = View.VISIBLE
                 } else {
@@ -700,8 +714,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 tv_mine_fan_sum.text = fourTotalBean.data.focus.toString()
                 tv_mine_like_sum.text = fourTotalBean.data.like.toString()
                 tv_mine_comment_sum.text = fourTotalBean.data.disc.toString()
-
-                SPStaticUtils.put(Constant.LAST_TIME_REQUEST, fourTotalBean.data.server)
 
             }
         }

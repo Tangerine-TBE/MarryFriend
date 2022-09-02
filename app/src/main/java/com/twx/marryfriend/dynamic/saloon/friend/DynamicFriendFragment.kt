@@ -528,42 +528,59 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
     }
 
-    override fun onGetTrendFocusSuccess(trendFocusBean: TrendFocusBean) {
+    override fun onGetTrendFocusSuccess(trendFocusBean: TrendFocusBean?) {
 
-        if (trendFocusBean.data.list.isNotEmpty()) {
+        srl_dynamic_focus_refresh.finishRefresh(true)
+        srl_dynamic_focus_refresh.finishLoadMore(true)
 
-            ll_dynamic_focus_empty.visibility = View.GONE
+        if (trendFocusBean != null) {
+            if (trendFocusBean.code == 200) {
 
-            val mIdList: MutableList<Int> = arrayListOf()
+                if (trendFocusBean.data.list.isNotEmpty()) {
 
-            if (mode == "first") {
-                mTrendList.clear()
-                mDiyList.clear()
+                    ll_dynamic_focus_empty.visibility = View.GONE
+
+                    val mIdList: MutableList<Int> = arrayListOf()
+
+                    if (mode == "first") {
+                        mTrendList.clear()
+                        mDiyList.clear()
+                    }
+
+                    for (i in 0.until(trendFocusBean.data.list.size)) {
+                        mTrendList.add(trendFocusBean.data.list[i])
+                        mIdList.add(trendFocusBean.data.list[i].id)
+
+                        val focus = true
+                        val like = trendFocusBean.data.list[i].guest_uid != null
+
+                        mDiyList.add(LikeBean(focus, like, trendFocusBean.data.list[i].like_count))
+
+                    }
+
+                    max = Collections.max(mIdList)
+                    min = Collections.min(mIdList)
+
+                    adapter.notifyDataSetChanged()
+
+                } else {
+
+                    if (mode == "first") {
+                        mTrendList.clear()
+                        mDiyList.clear()
+
+                        ll_dynamic_focus_empty.visibility = View.VISIBLE
+
+                    }
+
+                    adapter.notifyDataSetChanged()
+
+                }
+            } else {
+                ToastUtils.showShort(trendFocusBean.msg)
             }
-
-            for (i in 0.until(trendFocusBean.data.list.size)) {
-                mTrendList.add(trendFocusBean.data.list[i])
-                mIdList.add(trendFocusBean.data.list[i].id)
-
-                val focus = true
-                val like = trendFocusBean.data.list[i].guest_uid != null
-
-                mDiyList.add(LikeBean(focus, like, trendFocusBean.data.list[i].like_count))
-
-            }
-
-            max = Collections.max(mIdList)
-            min = Collections.min(mIdList)
-
-            adapter.notifyDataSetChanged()
-
-            srl_dynamic_focus_refresh.finishRefresh(true)
-            srl_dynamic_focus_refresh.finishLoadMore(true)
-
-        } else {
-            srl_dynamic_focus_refresh.finishRefresh(true)
-            srl_dynamic_focus_refresh.finishLoadMore(true)
         }
+
 
     }
 
