@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
 import com.message.ImUserManager
+import com.twx.marryfriend.ImInfoInit
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.MainBaseViewActivity
@@ -44,7 +45,7 @@ class MainActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
         initEmojiCompat()
-
+        ImInfoInit.init()
         initRecommendFragment()
         Thread { PushHelper.init(applicationContext) }.start()
         PushAgent.getInstance(this).onAppStart()
