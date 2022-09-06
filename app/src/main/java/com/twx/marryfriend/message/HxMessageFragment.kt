@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hyphenate.chat.EMConversation
 import com.hyphenate.easeim.section.conversation.ConversationListFragment
+import com.hyphenate.easeui.adapter.EaseAdapterDelegate
 import com.twx.marryfriend.R
 import com.twx.marryfriend.databinding.FragmentHxMessageBinding
 import com.twx.marryfriend.message.model.ConversationsModel
@@ -39,8 +40,11 @@ class HxMessageFragment: ConversationListFragment() {
         dataBinding=DataBindingUtil.inflate<FragmentHxMessageBinding>(LayoutInflater.from(requireContext()),R.layout.fragment_hx_message,llRoot,false)
         dataBinding?.lifecycleOwner=this
         llRoot.addView(dataBinding?.root, 0)
-
         loadData()
+    }
+
+    override fun getConversationDelegate(): EaseAdapterDelegate<*, *> {
+        return MySingleConversationDelegate()
     }
 
 

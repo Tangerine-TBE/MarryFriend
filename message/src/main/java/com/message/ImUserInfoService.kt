@@ -1,8 +1,20 @@
 package com.message
 
+import com.google.gson.Gson
+
 object ImUserInfoService {
-    class ImUserInfo(val userId:String,val nickname:String?=null,val avatar:String?=null){
+    class ImUserInfo(val userId:String,val nickname:String?=null,val avatar:String?=null,val ext:Ext?=null){
+
     }
+    data class Ext(val age:Int = 0,
+                   val isRealName:Boolean = false,
+                   val isVip:Boolean=false,
+                   val isSuperVip:Boolean=false,
+                   val city: String? = null,
+                   val occupation: String? = null,
+                   val education: String? = null,
+                   val isMutualLike:Boolean = false,
+                   val isFlower:Boolean = false)
     private val userInfoContainer by lazy {
         HashMap<String,ImUserInfo>()
     }
@@ -25,10 +37,19 @@ object ImUserInfoService {
     }
 
     fun getUserNickName(id:String):String?{
-       return userInfoContainer.get(id)?.nickname
+        return userInfoContainer.get(id)?.nickname
     }
 
     fun getUserAvatar(id:String):String?{
         return userInfoContainer.get(id)?.avatar
+    }
+
+    private val gson by lazy {
+        Gson()
+    }
+    fun getExt(id:String):String?{
+        return userInfoContainer[id]?.ext?.let {
+            gson.toJson(it)
+        }
     }
 }

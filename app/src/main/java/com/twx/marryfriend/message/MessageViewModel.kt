@@ -36,26 +36,29 @@ class MessageViewModel:ViewModel() {
 
             allConversation.map { conversationsBean ->
                 val friendInfo=friendsInfo?.find {
-                    it.id?.toString()==conversationsBean.conversationId
+                    it.user_id?.toString()==conversationsBean.conversationId
                 }
                 ConversationsItemModel(conversationsBean.conversationId,conversationsBean.conversationType)
                     .apply {
+//                        val userInfo=getUserInfo()
+                        if (friendInfo!=null){
+                            this.age=(friendInfo.age?:0)
+                            this.isSuperVip=friendInfo.isSuperVip()
+                            this.isVip=friendInfo.isVip()
+                            this.userImage=friendInfo.image_url
+                            this.nickname=friendInfo.nick
+                            this.isRealName=friendInfo.isRealName()
+                            this.occupation=friendInfo.occupation_str
+                            this.education=RecommendBean.getEducationStr(friendInfo.education)?.label
+                            this.location=friendInfo.work_city_str
+                            this.isMutualLike=friendInfo.isMutualLike()
+                            this.isFlower=friendInfo.isFlower()
+                        }
+
                         this.unReaderCount=conversationsBean.unReaderCount
                         this.lastTime=conversationsBean.lastTime
                         this.lastMassage=conversationsBean.lastMassage
                         this.msgType=conversationsBean.conversationType
-//                        val userInfo=getUserInfo()
-                        if (friendInfo!=null){
-                            this.userImage=friendInfo.image_url
-                            this.nickname=friendInfo.nick
-                            this.isRealName=friendInfo.isRealName()
-                            this.age=(friendInfo.age?:0)
-                            this.occupation=friendInfo.occupation_str
-                            this.education=RecommendBean.getEducationStr(friendInfo.education)?.label
-                            this.location=friendInfo.work_city_str
-                            this.isMutualLike=friendInfo.isLike()
-                            this.isFlower=friendInfo.isFlower()
-                        }
                     }
             }.also { list ->
                 continuation.resume(list)

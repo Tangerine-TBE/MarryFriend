@@ -344,14 +344,17 @@ class DemoHelper private constructor() {
                     return null
                 }
             })
+//            .setUserProvider {
+//
+//            }
             .setAvatarOptions(avatarOptions).userProvider = EaseUserProfileProvider { username ->
             val user = EaseUser(username)
             //设置用户昵称
             user.nickname = ImUserInfoService.getUserNickName(username)
             //设置头像地址
             user.avatar = ImUserInfoService.getUserAvatar(username)
+            user.ext=ImUserInfoService.getExt(username)
             //最后返回构建的 EaseUser 对象
-
             user
         }
     }

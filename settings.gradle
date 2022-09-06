@@ -26,3 +26,4 @@ include ':faceplatform-ui'
 
 include ':myutils'
 include ':message'
+include ':ease-im-kit'

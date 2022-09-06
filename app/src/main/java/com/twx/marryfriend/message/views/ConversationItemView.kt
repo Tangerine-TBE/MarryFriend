@@ -5,9 +5,12 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
+import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.databinding.ItemListSessionMessageBinding
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.twx.marryfriend.mutual.MutualLikeDialogActivity
 import com.xyzz.myutils.show.toast
@@ -24,6 +27,7 @@ class ConversationItemView  @JvmOverloads constructor(context: Context, attribut
         layoutParams= LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT)
 
         this.addView(dataBindingView.root)
+        setData(null)
         initListener()
     }
     private var conversationsItemModel: ConversationsItemModel?=null
@@ -31,6 +35,7 @@ class ConversationItemView  @JvmOverloads constructor(context: Context, attribut
     fun setData(data: ConversationsItemModel?) {
         conversationsItemModel=data
         dataBindingView.conversationsItemModel=data
+        Glide.with(this).load(data?.userImage).placeholder(UserInfo.getReversedDefHeadImage()).error(UserInfo.getReversedDefHeadImage()).into(messageHead)
     }
 
     private fun initListener(){
@@ -40,7 +45,7 @@ class ConversationItemView  @JvmOverloads constructor(context: Context, attribut
                 toast(context,"数据为空")
                 return@setOnClickListener
             }
-            context?.startActivity(ChatActivity.getIntent(context, data.conversationId,data.nickname,data.userImage,data.isRealName))
+            context?.startActivity(ImChatActivity.getIntent(context, data.conversationId,data.nickname,data.userImage,data.isRealName))
         }
         messageHead.setOnClickListener {
             context?.startActivity(MutualLikeDialogActivity.getIntent(context,conversationsItemModel?.userImage?:""))

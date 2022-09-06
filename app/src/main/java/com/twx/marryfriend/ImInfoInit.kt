@@ -58,7 +58,8 @@ object ImInfoInit {
             }
 
             val result= conversations?.map {
-                ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage)
+                ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
+                    ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
             }
             result?.also {
                 ImUserInfoService.setUserInfo(*it.toTypedArray())

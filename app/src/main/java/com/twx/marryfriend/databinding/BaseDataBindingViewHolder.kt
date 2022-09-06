@@ -19,5 +19,10 @@ class BaseDataBindingViewHolder constructor(view: View): RecyclerView.ViewHolder
         fun ImageView.src(src:Uri?){
             Glide.with(this).load(src).into(this)
         }
+        @JvmStatic
+        @BindingAdapter("android:src")
+        fun ImageView.src(src:Int?){
+            Glide.with(this).load(src).into(this)
+        }
     }
 }

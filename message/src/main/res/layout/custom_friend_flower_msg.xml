@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <TextView
-        android:id="@+id/chatMsgTime"
+        android:id="@+id/timestamp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"/>
     <com.hyphenate.easeui.widget.EaseImageView
         android:id="@+id/userHead"
-        app:layout_constraintTop_toBottomOf="@id/chatMsgTime"
+        app:layout_constraintTop_toBottomOf="@id/timestamp"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="12dp"
         style="@style/ease_row_sent_iv_userhead_style" />

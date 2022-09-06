@@ -44,6 +44,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
+@Deprecated("废弃")
 class ChatActivity:AppCompatActivity(/*R.layout.activity_chat*/) {
     companion object{
         private const val FRIEND_ID_KEY="friend_id_key"

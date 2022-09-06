@@ -70,6 +70,7 @@ open class ConversationListFragment : EaseConversationListFragment() {
     }
 
     private fun test(){
+        conversationListLayout.listAdapter
         val conversationListView=findViewById<EaseConversationListLayout>(com.hyphenate.easeui.R.id.list_conversation)
     }
 

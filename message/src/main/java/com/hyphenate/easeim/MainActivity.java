@@ -49,7 +49,6 @@ import com.hyphenate.easeim.section.discover.DiscoverFragment;
 import com.hyphenate.easeim.section.contact.activity.AddContactActivity;
 import com.hyphenate.easeim.section.contact.viewmodels.ContactsViewModel;
 import com.hyphenate.easeim.section.group.activity.GroupPrePickActivity;
-import com.hyphenate.easeim.section.me.AboutMeFragment;
 import com.hyphenate.easeui.model.EaseEvent;
 import com.hyphenate.easeui.ui.base.EaseBaseFragment;
 import com.hyphenate.easeui.widget.EaseTitleBar;
@@ -66,7 +65,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public class MainActivity extends BaseInitActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
     private BottomNavigationView navView;
     private EaseTitleBar mTitleBar;
-    private EaseBaseFragment mConversationListFragment, mFriendsFragment, mDiscoverFragment, mAboutMeFragment;
+    private EaseBaseFragment mConversationListFragment, mFriendsFragment, mDiscoverFragment;
     private EaseBaseFragment mCurrentFragment;
     private TextView mTvMainHomeMsg, mTvMainFriendsMsg, mTvMainDiscoverMsg, mTvMainAboutMeMsg;
     private int[] badgeIds = {R.layout.demo_badge_home, R.layout.demo_badge_friends, R.layout.demo_badge_discover, R.layout.demo_badge_about_me};
@@ -344,15 +343,6 @@ public class MainActivity extends BaseInitActivity implements BottomNavigationVi
         replace(mDiscoverFragment, "discover");
     }
 
-    private void switchToAboutMe() {
-        if(mAboutMeFragment == null) {
-            mAboutMeFragment = new AboutMeFragment();
-        }
-        //获取自己用户信息
-        fetchSelfInfo();
-        replace(mAboutMeFragment, "me");
-    }
-
     private void replace(EaseBaseFragment fragment, String tag) {
         if(mCurrentFragment != fragment) {
             FragmentTransaction t = getSupportFragmentManager().beginTransaction();
@@ -427,10 +417,7 @@ public class MainActivity extends BaseInitActivity implements BottomNavigationVi
             mTitleBar.setTitle(getResources().getString(R.string.em_main_title_discover));
             showNavigation = true;
         } else if (itemId == R.id.em_main_nav_me) {
-            switchToAboutMe();
-            mTitleBar.setTitle(getResources().getString(R.string.em_main_title_me));
-            showMenu = false;
-            showNavigation = true;
+
         }
         invalidateOptionsMenu();
         return showNavigation;

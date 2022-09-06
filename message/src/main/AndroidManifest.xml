@@ -447,9 +447,6 @@
         <!--消息推送设置-->
         <activity android:name=".section.me.activity.OfflinePushSettingsActivity"
             android:screenOrientation="portrait"/>
-        <!--关于环信IM-->
-        <activity android:name=".section.me.activity.AboutHxActivity"
-            android:screenOrientation="portrait"/>
 
         <!--自定义AppKey-->
         <activity android:name=".section.me.activity.AppKeyManageActivity"

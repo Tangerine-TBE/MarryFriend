@@ -45,6 +45,7 @@ import com.hyphenate.easeui.constants.EaseConstant
 import com.hyphenate.easeui.domain.EaseUser
 import com.hyphenate.easeui.model.EaseEvent
 import com.hyphenate.easeui.modules.chat.EaseChatFragment
+import com.hyphenate.easeui.modules.chat.EaseInputMenuStyle
 import com.hyphenate.easeui.modules.chat.interfaces.IChatPrimaryMenu
 import com.hyphenate.easeui.modules.chat.interfaces.OnRecallMessageResultListener
 import com.hyphenate.easeui.modules.menu.EasePopupWindowHelper
@@ -93,44 +94,16 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
         val chatInputMenu = chatLayout.chatInputMenu;
 //获取到菜单输入控件
         val primaryMenu = chatInputMenu.primaryMenu
-        primaryMenu
 //获取到扩展区域控件
         val chatExtendMenu = chatInputMenu.chatExtendMenu
 //获取到表情区域控件
         val emojiconMenu = chatInputMenu.emojiconMenu
 
-        //if(primaryMenu != null) {
-        //设置菜单样式为不可用语音模式
-        //    primaryMenu.setMenuShowType(EaseInputMenuStyle.ONLY_TEXT);
-        //}
         chatLayout.setTargetLanguageCode(DemoHelper.instance.model.targetLanguage)
     }
 
     protected open fun getAvatarDefaultSrc():Drawable?{
         return ContextCompat.getDrawable(requireContext(), R.drawable.ease_default_avatar)
-    }
-
-    /**
-     * 设置长按消息后的菜单
-     */
-    private fun addItemMenuAction() {
- /*       val itemMenu = MenuItemBean(
-            0,
-            R.id.action_chat_forward,
-            11,
-            getString(com.hyphenate.easeui.R.string.action_forward)
-        )
-        itemMenu.resourceId = com.hyphenate.easeui.R.drawable.ease_chat_item_menu_forward
-        chatLayout.addItemMenu(itemMenu)
-        val itemMenu1 = MenuItemBean(
-            0,
-            com.hyphenate.easeui.R.id.action_chat_label,
-            12,
-            getString(com.hyphenate.easeui.R.string.action_label)
-        )
-        itemMenu1.resourceId = com.hyphenate.easeui.R.drawable.ease_chat_item_menu_copy
-        chatLayout.addItemMenu(itemMenu1)
-        //        chatLayout.setReportYourSelf(false);*/
     }
 
     private fun resetChatExtendMenu() {
@@ -214,7 +187,6 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
     override fun initData() {
         super.initData()
         resetChatExtendMenu()
-        addItemMenuAction()
         chatLayout.chatInputMenu.primaryMenu.editText.setText(unSendMsg)
         chatLayout.turnOnTypingMonitor(DemoHelper.instance.model.isShowMsgTyping)
         LiveDataBus.get().with(DemoConstant.MESSAGE_CHANGE_CHANGE)

@@ -47,9 +47,9 @@ class MessageListAdapter: RecyclerView.Adapter<BaseDataBindingViewHolder>() {
     ): BaseDataBindingViewHolder {
         val view=if (viewType== TYPE_CHAT){
             ConversationItemView(parent.context)
-        }else if (viewType== TYPE_ASSISTANT){
+        }else if (viewType== TYPE_ASSISTANT){//小助手
             TipConversationItemView(parent.context)
-        }else if (viewType== TYPE_FOLLOW){
+        }else if (viewType== TYPE_FOLLOW){//关注的人
             LayoutInflater.from(parent.context).inflate(R.layout.item_message_follow,parent,false)
         }else{
             ConversationItemView(parent.context)
