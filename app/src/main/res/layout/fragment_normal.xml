@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,10 +16,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.to.aboomy.pager2banner.Banner
+            <com.youth.banner.Banner
                 android:id="@+id/banner_normal_container"
                 android:layout_width="match_parent"
-                android:layout_height="115dp" />
+                android:layout_height="115dp"
+                android:layout_marginVertical="20dp"
+                app:banner_indicator_normal_color="#DCDCDC"
+                app:banner_indicator_selected_color="#101010" />
 
             <RelativeLayout
                 android:id="@+id/rl_normal_12"

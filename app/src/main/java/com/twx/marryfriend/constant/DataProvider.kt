@@ -78,7 +78,6 @@ object DataProvider {
 
 
     val IncomeData = arrayListOf(
-        "保密或者不填",
         "1.5k及以下",
         "2.5k-8k",
         "8k-12k",
@@ -87,8 +86,33 @@ object DataProvider {
         "20k-35k",
         "35k-50k",
         "50k-70k",
-        "7k以上",
+        "70k以上",
     )
+
+    val NormalBannerData = arrayListOf(
+        R.mipmap.gif_vip_1,
+        R.mipmap.gif_vip_2,
+        R.mipmap.gif_vip_3,
+        R.mipmap.gif_vip_4,
+        R.mipmap.gif_vip_5,
+        R.mipmap.gif_vip_6,
+    )
+
+    val SuperBannerData = arrayListOf(
+        R.mipmap.gif_svip_1,
+        R.mipmap.gif_svip_2,
+        R.mipmap.gif_svip_3,
+        R.mipmap.gif_svip_4,
+        R.mipmap.gif_svip_5,
+        R.mipmap.gif_svip_6,
+        R.mipmap.gif_svip_7,
+        R.mipmap.gif_svip_8,
+        R.mipmap.gif_svip_9,
+        R.mipmap.gif_svip_10,
+        R.mipmap.gif_svip_11,
+        R.mipmap.gif_svip_12,
+    )
+
 
     val NormalVipData = arrayListOf(
         ItemBean("解锁收件箱", R.mipmap.icon_normal_1),

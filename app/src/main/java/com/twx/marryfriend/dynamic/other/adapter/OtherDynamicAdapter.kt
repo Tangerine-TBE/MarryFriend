@@ -14,6 +14,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.TimeUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.MyTrendsList
@@ -289,12 +293,51 @@ class OtherDynamicAdapter(
         }
 
 
-        if (mLikeList[position].like && !mLikeList[position].anim) {
-            holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
-        } else if (!mLikeList[position].like) {
-            holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
-        }
+//        if (mLikeList[position].like && !mLikeList[position].anim) {
+//            holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
+//        } else if (!mLikeList[position].like) {
+//            holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
+//        }
 
+
+        if (!mLikeList[position].like) {
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
+        } else if (!mLikeList[position].anim) {
+
+            Log.i("guo", "non---animal")
+
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
+        } else {
+
+            Log.i("guo", "animal")
+
+            Glide.with(mContext)
+                .asGif()
+                .load(R.mipmap.dolike)
+                .listener(object : RequestListener<GifDrawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<GifDrawable>?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: GifDrawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<GifDrawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        resource?.setLoopCount(1)
+                        return false
+                    }
+
+                })
+                .into(holder.ivLike)
+        }
 
         if (mLikeList[position].likeCount != 0) {
             holder.tvLike.text = mLikeList[position].likeCount.toString()

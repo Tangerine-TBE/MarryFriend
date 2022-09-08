@@ -26,7 +26,6 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-import com.twx.marryfriend.dynamic.mine.adapter.MyDynamicAdapter
 import com.twx.marryfriend.dynamic.other.adapter.OtherDynamicAdapter
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
@@ -34,7 +33,6 @@ import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
-import com.twx.marryfriend.utils.AnimalUtils
 import kotlinx.android.synthetic.main.activity_other_dynamic.*
 import java.util.*
 
@@ -71,6 +69,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     private var userId = ""
+
+    // 喜欢的回调是否执行
+    private var haveDoLikeSuccess = false
 
     // 我是否关注此用户
     private var haveFocus = false
@@ -173,7 +174,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         config.setReplaceAll(true)
             .registerInitCallback(object : EmojiCompat.InitCallback() {
                 override fun onInitialized() {
-                    Log.i("guo", "EmojiCompat initialized")
+
                 }
 
                 override fun onFailed(@Nullable throwable: Throwable?) {
@@ -556,7 +557,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                             val focus = true
                             val like = otherTrendsListBean.data.list[i].is_like != null
 
-                            mDiyList.add(LikeBean(focus,
+                            mDiyList.add(LikeBean(
+                                otherTrendsListBean.data.list[i].id,
+                                focus,
                                 like,
                                 otherTrendsListBean.data.list[i].like_count))
                         }
@@ -570,7 +573,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                                 val focus = true
                                 val like = otherTrendsListBean.data.list[i].is_like != null
 
-                                mDiyList.add(LikeBean(focus,
+                                mDiyList.add(LikeBean(
+                                    otherTrendsListBean.data.list[i].id,
+                                    focus,
                                     like,
                                     otherTrendsListBean.data.list[i].like_count))
                             }
@@ -584,7 +589,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                                 val focus = true
                                 val like = otherTrendsListBean.data.list[i].is_like != null
 
-                                mDiyList.add(LikeBean(focus,
+                                mDiyList.add(LikeBean(
+                                    otherTrendsListBean.data.list[i].id,
+                                    focus,
                                     like,
                                     otherTrendsListBean.data.list[i].like_count))
                             }
@@ -598,7 +605,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
                                 val focus = true
                                 val like = otherTrendsListBean.data.list[i].is_like != null
 
-                                mDiyList.add(LikeBean(focus,
+                                mDiyList.add(LikeBean(
+                                    otherTrendsListBean.data.list[i].id,
+                                    focus,
                                     like,
                                     otherTrendsListBean.data.list[i].like_count))
                             }
@@ -624,18 +633,32 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
-        // 点赞
-        if (likeClickBean != null) {
-            if (likeClickBean.code == 200) {
+        if (!haveDoLikeSuccess) {
+            haveDoLikeSuccess = true
+            // 点赞
+            if (likeClickBean != null) {
+                if (likeClickBean.code == 200) {
 
-                mDiyList[mLikePosition].like = true
-                mDiyList[mLikePosition].likeCount++
+                    mDiyList[mLikePosition].like = true
+                    mDiyList[mLikePosition].anim = true
+                    mDiyList[mLikePosition].likeCount++
 
-                adapter.notifyDataSetChanged()
-            } else {
-                ToastUtils.showShort(likeClickBean.msg)
+                    adapter.notifyDataSetChanged()
+
+                    val task: TimerTask = object : TimerTask() {
+                        override fun run() {
+                            mDiyList[mLikePosition].anim = false
+                        }
+                    }
+                    val timer = Timer()
+                    timer.schedule(task, 100)
+
+                } else {
+                    ToastUtils.showShort(likeClickBean.msg)
+                }
             }
         }
+
     }
 
     override fun onDoLikeClickError() {
@@ -772,9 +795,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             if (!mDiyList[mLikePosition].like) {
                 // 点赞
 
-                mDiyList[mLikePosition].anim = true
-                AnimalUtils.getAnimal(v as ImageView)
-
+                haveDoLikeSuccess = false
                 doLikeClick(
                     trendList[mLikePosition].id,
                     trendList[mLikePosition].user_id,

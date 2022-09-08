@@ -119,7 +119,6 @@ class MyDynamicActivity : MainBaseViewActivity(),
         config.setReplaceAll(true)
             .registerInitCallback(object : EmojiCompat.InitCallback() {
                 override fun onInitialized() {
-                    Log.i("guo", "EmojiCompat initialized")
                 }
 
                 override fun onFailed(@Nullable throwable: Throwable?) {

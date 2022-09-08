@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.text.TextPaint
+import com.blankj.utilcode.util.ImageUtils
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -50,6 +51,11 @@ object BitmapUtil {
         val canvas = Canvas(bitmap)
         canvas.drawText(text, 0f, abs(fontMetrics.ascent), textPaint)
         return bitmap
+    }
+
+    fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
+        ImageUtils.save(bitmap, targetPath, Bitmap.CompressFormat.PNG)
+        return targetPath
     }
 
 }

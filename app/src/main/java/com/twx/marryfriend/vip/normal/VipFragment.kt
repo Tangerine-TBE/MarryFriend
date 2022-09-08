@@ -3,6 +3,7 @@ package com.twx.marryfriend.vip.normal
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.alipay.sdk.app.PayTask
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -23,14 +25,17 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.net.callback.vip.IDoAliPayCallback
-import com.twx.marryfriend.net.callback.vip.IDoRefreshSelfCallback
 import com.twx.marryfriend.net.callback.vip.IDoVipRefreshSelfCallback
 import com.twx.marryfriend.net.impl.vip.doAliPayPresentImpl
-import com.twx.marryfriend.net.impl.vip.doRefreshSelfPresentImpl
 import com.twx.marryfriend.net.impl.vip.doVipRefreshSelfPresentImpl
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.vip.VipActivity
 import com.twx.marryfriend.vip.adapter.ToolAdapter
+import com.twx.marryfriend.vip.adapter.VipBannerAdapter
+import com.youth.banner.Banner
+import com.youth.banner.config.IndicatorConfig
+import com.youth.banner.indicator.CircleIndicator
+import com.youth.banner.indicator.RoundLinesIndicator
 import kotlinx.android.synthetic.main.activity_coin.*
 import kotlinx.android.synthetic.main.fragment_normal.*
 import java.util.*
@@ -46,18 +51,22 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
 
     var mVipPriceList: MutableList<String> = ArrayList()
-    var mVipModeList: MutableList<String> = java.util.ArrayList()
+    var mVipModeList: MutableList<String> = ArrayList()
 
     private lateinit var adapter: ToolAdapter
 
     private lateinit var mContext: Context
 
+    // 第一次进来选中的弹窗
+    private var item = 0
+
     private lateinit var doAliPayPresent: doAliPayPresentImpl
     private lateinit var doRefreshSelfPresent: doVipRefreshSelfPresentImpl
 
-    fun newInstance(context: Context): VipFragment {
+    fun newInstance(context: Context, item: Int): VipFragment {
         val fragment = VipFragment()
         fragment.mContext = context
+        fragment.item = item
         return fragment
     }
 
@@ -86,14 +95,30 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
         adapter = ToolAdapter(DataProvider.NormalVipData)
 
+        val linearLayoutManager = LinearLayoutManager(mContext)
+        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+
         rv_normal_container.layoutManager = GridLayoutManager(mContext, 4)
         rv_normal_container.adapter = adapter
+
+        banner_normal_container.isAutoLoop(false)
+        var banner = (banner_normal_container as Banner<Int, VipBannerAdapter>)
+        banner.apply {
+            addBannerLifecycleObserver(this@VipFragment)
+            setBannerRound(20f)
+            indicator = RoundLinesIndicator(mContext)
+            setAdapter(VipBannerAdapter(DataProvider.NormalBannerData))
+        }
 
         adapter.notifyDataSetChanged()
 
     }
 
     private fun initData() {
+
+        if (item > 5) item = 0
+
+        banner_normal_container.currentItem = item
 
         mVipPriceList.add("258")
         mVipPriceList.add("358")

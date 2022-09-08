@@ -6,6 +6,6 @@ package com.twx.marryfriend.bean.dynamic
  */
 data class PlusFocusBean(
     val code: Int,
-    val data: Any,
+    val data: List<String>,
     val msg: String,
 )

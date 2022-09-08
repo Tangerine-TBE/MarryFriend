@@ -314,6 +314,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             tv_user_data_ideal.text = SPStaticUtils.getString(Constant.ME_TA, "")
         }
 
+        Log.i("guo -------- income", SPStaticUtils.getString(Constant.ME_BIRTH, ""))
+        Log.i("guo -------- income", SPStaticUtils.getInt(Constant.ME_INCOME, 0).toString())
+        Log.i("guo -------- edu", SPStaticUtils.getInt(Constant.ME_EDU, 0).toString())
+        Log.i("guo -------- marry", SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0).toString())
+        Log.i("guo -------- love", SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0).toString())
+
         updateLife()
 
     }
@@ -446,7 +452,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private fun initEvent() {
 
-        showFirstDialog()
+        showNextDialog(0)
 
         iv_user_data_avatar.setOnClickListener {
             ToastUtils.showShort("上传头像")
@@ -747,7 +753,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 0) == 0) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -821,7 +827,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 身高
                             showHeightDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
+                            if (SPStaticUtils.getInt(Constant.ME_INCOME, 0) == 0) {
                                 // 月收入
                                 showIncomeDialog()
                             } else {
@@ -889,7 +895,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 身高
                         showHeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
+                        if (SPStaticUtils.getInt(Constant.ME_INCOME, 0) == 0) {
                             // 月收入
                             showIncomeDialog()
                         } else {
@@ -952,7 +958,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
+                    if (SPStaticUtils.getInt(Constant.ME_INCOME, 0) == 0) {
                         // 月收入
                         showIncomeDialog()
                     } else {
@@ -1010,7 +1016,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
             }
             3 -> {
-                if (SPStaticUtils.getInt(Constant.ME_INCOME, 10) == 10) {
+                if (SPStaticUtils.getInt(Constant.ME_INCOME, 0) == 0) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -1670,11 +1676,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         job = when (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")) {
             "" -> "未填写"
             else -> "${
-                SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")}-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
+                SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
+            }-${SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")}"
         }
 
-        when (SPStaticUtils.getInt(Constant.ME_INCOME, 10)) {
-            0 -> income = "保密"
+        when (SPStaticUtils.getInt(Constant.ME_INCOME, 0)) {
+            0 -> income = "未填写"
             1 -> income = "5k及以下"
             2 -> income = "5k~8k"
             3 -> income = "8k~12k"
@@ -1684,7 +1691,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             7 -> income = "35k~50k"
             8 -> income = "50k~70k"
             9 -> income = "70k及以上"
-            10 -> income = "未填写"
         }
 
         workPlace = when (SPStaticUtils.getString(Constant.ME_WORK, "")) {
@@ -1767,8 +1773,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             else -> mBodyList[SPStaticUtils.getInt(Constant.ME_BODY, 10)]
         }
 
+
+        Log.i("guo", "birth :$birth")
+
         baseInfoList.clear()
         moreInfoList.clear()
+
+
 
         baseInfoList.add(nick)
         baseInfoList.add(sex)
@@ -1793,7 +1804,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         moreAdapter.notifyDataSetChanged()
 
         getDataCompletion()
-
 
         // 更新数据
         if (xx) {
@@ -2427,7 +2437,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val homeCityCode = SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0)
         val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
 
-        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 10)
+        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 0)
         val marryState = SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0)
         val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
         val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
@@ -2647,21 +2657,36 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
-        lastBaseInfo = getBaseInfo()
-        lastMoreInfo = getMoreInfo()
+        if (updateMoreInfoBean != null) {
+            if (updateMoreInfoBean.code == 200) {
+                lastBaseInfo = getBaseInfo()
+                lastMoreInfo = getMoreInfo()
+            } else {
+                ToastUtils.showShort(updateMoreInfoBean.msg)
+            }
+        }
+
     }
 
     override fun onDoUpdateMoreInfoError() {
-
+        ToastUtils.showShort("上传信息失败")
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
-        lastBaseInfo = getBaseInfo()
-        lastMoreInfo = getMoreInfo()
+
+        if (baseInfoUpdateBean != null) {
+            if (baseInfoUpdateBean.code == 200) {
+                lastBaseInfo = getBaseInfo()
+                lastMoreInfo = getMoreInfo()
+            } else {
+                ToastUtils.showShort(baseInfoUpdateBean.msg)
+            }
+        }
+
     }
 
     override fun onDoUpdateBaseInfoError() {
-
+        ToastUtils.showShort("上传信息失败")
     }
 
     // ---------------------------------- 基础弹窗 ----------------------------------

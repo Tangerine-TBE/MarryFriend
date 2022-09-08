@@ -3,6 +3,7 @@ package com.twx.marryfriend.dynamic
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -40,6 +41,16 @@ class DynamicFragment : Fragment() {
         initData()
         initPresent()
         initEvent()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {//fragment可见
+            Log.i("guo", "动态界面刷新")
+
+            recommendFragment.autoRefresh()
+
+        }
     }
 
     fun newInstance(context: Context): DynamicFragment {
@@ -93,7 +104,10 @@ class DynamicFragment : Fragment() {
             val linearLayout = tb_dynamic_indicator.getChildAt(index) as? LinearLayout
             linearLayout?.let {
                 it.showDividers = LinearLayout.SHOW_DIVIDER_MIDDLE
-                it.dividerDrawable = context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.shape_tab_divider) }
+                it.dividerDrawable = context?.let { it1 ->
+                    ContextCompat.getDrawable(it1,
+                        R.drawable.shape_tab_divider)
+                }
                 it.dividerPadding = 50
             }
         }

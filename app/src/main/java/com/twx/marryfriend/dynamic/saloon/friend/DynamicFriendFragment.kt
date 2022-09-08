@@ -44,7 +44,7 @@ import java.io.Serializable
 import java.util.*
 
 class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback {
+    IDoLikeCancelCallback, SaloonFocusAdapter.OnItemClickListener {
 
     // 数据加载模式
     private var mode = "first"
@@ -108,6 +108,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
 
         adapter = SaloonFocusAdapter(mTrendList, mDiyList)
+        adapter.setOnItemClickListener(this)
 
         rv_dynamic_focus_container.adapter = adapter
         rv_dynamic_focus_container.layoutManager = LinearLayoutManager(context)
@@ -152,15 +153,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             }
         })
 
-        adapter.setOnItemClickListener(object : SaloonFocusAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, position: Int) {
-                val intent = Intent(context, DynamicOtherShowActivity::class.java)
-                intent.putExtra("trendId", mTrendList[position].id)
-                intent.putExtra("usersId", mTrendList[position].user_id.toInt())
-                intent.putExtra("mode", 1)
-                startActivityForResult(intent, 0)
-            }
-        })
 
         adapter.setOnAvatarClickListener(object : SaloonFocusAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
@@ -199,7 +191,11 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
         adapter.setOnCommentClickListener(object : SaloonFocusAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
-                ToastUtils.showShort("评论，跳转到动态详情界面，显示评论")
+                val intent = Intent(context, DynamicOtherShowActivity::class.java)
+                intent.putExtra("trendId", mTrendList[position].id)
+                intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+                intent.putExtra("mode", 1)
+                startActivityForResult(intent, 0)
             }
         })
 
@@ -554,7 +550,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                         val focus = true
                         val like = trendFocusBean.data.list[i].guest_uid != null
 
-                        mDiyList.add(LikeBean(focus, like, trendFocusBean.data.list[i].like_count))
+                        mDiyList.add(LikeBean(trendFocusBean.data.list[i].id,
+                            focus, like, trendFocusBean.data.list[i].like_count))
 
                     }
 
@@ -587,6 +584,22 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     override fun onGetTrendFocusError() {
         srl_dynamic_focus_refresh.finishRefresh(false)
         srl_dynamic_focus_refresh.finishLoadMore(false)
+    }
+
+    override fun onItemClick(v: View?, position: Int) {
+        val intent = Intent(context, DynamicOtherShowActivity::class.java)
+        intent.putExtra("trendId", mTrendList[position].id)
+        intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+        intent.putExtra("mode", 1)
+        startActivityForResult(intent, 0)
+    }
+
+    override fun onItemTextClick(v: View?, position: Int) {
+        val intent = Intent(context, DynamicOtherShowActivity::class.java)
+        intent.putExtra("trendId", mTrendList[position].id)
+        intent.putExtra("usersId", mTrendList[position].user_id.toInt())
+        intent.putExtra("mode", 1)
+        startActivityForResult(intent, 0)
     }
 
     inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {

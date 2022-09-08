@@ -411,38 +411,34 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         }
 
         iv_dynamic_other_show_like.setOnClickListener {
-            ToastUtils.showShort("添加一下点赞")
+
+            Log.i("guo", "userId : $userId")
 
             if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
                     Constant.ME_AVATAR_AUDIT,
                     "") != ""
             ) {
 
-                if (userId == SPStaticUtils.getString(Constant.USER_ID, "13").toInt()) {
-                    // 加个延时
-                    if (System.currentTimeMillis() - lastClickTime >= delayTime) {
-                        lastClickTime = System.currentTimeMillis();
+                if (userId != SPStaticUtils.getString(Constant.USER_ID, "13").toInt()) {
 
-                        if (!isLike) {
-                            // 点赞
-                            isLike = true
+                    if (!isLike) {
+                        // 点赞
+                        isLike = true
 
-                            doLikeClick(trendId,
-                                SPStaticUtils.getString(Constant.USER_ID, "13"),
-                                userId)
-
-                        } else {
-                            // 取消赞
-                            isLike = false
-
-                            doLikeCancelClick(trendId,
-                                SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
-                        }
-                        adapter.notifyDataSetChanged()
+                        doLikeClick(trendId,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"),
+                            userId)
 
                     } else {
-                        ToastUtils.showShort("点击太频繁了，请稍后再评论")
+                        // 取消赞
+                        isLike = false
+
+                        doLikeCancelClick(trendId,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
                     }
+
+                    adapter.notifyDataSetChanged()
+
                 } else {
                     ToastUtils.showShort("不能点赞自己的动态")
                 }
@@ -1662,6 +1658,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         eet_emoji_other_edit.requestFocus()
         KeyboardUtils.showSoftInput()
 
+
         mode = 1
         trendsId = mCommentOneList[positionOne].list.trends_id
         hostUid = mCommentOneList[positionOne].list.host_uid
@@ -1669,6 +1666,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         oneLevelId = mCommentOneList[positionOne].list.one_level_uid
         firstUid = 0
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "12").toInt()
+
+        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
+
     }
 
     override fun onItemMoreClick(v: View?, positionOne: Int) {
@@ -1707,6 +1707,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         eet_emoji_other_edit.requestFocus()
         KeyboardUtils.showSoftInput()
 
+
+
         Log.i("guo", "one_level_uid : ${mCommentOneList[positionOne].list.one_level_uid}")
 
         mode = 1
@@ -1716,6 +1718,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         oneLevelId = mCommentOneList[positionOne].list.one_level_uid
         firstUid = mCommentOneList[positionOne].list.two_last_uid
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "12").toInt()
+
+        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
+
     }
 
     override fun onChildClick(positionOne: Int, two: Int) {
@@ -1749,6 +1754,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         eet_emoji_other_edit.requestFocus()
         KeyboardUtils.showSoftInput()
 
+
+
         mode = 1
         trendsId = mCommentOneList[positionOne].list.trends_id
         hostUid = mCommentOneList[positionOne].list.host_uid
@@ -1756,6 +1763,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         oneLevelId = mCommentOneList[positionOne].twoList[two].pid
         firstUid = mCommentOneList[positionOne].twoList[two].two_last_uid
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "12").toInt()
+
+        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
+
     }
 
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
@@ -1797,6 +1807,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         eet_emoji_other_edit.requestFocus()
         KeyboardUtils.showSoftInput()
 
+
+
         mode = 1
         trendsId = mCommentOneList[positionOne].list.trends_id
         hostUid = mCommentOneList[positionOne].list.host_uid
@@ -1804,6 +1816,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
         oneLevelId = mCommentOneList[positionOne].twoLocalList[two].pid
         firstUid = mCommentOneList[positionOne].twoLocalList[two].two_last_uid
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+
+        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
+
     }
 
     override fun onLocalChildReplyAvatarClick(positionOne: Int, two: Int) {
