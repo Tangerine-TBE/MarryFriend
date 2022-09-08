@@ -61,6 +61,7 @@ class SaloonFocusAdapter(
 
     interface OnItemClickListener {
         fun onItemClick(v: View?, position: Int)
+        fun onItemTextClick(v: View?, position: Int)
     }
 
     interface OnAvatarClickListener {
@@ -196,8 +197,6 @@ class SaloonFocusAdapter(
 
         val info: TextView = view.findViewById(R.id.tv_detail_dynamic_other_info)
 
-        val text: TextView = view.findViewById(R.id.tv_detail_dynamic_other_text)
-
 
         val local: LinearLayout = view.findViewById(R.id.ll_detail_dynamic_other_location)
         val location: TextView = view.findViewById(R.id.tv_detail_dynamic_other_location)
@@ -220,6 +219,8 @@ class SaloonFocusAdapter(
         // 点击事件
         val detail: RelativeLayout = view.findViewById(R.id.rl_detail_dynamic_other_detail)
         val focus: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_focus)
+
+        val text: TextView = view.findViewById(R.id.tv_detail_dynamic_other_text)
 
         val one: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_one)
         val two: ImageView = view.findViewById(R.id.iv_detail_dynamic_other_two)
@@ -253,6 +254,10 @@ class SaloonFocusAdapter(
         Glide.with(mContext).load(R.drawable.ic_base_chat).into(holder.focus)
 
         initPic(holder, position)
+
+        holder.text.setOnClickListener {
+            mOnItemClickListener?.onItemTextClick(it, position)
+        }
 
         holder.detail.setOnClickListener {
             mOnAvatarClickListener?.onAvatarClick(it, position)
@@ -318,13 +323,13 @@ class SaloonFocusAdapter(
 
     private fun initPic(holder: ViewHolder, position: Int) {
 
-        if (mList[position].user_sex == 1){
+        if (mList[position].user_sex == 1) {
             Glide.with(mContext)
                 .load(mList[position].headface)
                 .error(R.drawable.ic_mine_male_default)
                 .placeholder(R.drawable.ic_mine_male_default)
                 .into(holder.avatar)
-        }else{
+        } else {
             Glide.with(mContext)
                 .load(mList[position].headface)
                 .error(R.drawable.ic_mine_female_default)

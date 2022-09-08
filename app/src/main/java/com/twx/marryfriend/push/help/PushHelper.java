@@ -52,14 +52,13 @@ public class PushHelper {
         //推送设置
         pushSetting(context);
 
-        Log.i("guo", " pushAgent.getInstance(context).register");
         //注册推送服务，每次调用register方法都会回调该接口
         pushAgent.getInstance(context).register(new UPushRegisterCallback() {
 
             @Override
             public void onSuccess(String deviceToken) {
                 //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
-                Log.i("guo", "deviceToken --> " + deviceToken);
+//                Log.i("guo", "deviceToken --> " + deviceToken);
 //                //获取deviceToken可通过接口：
 //                PushAgent.getInstance(context).getRegistrationId();
 //                //可设置别名，推送时使用别名推送
@@ -93,7 +92,6 @@ public class PushHelper {
         //小米推送：填写您在小米后台APP对应的xiaomi id和key
         MiPushRegistar.register(context, "2882303761520176390", "5612017666390");
 
-        Log.i("guo","huawei");
         //华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
         HuaWeiRegister.register(context.getApplicationContext());
 //        //OPPO推送：填写您在OPPO后台APP对应的app key和secret

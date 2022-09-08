@@ -11,6 +11,10 @@ import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.gif.GifDrawable
+import com.bumptech.glide.request.RequestListener
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.LikeBean
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
@@ -714,7 +718,51 @@ class SaloonAdapter(
             holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
         }
 
-        if (mList[position].focus_uid != null) {
+
+        if (!mDiyList[position].like) {
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_base_like)
+        } else if (!mDiyList[position].anim) {
+
+            Log.i("guo", "non---animal")
+
+            holder.ivLike.setImageResource(R.drawable.ic_dynamic_like)
+        } else {
+
+            Log.i("guo", "animal")
+
+            Glide.with(mContext)
+                .asGif()
+                .load(R.mipmap.dolike)
+                .listener(object : RequestListener<GifDrawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<GifDrawable>?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: GifDrawable?,
+                        model: Any?,
+                        target: com.bumptech.glide.request.target.Target<GifDrawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean,
+                    ): Boolean {
+                        resource?.setLoopCount(1)
+                        return false
+                    }
+
+                })
+                .into(holder.ivLike)
+        }
+
+
+
+
+
+        if (mDiyList[position].focus) {
             holder.focus.setImageResource(R.drawable.ic_base_chat)
         } else {
             holder.focus.setImageResource(R.drawable.ic_base_focus)

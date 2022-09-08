@@ -1,6 +1,7 @@
 package com.twx.marryfriend.guide.detailInfo.life
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,7 @@ import com.twx.marryfriend.net.callback.IDoUploadPhotoCallback
 import com.twx.marryfriend.net.impl.doLifeFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
+import com.twx.marryfriend.utils.BitmapUtil
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.activity_life_introduce.*
 import kotlinx.android.synthetic.main.layout_guide_step_name.*
@@ -207,6 +209,23 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
                         val file = File(picPath)
 
+                        val bitmap =
+                            BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)
+                                ?.let {
+                                    BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(
+                                        file), it)
+                                }
+
+                        val mPhotoPath =
+                            this.externalCacheDir.toString() + File.separator + "${
+                                FileUtils.getFileNameNoExtension(picPath)
+                            }.png"
+
+                        if (bitmap != null) {
+                            BitmapUtil.saveBitmap(bitmap, mPhotoPath)
+                        }
+
+
                         val name =
                             if (SPStaticUtils.getString(Constant.USER_ID, "default").length == 1) {
                                 "0${SPStaticUtils.getString(Constant.USER_ID, "default")}"
@@ -214,7 +233,9 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
                             }
 
-                        val putObjectFromFileResponse = client.putObject("user${name}", FileUtils.getFileName(picPath), file)
+                        val putObjectFromFileResponse = client.putObject("user${name}",
+                            FileUtils.getFileName(picPath),
+                            File(mPhotoPath))
 
                         picUrl = client.generatePresignedUrl("user${name}",
                             FileUtils.getFileName(picPath), -1).toString()
@@ -229,7 +250,6 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                     }.start()
 
                 }
-
 
             }
         }

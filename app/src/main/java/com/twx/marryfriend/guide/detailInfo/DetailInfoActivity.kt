@@ -127,7 +127,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     // 用户年收入
     private var incomePosition = 0
-    private var incomeData: MutableList<String> = arrayListOf()
 
     // 弹窗第一组数据
     private var jobFirstList: MutableList<String> = arrayListOf()
@@ -550,14 +549,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         mEduData.add("博士")
         mEduData.add("博士以上")
 
-        incomeData.add("保密")
-        incomeData.add("五千以下")
-        incomeData.add("五千~一万")
-        incomeData.add("一万~两万")
-        incomeData.add("两万~四万")
-        incomeData.add("四万~七万")
-        incomeData.add("七万及以上")
-
         targetVisibilityList.add("所有人可见")
         targetVisibilityList.add("目标相同的人可见")
         targetVisibilityList.add("不公开")
@@ -607,7 +598,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         } else {
             SPStaticUtils.getInt(Constant.ME_AGE, 18) + 8
         }
-        
+
         if (minAge < 18) {
             minAge = 18
         }
@@ -778,7 +769,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_OCCUPATION_CODE, jobIDSecondList[jobSecond])
                         SPStaticUtils.put(Constant.ME_OCCUPATION_NAME, jobSecondList[jobSecond])
 
-                        SPStaticUtils.put(Constant.ME_INCOME, incomePosition)
+                        SPStaticUtils.put(Constant.ME_INCOME, incomePosition + 1)
 
                     } else {
                         if (!chooseJob) {
@@ -3108,7 +3099,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
 
             } else {
-                ToastUtils.showShort(faceDetectBean.data[0].msg)
+                ToastUtils.showShort(faceDetectBean.error_msg)
             }
         }
 
@@ -3401,7 +3392,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             val incomePicker = findViewById<WheelPicker>(R.id.wp_income_job_income_container)
 
-            incomePicker.data = incomeData
+            incomePicker.data = DataProvider.IncomeData
 
             // 是否为循环状态
             incomePicker.isCyclic = false
@@ -3427,6 +3418,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             incomePicker.itemAlign = WheelPicker.ALIGN_CENTER
 
             incomePicker.setOnItemSelectedListener { picker, data, position ->
+                Log.i("guo", position.toString())
                 incomePosition = position
             }
 
@@ -3436,7 +3428,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             findViewById<TextView>(R.id.tv_income_income_confirm).setOnClickListener {
 
-                tv_guide_income_income.text = incomeData[incomePosition]
+                tv_guide_income_income.text = DataProvider.IncomeData[incomePosition]
 
                 tv_guide_income_income.setTextColor(Color.parseColor("#0F0F0F"))
 
@@ -4071,20 +4063,29 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             all: Boolean,
                         ) {
 
-                            val tempPhotoFile: File = File(mTempPhotoPath)
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            // 如果在Android7.0以上,使用FileProvider获取Uri
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                val authority = context.packageName.toString() + ".fileProvider"
-                                val contentUri: Uri =
-                                    FileProvider.getUriForFile(context, authority, tempPhotoFile)
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                            if (all) {
+
+                                val tempPhotoFile: File = File(mTempPhotoPath)
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority = context.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri =
+                                        FileProvider.getUriForFile(context,
+                                            authority,
+                                            tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+                                startActivityForResult(intent, 2)
+
                             } else {
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(tempPhotoFile))
+                                ToastUtils.showShort("请授予应用相关权限")
                             }
-                            startActivityForResult(intent, 2)
+
                         }
 
                         override fun onDenied(
@@ -4133,6 +4134,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 dismiss()
 
                 XXPermissions.with(this@DetailInfoActivity)
+                    .permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
@@ -4140,8 +4142,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             all: Boolean,
                         ) {
 
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
-                            startActivityForResult(intent, 3)
+                            if (all){
+
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
+                                startActivityForResult(intent, 3)
+
+                            }else{
+                                ToastUtils.showShort("请授予应用相关权限")
+                            }
 
                         }
 

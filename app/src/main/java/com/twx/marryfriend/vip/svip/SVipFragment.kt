@@ -14,6 +14,7 @@ import androidx.core.os.HandlerCompat.postDelayed
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.alipay.sdk.app.PayTask
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ThreadUtils
@@ -26,6 +27,7 @@ import com.twx.marryfriend.bean.vip.VipPriceBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.dynamic.saloon.tip.comment.CommentFragment
 import com.twx.marryfriend.net.callback.vip.IDoAliPayCallback
 import com.twx.marryfriend.net.callback.vip.IDoRefreshSelfCallback
 import com.twx.marryfriend.net.callback.vip.IDoSVipRefreshSelfCallback
@@ -37,7 +39,12 @@ import com.twx.marryfriend.net.impl.vip.getVipPricePresentImpl
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.weight.CustomScrollView
 import com.twx.marryfriend.vip.VipActivity
+import com.twx.marryfriend.vip.adapter.BannerFragment
 import com.twx.marryfriend.vip.adapter.ToolAdapter
+import com.twx.marryfriend.vip.adapter.VipBannerAdapter
+import com.youth.banner.Banner
+import com.youth.banner.indicator.RoundLinesIndicator
+import kotlinx.android.synthetic.main.activity_tips.*
 import kotlinx.android.synthetic.main.fragment_normal.*
 import kotlinx.android.synthetic.main.fragment_super.*
 import java.util.*
@@ -56,6 +63,9 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
     private lateinit var mContext: Context
 
+    // 第一次进来选中的弹窗
+    private var item = 0
+
     private lateinit var adapter: ToolAdapter
 
     private lateinit var doAliPayPresent: doAliPayPresentImpl
@@ -63,9 +73,10 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
     private lateinit var doRefreshSelfPresent: doSVipRefreshSelfPresentImpl
 
 
-    fun newInstance(context: Context): SVipFragment {
+    fun newInstance(context: Context, item: Int): SVipFragment {
         val fragment = SVipFragment()
         fragment.mContext = context
+        fragment.item = item
         return fragment
     }
 
@@ -100,9 +111,20 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
         adapter.notifyDataSetChanged()
 
+        banner_super_container.isAutoLoop(false)
+        var banner = (banner_super_container as Banner<Int, VipBannerAdapter>)
+        banner.apply {
+            addBannerLifecycleObserver(this@SVipFragment)
+            setBannerRound(20f)
+            indicator = RoundLinesIndicator(mContext)
+            setAdapter(VipBannerAdapter(DataProvider.SuperBannerData))
+        }
+
     }
 
     private fun initData() {
+
+        banner_super_container.currentItem = item
 
         mVipPriceList.add("388")
         mVipPriceList.add("588")

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@mipmap/pic_bg_dialog"
     tools:context=".guide.jumpInfo.JumpActivity">
 
     <RelativeLayout
@@ -75,6 +75,16 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" />
 
+        <include
+            layout="@layout/layout_main_guide_greet"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
+        <include
+            layout="@layout/layout_main_guide_avatar"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+
     </ViewFlipper>
 
     <TextView
@@ -91,5 +101,44 @@
         android:textColor="@color/white"
         android:textSize="17sp"
         android:visibility="gone" />
+
+
+    <TextView
+        android:id="@+id/ll_guide_jump_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp"
+        android:text="你给别人打招呼,又没有填打招呼语句的时候,每天一次"
+        android:textColor="#9A9A9A"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_jump_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_bg_dialog"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="正在上传中..."
+            android:textColor="#0F0F0F"
+            android:textSize="16sp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

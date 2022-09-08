@@ -49,6 +49,9 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     // 查看预览用户的id
     private var targetId = 0
 
+    // 初次进入时弹窗界面
+    private var targetItem = 0
+
     // 初次进入时选择的会员界面    0 普通会员 ； 1 超级会员
     private var mode = 0
 
@@ -65,16 +68,18 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     /**
      *
      * mode : 0 普通会员 ； 1 超级会员
-     *id : 查看预览用户的id，不预览时为0
-     *
+     * id : 查看预览用户的id，不预览时为0
+     * item : 第一显示弹窗的位置
      * */
     companion object {
         private const val VIP_MODE = "vip_mode"
         private const val TARGET_ID = "target_id"
-        fun getIntent(context: Context, mode: Int, id: Int? = 0): Intent? {
+        private const val TARGET_ITEM = "target_item"
+        fun getIntent(context: Context, mode: Int, id: Int? = 0, item: Int? = 0): Intent? {
             val intent = Intent(context, VipActivity::class.java)
             intent.putExtra(VIP_MODE, mode)
             intent.putExtra(TARGET_ID, id)
+            intent.putExtra(TARGET_ITEM, item)
             return intent
         }
     }
@@ -96,8 +101,12 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         doRefreshSelfPresent = doRefreshSelfPresentImpl.getsInstance()
         doRefreshSelfPresent.registerCallback(this)
 
-        normal = VipFragment().newInstance(this)
-        svip = SVipFragment().newInstance(this)
+        mode = intent.getIntExtra("vip_mode", 0)
+        targetId = intent.getIntExtra("target_id", 0)
+        targetItem = intent.getIntExtra("target_item", 0)
+
+        normal = VipFragment().newInstance(this, targetItem)
+        svip = SVipFragment().newInstance(this, targetItem)
 
         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
             Glide.with(this)
@@ -125,7 +134,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
         xctl.setOnScrimsListener(this)
 
-        mode = intent.getIntExtra("vip_mode", 0)
+
 
         when (mode) {
             0 -> {
@@ -142,7 +151,6 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             }
         }
 
-        targetId = intent.getIntExtra("target_id", 0)
 
     }
 
@@ -309,7 +317,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
                 Log.i("guo", "刷新超级会员的信息")
 
                 if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) != 2) {
-                    tv_vip_level.text = "您还不是会员"
+                    tv_vip_level.text = "您还不是超级会员"
                     tv_vip_time.visibility = View.GONE
                 } else {
                     tv_vip_level.text = "您已经是超级会员"

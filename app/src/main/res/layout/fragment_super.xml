@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,9 +18,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.to.aboomy.pager2banner.Banner
+            <com.youth.banner.Banner
+                android:id="@+id/banner_super_container"
                 android:layout_width="match_parent"
-                android:layout_height="115dp" />
+                android:layout_height="115dp"
+                android:layout_marginVertical="20dp"
+                app:banner_indicator_normal_color="#DCDCDC"
+                app:banner_indicator_selected_color="#101010" />
 
             <RelativeLayout
                 android:id="@+id/rl_super_12"
@@ -35,9 +40,9 @@
                     android:background="@drawable/ic_month_super"
                     android:gravity="center"
                     android:text="12"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -108,9 +113,9 @@
                     android:background="@drawable/ic_month_super"
                     android:gravity="center"
                     android:text="3"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -181,9 +186,9 @@
                     android:background="@drawable/ic_month_super"
                     android:gravity="center"
                     android:text="1"
-                    android:textStyle="bold"
                     android:textColor="@color/white"
-                    android:textSize="15sp" />
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"

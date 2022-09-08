@@ -447,13 +447,15 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                         if (mTrendList[position].user_id != SPStaticUtils.getString(Constant.USER_ID,
                                 "13")
                         ) {
-                            mDiyList[position].anim = true
+//                            mDiyList[position].anim = true
 
-                            AnimalUtils.getAnimal(v as ImageView)
+//                            AnimalUtils.getAnimal(v as ImageView)
 
                             doLikeClick(mTrendList[position].id,
                                 mTrendList[position].user_id,
                                 SPStaticUtils.getString(Constant.USER_ID, "13"))
+
+
 
                         } else {
                             ToastUtils.showShort("不能给自己点赞")
@@ -502,6 +504,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 adapter.notifyDataSetChanged()
             }
         })
+    }
+
+    fun autoRefresh() {
+        srl_dynamic_recommend_refresh.autoRefresh()
     }
 
     // 获取消息提醒列表
@@ -598,11 +604,26 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         if (plusFocusBean != null) {
             if (plusFocusBean.code == 200) {
 
-                mode = "first"
-                max = 3
-                min = 2
+                val focusId = plusFocusBean.data[0]
 
-                getTrendSaloon(mode, max, min)
+                for (i in 0.until(mDiyList.size)) {
+
+                    if (mDiyList[i].trendID == focusId.toInt()) {
+                        mDiyList[i].focus = true
+                    }
+
+                }
+
+                adapter.notifyDataSetChanged()
+
+//                mode = "first"
+//                max = 3
+//                min = 2
+//
+//                getTrendSaloon(mode, max, min)
+
+                // 关注
+
 
             }
         }
@@ -634,8 +655,17 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             if (likeClickBean.code == 200) {
 
                 mDiyList[mLikePosition].like = true
+                mDiyList[mLikePosition].anim = true
                 mDiyList[mLikePosition].likeCount++
                 adapter.notifyDataSetChanged()
+
+                val task: TimerTask = object : TimerTask() {
+                    override fun run() {
+                        mDiyList[mLikePosition].anim = false
+                    }
+                }
+                val timer = Timer()
+                timer.schedule(task, 100)
 
             } else {
                 ToastUtils.showShort(likeClickBean.msg)
@@ -676,7 +706,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                         val like = trendSaloonBean.data.list[i].guest_uid != null
 
-                        mDiyList.add(LikeBean(focus, like, trendSaloonBean.data.list[i].like_count))
+                        mDiyList.add(
+                            LikeBean(
+                                trendSaloonBean.data.list[i].user_id.toInt(),
+                                focus,
+                                like,
+                                trendSaloonBean.data.list[i].like_count))
 
                     }
 

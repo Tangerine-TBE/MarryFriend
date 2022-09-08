@@ -8,8 +8,9 @@ package com.twx.marryfriend.bean.dynamic
  *
  */
 data class LikeBean(
+    var trendID: Int,
     var focus: Boolean,
     var like: Boolean,
     var likeCount: Int,
-    var anim: Boolean = false
+    var anim: Boolean = false,
 )

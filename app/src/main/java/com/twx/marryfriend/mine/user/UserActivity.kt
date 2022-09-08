@@ -3,6 +3,7 @@ package com.twx.marryfriend.mine.user
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -149,6 +150,15 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
         }
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            val intent = intent
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
     override fun onLoading() {
 
     }
@@ -192,8 +202,10 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
                 SPStaticUtils.put(Constant.ME_CAR, fiveInfoBean.data.more.buy_car)
 
-                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, fiveInfoBean.data.base.hometown_province_str)
-                SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, fiveInfoBean.data.base.hometown_city_str)
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                    fiveInfoBean.data.base.hometown_province_str)
+                SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
+                    fiveInfoBean.data.base.hometown_city_str)
 
                 SPStaticUtils.put(Constant.ME_WEIGHT, fiveInfoBean.data.more.weight)
 

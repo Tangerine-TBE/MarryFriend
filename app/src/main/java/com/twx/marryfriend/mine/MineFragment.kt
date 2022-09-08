@@ -45,14 +45,16 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
-import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.bean.FaceDetectBean
+import com.twx.marryfriend.bean.TextVerifyBean
+import com.twx.marryfriend.bean.UpdateGreetInfoBean
+import com.twx.marryfriend.bean.ViewHeadfaceBean
 import com.twx.marryfriend.bean.mine.FourTotalBean
 import com.twx.marryfriend.coin.CoinActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
-import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
@@ -62,23 +64,23 @@ import com.twx.marryfriend.mine.record.AudioRecorder
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
-import com.twx.marryfriend.mine.voice.VoiceActivity
-import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
+import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
+import com.twx.marryfriend.net.callback.IDoUpdateGreetInfoCallback
+import com.twx.marryfriend.net.callback.IDoViewHeadFaceCallback
 import com.twx.marryfriend.net.callback.mine.IGetFourTotalCallback
-import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
+import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
+import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
+import com.twx.marryfriend.net.impl.doViewHeadFacePresentImpl
 import com.twx.marryfriend.net.impl.mine.getFourTotalPresentImpl
 import com.twx.marryfriend.set.SetActivity
-import com.twx.marryfriend.tools.avatar.AvatarToolActivity
-import com.twx.marryfriend.tools.hobby.HobbyToolActivity
-import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.twx.marryfriend.vip.VipActivity
 import com.yalantis.ucrop.UCrop
-import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.fragment_mine.*
-import kotlinx.android.synthetic.main.layout_guide_step_name.*
 import java.io.*
 import java.util.*
 
@@ -140,6 +142,18 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         initData()
         initPresent()
         initEvent()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {//fragment可见
+            Log.i("guo", "调用数据")
+
+            getFourTotal()
+            // 回调触发弹窗刷新
+            getDialogOrder()
+
+        }
     }
 
     private fun initView() {
@@ -365,7 +379,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         rl_mine_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 5) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0, 4) })
         }
 
         ll_mine_set_dynamic.setOnClickListener {
@@ -379,11 +393,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0, 3) })
         }
 
         ll_mine_set_svip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1, 0, 7) })
         }
 
         ll_mine_set_coin.setOnClickListener {
@@ -612,6 +626,8 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 // 更新审核头像
                 0 -> {
                     getAvatar()
+                    // 回调触发弹窗刷新
+                    getDialogOrder()
                 }
                 // 上传生活照
                 1 -> {
@@ -647,6 +663,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     override fun onGetFourTotalSuccess(fourTotalBean: FourTotalBean?) {
         if (fourTotalBean != null) {
             if (fourTotalBean.code == 200) {
+
+//                SPStaticUtils.put(Constant.LAST_LIKE_TIME_REQUEST, "1970-01-01 00:00:00")
+//                SPStaticUtils.put(Constant.LAST_FOCUS_TIME_REQUEST, "1970-01-01 00:00:00")
+//                SPStaticUtils.put(Constant.LAST_VIEW_TIME_REQUEST, "1970-01-01 00:00:00")
+//                SPStaticUtils.put(Constant.LAST_COMMENT_TIME_REQUEST, "1970-01-01 00:00:00")
 
                 val lastLikeTime =
                     SPStaticUtils.getString(Constant.LAST_LIKE_TIME_REQUEST, "1970-01-01 00:00:00")

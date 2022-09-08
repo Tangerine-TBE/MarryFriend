@@ -133,7 +133,6 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
     // 是否存在
     private var haveThirdPic = false
 
-
     // 第四张我的生活照
     private var mLifeFourPath = ""
 
@@ -858,8 +857,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                             } else if (!haveFivePic) {
 
-                                val intent = Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
+                                val intent = Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
                                 intent.putExtra("path", lifeChoosePath)
                                 intent.putExtra("introduce", "")
                                 startActivityForResult(intent, 555)
@@ -908,6 +906,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                     }
                 }
                 dismiss()
+
             }
 
         }

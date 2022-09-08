@@ -34,9 +34,21 @@ open class VerifyCollectionSuccessActivity : MainBaseViewActivity() {
 
         val identityCode = SPStaticUtils.getString(Constant.TRUE_ID, "")
 
-        SPStaticUtils.put(Constant.ME_BIRTH_YEAR, identityCode.substring(6, 10).toInt() - TimeUtils.date2String(TimeUtils.getNowDate(), "yyyy").toInt() + 100)
+        SPStaticUtils.put(Constant.ME_BIRTH_YEAR,
+            identityCode.substring(6, 10).toInt() - TimeUtils.date2String(TimeUtils.getNowDate(),
+                "yyyy").toInt() + 100)
         SPStaticUtils.put(Constant.ME_BIRTH_MONTH, identityCode.substring(10, 12).toInt() - 1)
         SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
+
+        SPStaticUtils.put(Constant.ME_BIRTH,
+            "${
+                identityCode.substring(6, 10)
+                    .toInt() - TimeUtils.date2String(TimeUtils.getNowDate(),
+                    "yyyy").toInt() + 100
+            }" +
+                    "-${identityCode.substring(10, 12).toInt() - 1}-${
+                        identityCode.substring(12, 14).toInt() - 1
+                    }")
 
         val intent = intent
         setResult(RESULT_OK, intent)

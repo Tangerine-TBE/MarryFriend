@@ -52,6 +52,7 @@ import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.send.adapter.OnNineGridViewListener
 import com.twx.marryfriend.dynamic.send.adapter.PhotoPublishAdapter
+import com.twx.marryfriend.dynamic.send.dialog.VideoZipDialog
 import com.twx.marryfriend.dynamic.send.location.LocationActivity
 import com.twx.marryfriend.dynamic.send.utils.ItemTouchHelperCallback
 import com.twx.marryfriend.mine.verify.VerifyActivity
@@ -60,11 +61,12 @@ import com.twx.marryfriend.net.callback.dynamic.IDoUploadTrendCallback
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl
 import com.twx.marryfriend.set.web.SetWebActivity
-import com.twx.marryfriend.utils.DynamicFileProvider
-import com.twx.marryfriend.utils.GlideEngine
-import com.twx.marryfriend.utils.UnicodeUtils
+import com.twx.marryfriend.utils.*
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.utils.emoji.EmojiUtils
+import io.microshow.rxffmpeg.RxFFmpegCommandList
+import io.microshow.rxffmpeg.RxFFmpegInvoke
+import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
 import java.io.File
 import java.util.*
@@ -126,6 +128,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
     private lateinit var client: BosClient
 
+    private lateinit var mVideoZipDialog: VideoZipDialog
+
     override fun getLayoutView(): Int = R.layout.activity_dynamic_send
 
     override fun initView() {
@@ -136,6 +140,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         doUploadTrendPresent = doUploadTrendPresentImpl.getsInstance()
         doUploadTrendPresent.registerCallback(this)
+
+        mVideoZipDialog = VideoZipDialog()
 
         mAdapter = PhotoPublishAdapter(this)
         mAdapter.setMaxPic(9)
@@ -533,98 +539,193 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                     if (System.currentTimeMillis() - lastClickTime >= delayTime) {
                         lastClickTime = System.currentTimeMillis();
 
-                        ll_send_loading.visibility = View.VISIBLE
 
-                        when (mDataList.size) {
-                            0 -> {
-                                trendsType = 3
-                            }
-                            1 -> {
-                                trendsType =
+                        // 还需要上传图片
+
+                        if (mDataList.isNotEmpty()) {
+                            // 有图片文字数据
+
+                            trendsType = when (mDataList.size) {
+                                1 -> {
                                     if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
                                         2
                                     } else {
                                         1
                                     }
+                                }
+                                else -> {
+                                    1
+                                }
                             }
-                            else -> {
-                                trendsType = 1
-                            }
-                        }
-
-                        // 还需要上传图片
-
-                        if (mDataList.isNotEmpty()) {
-                            // 根据类型上传图片或视频后在上传动态
-
-                            val xlist: MutableList<String> = arrayListOf()
-
-                            Thread {
-
-                                Log.i("guo", mDataList.toString())
-
-                                // 分图片与视频两种不同上传方式
-                                if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
-                                    // 视频
-
-                                    val name = TimeUtils.getNowMills()
-
-                                    val file = File(mDataList[0])
-                                    val putObjectFromFileResponse = client.putObject("user${
-                                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }", "${name}.mp4", file)
-
-                                    val mLifeFirstUrl = client.generatePresignedUrl("user${
-                                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }", "${name}.mp4", -1).toString()
-
-                                    xlist.add(mLifeFirstUrl)
-
-                                } else {
-
-                                    // 图片
-                                    for (i in 0.until(mDataList.size)) {
-
-                                        val name = TimeUtils.getNowMills()
-
-                                        val file = File(mDataList[i])
-                                        val putObjectFromFileResponse = client.putObject("user${
-                                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                                        }", "${name}.jpg", file)
 
 
-                                        xlist.add(client.generatePresignedUrl("user${
-                                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                                        }", "${name}.jpg", -1).toString())
+                            when (trendsType) {
+                                1 -> {
+                                    // 图片动态 ，上传图片
 
-                                        Log.i("guo", " $i : ${xlist}")
+                                    ll_send_loading.visibility = View.VISIBLE
 
+                                    val xlist: MutableList<String> = arrayListOf()
+                                    Thread {
+
+                                        for (i in 0.until(mDataList.size)) {
+
+                                            val name = TimeUtils.getNowMills()
+
+                                            val file = File(mDataList[i])
+
+                                            val bitmap =
+                                                BitmapUtil.generateBitmap("佳偶婚恋交友",
+                                                    16f,
+                                                    Color.WHITE)
+                                                    ?.let {
+                                                        BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(
+                                                            file), it)
+                                                    }
+
+                                            val mPhotoPath =
+                                                this.externalCacheDir.toString() + File.separator + "${
+                                                    FileUtils.getFileNameNoExtension(mDataList[i])
+                                                }.png"
+
+                                            if (bitmap != null) {
+                                                BitmapUtil.saveBitmap(bitmap, mPhotoPath)
+                                            }
+
+                                            val putObjectFromFileResponse = client.putObject("user${
+                                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                                            }", "${name}.jpg", File(mPhotoPath))
+
+
+                                            xlist.add(client.generatePresignedUrl("user${
+                                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                                            }", "${name}.jpg", -1).toString())
+
+                                            Log.i("guo", " $i : ${xlist}")
+
+                                        }
+
+                                        val x = xlist.toString().replace("[", "")
+
+                                        imageUrl = x.replace("]", "")
+
+                                        if (content != "") {
+                                            doTextVerify(content)
+                                        } else {
+                                            uploadTrend()
+                                        }
+
+                                    }.start()
+
+                                }
+
+                                2 -> {
+
+
+                                    Log.i("guo",
+                                        "time : ${VideoUtil.getLocalVideoDuration(mDataList[0])}")
+
+
+
+                                    if (VideoUtil.getLocalVideoDuration(mDataList[0]) > 120) {
+                                        ToastUtils.showShort("视频时长大于120秒")
+                                    }
+
+                                    var size = 0
+
+                                    if (FileUtils.getSize(mDataList[0]).contains("MB")) {
+                                        size = FileUtils.getSize(mDataList[0]).replace("MB", "").toFloat().toInt()
+                                    } else if (FileUtils.getSize(mDataList[0]).contains("KB")) {
+                                        size = FileUtils.getSize(mDataList[0]).replace("KB", "").toFloat().toInt()
+                                        if (size < 1000) {
+                                            size = 1
+                                        } else {
+                                            size /= 1000
+                                        }
+                                    }
+
+                                    Log.i("guo",
+                                        "soze : ${FileUtils.getSize(mDataList[0])} chcange to $size")
+
+
+                                    if (size <= 10) {
+
+                                        // 正常符合流程的视频，直接上传
+
+                                        // 视频动态 ，上传视频
+
+                                        ll_send_loading.visibility = View.VISIBLE
+
+                                        val xlist: MutableList<String> = arrayListOf()
+
+                                        Thread {
+                                            val name = TimeUtils.getNowMills()
+
+                                            val file = File(mDataList[0])
+                                            val putObjectFromFileResponse =
+                                                client.putObject("user${
+                                                    SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default")
+                                                }", "${name}.mp4", file)
+
+                                            val mLifeFirstUrl =
+                                                client.generatePresignedUrl("user${
+                                                    SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default")
+                                                }", "${name}.mp4", -1).toString()
+
+                                            xlist.add(mLifeFirstUrl)
+
+
+                                            val x = xlist.toString().replace("[", "")
+
+                                            videoUrl = x.replace("]", "")
+
+
+                                            if (content != "") {
+                                                doTextVerify(content)
+                                            } else {
+                                                uploadTrend()
+                                            }
+
+                                        }.start()
+
+
+                                    } else {
+
+                                        ToastUtils.showShort("视频过大或者过长，需要压缩")
+
+
+                                        val width = VideoUtil.getLocalVideoWidth(mDataList[0])
+                                        val height = VideoUtil.getLocalVideoHeight(mDataList[0])
+
+
+                                        Log.i("guo", "width : $width")
+                                        Log.i("guo", "Height : $height")
+
+
+                                        val vga =
+                                            "${(width * 0.8).toInt()}*${(height * 0.8).toInt()}"
+
+                                        Log.i("guo", vga)
+
+                                        val targetPath =
+                                            externalCacheDir.toString() + File.separator + FileUtils.getFileNameNoExtension(
+                                                mDataList[0]) + ".mp4"
+
+
+                                        doZipVideo(mDataList[0], vga, targetPath)
 
                                     }
 
+
                                 }
-
-                                if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
-                                    val x = xlist.toString().replace("[", "")
-
-                                    videoUrl = x.replace("]", "")
-                                } else {
-                                    val x = xlist.toString().replace("[", "")
-
-                                    imageUrl = x.replace("]", "")
-                                }
-
-                                if (content != "") {
-                                    doTextVerify(content)
-                                } else {
-                                    uploadTrend()
-                                }
-
-
-                            }.start()
+                            }
 
                         } else {
                             // 不需要上传图片，直接上传文字即可
+
+                            trendsType = 3
 
                             if (content != "") {
                                 doTextVerify(content)
@@ -633,6 +734,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             }
 
                         }
+
 
                     } else {
                         ToastUtils.showShort("点击太频繁了，请稍后再评论")
@@ -726,6 +828,104 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         return trendInfo
 
+    }
+
+
+    // 调整分辨率压缩视频
+    private fun doZipVideo(
+        path: String,
+        vga: String,
+        targetPath: String,
+    ) {
+        RxFFmpegInvoke.getInstance()
+            .runCommandRxJava(zipVideo(path, vga, targetPath))
+            .subscribe(object : RxFFmpegSubscriber() {
+                override fun onError(message: String?) {
+                    mVideoZipDialog.setContent(0)
+                    mVideoZipDialog.dismissAllowingStateLoss()
+                }
+
+                override fun onFinish() {}
+
+                override fun onProgress(progress: Int, progressTime: Long) {
+                    mVideoZipDialog.setContent(progress)
+                }
+
+                override fun onCancel() {
+                    mVideoZipDialog.setContent(0)
+                }
+
+                override fun onStart() {
+                    super.onStart()
+                    mVideoZipDialog.show(supportFragmentManager, "Dialog")
+                }
+
+                override fun onComplete() {
+                    super.onComplete()
+                    mVideoZipDialog.setContent(0)
+                    mVideoZipDialog.dismissAllowingStateLoss()
+
+                    ThreadUtils.runOnUiThread {
+
+                        ll_send_loading.visibility = View.VISIBLE
+
+                        // 视频动态 ，上传视频
+                        val xlist: MutableList<String> = arrayListOf()
+
+                        Thread {
+                            val name = TimeUtils.getNowMills()
+
+                            val file = File(targetPath)
+                            val putObjectFromFileResponse =
+                                client.putObject("user${
+                                    SPStaticUtils.getString(Constant.USER_ID,
+                                        "default")
+                                }", "${name}.mp4", file)
+
+                            val mLifeFirstUrl =
+                                client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID,
+                                        "default")
+                                }", "${name}.mp4", -1).toString()
+
+                            xlist.add(mLifeFirstUrl)
+
+
+                            val x = xlist.toString().replace("[", "")
+
+                            videoUrl = x.replace("]", "")
+
+
+                            if (content != "") {
+                                doTextVerify(content)
+                            } else {
+                                uploadTrend()
+                            }
+
+                        }.start()
+
+                    }
+
+
+                }
+            })
+    }
+
+
+    //  调整分辨率压缩视频
+    //  ffmpeg -i Desktop/1.mov -s vga Desktop/1.mp4
+    private fun zipVideo(
+        VideoPath: String,
+        vga: String,
+        targetFile: String,
+    ): Array<String?> {
+        val cmdList = RxFFmpegCommandList()
+        cmdList.append("-i")
+        cmdList.append(VideoPath)
+        cmdList.append("-s")
+        cmdList.append("vga")
+        cmdList.append(targetFile)
+        return cmdList.build()
     }
 
 
@@ -892,9 +1092,35 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                             for (i in 0.until(result.size)) {
                                                 mDataList.add(result[i].realPath)
                                             }
-                                            mAdapter.data = mDataList
-                                            mAdapter.notifyDataSetChanged()
-                                            fixBottom()
+
+
+                                            if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
+                                                // 视频查看文件大小，再考虑是否展示
+                                                when {
+                                                    VideoUtil.getLocalVideoDuration(mDataList[0]) < 5 -> {
+                                                        mDataList.clear()
+                                                        ToastUtils.showShort("视频长度不能小于5s")
+                                                    }
+                                                    VideoUtil.getLocalVideoDuration(mDataList[0]) > 120 -> {
+                                                        mDataList.clear()
+                                                        ToastUtils.showShort("视频时长不能超过2分钟")
+                                                    }
+                                                    else -> {
+                                                        mAdapter.data = mDataList
+                                                        mAdapter.notifyDataSetChanged()
+                                                        fixBottom()
+                                                    }
+                                                }
+
+                                            } else {
+                                                // 图片直接展示
+                                                mAdapter.data = mDataList
+                                                mAdapter.notifyDataSetChanged()
+                                                fixBottom()
+
+                                            }
+
+
                                         }
 
                                         override fun onCancel() {

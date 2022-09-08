@@ -1,34 +1,62 @@
 package com.twx.marryfriend.guide.jumpInfo
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.FileProvider
 import com.aigestudio.wheelpicker.WheelPicker
-import com.baidu.idl.face.platform.common.LogHelper
-import com.blankj.utilcode.util.ConvertUtils
-import com.blankj.utilcode.util.GsonUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.baidubce.auth.DefaultBceCredentials
+import com.baidubce.services.bos.BosClient
+import com.baidubce.services.bos.BosClientConfiguration
+import com.blankj.utilcode.util.*
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
+import com.luck.picture.lib.animators.AnimationType
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.config.SelectModeConfig
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.luck.picture.lib.language.LanguageConfig
+import com.luck.picture.lib.style.PictureSelectorStyle
+import com.luck.picture.lib.style.PictureWindowAnimationStyle
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupAnimation
+import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.BaseInfoUpdateBean
-import com.twx.marryfriend.bean.CityBean
-import com.twx.marryfriend.bean.UpdateMoreInfoBean
+import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
 import com.twx.marryfriend.guide.detailInfo.step.*
 import com.twx.marryfriend.main.MainActivity
+import com.twx.marryfriend.mine.greet.GreetEditActivity
+import com.twx.marryfriend.net.callback.IDoFaceDetectCallback
 import com.twx.marryfriend.net.callback.IDoUpdateBaseInfoCallback
 import com.twx.marryfriend.net.callback.IDoUpdateMoreInfoCallback
+import com.twx.marryfriend.net.callback.IDoUploadAvatarCallback
+import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateBaseInfoPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateMoreInfoPresentImpl
-import com.twx.marryfriend.net.present.IDoUpdateMoreInfoPresent
-import kotlinx.android.synthetic.main.activity_base_info.*
-import kotlinx.android.synthetic.main.activity_detail_info.*
+import com.twx.marryfriend.net.impl.doUploadAvatarPresentImpl
+import com.twx.marryfriend.utils.BitmapUtil
+import com.twx.marryfriend.utils.GlideEngine
+import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_jump.*
-import kotlinx.android.synthetic.main.layout_guide_step_name.*
+import kotlinx.android.synthetic.main.fragment_data.*
 import kotlinx.android.synthetic.main.layout_main_guide_car.*
 import kotlinx.android.synthetic.main.layout_main_guide_havechild.*
 import kotlinx.android.synthetic.main.layout_main_guide_home.*
@@ -36,9 +64,11 @@ import kotlinx.android.synthetic.main.layout_main_guide_house.*
 import kotlinx.android.synthetic.main.layout_main_guide_job.*
 import kotlinx.android.synthetic.main.layout_main_guide_smoke.*
 import kotlinx.android.synthetic.main.layout_main_guide_wantchild.*
+import java.io.*
 import java.util.*
 
-class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback {
+class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
+    IDoFaceDetectCallback, IDoUploadAvatarCallback {
 
     // 基础数据是否上传完成
     private var isCompleteUpdateBaseInfo = false
@@ -49,7 +79,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     // 是否允许跳转 (逻辑是,点击一次之后继续展示下一界面,再点击一次则跳过,跳转至主界面)
     private var isReadyJump = false
 
-    // 城市数据
 
     // 家乡城市是否填写（滚轮滑动即视作已填写）
     private var isHomeReady = false
@@ -77,6 +106,23 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     private var mJobSecondList: MutableList<String> = arrayListOf()
     private var mJobIdSecondList: MutableList<Int> = arrayListOf()
 
+
+    // 头像暂存的bitmap
+    private var photoBitmap: Bitmap? = null
+
+    // 临时图片文件路径
+    private var mTempPhotoPath = ""
+
+    // 剪切后图像文件
+    private var mDestination: Uri? = null
+
+    // 剪切后图像存放地址
+    private var mPhotoPath = ""
+
+    // 图像上传百度云的url
+    private var mPhotoUrl = ""
+
+
     private var mStepDetailOne: StepDetailOne? = null   //  购车情况
     private var mStepDetailTwo: StepDetailTwo? = null   //  家乡
     private var mStepDetailThree: StepDetailThree? = null   //  抽烟
@@ -84,9 +130,15 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     private var mStepDetailFive: StepDetailFive? = null   //  是否有孩子
     private var mStepDetailSix: StepDetailSix? = null   //  工作
     private var mStepDetailSeven: StepDetailSeven? = null   //  住房情况
+    private var mStepDetailEight: StepDetailEight? = null   //  招呼语
+    private var mStepDetailNine: StepDetailNine? = null   //  头像
+
+    private lateinit var client: BosClient
 
     private lateinit var doUpdateMoreInfoPresent: doUpdateMoreInfoPresentImpl
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
+    private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
+    private lateinit var doUploadAvatarPresent: doUploadAvatarPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_jump
 
@@ -101,6 +153,18 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         doUpdateBaseInfoPresent = doUpdateBaseInfoPresentImpl.getsInstance()
         doUpdateBaseInfoPresent.registerCallback(this)
+
+        doFaceDetectPresent = doFaceDetectPresentImpl.getsInstance()
+        doFaceDetectPresent.registerCallback(this)
+
+        doUploadAvatarPresent = doUploadAvatarPresentImpl.getsInstance()
+        doUploadAvatarPresent.registerCallback(this)
+
+        mTempPhotoPath =
+            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+        mDestination = Uri.fromFile(File(this.cacheDir, "photoCropImage.jpeg"))
+
+        mPhotoPath = this.externalCacheDir.toString() + File.separator + "head.png"
 
     }
 
@@ -126,10 +190,19 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         initHomeWheelPicker()
 
+        showBeginUI()
+
     }
 
     override fun initPresent() {
         super.initPresent()
+
+        val config: BosClientConfiguration = BosClientConfiguration()
+        config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
+            "1b430f2517d0460ebdbecfd910c572f8")
+        config.endpoint = "http://adrmf.gz.bcebos.com"
+        client = BosClient(config)
+
     }
 
     override fun initEvent() {
@@ -137,10 +210,26 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         ll_guide_jump_skip.setOnClickListener {
 
-            if (isReadyJump) {
+            if (isReadyJump || vf_guide_jump_container.displayedChild == 8) {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             } else {
+
+
+                when (vf_guide_jump_container.displayedChild) {
+                    0 -> ll_guide_jump_next.visibility = View.VISIBLE
+                    4 -> ll_guide_jump_next.visibility = View.VISIBLE
+                    6 -> {
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                    }
+                    7 -> {
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                    }
+                    else -> ll_guide_jump_next.visibility = View.GONE
+                }
+
                 vf_guide_jump_container.showNext()
                 isReadyJump = true
             }
@@ -161,29 +250,18 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                         SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
                             mCitySecondList[mCitySecondPosition])
 
-                        vf_guide_jump_container.showNext()
-
-                        ll_guide_jump_next.visibility = View.GONE
+                        showNextUI()
 
                     } else {
 
-                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, mCityIdFirstList[0])
-                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, mCityFirstList[0])
-                        SPStaticUtils.put(Constant.ME_HOME_CITY_CODE, mCityIdSecondList[0])
-                        SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, mCitySecondList[0])
+                        ToastUtils.showShort("请确定您的家乡")
 
-                        vf_guide_jump_container.showNext()
+                        isHomeReady = true
 
-                        ll_guide_jump_next.visibility = View.GONE
                     }
                 }
                 5 -> {
                     if (isJobReady) {
-
-                        Log.i("guo",
-                            "${mJobFirstList[mFirstJobPosition]} : ${mJobIdFirstList[mFirstJobPosition]}")
-                        Log.i("guo",
-                            "${mJobSecondList[mSecondJobPosition]} : ${mJobIdSecondList[mSecondJobPosition]}")
 
                         SPStaticUtils.put(Constant.ME_INDUSTRY_CODE,
                             mJobIdFirstList[mFirstJobPosition])
@@ -194,29 +272,33 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                         SPStaticUtils.put(Constant.ME_OCCUPATION_NAME,
                             mJobSecondList[mSecondJobPosition])
 
-                        vf_guide_jump_container.showNext()
-
-                        ll_guide_jump_next.visibility = View.GONE
+                        showNextUI()
 
                     } else {
 
-                        Log.i("guo", "${mJobFirstList[0]} : ${mJobIdFirstList[0]}")
-                        Log.i("guo", "${mJobSecondList[0]} : ${mJobIdSecondList[0]}")
+                        ToastUtils.showShort("请确定您的工作")
 
-                        SPStaticUtils.put(Constant.ME_INDUSTRY_CODE,
-                            mJobIdFirstList[0])
-                        SPStaticUtils.put(Constant.ME_INDUSTRY_NAME,
-                            mJobFirstList[0])
-                        SPStaticUtils.put(Constant.ME_OCCUPATION_CODE,
-                            mJobIdSecondList[0])
-                        SPStaticUtils.put(Constant.ME_OCCUPATION_NAME,
-                            mJobSecondList[0])
-
-                        vf_guide_jump_container.showNext()
-
-                        ll_guide_jump_next.visibility = View.GONE
+                        isJobReady = true
 
                     }
+
+                }
+                7 -> {
+
+                    // 需要跳转到介绍语填写界面
+                    startActivityForResult(Intent(this, GreetEditActivity::class.java), 0)
+
+                }
+                8 -> {
+
+                    // 需要弹出头像上传弹窗
+                    XPopup.Builder(this)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(PhotoGuideDialog(this))
+                        .show()
 
                 }
             }
@@ -229,9 +311,9 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_car_have.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_car_have.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
             SPStaticUtils.put(Constant.ME_CAR, 1)
-            ll_guide_jump_next.visibility = View.VISIBLE
+
 
         }
 
@@ -240,9 +322,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_car_non.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_car_non.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
             SPStaticUtils.put(Constant.ME_CAR, 2)
-            ll_guide_jump_next.visibility = View.VISIBLE
         }
 
         // 家乡
@@ -279,7 +360,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_smoke_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_smoke_one.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_SMOKE, 3)
 
@@ -290,7 +371,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_smoke_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_smoke_two.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_SMOKE, 2)
         }
@@ -300,7 +381,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_smoke_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_smoke_three.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_SMOKE, 1)
 
@@ -311,7 +392,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_smoke_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_smoke_four.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_SMOKE, 4)
         }
@@ -322,7 +403,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_wantchild_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_wantchild_one.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_WANT_CHILD, 1)
         }
@@ -332,7 +413,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_wantchild_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_wantchild_two.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_WANT_CHILD, 2)
         }
@@ -342,7 +423,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_wantchild_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_wantchild_three.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_WANT_CHILD, 3)
         }
@@ -352,7 +433,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_wantchild_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_wantchild_four.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_WANT_CHILD, 4)
         }
@@ -363,12 +444,10 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_havechild_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_havechild_one.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
-            ll_guide_jump_next.visibility = View.VISIBLE
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_HAVE_CHILD, 1)
 
-            ll_guide_jump_next.visibility = View.VISIBLE
         }
 
         tv_jump_havechild_two.setOnClickListener {
@@ -376,12 +455,10 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_havechild_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_havechild_two.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
-            ll_guide_jump_next.visibility = View.VISIBLE
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_HAVE_CHILD, 2)
 
-            ll_guide_jump_next.visibility = View.VISIBLE
         }
 
         tv_jump_havechild_three.setOnClickListener {
@@ -389,12 +466,10 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_havechild_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_havechild_three.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
-            ll_guide_jump_next.visibility = View.VISIBLE
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_HAVE_CHILD, 3)
 
-            ll_guide_jump_next.visibility = View.VISIBLE
         }
 
         tv_jump_havechild_four.setOnClickListener {
@@ -402,12 +477,10 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             tv_jump_havechild_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
             tv_jump_havechild_four.setTextColor(Color.parseColor("#FF4444"))
 
-            vf_guide_jump_container.showNext()
-            ll_guide_jump_next.visibility = View.VISIBLE
+            showNextUI()
 
             SPStaticUtils.put(Constant.ME_HAVE_CHILD, 4)
 
-            ll_guide_jump_next.visibility = View.VISIBLE
         }
 
         // 工作
@@ -445,7 +518,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
             SPStaticUtils.put(Constant.ME_HOUSE, 1)
 
-            jumpToMain()
+            showNextUI()
 
         }
 
@@ -456,7 +529,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
             SPStaticUtils.put(Constant.ME_HOUSE, 2)
 
-            jumpToMain()
+            showNextUI()
 
         }
 
@@ -467,7 +540,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
             SPStaticUtils.put(Constant.ME_HOUSE, 3)
 
-            jumpToMain()
+            showNextUI()
 
         }
 
@@ -478,7 +551,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
             SPStaticUtils.put(Constant.ME_HOUSE, 4)
 
-            jumpToMain()
+            showNextUI()
 
         }
 
@@ -489,7 +562,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
             SPStaticUtils.put(Constant.ME_HOUSE, 5)
 
-            jumpToMain()
+            showNextUI()
+
 
         }
 
@@ -526,9 +600,417 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                 if (mStepDetailSeven == null) {
                     mStepDetailSeven = StepDetailSeven(this, vf_guide_jump_container.getChildAt(6))
                 }
+
+                if (mStepDetailEight == null) {
+                    mStepDetailEight = StepDetailEight(this, vf_guide_jump_container.getChildAt(7))
+                }
+
+                if (mStepDetailNine == null) {
+                    mStepDetailNine = StepDetailNine(this, vf_guide_jump_container.getChildAt(8))
+                }
+
             }
         }
         return null
+    }
+
+
+    private fun showBeginUI() {
+        // 判断各个界面是否有数据
+
+        // 购车情况
+        val car = SPStaticUtils.getInt(Constant.ME_CAR, 0)
+        // 家乡
+        val home = SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
+        // 抽烟
+        val smoke = SPStaticUtils.getInt(Constant.ME_SMOKE, 0)
+        // 想要孩子吗
+        val wantChild = SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0)
+        // 你有孩子吗
+        val haveChild = SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0)
+        // 工作
+        val work = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
+        // 住房情况
+        val house = SPStaticUtils.getInt(Constant.ME_HOUSE, 0)
+        // 招呼语
+        val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
+        // 头像
+        val avatar = SPStaticUtils.getString(Constant.ME_AVATAR, "")
+
+
+        Log.i("guo", "car : $car")
+        Log.i("guo", "home : $home")
+        Log.i("guo", "smoke : $smoke")
+        Log.i("guo", "wantChild : $wantChild")
+        Log.i("guo", "haveChild : $haveChild")
+        Log.i("guo", "work : $work")
+        Log.i("guo", "house : $house")
+        Log.i("guo", "greet : $greet")
+        Log.i("guo", "avatar : $avatar")
+
+
+        when {
+            car == 0 -> {
+                // home 没有数据
+                show(0)
+                ll_guide_jump_next.visibility = View.GONE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            home == "" -> {
+                // home 没有数据
+                show(1)
+                ll_guide_jump_next.visibility = View.VISIBLE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            smoke == 0 -> {
+                show(2)
+                ll_guide_jump_next.visibility = View.GONE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            wantChild == 0 -> {
+                show(3)
+                ll_guide_jump_next.visibility = View.GONE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            haveChild == 0 -> {
+                show(4)
+                ll_guide_jump_next.visibility = View.GONE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            work == "" -> {
+                show(5)
+                ll_guide_jump_next.visibility = View.VISIBLE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            house == 0 -> {
+                show(6)
+                ll_guide_jump_next.visibility = View.GONE
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            greet == "" -> {
+                show(7)
+                ll_guide_jump_next.visibility = View.VISIBLE
+                ll_guide_jump_next.text = "立即填写"
+                ll_guide_jump_tips.visibility = View.VISIBLE
+            }
+            avatar == "" -> {
+                show(8)
+                ll_guide_jump_next.visibility = View.VISIBLE
+                ll_guide_jump_next.text = "上传头像"
+                ll_guide_jump_tips.visibility = View.GONE
+            }
+            else -> {
+                // 跳转到首页
+                jumpToMain()
+            }
+        }
+
+
+    }
+
+    // 显示下一个弹窗
+    private fun showNextUI() {
+        // 判断各个界面是否有数据
+
+        // 购车情况
+        val car = SPStaticUtils.getInt(Constant.ME_CAR, 0)
+        // 家乡
+        val home = SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
+        // 抽烟
+        val smoke = SPStaticUtils.getInt(Constant.ME_SMOKE, 0)
+        // 想要孩子吗
+        val wantChild = SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0)
+        // 你有孩子吗
+        val haveChild = SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0)
+        // 工作
+        val work = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
+        // 住房情况
+        val house = SPStaticUtils.getInt(Constant.ME_HOUSE, 0)
+        // 招呼语
+        val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
+        // 头像
+        val avatar = SPStaticUtils.getString(Constant.ME_AVATAR, "")
+
+
+        Log.i("guo", "car : $car")
+        Log.i("guo", "home : $home")
+        Log.i("guo", "smoke : $smoke")
+        Log.i("guo", "wantChild : $wantChild")
+        Log.i("guo", "haveChild : $haveChild")
+        Log.i("guo", "work : $work")
+        Log.i("guo", "house : $house")
+        Log.i("guo", "greet : $greet")
+        Log.i("guo", "avatar : $avatar")
+
+
+        when (vf_guide_jump_container.displayedChild) {
+            0 -> {
+                when {
+                    home == "" -> {
+                        // home 没有数据
+                        show(1)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    smoke == 0 -> {
+                        show(2)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    wantChild == 0 -> {
+                        show(3)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    haveChild == 0 -> {
+                        show(4)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    work == "" -> {
+                        show(5)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    house == 0 -> {
+                        show(6)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            1 -> {
+                when {
+                    smoke == 0 -> {
+                        show(2)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    wantChild == 0 -> {
+                        show(3)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    haveChild == 0 -> {
+                        show(4)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    work == "" -> {
+                        show(5)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    house == 0 -> {
+                        show(6)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            2 -> {
+                when {
+                    wantChild == 0 -> {
+                        show(3)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    haveChild == 0 -> {
+                        show(4)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    work == "" -> {
+                        show(5)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    house == 0 -> {
+                        show(6)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            3 -> {
+                when {
+                    haveChild == 0 -> {
+                        show(4)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    work == "" -> {
+                        show(5)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    house == 0 -> {
+                        show(6)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            4 -> {
+                when {
+                    work == "" -> {
+                        show(5)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    house == 0 -> {
+                        show(6)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            5 -> {
+                when {
+                    house == 0 -> {
+                        show(6)
+                        ll_guide_jump_next.visibility = View.GONE
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            6 -> {
+                when {
+                    greet == "" -> {
+                        show(7)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "立即填写"
+                        ll_guide_jump_tips.visibility = View.VISIBLE
+                    }
+                    avatar == "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+            7 -> {
+                when (avatar) {
+                    "" -> {
+                        show(8)
+                        ll_guide_jump_next.visibility = View.VISIBLE
+                        ll_guide_jump_next.text = "上传头像"
+                        ll_guide_jump_tips.visibility = View.GONE
+                    }
+                    else -> {
+                        // 跳转到首页
+                        jumpToMain()
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    private fun show(page: Int) {
+        vf_guide_jump_container.displayedChild = page
     }
 
     // 初始化界面切换动画
@@ -547,11 +1029,23 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
         doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
-
         val baseInfoMap: MutableMap<String, String> = TreeMap()
         baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
         doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+    }
+
+    // 需要上传的基础信息
+    private fun updateAvatar(photoUrl: String, type: String, name: String) {
+
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
     }
 
@@ -576,7 +1070,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                     "\"hometown_province_num\": \"$homeProvinceCode\"," +           // 家乡省份编码
                     "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
                     "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
-                    "\"hometown_city_str\":     \"$homeCityName\"}"                   // 我心目中的Ta
+                    "\"hometown_city_str\":     \"$homeCityName\"}"                   // 家乡城市名字
 
         return baseInfo
 
@@ -736,6 +1230,149 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     }
 
+    // 裁剪图片方法实现 ( 头像界面 )
+    private fun startPhotoCropActivity(source: Uri) {
+        val options = UCrop.Options()
+        // 修改标题栏颜色
+        options.setToolbarColor(Color.parseColor("#FFFFFF"))
+        // 修改状态栏颜色
+        options.setStatusBarColor(Color.parseColor("#0F0F0F"))
+        // 隐藏底部工具
+        options.setHideBottomControls(true)
+        // 图片格式
+        options.setCompressionFormat(Bitmap.CompressFormat.JPEG)
+        // 设置图片压缩质量
+        options.setCompressionQuality(100)
+
+
+        // 是否让用户调整范围(默认false)，如果开启，可能会造成剪切的图片的长宽比不是设定的
+        // 如果不开启，用户不能拖动选框，只能缩放图片
+//        options.setFreeStyleCropEnabled(true);
+        mDestination?.let {
+            UCrop.of<Any>(source, it) // 长宽比
+                .withAspectRatio(1f, 1f) // 图片大小
+                .withMaxResultSize(512, 512) // 配置参数
+                .withOptions(options)
+                .start(this)
+        }
+
+    }
+
+    // 处理剪切成功的返回值 ( 头像界面 )
+    private fun handlePhotoCropResult(result: Intent) {
+        deleteTempPhotoFile()
+        val resultUri = UCrop.getOutput(result)
+        if (null != resultUri) {
+            var bitmap: Bitmap? = null
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, resultUri)
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
+            photoBitmap = bitmap
+
+            val map: MutableMap<String, String> = TreeMap()
+
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+            map[Contents.IMAGE] = bitmapToBase64(bitmap)
+
+            ll_jump_loading.visibility = View.VISIBLE
+
+            doFaceDetectPresent.doFaceDetect(map)
+
+        } else {
+            ToastUtils.showShort("无法剪切选择图片")
+        }
+    }
+
+    // 处理剪切失败的返回值
+    private fun handlePhotoCropError(result: Intent) {
+        deleteTempPhotoFile()
+        val cropError = UCrop.getError(result)
+        if (cropError != null) {
+            ToastUtils.showShort(cropError.message)
+        } else {
+            ToastUtils.showShort("无法剪切选择图片")
+        }
+    }
+
+    // 删除拍照临时文件
+    private fun deleteTempPhotoFile() {
+        val tempFile = File(mTempPhotoPath)
+        if (tempFile.exists() && tempFile.isFile) {
+            tempFile.delete()
+        }
+    }
+
+    // 将图片转换成Base64编码的字符串
+    private fun bitmapToBase64(bitmap: Bitmap?): String {
+        var result: String = ""
+        var baos: ByteArrayOutputStream? = null
+        try {
+            if (bitmap != null) {
+                baos = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                baos.flush()
+                baos.close()
+                val bitmapBytes = baos.toByteArray()
+                result =
+                    android.util.Base64.encodeToString(bitmapBytes, android.util.Base64.NO_WRAP)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } finally {
+            try {
+                if (baos != null) {
+                    baos.flush()
+                    baos.close()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return result
+    }
+
+    private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
+        ImageUtils.save(bitmap, targetPath, Bitmap.CompressFormat.PNG)
+        return targetPath
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+
+                    showNextUI()
+
+                }
+                // 拍照返回至裁切
+                1 -> {
+                    val temp = File(mTempPhotoPath)
+                    startPhotoCropActivity(Uri.fromFile(temp))
+                }
+                UCrop.REQUEST_CROP -> {
+
+                    // 只走头像的回调
+                    if (data != null) {
+                        handlePhotoCropResult(data)
+                    }
+
+                }
+                UCrop.RESULT_ERROR -> {
+                    if (data != null) {
+                        handlePhotoCropError(data)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onLoading() {
 
     }
@@ -744,12 +1381,96 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     }
 
+    override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
+
+        Log.i("guo","onDoUploadAvatarSuccess")
+        jumpToMain()
+
+        if (uploadAvatarBean != null) {
+            if (uploadAvatarBean.code == 200) {
+                jumpToMain()
+            } else {
+                ToastUtils.showShort("头像上传失败")
+            }
+        }
+    }
+
+    override fun onDoUploadAvatarError() {
+        ll_jump_loading.visibility = View.GONE
+    }
+
+    override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean?) {
+        if (faceDetectBean != null) {
+            if (faceDetectBean.conclusion == "合规") {
+
+
+                val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                    BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
+                }
+
+
+                FileUtils.delete(mPhotoPath)
+
+                if (bitmap != null) {
+                    saveBitmap(bitmap, mPhotoPath)
+                }
+
+                Thread {
+
+                    //上传Object
+                    val file = File(mPhotoPath)
+                    // bucketName 为文件夹名 ，使用用户id来进行命名
+                    // key值为保存文件名，试用固定的几种格式来命名
+
+                    val putObjectFromFileResponse = client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID,
+                            "default")
+                    }",
+                        FileUtils.getFileName(mPhotoPath), file)
+
+                    Log.i("guo", FileUtils.getFileName(mPhotoPath))
+
+                    mPhotoUrl = client.generatePresignedUrl("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", FileUtils.getFileName(mPhotoPath), -1).toString()
+
+                    SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+
+                    Log.i("guo", mPhotoUrl)
+
+                    updateAvatar(mPhotoUrl,
+                        FileUtils.getFileExtension(mPhotoPath),
+                        FileUtils.getFileNameNoExtension(mPhotoPath))
+
+                }.start()
+
+            } else {
+                ToastUtils.showShort(faceDetectBean.error_msg)
+                ll_jump_loading.visibility = View.GONE
+            }
+        }
+    }
+
+    override fun onDoFaceDetectError() {
+        ll_jump_loading.visibility = View.GONE
+    }
+
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
+
+        ll_jump_loading.visibility = View.GONE
 
         isCompleteUpdateBaseInfo = true
 
         if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
-            ToastUtils.showShort("资料上传成功")
+
+            if (baseInfoUpdateBean != null) {
+                if (baseInfoUpdateBean.code == 200) {
+                    ToastUtils.showShort("资料上传成功")
+                } else {
+                    ToastUtils.showShort("资料上传失败")
+                }
+            }
+
 //            val intent = Intent(this, MainActivity::class.java)
 //            startActivity(intent)
             this.finish()
@@ -758,6 +1479,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     }
 
     override fun onDoUpdateBaseInfoError() {
+
+        ll_jump_loading.visibility = View.GONE
 
         isCompleteUpdateBaseInfo = true
 
@@ -773,10 +1496,18 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
 
+        ll_jump_loading.visibility = View.GONE
+
         isCompleteUpdateMoreInfo = true
 
         if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
-            ToastUtils.showShort("资料上传成功")
+            if (updateMoreInfoBean != null) {
+                if (updateMoreInfoBean.code == 200) {
+                    ToastUtils.showShort("资料上传成功")
+                } else {
+                    ToastUtils.showShort("资料上传失败")
+                }
+            }
 
 //            val intent = Intent(this, MainActivity::class.java)
 //            startActivity(intent)
@@ -786,6 +1517,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     }
 
     override fun onDoUpdateMoreInfoError() {
+        ll_jump_loading.visibility = View.GONE
 
         isCompleteUpdateMoreInfo = true
 
@@ -795,6 +1527,132 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 //            val intent = Intent(this, MainActivity::class.java)
 //            startActivity(intent)
             this.finish()
+        }
+
+    }
+
+    // -------------------  上传头像界面  -----------------
+
+    inner class PhotoGuideDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_photo_guide
+
+        override fun onCreate() {
+            super.onCreate()
+
+            val assetManager = context.assets
+
+            val goodOne: InputStream = assetManager.open("pic/pic_guide_photo_good_one.png")
+            val goodTwo: InputStream = assetManager.open("pic/pic_guide_photo_good_two.png")
+            val goodThree: InputStream = assetManager.open("pic/pic_guide_photo_good_three.png")
+
+            val badOne: InputStream = assetManager.open("pic/pic_guide_photo_bad_one.png")
+            val badTwo: InputStream = assetManager.open("pic/pic_guide_photo_bad_two.png")
+            val badThree: InputStream = assetManager.open("pic/pic_guide_photo_bad_three.png")
+            val badFour: InputStream = assetManager.open("pic/pic_guide_photo_bad_four.png")
+            val badFive: InputStream = assetManager.open("pic/pic_guide_photo_bad_five.png")
+
+            findViewById<ImageView>(R.id.iv_dialog_photo_good_one).background =
+                BitmapDrawable(BitmapFactory.decodeStream(goodOne))
+            findViewById<ImageView>(R.id.iv_dialog_photo_good_two).background =
+                BitmapDrawable(BitmapFactory.decodeStream(goodTwo))
+            findViewById<ImageView>(R.id.iv_dialog_photo_good_three).background =
+                BitmapDrawable(BitmapFactory.decodeStream(goodThree))
+            findViewById<ImageView>(R.id.iv_dialog_photo_bad_one).background =
+                BitmapDrawable(BitmapFactory.decodeStream(badOne))
+            findViewById<ImageView>(R.id.iv_dialog_photo_bad_two).background =
+                BitmapDrawable(BitmapFactory.decodeStream(badTwo))
+            findViewById<ImageView>(R.id.iv_dialog_photo_bad_three).background =
+                BitmapDrawable(BitmapFactory.decodeStream(badThree))
+            findViewById<ImageView>(R.id.iv_dialog_photo_bad_four).background =
+                BitmapDrawable(BitmapFactory.decodeStream(badFour))
+            findViewById<ImageView>(R.id.iv_dialog_photo_bad_five).background =
+                BitmapDrawable(BitmapFactory.decodeStream(badFive))
+
+            findViewById<ImageView>(R.id.iv_dialog_photo_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_photo_confirm).setOnClickListener {
+                ToastUtils.showShort("打开相册")
+
+                dismiss()
+
+                val selectorStyle = PictureSelectorStyle()
+                val animationStyle = PictureWindowAnimationStyle()
+                animationStyle.setActivityEnterAnimation(R.anim.ps_anim_up_in)
+                animationStyle.setActivityExitAnimation(R.anim.ps_anim_down_out)
+                selectorStyle.windowAnimationStyle = animationStyle
+
+                PictureSelector.create(this@JumpActivity)
+                    .openGallery(SelectMimeType.TYPE_IMAGE)
+                    .setImageEngine(GlideEngine.createGlideEngine())
+                    .setSelectionMode(SelectModeConfig.SINGLE)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
+                    .setImageSpanCount(3)
+                    .isDisplayCamera(true)
+                    .isPreviewImage(true)
+                    .isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE)
+                    .setSelectorUIStyle(selectorStyle)
+                    .forResult(object : OnResultCallbackListener<LocalMedia> {
+                        override fun onResult(result: ArrayList<LocalMedia>?) {
+
+                            val temp = File(result?.get(0)?.realPath)
+                            startPhotoCropActivity(Uri.fromFile(temp))
+
+                        }
+
+                        override fun onCancel() {
+
+                        }
+
+                    })
+
+
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_photo_camera).setOnClickListener {
+                ToastUtils.showShort("打开相机")
+
+                dismiss()
+
+                XXPermissions.with(this@JumpActivity)
+                    .permission(Permission.CAMERA)
+                    .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                    .request(object : OnPermissionCallback {
+                        override fun onGranted(
+                            permissions: MutableList<String>?,
+                            all: Boolean,
+                        ) {
+
+                            val tempPhotoFile: File = File(mTempPhotoPath)
+                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            // 如果在Android7.0以上,使用FileProvider获取Uri
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                val authority = context.packageName.toString() + ".fileProvider"
+                                val contentUri: Uri =
+                                    FileProvider.getUriForFile(context, authority, tempPhotoFile)
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                            } else {
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    Uri.fromFile(tempPhotoFile))
+                            }
+                            startActivityForResult(intent, 1)
+                        }
+
+                        override fun onDenied(
+                            permissions: MutableList<String>?,
+                            never: Boolean,
+                        ) {
+                            super.onDenied(permissions, never)
+                            ToastUtils.showShort("请授予应用相关权限")
+                        }
+
+                    })
+            }
+
         }
 
     }
