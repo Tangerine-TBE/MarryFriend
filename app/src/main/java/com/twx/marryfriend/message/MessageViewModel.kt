@@ -104,4 +104,28 @@ class MessageViewModel:ViewModel() {
             "size" to "20"
         ))
     }
+
+    suspend fun getFollowCountImg()=suspendCoroutine<Pair<Int,String>?>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/TrendsNotice/focousCountImg"
+        val map= mapOf(
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
+        )
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val jsonObject=JSONObject(response)
+                val data=jsonObject.getJSONObject("data")
+                val total=data.getInt("total")
+                if (total<=0){
+                    coroutine.resume(null)
+                }else{
+                    coroutine.resume(total to data.getString("image"))
+                }
+                iLog(response)
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
 }

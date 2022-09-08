@@ -55,6 +55,7 @@ open class ChatActivity : BaseInitActivity(), OnBackPressListener, OnRightClickL
     private val fragment by lazy {
         getChatFragment()
     }
+
     private var viewModel: ChatViewModel? = null
 
     protected open fun getChatFragment():ChatFragment{

@@ -366,6 +366,7 @@ public class EaseConversationListLayout extends EaseBaseLayout implements IConve
 
     @Override
     public void addHeaderAdapter(RecyclerView.Adapter adapter) {
+        adapter.setHasStableIds(true);
         this.adapter.addAdapter(0, adapter);
     }
 

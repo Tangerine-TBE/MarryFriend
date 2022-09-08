@@ -31,7 +31,7 @@ open class ConversationListFragment : EaseConversationListFragment() {
     private var mViewModel: ConversationListViewModel? = null
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
-        conversationListLayout.listAdapter.emptyLayoutId = R.layout.ease_layout_default_no_data
+//        conversationListLayout.listAdapter.emptyLayoutId = R.layout.ease_layout_default_no_data
         initViewModel()
     }
 
@@ -54,7 +54,7 @@ open class ConversationListFragment : EaseConversationListFragment() {
     }
 
     private fun showDeleteDialog(position: Int, info: EaseConversationInfo) {
-        SimpleDialogFragment.Builder(mContext as BaseActivity)
+        SimpleDialogFragment.Builder(requireActivity())
             .setTitle(R.string.delete_conversation)
             .setOnConfirmClickListener(R.string.delete) {
                 conversationListLayout.deleteConversation(position, info)
@@ -67,11 +67,6 @@ open class ConversationListFragment : EaseConversationListFragment() {
 
     override fun initListener() {
         super.initListener()
-    }
-
-    private fun test(){
-        conversationListLayout.listAdapter
-        val conversationListView=findViewById<EaseConversationListLayout>(com.hyphenate.easeui.R.id.list_conversation)
     }
 
     override fun initData() {

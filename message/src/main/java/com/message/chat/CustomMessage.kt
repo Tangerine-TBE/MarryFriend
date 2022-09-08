@@ -7,7 +7,7 @@ sealed class CustomMessage constructor(emMessage: EMMessage):Message<EMCustomMes
     enum class CustomEvent(title:String,val code:String){
         flower("送花","flower"),
         security("安全提示","security"),
-        openVip("开通vip","openVip"),
+        openSuperVip("开通vip","openVip"),
         upload_head("上传头像","uploadHead")
     }
 

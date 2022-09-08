@@ -65,6 +65,17 @@ class BaseViewHolder(itemView:View):RecyclerView.ViewHolder(itemView) {
                 .into(it)
         }
     }
+
+    fun setImage(viewId: Int,strPath: String,def:Int):ImageView{
+        return getView<ImageView>(viewId).also {
+            Glide.with(context)
+                .load(strPath)
+                .error(def)
+                .placeholder(def)
+                .into(it)
+        }
+    }
+
     fun setImage(viewId: Int,photoPath:String?,isRs:Boolean=false,perDefImg:Int?=null):ImageView{
         return getView<ImageView>(viewId).also {
             if (!photoPath.isNullOrEmpty()) {

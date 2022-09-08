@@ -46,7 +46,7 @@ sealed class Message<BODY: EMMessageBody>(val emMessage: EMMessage){
                         CustomMessage.CustomEvent.security -> {
                             SendFlowerMessage(emMessage)
                         }
-                        CustomMessage.CustomEvent.openVip -> {
+                        CustomMessage.CustomEvent.openSuperVip -> {
                             SendFlowerMessage(emMessage)
                         }
                         CustomMessage.CustomEvent.upload_head -> {

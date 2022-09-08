@@ -2,6 +2,7 @@ package com.twx.marryfriend
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.SPStaticUtils
 import com.twx.marryfriend.constant.Constant
@@ -43,6 +44,9 @@ object UserInfo {
 
         val userId=if(BuildConfig.DEBUG&&
             (phone=="15270318482"||phone=="17370452215")){//3是男的
+            if (Build.MANUFACTURER.contains("xiaomi",true)){
+                return "3"
+            }
             return "2"//3,4,6,11,16//
         }else{
             SPStaticUtils.getString(Constant.USER_ID, null)
@@ -68,6 +72,10 @@ object UserInfo {
 
     fun isVip():Boolean{
         return getUserVipLevel()>0
+    }
+
+    fun isSuperVip():Boolean{
+        return getUserVipLevel()>1
     }
     fun getHeadPortrait():String{
         return SPStaticUtils.getString(
@@ -131,14 +139,8 @@ object UserInfo {
 
     }
 
-    fun getGreetText():String{
-        return SPStaticUtils.getString(Constant.ME_GREET).let {
-            if (it.isNullOrBlank()){
-                "你好啊！"
-            }else{
-                it
-            }
-        }
+    fun getGreetText():String?{
+        return SPStaticUtils.getString(Constant.ME_GREET)
     }
 
     fun isHaveLifePhoto():Boolean{

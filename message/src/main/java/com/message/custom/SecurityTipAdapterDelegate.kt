@@ -30,11 +30,9 @@ class SecurityTipAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChat
             }
 
             override fun onSetUpView() {
-//            view.settext
                 setOnClickListener {
-                    toast(context,"安全提示")
+                    ImCustomEventListenerManager.click(it,CustomMessage.CustomEvent.security,message)
                 }
-//                message
             }
         }
     }

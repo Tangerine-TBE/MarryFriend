@@ -159,6 +159,7 @@
             android:layout_height="wrap_content"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/lastMsgView"
         app:layout_constraintStart_toStartOf="@id/messageUserNickname"
         app:layout_constraintTop_toBottomOf="@id/messageUserNickname"
         android:layout_marginTop="6dp"
@@ -174,6 +175,8 @@
         <TextView
             android:id="@+id/conversationLastMsg"
             tools:text="最后一条命"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:layout_marginStart="@dimen/adaptive_11dp"
             android:textColor="#FF717171"
             android:textSize="15dp"

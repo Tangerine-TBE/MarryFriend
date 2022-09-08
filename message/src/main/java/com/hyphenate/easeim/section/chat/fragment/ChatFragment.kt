@@ -360,10 +360,14 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
                 startActivityForResult(userCardIntent, REQUEST_CODE_SELECT_USER_CARD)
             }
             R.id.extend_item_send_flower->{
-                val msg=ImMessageManager.sendFlower(conversationId)?.emMessage
-                sendMessage(msg)
+                onClickSendFlower()
             }
         }
+    }
+
+    protected open fun onClickSendFlower(){
+        val msg=ImMessageManager.sendFlower(conversationId)?.emMessage
+        sendMessage(msg)
     }
 
     fun sendMessage(message:EMMessage?){

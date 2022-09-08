@@ -64,12 +64,12 @@ class OneClickHelloDialog(context: Context,private val data:List<OneClickHelloIt
                 return@setOnClickListener
             }
             sendAction.invoke(resultList)
-            resultList?.forEach {
-                val id=it.user_id
-                if (id!=null) {
-                    ImMessageManager.sendTextMsg(id.toString(), UserInfo.getGreetText())
-                }
-            }
+//            resultList?.forEach {
+//                val id=it.user_id
+//                if (id!=null) {
+//                    ImMessageManager.sendTextMsg(id.toString(), UserInfo.getGreetText())
+//                }
+//            }
             dismiss()
         }
     }

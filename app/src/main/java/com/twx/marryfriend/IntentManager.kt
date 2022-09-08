@@ -83,7 +83,7 @@ object IntentManager {
     fun getUpHeadImageIntent(context: Context):Intent?{
         val intent=Intent(context, AvatarToolActivity::class.java)
         intent.putExtra("activity", "data")
-        return null
+        return intent
     }
     fun getUpFillInHobbyIntent(context: Context):Intent?{
         val intent=Intent(context, HobbyToolActivity::class.java)
@@ -97,7 +97,7 @@ object IntentManager {
     fun getUpFillInIntroduceIntent(context: Context):Intent?{
         val intent=Intent(context, IntroduceToolActivity::class.java)
         intent.putExtra("activity", "data")
-        return null
+        return intent
     }
 //    fun getUpFillInVoiceIntent(context: Context):Intent?{
 //        val intent=Intent(context, LifePhotoActivity::class.java)

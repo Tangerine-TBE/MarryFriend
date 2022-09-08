@@ -1,11 +1,19 @@
 package com.twx.marryfriend
 
+import android.content.Intent
+import android.net.Uri
+import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hyphenate.chat.EMMessage
 import com.message.ImLoginHelper
 import com.message.ImUserInfoService
+import com.message.chat.CustomMessage
+import com.message.custom.IImEventListener
+import com.message.custom.ImCustomEventListenerManager
 import com.twx.marryfriend.message.MessageViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
+import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
@@ -14,7 +22,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object ImInfoInit {
+object ImHelper {
     private val messageViewModel by lazy {
         MessageViewModel()
     }
@@ -68,6 +76,26 @@ object ImInfoInit {
                 login(userId)
             }
         }
+        ImCustomEventListenerManager.addListener(object :IImEventListener{
+            override fun click(view: View, event: CustomMessage.CustomEvent, emMessage: EMMessage) {
+                when(event){
+                    CustomMessage.CustomEvent.flower -> {
+
+                    }
+                    CustomMessage.CustomEvent.security -> {
+                        view.context.startActivity(Intent(Intent.ACTION_VIEW).also {
+                            it.data = Uri.parse("http://test.aisou.club/userManual/fraud.html")
+                        })
+                    }
+                    CustomMessage.CustomEvent.openSuperVip -> {
+                        view.context.startActivity(VipActivity.getIntent(view.context,1,emMessage.from?.toIntOrNull()))
+                    }
+                    CustomMessage.CustomEvent.upload_head -> {
+                        view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))
+                    }
+                }
+            }
+        })
     }
 
     private fun login(userId:String){

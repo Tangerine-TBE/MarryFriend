@@ -18,8 +18,10 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.hyphenate.easeim.R;
@@ -238,7 +240,7 @@ public class DemoDialogFragment extends BaseDialogFragment implements View.OnCli
     }
 
     public static class Builder {
-        public BaseActivity context;
+        public FragmentActivity context;
         private String title;
         private int titleColor;
         private float titleSize;
@@ -251,7 +253,7 @@ public class DemoDialogFragment extends BaseDialogFragment implements View.OnCli
         private String cancel;
         private String content;
 
-        public Builder(BaseActivity context) {
+        public Builder(FragmentActivity context) {
             this.context = context;
         }
 

@@ -34,9 +34,8 @@ class UploadHeadAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatR
 
             override fun onSetUpView() {
                 setOnClickListener {
-                    toast(context,"上传头像")
+                    ImCustomEventListenerManager.click(it,CustomMessage.CustomEvent.upload_head,message)
                 }
-//                message
             }
         }
     }

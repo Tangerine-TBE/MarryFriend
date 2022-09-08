@@ -7,20 +7,25 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.modules.chat.EaseChatPrimaryMenu
 import com.hyphenate.easeui.modules.chat.interfaces.EaseChatPrimaryMenuListener
 import com.message.ImMessageManager
 import com.message.chat.CustomMessage
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.recommend.RecommendViewModel
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class MyChatFragment: ChatFragment() {
+class ImChatFragment: ChatFragment() {
     companion object{
         private const val IS_SEND_OPEN_VIP="is_send_open_vip"
         fun putSendOpenVipMsg(conversationId:String){
@@ -30,24 +35,30 @@ class MyChatFragment: ChatFragment() {
             return SPUtil.instance.getBoolean(IS_SEND_OPEN_VIP+conversationId,false)
         }
 
-        private const val IS_SEND_OPEN_VIP_UP="is_send_open_vip"
+        private const val IS_SEND_UPLOAD_HEAD="IS_SEND_UPLOAD_HEAD"
         fun putUploadHeadMsg(conversationId:String){
-            SPUtil.instance.putBoolean(IS_SEND_OPEN_VIP_UP+conversationId,true)
+            SPUtil.instance.putBoolean(IS_SEND_UPLOAD_HEAD+conversationId,true)
         }
         fun isUploadHeadMsg(conversationId:String):Boolean{
-            return SPUtil.instance.getBoolean(IS_SEND_OPEN_VIP_UP+conversationId,false)
+            return SPUtil.instance.getBoolean(IS_SEND_UPLOAD_HEAD+conversationId,false)
         }
     }
 
-    private var isVip =UserInfo.isVip()
+    private var isSuperVip =UserInfo.isSuperVip()
     private var isSendSecurity=false
-    private var isSendVip= false
+    private var isSendSuperVip= false
     private var isSendHead=false
     private var isUploadHead=false
+    private val recommendViewModel by lazy {
+        ViewModelProvider(this).get(RecommendViewModel::class.java)
+    }
+    private val coinInsufficientDialog by lazy {
+        ReChargeCoinDialog(requireContext())
+    }
 
     override fun initView() {
         super.initView()
-        isSendVip= isSendOpenVipMsg(conversationId?:return)
+        isSendSuperVip= isSendOpenVipMsg(conversationId?:return)
         isSendHead=isUploadHeadMsg(conversationId?:return)
         val msgs= ImMessageManager.getHistoryMessage(conversationId?:return,10)
         if (msgs.isEmpty()){//发送安全提示
@@ -59,7 +70,6 @@ class MyChatFragment: ChatFragment() {
         }else{
             isSendSecurity=true
         }
-//        ImMessageManager.getCustomMessage(conversationId?:return,CustomMessage.CustomEvent.upload_head)
 
 
         val easeChatPrimaryMenuListener= EaseChatPrimaryMenu::class.java.getDeclaredField("listener").also {
@@ -123,42 +133,54 @@ class MyChatFragment: ChatFragment() {
             }
 
         })
+        polling()
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!isVip&&!isSendVip){
-            lifecycleScope.launchWhenResumed {
-                while (!UserInfo.isVip()&&!isSendVip){
-                    val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launchWhenResumed,10).take(3)
-                    if (ms.size==3&&ms.all { it.from== UserInfo.getUserId() }){
-                        ImMessageManager.getCustomMessage(conversationId?:return@launchWhenResumed,
-                            CustomMessage.CustomEvent.openVip)?.also {
+    private fun polling(){
+        if (!isSuperVip&&!isSendSuperVip){
+            lifecycleScope.launch {
+                while (!UserInfo.isSuperVip()&&!isSendSuperVip){
+                    val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launch,10).take(3)
+                    if (ms.firstOrNull()?.emMessage?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
+                        ImMessageManager.getCustomMessage(conversationId?:return@launch,
+                            CustomMessage.CustomEvent.openSuperVip)?.also {
                             ImMessageManager.insertMessage(it)
                         }
-                        isSendVip=true
+                        isSendSuperVip=true
                         putSendOpenVipMsg(conversationId)
                     }
-                    delay(3000)
+                    delay(2800)
                 }
             }
-        }else{
-            isUploadHead=UserInfo.isHaveHeadImage()
-            if (!isUploadHead&&!isSendHead){
-                lifecycleScope.launchWhenResumed {
-                    while (!UserInfo.isHaveHeadImage()){
-                        val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launchWhenResumed,10).take(3)
-                        if (ms.size==3&&ms.all { it.from== UserInfo.getUserId() }){
-                            ImMessageManager.getCustomMessage(conversationId?:return@launchWhenResumed,
-                                CustomMessage.CustomEvent.upload_head)?.also {
-                                ImMessageManager.insertMessage(it)
-                            }
-                            isSendHead=true
-                            putUploadHeadMsg(conversationId)
+        }
+        isUploadHead=UserInfo.isHaveHeadImage()
+        if (!isUploadHead&&!isSendHead){
+            lifecycleScope.launch {
+                while (!UserInfo.isHaveHeadImage()){
+                    val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launch,10).take(3)
+                    if (ms.firstOrNull()?.emMessage?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
+                        ImMessageManager.getCustomMessage(conversationId?:return@launch,
+                            CustomMessage.CustomEvent.upload_head)?.also {
+                            ImMessageManager.insertMessage(it)
                         }
-                        delay(3000)
+                        isSendHead=true
+                        putUploadHeadMsg(conversationId)
                     }
+                    delay(3200)
                 }
+            }
+        }
+    }
+
+    override fun onClickSendFlower() {
+        lifecycleScope.launch {
+            try {
+                recommendViewModel.superLike(conversationId?.toIntOrNull()?:return@launch){
+                    coinInsufficientDialog.show()
+                }
+                super.onClickSendFlower()
+            }catch (e:Exception){
+                toast(e.message)
             }
         }
     }

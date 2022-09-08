@@ -1,6 +1,6 @@
 package com.hyphenate.easeim.section.dialog;
 
-import com.hyphenate.easeim.section.base.BaseActivity;
+import androidx.fragment.app.FragmentActivity;
 
 public class SimpleDialogFragment extends DemoDialogFragment {
     public static final String MESSAGE_KEY = "message";
@@ -14,7 +14,7 @@ public class SimpleDialogFragment extends DemoDialogFragment {
 
     public static class Builder extends DemoDialogFragment.Builder {
 
-        public Builder(BaseActivity context) {
+        public Builder(FragmentActivity context) {
             super(context);
         }
 

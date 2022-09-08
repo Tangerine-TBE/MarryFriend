@@ -10,13 +10,12 @@ import com.hyphenate.easeui.interfaces.MessageListItemClickListener
 import com.hyphenate.easeui.viewholder.EaseChatRowViewHolder
 import com.hyphenate.easeui.widget.chatrow.EaseChatRow
 import com.message.chat.CustomMessage
-import com.xyzz.myutils.show.toast
 
 class OpenVipAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRowViewHolder>(){
     override fun isForViewType(item: EMMessage?, position: Int): Boolean {
 //        item?.getBooleanAttribute()
         return item?.type == EMMessage.Type.CUSTOM &&
-                (item.body as? EMCustomMessageBody)?.event()== CustomMessage.CustomEvent.openVip.code
+                (item.body as? EMCustomMessageBody)?.event()== CustomMessage.CustomEvent.openSuperVip.code
     }
 
     override fun getEaseChatRow(parent: ViewGroup?, isSender: Boolean): EaseChatRow {
@@ -30,11 +29,9 @@ class OpenVipAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRowV
             }
 
             override fun onSetUpView() {
-//            view.settext
                 setOnClickListener {
-                    toast(context,"开通会员")
+                    ImCustomEventListenerManager.click(it,CustomMessage.CustomEvent.openSuperVip,message)
                 }
-//                message
             }
         }
     }

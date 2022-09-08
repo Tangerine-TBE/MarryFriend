@@ -17,17 +17,18 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
 
 /**
  * 作为dialog fragment的基类
  */
 public abstract class BaseDialogFragment extends DialogFragment {
-    public BaseActivity mContext;
+    public FragmentActivity mContext;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mContext = (BaseActivity) context;
+        mContext = (FragmentActivity) context;
     }
 
     @Nullable

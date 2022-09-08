@@ -549,7 +549,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             lifecycleScope.launch (){
                 loadingDialog.show()
                 try {
-                    recommendViewModel.superLike(userId?:return@launch toast("id 为空"))
+                    recommendViewModel.superLike(userId?:return@launch toast("id 为空")){
+
+                    }
                 }catch (e:Exception){
                     toast(e.message)
                 }

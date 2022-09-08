@@ -417,7 +417,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 },{
                     openVip()
                 })
-                ImMessageManager.sendTextMsg(item.getId().toString(), UserInfo.getGreetText())
+//                ImMessageManager.sendTextMsg(item.getId().toString(), UserInfo.getGreetText())
                 toast(str)
             }catch (e:Exception){
                 e.message?.also {

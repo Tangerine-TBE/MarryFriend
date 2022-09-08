@@ -21,6 +21,7 @@ import com.hyphenate.easeui.utils.EaseSmileUtils
 import com.message.ImUserInfoService
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.getUserExt
 import kotlinx.android.synthetic.main.item_conversation_delegate.view.*
 import java.util.*
 
@@ -40,16 +41,22 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         holder?:return
 
         val username = item.conversationId()
-        val defaultAvatar=UserInfo.getReversedDefHelloHeadImage()
+        val defaultAvatar=UserInfo.getReversedDefHeadImage()
 
         holder.name?.text=bean.timestamp.toString()
-        holder.avatar.setImageResource(defaultAvatar);
+        holder.avatar.setImageResource(defaultAvatar)
         holder.name.text = username
 
         if(UserInfo.isVip()){
-           holder.msgLock.visibility=View.GONE
+            holder.msgLock.visibility=View.GONE
+
+            holder.lastMsgView.visibility=View.VISIBLE
+            holder.notVipShowView.visibility=View.GONE
         }else{
             holder.msgLock.visibility=View.VISIBLE
+
+            holder.lastMsgView.visibility=View.GONE
+            holder.notVipShowView.visibility=View.VISIBLE
         }
 
         val infoProvider = EaseIM.getInstance().conversationInfoProvider
@@ -80,7 +87,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                             .into(holder.avatar)
                     }
 
-                    user.getUserExt().also {
+                    (user.getUserExt()?:ImUserInfoService.Ext()).also {
                         if (it?.isMutualLike!=true&&it?.isFlower!=true){
                             holder.messageMutualLikeIcon.visibility=View.GONE
                         }else{
@@ -110,16 +117,11 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                             holder.vipIdentification2.visibility=View.GONE
                             holder.superVipHead.visibility=View.GONE
                         }
-                        if (UserInfo.isVip()){
-                            holder.notVipShowView.visibility=View.GONE
-                        }else{
-                            holder.notVipShowView.visibility=View.VISIBLE
-                            holder.apply {
-                                conversationCity.text=it.city
-                                conversationAge.text=it.age.toString()+"岁"
-                                conversationOccupation.text=it.occupation
-                                conversationEducation.text=it.education
-                            }
+                        holder.apply {
+                            conversationCity.text=it.city
+                            conversationAge.text=it.age.toString()+"岁"
+                            conversationOccupation.text=it.occupation
+                            conversationEducation.text=it.education
                         }
                     }
                 }
@@ -220,6 +222,11 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                 this.notVipShowView
             }
         }
+        val lastMsgView by lazy {
+            with(itemView){
+                this.lastMsgView
+            }
+        }
         val conversationCity by lazy {
             with(itemView){
                 this.conversationCity
@@ -261,17 +268,6 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                     }
                 }
             }
-        }
-    }
-
-    private val gson by lazy {
-        Gson()
-    }
-    fun EaseUser.getUserExt():ImUserInfoService.Ext{
-        if (this.ext==null){
-            return ImUserInfoService.Ext()
-        }else{
-            return gson.fromJson(this.ext,ImUserInfoService.Ext::class.java)?:ImUserInfoService.Ext()
         }
     }
 }

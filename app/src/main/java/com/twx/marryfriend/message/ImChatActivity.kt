@@ -5,22 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import com.hyphenate.easeim.DemoHelper
 import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.section.chat.activity.ChatActivity
 import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.constants.EaseConstant
-import com.message.ImMessageManager
-import com.message.chat.CustomMessage
-import com.twx.marryfriend.ImInfoInit
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
-import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.createDialog
 import com.xyzz.myutils.show.toast
-import kotlinx.coroutines.delay
 
 class ImChatActivity: ChatActivity() {
     companion object{
@@ -46,7 +40,7 @@ class ImChatActivity: ChatActivity() {
         }
     }
     private val isRealName by lazy {
-        ImInfoInit.getUserInfo(conversationId?:return@lazy false)?.isRealName?:false
+        ImHelper.getUserInfo(conversationId?:return@lazy false)?.isRealName?:false
     }
     private val friendRealName by lazy {
         findViewById<View>(R.id.friendRealName)
@@ -86,7 +80,7 @@ class ImChatActivity: ChatActivity() {
     }
 
     override fun getChatFragment(): ChatFragment {
-        return MyChatFragment()
+        return ImChatFragment()
             .also {
                 val bundle = Bundle()
                 bundle.putString(EaseConstant.EXTRA_CONVERSATION_ID, conversationId)

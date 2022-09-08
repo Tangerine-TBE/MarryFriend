@@ -11,13 +11,12 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
-import com.hyphenate.easeim.section.conversation.ConversationListFragment
-import com.twx.marryfriend.ImInfoInit
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.likeme.LoveFragment
-import com.twx.marryfriend.message.HxMessageFragment
+import com.twx.marryfriend.message.HxConversationFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
@@ -30,7 +29,7 @@ class MainActivity : MainBaseViewActivity() {
     private var recommend: RecommendFragment? = null
     private var love: LoveFragment? = null
     private var dynamic: DynamicFragment? = null
-    private var conversationListFragment: HxMessageFragment? = null
+    private var conversationListFragment: HxConversationFragment? = null
     private var mine: MineFragment? = null
 
     override fun getLayoutView(): Int = R.layout.activity_main
@@ -38,7 +37,7 @@ class MainActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
         initEmojiCompat()
-        ImInfoInit.init()
+        ImHelper.init()
         initRecommendFragment()
         Thread { PushHelper.init(applicationContext) }.start()
         PushAgent.getInstance(this).onAppStart()
@@ -114,7 +113,7 @@ class MainActivity : MainBaseViewActivity() {
     private fun initMessageFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (conversationListFragment == null) {
-            conversationListFragment = HxMessageFragment()
+            conversationListFragment = HxConversationFragment()
             transaction.add(R.id.fl_main_container, conversationListFragment!!)
         }
         hideFragment(transaction)
