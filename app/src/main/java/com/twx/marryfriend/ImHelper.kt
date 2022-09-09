@@ -104,21 +104,28 @@ object ImHelper {
             iLog("准备获取用户资料")
             list.map {
                 it.from
-            }.filter {
-                ImUserInfoService.getUserNickName(it)!=null
             }.also {
                 iLog("已准备好获取用户资料,${it}")
-                GlobalScope.launch {
-                    iLog("开始获取用户资料,${it}")
-                    val conversations=messageViewModel.getConversationsInfo(it)
-                    val result= conversations.map {
-                        ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
-                            ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
-                    }
-                    result.also {
-                        iLog("获取用户资料成功,${it.map { it.userId }}")
-                        ImUserInfoService.setUserInfo(*it.toTypedArray())
-                    }
+                updateFriendInfo(it)
+            }
+        }
+    }
+
+    fun updateFriendInfo(ids:List<String>){
+        ids.filter {
+            ImUserInfoService.getUserNickName(it)==null
+        }.also {
+            iLog("已准备好获取用户资料,${it}")
+            GlobalScope.launch {
+                iLog("开始获取用户资料,${it}")
+                val conversations=messageViewModel.getConversationsInfo(it)
+                val result= conversations.map {
+                    ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
+                        ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
+                }
+                result.also {
+                    iLog("获取用户资料成功,${it.map { it.userId }}")
+                    ImUserInfoService.setUserInfo(*it.toTypedArray())
                 }
             }
         }

@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.kingja.loadsir.core.LoadSir
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
@@ -117,6 +118,11 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
                 searchResultAdapter.setData(result)
                 if(result.isEmpty()){
                     loadService.showCallback(SearchEmptyDataCallBack::class.java)
+                }
+                result.mapNotNull {
+                    it.user_id?.toString()
+                }.also {
+                    ImHelper.updateFriendInfo(it)
                 }
             }catch (e:Exception){
                 toast(e.message?:"")
