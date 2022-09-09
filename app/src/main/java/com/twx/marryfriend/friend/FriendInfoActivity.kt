@@ -20,6 +20,7 @@ import com.google.android.material.chip.Chip
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
@@ -165,6 +166,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             briefIntroduction.apply {
                 itemSetting.setOnClickListener {
                     followReportDialog.show()
+                    if (BuildConfig.DEBUG){
+                        toast(userId.toString())
+                    }
                 }
                 Glide.with(this).load(item.getHeadImg()).into(recommendPhoto)
                 itemNickname.text=item.getNickname()

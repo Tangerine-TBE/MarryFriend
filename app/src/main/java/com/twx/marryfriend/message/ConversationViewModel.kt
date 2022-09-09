@@ -18,7 +18,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class MessageViewModel:ViewModel() {
+class ConversationViewModel:ViewModel() {
     private val gson by lazy {
         Gson()
     }
@@ -34,34 +34,61 @@ class MessageViewModel:ViewModel() {
                 null
             }
 
-            allConversation.map { conversationsBean ->
-                val friendInfo=friendsInfo?.find {
-                    it.user_id?.toString()==conversationsBean.conversationId
-                }
-                ConversationsItemModel(conversationsBean.conversationId,conversationsBean.conversationType)
-                    .apply {
-//                        val userInfo=getUserInfo()
-                        if (friendInfo!=null){
-                            this.age=(friendInfo.age?:0)
-                            this.isSuperVip=friendInfo.isSuperVip()
-                            this.isVip=friendInfo.isVip()
-                            this.userImage=friendInfo.image_url
-                            this.nickname=friendInfo.nick
-                            this.isRealName=friendInfo.isRealName()
-                            this.occupation=friendInfo.occupation_str
-                            this.education=RecommendBean.getEducationStr(friendInfo.education)?.label
-                            this.location=friendInfo.work_city_str
-                            this.isMutualLike=friendInfo.isMutualLike()
-                            this.isFlower=friendInfo.isFlower()
+            friendsInfo?.mapNotNull {
+                val id=it.user_id?.toString()
+                if (id==null){
+                    null
+                }else{
+                    ConversationsItemModel(id)
+                        .apply {
+                            this.age=(it.age?:0)
+                            this.isSuperVip=it.isSuperVip()
+                            this.isVip=it.isVip()
+                            this.userImage=it.image_url
+                            this.nickname=it.nick
+                            this.isRealName=it.isRealName()
+                            this.occupation=it.occupation_str
+                            this.education=RecommendBean.getEducationStr(it.education)?.label
+                            this.location=it.work_city_str
+                            this.isMutualLike=it.isMutualLike()
+                            this.isFlower=it.isFlower()
                         }
-
-                        this.unReaderCount=conversationsBean.unReaderCount
-                        this.lastTime=conversationsBean.lastTime
-                        this.lastMassage=conversationsBean.lastMassage
-                        this.msgType=conversationsBean.conversationType
-                    }
+                }
             }.also { list ->
-                continuation.resume(list)
+                continuation.resume(list?: emptyList())
+            }
+        }
+    }
+
+    suspend fun getConversationsInfo(ids:List<String>)=suspendCoroutine<List<ConversationsItemModel>>{ continuation->
+        viewModelScope.launch {
+            val friendsInfo=try {
+                getFriendsInfo(ids).data
+            }catch (e:Exception){
+                null
+            }
+            friendsInfo?.mapNotNull {
+                val id=it.user_id?.toString()
+                if (id==null){
+                    null
+                }else{
+                    ConversationsItemModel(id)
+                        .apply {
+                            this.age=(it.age?:0)
+                            this.isSuperVip=it.isSuperVip()
+                            this.isVip=it.isVip()
+                            this.userImage=it.image_url
+                            this.nickname=it.nick
+                            this.isRealName=it.isRealName()
+                            this.occupation=it.occupation_str
+                            this.education=RecommendBean.getEducationStr(it.education)?.label
+                            this.location=it.work_city_str
+                            this.isMutualLike=it.isMutualLike()
+                            this.isFlower=it.isFlower()
+                        }
+                }
+            }.also { list ->
+                continuation.resume(list?: emptyList())
             }
         }
     }
@@ -71,7 +98,7 @@ class MessageViewModel:ViewModel() {
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "uid_array" to gson.toJson(userArray)
-            )
+        )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 coroutine.resume(gson.fromJson(response,ConversationBean::class.java))
@@ -105,7 +132,7 @@ class MessageViewModel:ViewModel() {
         ))
     }
 
-    suspend fun getFollowCountImg()=suspendCoroutine<Pair<Int,String>?>{ coroutine->
+    suspend fun getFollowCountAndImg()=suspendCoroutine<Pair<Int,String>?>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/TrendsNotice/focousCountImg"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))

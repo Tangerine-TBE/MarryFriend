@@ -11,92 +11,61 @@ import android.util.Log
 import android.util.Pair
 import android.widget.Toast
 import com.google.android.gms.common.ConnectionResult
-import com.hyphenate.easeim.HxInit.lifecycleCallbacks
-import com.hyphenate.easeim.HxInit.application
-import com.hyphenate.easeim.common.model.DemoModel
-import com.hyphenate.easeui.domain.EaseUser
-import com.hyphenate.easeim.common.manager.UserProfileManager
-import com.hyphenate.easecallkit.base.EaseCallKitListener
-import com.hyphenate.easeim.common.utils.FetchUserRunnable
-import com.hyphenate.easeim.common.utils.FetchUserInfoList
-import com.hyphenate.chat.EMClient
-import com.hyphenate.easecallkit.base.EaseCallKitConfig
-import com.hyphenate.easecallkit.EaseCallKit
-import com.hyphenate.easeim.section.av.VideoCallActivity
-import com.hyphenate.easeim.section.av.MultipleVideoActivity
-import com.hyphenate.chat.EMOptions
-import com.hyphenate.easeui.EaseIM
-import com.hyphenate.easeui.manager.EaseMessageTypeSetManager
-import com.message.custom.FlowerAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseExpressionAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseFileAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseImageAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseLocationAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseVideoAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseVoiceAdapterDelegate
-import com.hyphenate.easeim.section.chat.delegates.ChatConferenceInviteAdapterDelegate
-import com.hyphenate.easeim.section.chat.delegates.ChatRecallAdapterDelegate
-import com.hyphenate.easeim.section.chat.delegates.ChatVideoCallAdapterDelegate
-import com.hyphenate.easeim.section.chat.delegates.ChatVoiceCallAdapterDelegate
-import com.hyphenate.easeim.section.chat.delegates.ChatUserCardAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseCustomAdapterDelegate
-import com.hyphenate.easeim.section.chat.delegates.ChatNotificationAdapterDelegate
-import com.hyphenate.easeui.delegate.EaseTextAdapterDelegate
-import com.hyphenate.chat.EMContactManager
-import com.hyphenate.chat.EMGroupManager
-import com.hyphenate.chat.EMChatRoomManager
-import com.hyphenate.chat.EMChatManager
-import com.hyphenate.chat.EMPushManager
-import com.hyphenate.chat.EMConversation.EMConversationType
-import com.hyphenate.chat.EMConversation
-import com.hyphenate.easeim.section.chat.ChatPresenter
-import com.hyphenate.easeui.provider.EaseSettingsProvider
-import com.hyphenate.chat.EMMessage
-import com.hyphenate.easeui.provider.EaseEmojiconInfoProvider
-import com.hyphenate.easeui.domain.EaseEmojicon
-import com.hyphenate.easeui.domain.EaseEmojiconGroupEntity
-import com.hyphenate.easeim.common.model.EmojiconExampleGroupData
-import com.hyphenate.easeui.provider.EaseUserProfileProvider
-import com.hyphenate.chat.EMTranslateParams
-import com.hyphenate.easeui.domain.EaseAvatarOptions
-import com.hyphenate.easeim.DemoHelper
-import com.hyphenate.push.EMPushConfig
-import com.hyphenate.easeim.common.receiver.HeadsetReceiver
-import com.heytap.msp.push.HeytapPushManager
-import com.hyphenate.push.EMPushHelper
-import com.hyphenate.push.PushListener
-import com.hyphenate.push.EMPushType
-import com.hyphenate.util.EMLog
 import com.google.android.gms.common.GoogleApiAvailabilityLight
+import com.heytap.msp.push.HeytapPushManager
 import com.hyphenate.EMCallBack
-import com.hyphenate.easecallkit.event.CallCancelEvent
-import com.hyphenate.easeim.HxInit
-import com.hyphenate.easeim.common.db.DemoDbHelper
-import com.hyphenate.easeui.model.EaseNotifier
-import com.hyphenate.easeim.section.conference.ConferenceInviteActivity
-import com.hyphenate.easeim.common.constant.DemoConstant
-import com.hyphenate.easecallkit.base.EaseCallType
-import com.hyphenate.easecallkit.base.EaseCallEndReason
-import com.hyphenate.easecallkit.base.EaseCallKitTokenCallback
-import com.hyphenate.easecallkit.EaseCallKit.EaseCallError
-import com.hyphenate.easeim.common.livedatas.LiveDataBus
-import com.hyphenate.easeui.model.EaseEvent
-import com.hyphenate.easecallkit.base.EaseGetUserAccountCallback
-import com.hyphenate.easecallkit.base.EaseUserAccount
+import com.hyphenate.EMValueCallBack
+import com.hyphenate.chat.*
+import com.hyphenate.chat.EMConversation.EMConversationType
 import com.hyphenate.cloud.EMHttpClient
-import com.hyphenate.exceptions.HyphenateException
-import com.hyphenate.easecallkit.base.EaseCallUserInfo
+import com.hyphenate.easecallkit.EaseCallKit
+import com.hyphenate.easecallkit.EaseCallKit.EaseCallError
+import com.hyphenate.easecallkit.base.*
+import com.hyphenate.easecallkit.event.CallCancelEvent
+import com.hyphenate.easeim.HxInit.application
+import com.hyphenate.easeim.HxInit.lifecycleCallbacks
+import com.hyphenate.easeim.common.constant.DemoConstant
+import com.hyphenate.easeim.common.db.DemoDbHelper
+import com.hyphenate.easeim.common.livedatas.LiveDataBus
+import com.hyphenate.easeim.common.manager.UserProfileManager
+import com.hyphenate.easeim.common.model.DemoModel
+import com.hyphenate.easeim.common.model.EmojiconExampleGroupData
+import com.hyphenate.easeim.common.receiver.HeadsetReceiver
+import com.hyphenate.easeim.common.utils.FetchUserInfoList
+import com.hyphenate.easeim.common.utils.FetchUserRunnable
 import com.hyphenate.easeim.common.utils.PreferenceManager
+import com.hyphenate.easeim.section.av.MultipleVideoActivity
+import com.hyphenate.easeim.section.av.VideoCallActivity
+import com.hyphenate.easeim.section.chat.ChatPresenter
+import com.hyphenate.easeim.section.chat.delegates.*
+import com.hyphenate.easeim.section.conference.ConferenceInviteActivity
+import com.hyphenate.easeui.EaseIM
+import com.hyphenate.easeui.delegate.*
+import com.hyphenate.easeui.domain.EaseAvatarOptions
+import com.hyphenate.easeui.domain.EaseEmojicon
+import com.hyphenate.easeui.domain.EaseUser
+import com.hyphenate.easeui.manager.EaseMessageTypeSetManager
+import com.hyphenate.easeui.model.EaseEvent
+import com.hyphenate.easeui.model.EaseNotifier
+import com.hyphenate.easeui.provider.EaseEmojiconInfoProvider
+import com.hyphenate.easeui.provider.EaseSettingsProvider
+import com.hyphenate.easeui.provider.EaseUserProfileProvider
+import com.hyphenate.exceptions.HyphenateException
+import com.hyphenate.push.EMPushConfig
+import com.hyphenate.push.EMPushHelper
+import com.hyphenate.push.EMPushType
+import com.hyphenate.push.PushListener
+import com.hyphenate.util.EMLog
 import com.message.ImUserInfoService
+import com.message.custom.FlowerAdapterDelegate
 import com.message.custom.OpenVipAdapterDelegate
 import com.message.custom.SecurityTipAdapterDelegate
 import com.message.custom.UploadHeadAdapterDelegate
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
+
 
 /**
  * 作为hyphenate-sdk的入口控制类，获取sdk下的基础类均通过此类
@@ -130,7 +99,7 @@ class DemoHelper private constructor() {
             //注册call Receiver
             //initReceiver(context);
             //初始化ease ui相关
-            initEaseUI(context)
+            initEaseUI()
             //注册对话类型
             registerConversationType()
 
@@ -287,7 +256,7 @@ class DemoHelper private constructor() {
      * ChatPresenter中添加了网络连接状态监听，多端登录监听，群组监听，联系人监听，聊天室监听
      * @param context
      */
-    private fun initEaseUI(context: Context) {
+    private fun initEaseUI() {
         //添加ChatPresenter,ChatPresenter中添加了网络连接状态监听，
         EaseIM.getInstance().addChatPresenter(ChatPresenter.getInstance())
         EaseIM.getInstance()
@@ -344,16 +313,29 @@ class DemoHelper private constructor() {
                     return null
                 }
             })
-//            .setUserProvider {
-//
-//            }
+            .setUserProvider { id ->
+                val userInfo=ImUserInfoService.getUser(id)
+                EaseUser(id).also { easeUser ->
+                    easeUser.ext=ImUserInfoService.getExt(id)
+                    userInfo?.avatar?.also {
+                        easeUser.avatar=it
+                    }
+                    userInfo?.nickname?.also {
+                        easeUser.nickname=it
+                    }
+                }
+            }
             .setAvatarOptions(avatarOptions).userProvider = EaseUserProfileProvider { username ->
             val user = EaseUser(username)
-            //设置用户昵称
-            user.nickname = ImUserInfoService.getUserNickName(username)
-            //设置头像地址
-            user.avatar = ImUserInfoService.getUserAvatar(username)
-            user.ext=ImUserInfoService.getExt(username)
+            ImUserInfoService.getUserNickName(username)?.also {
+                user.nickname =it
+            }
+            ImUserInfoService.getUserAvatar(username)?.also {
+                user.avatar =it
+            }
+            ImUserInfoService.getExt(username)?.also {
+                user.ext=it
+            }
             //最后返回构建的 EaseUser 对象
             user
         }

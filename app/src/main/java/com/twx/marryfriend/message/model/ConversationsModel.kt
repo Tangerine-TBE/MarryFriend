@@ -12,11 +12,41 @@ class ConversationsModel:BaseObservable() {
     }
     var list: List<MutualLikeData>? = null
         set(value) {
-            imageHead1=value?.get(0)?.image_url
-            imageHead1=value?.get(1)?.image_url
-            imageHead1=value?.get(2)?.image_url
-            imageHead1=value?.get(3)?.image_url
-            imageHead1=value?.get(4)?.image_url
+            if (value==null){
+
+            }else{
+                when{
+                    value.size>=5->{
+                        imageHead1= value[0].image_url
+                        imageHead2= value[1].image_url
+                        imageHead3= value[2].image_url
+                        imageHead4= value[3].image_url
+                        imageHead5= value[4].image_url
+                    }
+                    value.size>=4->{
+                        imageHead1= value[0].image_url
+                        imageHead2= value[1].image_url
+                        imageHead3= value[2].image_url
+                        imageHead4= value[3].image_url
+                    }
+                    value.size>=3->{
+                        imageHead1= value[0].image_url
+                        imageHead2= value[1].image_url
+                        imageHead3= value[2].image_url
+                    }
+                    value.size>=2->{
+                        imageHead1= value[0].image_url
+                        imageHead2= value[1].image_url
+                    }
+                    value.size>=1->{
+                        imageHead1= value[0].image_url
+                    }
+                    else->{
+
+                    }
+                }
+            }
+
             field=value
             notifyChange()
         }

@@ -27,7 +27,6 @@
                     android:id="@+id/itemMutualLikeImg"
                     tools:src="@mipmap/ic_item_vip"
                     android:scaleType="centerCrop"
-                    android:src="@{mutualLikeData.image_url}"
                     app:shapeAppearance="@style/loveMeImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"/>
@@ -46,7 +45,7 @@
                     android:orientation="horizontal">
                     <ImageView
                         android:layout_marginStart="9dp"
-                        android:src="@mipmap/ic_launcher"
+                        android:src="@mipmap/ic_mutual_flag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
                     <TextView
@@ -74,17 +73,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-                        <TextView
-                            android:id="@+id/itemMutualLikeOnLineTime"
-                            tools:text="卡尼吉伊娃"
-                            android:text="@{mutualLikeData.nick}"
-                            android:drawableEnd="@mipmap/ic_launcher"
-                            android:gravity="center"
-                            android:textColor="#FFFFFFFF"
-                            android:textSize="17sp"
-                            android:textStyle="bold"
+                        <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+                            <TextView
+                                android:id="@+id/itemMutualLikeOnLineTime"
+                                tools:text="卡尼吉伊娃"
+                                android:text="@{mutualLikeData.nick}"
+                                android:gravity="center"
+                                android:textColor="#FFFFFFFF"
+                                android:textSize="17sp"
+                                android:textStyle="bold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <ImageView
+                                android:id="@+id/sexIcon"
+                                android:layout_marginStart="4dp"
+                                android:src="@mipmap/ic_mutual_women"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"/>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_marginTop="7dp"
                             android:layout_width="wrap_content"
@@ -138,7 +148,8 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
-                    android:src="@mipmap/ic_launcher"
+                    android:id="@+id/mutualChat"
+                    android:src="@mipmap/ic_mutual_chat"
                     app:layout_constraintTop_toTopOf="@id/mutualLikeText"
                     app:layout_constraintBottom_toTopOf="@id/mutualLikeText"
                     app:layout_constraintEnd_toEndOf="parent"

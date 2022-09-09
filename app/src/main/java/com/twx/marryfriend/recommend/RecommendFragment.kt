@@ -30,6 +30,7 @@ import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.ilove.ILikeActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -77,9 +78,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         test.setOnClickListener {
-//            startActivity(Intent(requireContext(),BeginActivity::class.java))
-            startActivity(Intent(requireContext(), MainActivity::class.java))
-//            startActivity(Intent(requireContext(), LoginActivity::class.java))
+            toast(UserInfo.getUserId().toString())
+            if (BuildConfig.DEBUG){
+                startActivity(ImChatActivity.getIntent(requireContext(),"2", isRealName = false))
+            }
         }
         cardSwipeView.adapter=recommendAdapter
         val cardCallback = SlideCardCallback()

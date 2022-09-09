@@ -277,16 +277,6 @@ object ImMessageManager {
         EMClient.getInstance().chatManager().saveMessage(message)
     }
 
-    fun sendSecurityTip(username: String):Message<out EMMessageBody>?{
-        val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
-        val customBody = EMCustomMessageBody(CustomMessage.CustomEvent.security.code)
-        customMessage.addBody(customBody)
-        customMessage.setTo(username)
-        customMessage.chatType = EMMessage.ChatType.Chat
-        EMClient.getInstance().chatManager().sendMessage(customMessage)
-        return Message.toMyMessage(customMessage)
-    }
-
     fun startMessageListener(){
         iLog("用户${EMClient.getInstance().currentUser}注册消息监听")
         EMClient.getInstance().chatManager().removeMessageListener(msgListener)

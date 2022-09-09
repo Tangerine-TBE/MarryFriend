@@ -115,6 +115,8 @@ class MainActivity : MainBaseViewActivity() {
         if (conversationListFragment == null) {
             conversationListFragment = HxConversationFragment()
             transaction.add(R.id.fl_main_container, conversationListFragment!!)
+        }else{
+            conversationListFragment?.onResume()
         }
         hideFragment(transaction)
         transaction.show(conversationListFragment!!)

@@ -43,7 +43,6 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         val username = item.conversationId()
         val defaultAvatar=UserInfo.getReversedDefHeadImage()
 
-        holder.name?.text=bean.timestamp.toString()
         holder.avatar.setImageResource(defaultAvatar)
         holder.name.text = username
 
