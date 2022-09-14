@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import com.hyphenate.chat.EMClient
 import com.hyphenate.easeim.DemoHelper
 import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.section.chat.activity.ChatActivity
@@ -46,6 +47,9 @@ class ImChatActivity: ChatActivity() {
             intent.putExtra(IS_REAL_NAME_KEY,isRealName?:ext?.isRealName)
             return intent
         }
+        fun getConversationId(intent: Intent?):String?{
+            return intent?.getStringExtra(EaseConstant.EXTRA_CONVERSATION_ID)
+        }
     }
     private val isRealName by lazy {
         ImHelper.getUserInfo(conversationId?:return@lazy false)?.isRealName?:false
@@ -68,11 +72,12 @@ class ImChatActivity: ChatActivity() {
                     dialog.dismiss()
                 }
                 dialog.findViewById<View>(R.id.setTop).setOnClickListener {
-                    toast("置顶")
+                    setResult(RESULT_OK,intent)
                     dialog.dismiss()
                 }
                 dialog.findViewById<View>(R.id.blockFriends).setOnClickListener {
-                    toast("屏蔽好友")
+                    EMClient.getInstance().contactManager().addUserToBlackList(conversationId,true)
+                    toast("加入黑名单成功")
                     dialog.dismiss()
                 }
                 dialog.findViewById<View>(R.id.report).setOnClickListener {

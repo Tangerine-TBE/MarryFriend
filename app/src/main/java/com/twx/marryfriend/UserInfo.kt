@@ -71,7 +71,7 @@ object UserInfo {
     }
 
     fun isVip():Boolean{
-        return false
+        return getUserVipLevel()>0
     }
 
     fun isSuperVip():Boolean{

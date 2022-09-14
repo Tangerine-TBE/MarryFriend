@@ -1,10 +1,13 @@
 package com.twx.marryfriend.message
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -104,9 +107,40 @@ class ImConversationFragment: ConversationListFragment() {
         }
     }
 
+    fun makeConversationTop(item: EMConversation){
+        val index=conversationListLayout.listAdapter.data.indexOfFirst {
+            it.info==item
+        }
+        if (index!=-1){
+            val info=conversationListLayout.getItem(index)
+            conversationListLayout.makeConversationTop(index,info)
+        }
+    }
+
+    /**
+     * TODO
+     */
+    fun makeConversationTop(conversationId: String){
+        val item=conversationListLayout.listAdapter.data.find {
+            val i=it.info
+            i is EMConversation&&i.conversationId()==conversationId
+        }?.info as? EMConversation
+        makeConversationTop(item?:return)
+    }
+
+    private val startActivityForResult =   registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
+        ActivityResultCallback {
+            if (it.resultCode==Activity.RESULT_OK){
+                val cid=ImChatActivity.getConversationId(it.data)
+                if (cid!=null){
+                    makeConversationTop(cid)
+                }
+            }
+        })
     override fun toChatActivity(item: EMConversation) {
         val isRealName=EaseIM.getInstance().userProvider.getUser(item.conversationId()).getUserExt()?.isRealName?:false
-        startActivity(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
+//        startActivity(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
+        startActivityForResult.launch(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
     }
 
     override fun onResume() {
