@@ -56,7 +56,6 @@ import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_jump.*
-import kotlinx.android.synthetic.main.fragment_data.*
 import kotlinx.android.synthetic.main.layout_main_guide_car.*
 import kotlinx.android.synthetic.main.layout_main_guide_havechild.*
 import kotlinx.android.synthetic.main.layout_main_guide_home.*
@@ -615,6 +614,56 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     }
 
 
+    /**
+     *
+     * 获取弹窗资料是否填写完成
+     *
+     * true ：填写完成
+     * false ： 还有项目没有填写
+     *
+     * */
+    companion object {
+
+        fun getDataComplete(): Boolean {
+
+            // 购车情况
+            val car = SPStaticUtils.getInt(Constant.ME_CAR, 0)
+            // 家乡
+            val home = SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
+            // 抽烟
+            val smoke = SPStaticUtils.getInt(Constant.ME_SMOKE, 0)
+            // 想要孩子吗
+            val wantChild = SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0)
+            // 你有孩子吗
+            val haveChild = SPStaticUtils.getInt(Constant.ME_HAVE_CHILD, 0)
+            // 工作
+            val work = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
+            // 住房情况
+            val house = SPStaticUtils.getInt(Constant.ME_HOUSE, 0)
+            // 招呼语
+            val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
+            // 头像
+            val avatar = if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                SPStaticUtils.getString(Constant.ME_AVATAR, "")
+            } else {
+                SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "")
+            }
+
+
+            return car != 0 &&
+                    home != "" &&
+                    smoke != 0 &&
+                    wantChild != 0 &&
+                    haveChild != 0 &&
+                    work != "" &&
+                    house != 0 &&
+                    greet != "" &&
+                    avatar != ""
+
+        }
+
+    }
+
     private fun showBeginUI() {
         // 判断各个界面是否有数据
 
@@ -635,7 +684,11 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         // 招呼语
         val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
         // 头像
-        val avatar = SPStaticUtils.getString(Constant.ME_AVATAR, "")
+        val avatar = if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+            SPStaticUtils.getString(Constant.ME_AVATAR, "")
+        } else {
+            SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "")
+        }
 
 
         Log.i("guo", "car : $car")
@@ -729,7 +782,11 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         // 招呼语
         val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
         // 头像
-        val avatar = SPStaticUtils.getString(Constant.ME_AVATAR, "")
+        val avatar = if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+            SPStaticUtils.getString(Constant.ME_AVATAR, "")
+        } else {
+            SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "")
+        }
 
 
         Log.i("guo", "car : $car")
@@ -1023,6 +1080,8 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     // 跳转至主页面
     private fun jumpToMain() {
+
+        Log.i("guo", "jumpToMain")
 
         val moreInfoMap: MutableMap<String, String> = TreeMap()
         moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
@@ -1383,11 +1442,11 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
 
-        Log.i("guo","onDoUploadAvatarSuccess")
-        jumpToMain()
+        Log.i("guo", "onDoUploadAvatarSuccess")
 
         if (uploadAvatarBean != null) {
             if (uploadAvatarBean.code == 200) {
+                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
                 jumpToMain()
             } else {
                 ToastUtils.showShort("头像上传失败")
@@ -1434,8 +1493,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                         SPStaticUtils.getString(Constant.USER_ID, "default")
                     }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
-                    SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
-
                     Log.i("guo", mPhotoUrl)
 
                     updateAvatar(mPhotoUrl,
@@ -1445,7 +1502,11 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                 }.start()
 
             } else {
-                ToastUtils.showShort(faceDetectBean.error_msg)
+                if (faceDetectBean.error_msg != null) {
+                    ToastUtils.showShort(faceDetectBean.error_msg)
+                } else {
+                    ToastUtils.showShort(faceDetectBean.data[0].msg)
+                }
                 ll_jump_loading.visibility = View.GONE
             }
         }
@@ -1456,77 +1517,92 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
+        if (!isCompleteUpdateBaseInfo) {
+            isCompleteUpdateBaseInfo = true
 
-        ll_jump_loading.visibility = View.GONE
 
-        isCompleteUpdateBaseInfo = true
+            if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
 
-        if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
+                ll_jump_loading.visibility = View.GONE
 
-            if (baseInfoUpdateBean != null) {
-                if (baseInfoUpdateBean.code == 200) {
-                    ToastUtils.showShort("资料上传成功")
-                } else {
-                    ToastUtils.showShort("资料上传失败")
+                if (baseInfoUpdateBean != null) {
+                    if (baseInfoUpdateBean.code == 200) {
+                        ToastUtils.showShort("资料上传成功")
+                    } else {
+                        ToastUtils.showShort("资料上传失败")
+                    }
                 }
+
+                Log.i("guo", "finishBase")
+
+                this.finish()
             }
 
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-            this.finish()
         }
 
     }
 
     override fun onDoUpdateBaseInfoError() {
+        if (!isCompleteUpdateBaseInfo) {
+            isCompleteUpdateBaseInfo = true
 
-        ll_jump_loading.visibility = View.GONE
 
-        isCompleteUpdateBaseInfo = true
+            if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
 
-        if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
-            ToastUtils.showShort("资料上传失败")
+                ll_jump_loading.visibility = View.GONE
 
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-            this.finish()
+                ToastUtils.showShort("资料上传失败")
+
+                Log.i("guo", "finishBase")
+
+                this.finish()
+            }
+
         }
 
     }
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
+        if (!isCompleteUpdateMoreInfo) {
+            isCompleteUpdateMoreInfo = true
 
-        ll_jump_loading.visibility = View.GONE
 
-        isCompleteUpdateMoreInfo = true
+            if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
 
-        if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
-            if (updateMoreInfoBean != null) {
-                if (updateMoreInfoBean.code == 200) {
-                    ToastUtils.showShort("资料上传成功")
-                } else {
-                    ToastUtils.showShort("资料上传失败")
+                ll_jump_loading.visibility = View.GONE
+
+                if (updateMoreInfoBean != null) {
+                    if (updateMoreInfoBean.code == 200) {
+                        ToastUtils.showShort("资料上传成功")
+                    } else {
+                        ToastUtils.showShort("资料上传失败")
+                    }
                 }
+
+                Log.i("guo", "finishMore")
+
+                this.finish()
             }
 
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-            this.finish()
         }
 
     }
 
     override fun onDoUpdateMoreInfoError() {
-        ll_jump_loading.visibility = View.GONE
+        if (!isCompleteUpdateMoreInfo) {
+            isCompleteUpdateMoreInfo = true
 
-        isCompleteUpdateMoreInfo = true
+            if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
 
-        if (isCompleteUpdateBaseInfo && isCompleteUpdateMoreInfo) {
-            ToastUtils.showShort("资料上传失败")
+                ll_jump_loading.visibility = View.GONE
 
-//            val intent = Intent(this, MainActivity::class.java)
-//            startActivity(intent)
-            this.finish()
+                ToastUtils.showShort("资料上传失败")
+
+                Log.i("guo", "finishMore")
+
+                this.finish()
+            }
+
         }
 
     }

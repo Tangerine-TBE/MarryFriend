@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:text="选择你的居住城市和家乡"
+                android:gravity="center"
                 android:textColor="#404040"
                 android:textSize="22sp"
                 android:textStyle="bold" />

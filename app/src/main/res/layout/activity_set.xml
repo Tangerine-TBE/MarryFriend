@@ -63,7 +63,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:overScrollMode="never" />
+                    android:overScrollMode="never"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_set_container_3"

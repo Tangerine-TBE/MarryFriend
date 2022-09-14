@@ -48,7 +48,7 @@ class DynamicFragment : Fragment() {
         if (!hidden) {//fragment可见
             Log.i("guo", "动态界面刷新")
 
-            recommendFragment.autoRefresh()
+            recommendFragment.getTotalCount()
 
         }
     }

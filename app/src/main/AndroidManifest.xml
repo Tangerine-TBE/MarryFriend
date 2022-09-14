@@ -52,6 +52,12 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".set.report.ReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".set.report.ReportReasonActivity"
+            android:exported="false" />
+        <activity
             android:name=".set.feedback.SuggestionActivity"
             android:exported="false" />
         <activity
@@ -277,8 +283,7 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
-        <!-- 华为应用推送的AppID -->
+            android:process=":remote" /> <!-- 华为应用推送的AppID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="appid=106852163" />

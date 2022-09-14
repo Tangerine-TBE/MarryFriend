@@ -443,7 +443,11 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
                 ll_avatar_loading.visibility = View.GONE
 
-                ToastUtils.showShort(faceDetectBean.data[0].msg)
+                if (faceDetectBean.error_msg != null) {
+                    ToastUtils.showShort(faceDetectBean.error_msg)
+                } else {
+                    ToastUtils.showShort(faceDetectBean.data[0].msg)
+                }
 
             }
         }

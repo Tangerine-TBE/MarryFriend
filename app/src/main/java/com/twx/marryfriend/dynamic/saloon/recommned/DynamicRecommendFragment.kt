@@ -28,6 +28,7 @@ import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonAdapter
 import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
@@ -177,24 +178,38 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
             rl_dynamic_tips.visibility = View.GONE
 
+            for (i in 0.until(mDiyList.size)) {
+                mDiyList[i].anim = false
+            }
+            adapter.notifyDataSetChanged()
+
             startActivity(context?.let { it1 -> TipsActivity.getIntent(it1, commentSum, likeSum) })
 
         }
 
         adapter.setOnVideoClickListener(object : SaloonAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
-                val intent = Intent(mContext,
-                    com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity::class.java)
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
+                val intent = Intent(mContext, VideoPreviewActivity::class.java)
                 intent.putExtra("videoUrl", mTrendList[position].video_url)
                 intent.putExtra("name", mTrendList[position].nick)
                 startActivity(intent)
             }
         })
 
-
         adapter.setOnAvatarClickListener(object : SaloonAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
                 ToastUtils.showShort("头像,进入资料详情界面")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
 
                 startActivity(FriendInfoActivity.getIntent(requireContext(),
                     mTrendList[position].user_id.toInt()))
@@ -216,6 +231,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnCommentClickListener(object : SaloonAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 val intent = Intent(context, DynamicOtherShowActivity::class.java)
                 intent.putExtra("trendId", mTrendList[position].id)
                 intent.putExtra("usersId", mTrendList[position].user_id.toInt())
@@ -231,7 +252,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnOneClickListener(object : SaloonAdapter.OnOneClickListener {
             override fun onOneClick(v: View?, position: Int) {
-                ToastUtils.showShort("one")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 0
 
                 val images: MutableList<String> =
@@ -252,7 +278,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnTwoClickListener(object : SaloonAdapter.OnTwoClickListener {
             override fun onTwoClick(v: View?, position: Int) {
-                ToastUtils.showShort("two")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 1
 
                 val images: MutableList<String> =
@@ -273,7 +304,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnThreeClickListener(object : SaloonAdapter.OnThreeClickListener {
             override fun onThreeClick(v: View?, position: Int) {
-                ToastUtils.showShort("three")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 2
 
                 val images: MutableList<String> =
@@ -294,7 +330,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnFourClickListener(object : SaloonAdapter.OnFourClickListener {
             override fun onFourClick(v: View?, position: Int) {
-                ToastUtils.showShort("four")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 3
 
                 val images: MutableList<String> =
@@ -321,9 +362,13 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnFiveClickListener(object : SaloonAdapter.OnFiveClickListener {
             override fun onFiveClick(v: View?, position: Int) {
-                ToastUtils.showShort("five")
-                imageIndex = 4
 
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
+                imageIndex = 4
 
                 val images: MutableList<String> =
                     mTrendList[position].image_url.split(",") as MutableList<String>
@@ -350,7 +395,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnSixClickListener(object : SaloonAdapter.OnSixClickListener {
             override fun onSixClick(v: View?, position: Int) {
-                ToastUtils.showShort("six")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 5
 
                 val images: MutableList<String> =
@@ -371,7 +421,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnSevenClickListener(object : SaloonAdapter.OnSevenClickListener {
             override fun onSevenClick(v: View?, position: Int) {
-                ToastUtils.showShort("seven")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 6
 
                 val images: MutableList<String> =
@@ -392,7 +447,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnEightClickListener(object : SaloonAdapter.OnEightClickListener {
             override fun onEightClick(v: View?, position: Int) {
-                ToastUtils.showShort("eight")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 7
 
                 val images: MutableList<String> =
@@ -413,7 +473,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnNineClickListener(object : SaloonAdapter.OnNineClickListener {
             override fun onNineClick(v: View?, position: Int) {
-                ToastUtils.showShort("nine")
+
+                for (i in 0.until(mDiyList.size)) {
+                    mDiyList[i].anim = false
+                }
+                adapter.notifyDataSetChanged()
+
                 imageIndex = 8
 
                 val images: MutableList<String> =
@@ -456,7 +521,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                                 SPStaticUtils.getString(Constant.USER_ID, "13"))
 
 
-
                         } else {
                             ToastUtils.showShort("不能给自己点赞")
                         }
@@ -489,6 +553,11 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 } else {
                     ToastUtils.showShort("消息界面")
 
+                    for (i in 0.until(mDiyList.size)) {
+                        mDiyList[i].anim = false
+                    }
+                    adapter.notifyDataSetChanged()
+
                     val identity = mTrendList[position].identity_status == 1
 
                     startActivity(context?.let {
@@ -506,12 +575,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         })
     }
 
-    fun autoRefresh() {
+    private fun autoRefresh() {
         srl_dynamic_recommend_refresh.autoRefresh()
     }
 
     // 获取消息提醒列表
-    private fun getTotalCount() {
+    fun getTotalCount() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getTotalCountPresent.getTotalCount(map)
@@ -769,6 +838,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onItemClick(v: View?, position: Int) {
+
+        for (i in 0.until(mDiyList.size)) {
+            mDiyList[i].anim = false
+        }
+        adapter.notifyDataSetChanged()
+
         val intent = Intent(context, DynamicOtherShowActivity::class.java)
         intent.putExtra("trendId", mTrendList[position].id)
         intent.putExtra("usersId", mTrendList[position].user_id.toInt())
@@ -782,6 +857,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onTextClick(v: View?, position: Int) {
+
+        for (i in 0.until(mDiyList.size)) {
+            mDiyList[i].anim = false
+        }
+        adapter.notifyDataSetChanged()
+
         val intent = Intent(context, DynamicOtherShowActivity::class.java)
         intent.putExtra("trendId", mTrendList[position].id)
         intent.putExtra("usersId", mTrendList[position].user_id.toInt())

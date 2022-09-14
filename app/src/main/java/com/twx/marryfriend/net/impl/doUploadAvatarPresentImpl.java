@@ -1,5 +1,7 @@
 package com.twx.marryfriend.net.impl;
 
+import android.util.Log;
+
 import com.twx.marryfriend.bean.UploadAvatarBean;
 import com.twx.marryfriend.bean.UploadPhotoBean;
 import com.twx.marryfriend.net.callback.IDoUploadAvatarCallback;
@@ -60,6 +62,7 @@ public class doUploadAvatarPresentImpl implements IDoUploadAvatarPresent {
 
             @Override
             public void onFailure(Call<UploadAvatarBean> call, Throwable t) {
+                Log.e("guo", "error:" + t);
                 for (IDoUploadAvatarCallback callback : mCallback) {
                     callback.onDoUploadAvatarError();
                 }

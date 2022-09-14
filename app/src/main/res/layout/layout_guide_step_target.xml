@@ -30,6 +30,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="8dp"
                     android:text="我的择偶条件"
+                    android:gravity="center"
                     android:textColor="#404040"
                     android:textSize="22sp"
                     android:textStyle="bold" />

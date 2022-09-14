@@ -14,7 +14,7 @@ data class FaceDetectBean(
     val isHitMd5: Boolean,
     val log_id: Long,
     val error_code: String,
-    val error_msg: String,
+    val error_msg: String?,
 )
 
 data class FaceDetectData(

@@ -370,64 +370,77 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             iv_vip_dialog_avatar_true.visibility = View.GONE
         }
 
-        tv_vip_dialog_photo_sum.text = "她上传了${previewOtherBean.data.photos_count}张照片"
+        if (previewOtherBean.data.photos_count != 0) {
 
-        val photoList = arrayListOf<String>()
+            tv_vip_dialog_photo_sum.text = "她上传了${previewOtherBean.data.photos_count}张照片"
 
-        for (i in 0.until(previewOtherBean.data.photos_count)) {
-            photoList.add(photo[i].image_url)
+            val photoList = arrayListOf<String>()
+
+            for (i in 0.until(previewOtherBean.data.photos_count)) {
+                photoList.add(photo[i].image_url)
+            }
+
+            mDialogPhotoAdapter = DialogAdapter(photoList)
+            val linearLayoutManager = LinearLayoutManager(this)
+            linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+
+            rl_vip_dialog_photo_container.layoutManager = linearLayoutManager
+            rl_vip_dialog_photo_container.adapter = mDialogPhotoAdapter
+
+        } else {
+            tv_vip_dialog_photo_sum.visibility = View.GONE
+            rl_vip_dialog_photo_container.visibility = View.GONE
         }
 
-        mDialogPhotoAdapter = DialogAdapter(photoList)
-        val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-
-        rl_vip_dialog_photo_container.layoutManager = linearLayoutManager
-        rl_vip_dialog_photo_container.adapter = mDialogPhotoAdapter
-
-        tv_vip_dialog_dynamic_sum.text = "她上传了${previewOtherBean.data.trends_count}条动态"
 
 
+        if (previewOtherBean.data.trends_count != 0) {
+            tv_vip_dialog_dynamic_sum.text = "她上传了${previewOtherBean.data.trends_count}条动态"
 
-        when (trends.trends_type) {
-            1 -> {
-                tv_vip_dialog_dynamic_text.visibility = View.GONE
-                rv_vip_dialog_dynamic_container.visibility = View.VISIBLE
-                fl_vip_dialog_dynamic_video.visibility = View.GONE
+            when (trends.trends_type) {
+                1 -> {
+                    tv_vip_dialog_dynamic_text.visibility = View.GONE
+                    rv_vip_dialog_dynamic_container.visibility = View.VISIBLE
+                    fl_vip_dialog_dynamic_video.visibility = View.GONE
 
-                val dynamicList = arrayListOf<String>()
+                    val dynamicList = arrayListOf<String>()
 
-                for (i in 0.until(previewOtherBean.data.photos_count)) {
-                    dynamicList.add(photo[i].image_url)
+                    for (i in 0.until(previewOtherBean.data.photos_count)) {
+                        dynamicList.add(photo[i].image_url)
+                    }
+
+                    mDialogDynamicAdapter = DialogAdapter(dynamicList)
+                    val dynamicLinearLayoutManager = LinearLayoutManager(this)
+                    dynamicLinearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+
+                    rl_vip_dialog_photo_container.layoutManager = dynamicLinearLayoutManager
+                    rl_vip_dialog_photo_container.adapter = mDialogDynamicAdapter
+
                 }
+                2 -> {
+                    tv_vip_dialog_dynamic_text.visibility = View.GONE
+                    rv_vip_dialog_dynamic_container.visibility = View.GONE
+                    fl_vip_dialog_dynamic_video.visibility = View.VISIBLE
 
-                mDialogDynamicAdapter = DialogAdapter(photoList)
-                val dynamicLinearLayoutManager = LinearLayoutManager(this)
-                dynamicLinearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+                    Glide.with(applicationContext)
+                        .load(trends.video_url)
+                        .error(R.drawable.ic_pic_default)
+                        .placeholder(R.drawable.ic_pic_default)
+                        .into(iv_vip_dialog_dynamic_video)
+                }
+                3 -> {
+                    tv_vip_dialog_dynamic_text.visibility = View.VISIBLE
+                    rv_vip_dialog_dynamic_container.visibility = View.GONE
+                    fl_vip_dialog_dynamic_video.visibility = View.GONE
 
-                rl_vip_dialog_photo_container.layoutManager = dynamicLinearLayoutManager
-                rl_vip_dialog_photo_container.adapter = mDialogDynamicAdapter
-
+                    tv_vip_dialog_dynamic_text.text = trends.text_content
+                }
             }
-            2 -> {
-                tv_vip_dialog_dynamic_text.visibility = View.GONE
-                rv_vip_dialog_dynamic_container.visibility = View.GONE
-                fl_vip_dialog_dynamic_video.visibility = View.VISIBLE
-
-                Glide.with(applicationContext)
-                    .load(trends.video_url)
-                    .error(R.drawable.ic_pic_default)
-                    .placeholder(R.drawable.ic_pic_default)
-                    .into(iv_vip_dialog_dynamic_video)
-            }
-            3 -> {
-                tv_vip_dialog_dynamic_text.visibility = View.VISIBLE
-                rv_vip_dialog_dynamic_container.visibility = View.GONE
-                fl_vip_dialog_dynamic_video.visibility = View.GONE
-
-                tv_vip_dialog_dynamic_text.text = trends.text_content
-            }
+        } else {
+            tv_vip_dialog_dynamic_sum.visibility = View.GONE
+            ll_vip_dialog_dynamic_container.visibility = View.GONE
         }
+
 
         if (base.introduce_self != "") {
             tv_vip_dialog_dynamic_introduce.text = base.introduce_self

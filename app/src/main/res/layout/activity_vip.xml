@@ -205,7 +205,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#80101010"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -320,6 +320,7 @@
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/ll_vip_dialog_dynamic_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"

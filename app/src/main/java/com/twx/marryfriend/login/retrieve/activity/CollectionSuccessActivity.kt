@@ -1,14 +1,8 @@
 package com.twx.marryfriend.login.retrieve.activity
 
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.util.Log
-import com.baidu.idl.face.platform.FaceSDKManager
-import com.baidu.idl.face.platform.ui.utils.IntentUtils
-import com.baidu.idl.face.platform.utils.Base64Utils
-import com.baidu.idl.face.platform.utils.DensityUtils
 import com.blankj.utilcode.util.*
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
@@ -18,23 +12,21 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.utils.TimeUtil
 import kotlinx.android.synthetic.main.activity_collect_success.*
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.IOException
 import java.net.URLDecoder
 import java.util.*
 
 open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCallback,
     IDoUpdateBaseInfoCallback, IDoUpdateMoreInfoCallback, IDoUpdateDemandInfoCallback,
-    IDoUploadPhotoCallback {
+    IDoUpdateVerifyInfoCallback {
 
     protected var mDestroyType = ""
 
     private var str = ""
 
     // 各文件是否上传完成
-    private var photoCompleteLoad = false
+    private var verifyCompleteLoad = false
     private var demandCompleteLoad = false
     private var moreInfoCompleteLoad = false
     private var baseInfoCompleteLoad = false
@@ -44,7 +36,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
     private lateinit var doUpdateMoreInfoPresent: doUpdateMoreInfoPresentImpl
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
-    private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
+    private lateinit var doUpdateVerifyInfoPresent: doUpdateVerifyInfoPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_collect_success
 
@@ -67,8 +59,8 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         updateDemandInfoPresent = doUpdateDemandInfoPresentImpl.getsInstance()
         updateDemandInfoPresent.registerCallback(this)
 
-        uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
-        uploadPhotoPresent.registerCallback(this)
+        doUpdateVerifyInfoPresent = doUpdateVerifyInfoPresentImpl.getsInstance()
+        doUpdateVerifyInfoPresent.registerCallback(this)
 
     }
 
@@ -129,9 +121,33 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
     // 开始上传信息
     private fun update() {
 
-        Log.i("guo","base : ${getBaseInfo()}")
-        Log.i("guo","more : ${getMoreInfo()}")
-        Log.i("guo","demand : ${getDemandInfo()}")
+        Log.i("guo", "verify : ${getVerifyInfo()}")
+        Log.i("guo", "base : ${getBaseInfo()}")
+        Log.i("guo", "more : ${getMoreInfo()}")
+        Log.i("guo", "demand : ${getDemandInfo()}")
+
+
+        val identityCode = SPStaticUtils.getString(Constant.TRUE_ID, "")
+
+        SPStaticUtils.put(Constant.ME_SEX, isSex(identityCode))
+
+        SPStaticUtils.put(Constant.ME_BIRTH_YEAR,
+            identityCode.substring(6, 10).toInt() - TimeUtils.date2String(TimeUtils.getNowDate(),
+                "yyyy").toInt() + 100)
+        SPStaticUtils.put(Constant.ME_BIRTH_MONTH, identityCode.substring(10, 12).toInt() - 1)
+        SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
+
+        SPStaticUtils.put(Constant.ME_BIRTH,
+            "${identityCode.substring(6, 10).toInt()}" +
+                    "-${identityCode.substring(10, 12).toInt()}" +
+                    "-${identityCode.substring(12, 14).toInt()}")
+
+
+        val verifyInfoMap: MutableMap<String, String> = TreeMap()
+        verifyInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        verifyInfoMap[Contents.VERIFY_UPDATE] = getVerifyInfo()
+        doUpdateVerifyInfoPresent.doUpdateVerifyInfo(verifyInfoMap)
+
 
         val moreInfoMap: MutableMap<String, String> = TreeMap()
         moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
@@ -148,20 +164,28 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
         updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
-        val uploadPhotoMap: MutableMap<String, String> = TreeMap()
-        uploadPhotoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        uploadPhotoMap[Contents.IMAGE_URL] = SPStaticUtils.getString(Constant.ME_AVATAR)
-        uploadPhotoMap[Contents.FILE_TYPE] = "png"
-        uploadPhotoMap[Contents.FILE_NAME] = "head.png"
-        uploadPhotoMap[Contents.CONTENT] = "0"
-        uploadPhotoMap[Contents.KIND] = 1.toString()
-        uploadPhotoPresent.doUploadPhoto(uploadPhotoMap)
-
     }
 
 
+    // 上传的认证信息
+    private fun getVerifyInfo(): String {
+
+        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 1)
+        val name = SPStaticUtils.getString(Constant.TRUE_NAME, "")
+        val id = SPStaticUtils.getString(Constant.TRUE_ID, "")
+        val ta = 1
+
+        return " {      \"user_sex\":         \"$sex\"," +       // 性别
+                "\"identity_name\":    \"$name\"," +      // 身份证名字
+                "\"identity_number\":  \"$id\"," +        // 身份证号码
+                " \"identity_status\":   $ta}"
+    }
+
     // 需要上传的基础信息
     private fun getBaseInfo(): String {
+
+        val age = TimeUtil.birthdayToAge(SPStaticUtils.getString(Constant.ME_BIRTH, ""))
+        val birthday = SPStaticUtils.getString(Constant.ME_BIRTH, "")
 
         val edu = SPStaticUtils.getInt(Constant.ME_EDU, 0)
         val school = SPStaticUtils.getString(Constant.ME_SCHOOL, "")
@@ -187,6 +211,8 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
         val baseInfo =
             " {\"school_name\":       \"$school\"," +         // 学校名字
+                    "\"age\":            \"$age\"," +                // 用户年龄
+                    "\"birthday\":      \"$birthday\"," +       // 出生年月日
                     "\"education\":         $edu," +                // 学历
                     "\"industry_num\":      $industryCode," +       // 行业编码
                     "\"industry_str\":      \"$industryName\"," +       // 行业名字
@@ -212,10 +238,8 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
     private fun getMoreInfo(): String {
         val loveTarget = SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0)
         val loveTargetShow = SPStaticUtils.getInt(Constant.ME_LOVE_TARGET_SHOW, 0)
-        val moreInfo =
-            " {\"love_target\":       $loveTarget," +       // 恋爱目标
-                    "\"target_show\":       $loveTargetShow}"  // 想结婚时间
-        return moreInfo
+        return " {\"love_target\":       $loveTarget," +       // 恋爱目标
+                "\"target_show\":       $loveTargetShow}"
     }
 
     // 需要上传的择偶条件信息
@@ -223,28 +247,18 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         val ageMin = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)
         val ageMax = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)
 
-        val demandInfo =
-            " {\"age_min\":       $ageMin," +
-                    "\"age_max\":       $ageMax}"
-        return demandInfo
+        return " {\"age_min\":       $ageMin,\"age_max\":       $ageMax}"
 
     }
 
     private fun judgeLoading() {
-        if (photoCompleteLoad && demandCompleteLoad && moreInfoCompleteLoad && baseInfoCompleteLoad) {
+        if (verifyCompleteLoad && demandCompleteLoad && moreInfoCompleteLoad && baseInfoCompleteLoad) {
             ToastUtils.showShort("资料全部上传完成，跳转至首页")
 
             SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
 
-            val identityCode = SPStaticUtils.getString(Constant.TRUE_ID, "")
-
-            SPStaticUtils.put(Constant.ME_BIRTH_YEAR,
-                identityCode.substring(6, 10)
-                    .toInt() - TimeUtils.date2String(TimeUtils.getNowDate(), "yyyy").toInt() + 100)
-            SPStaticUtils.put(Constant.ME_BIRTH_MONTH, identityCode.substring(10, 12).toInt() - 1)
-            SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
-
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
+
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             this.finish()
@@ -252,47 +266,17 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         }
     }
 
-    private fun saveImage(bitmap: Bitmap) {
-        val path = PathUtils.getInternalAppCachePath() + File.separator + "1.jpeg"
-        Log.i("guo", path)
-        ImageUtils.save(bitmap, path, Bitmap.CompressFormat.PNG)
-    }
-
-    private fun base64ToBitmap(base64Data: String): Bitmap {
-        val bytes = Base64Utils.decode(base64Data, Base64Utils.NO_WRAP)
-        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-    }
-
-    private fun bitmapToBase64(bitmap: Bitmap?): String {
-
-        var result: String = ""
-        var baos: ByteArrayOutputStream? = null
-        try {
-            if (bitmap != null) {
-                baos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                baos.flush()
-                baos.close()
-                val bitmapBytes = baos.toByteArray()
-                result =
-                    android.util.Base64.encodeToString(bitmapBytes, android.util.Base64.NO_WRAP)
+    /**
+     * 1 man 2 girl 果是奇数性别为男，偶数则为女。
+     */
+    open fun isSex(idCard: String): Int {
+        return if (!TextUtils.isEmpty(idCard) && idCard.length == 18) {
+            if (idCard.substring(16, 17).toInt() % 2 == 0) {
+                2
+            } else {
+                1
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.flush()
-                    baos.close()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-
-        Log.i("guo", "su；$result")
-        return result
-
+        } else 0
     }
 
     override fun onLoading() {
@@ -303,44 +287,72 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
     }
 
-    override fun onDoUploadPhotoSuccess(uploadPhotoBean: UploadPhotoBean?) {
-        photoCompleteLoad = true
+    override fun onDoUpdateVerifyInfoSuccess(updateVerifyInfoBean: UpdateVerifyInfoBean?) {
+        verifyCompleteLoad = true
 
         judgeLoading()
+
+        if (updateVerifyInfoBean != null) {
+            if (updateVerifyInfoBean.code != 200) {
+                ToastUtils.showShort("数据上传失败")
+            }
+        }
+
     }
 
-    override fun onDoUploadPhotoError() {
-
+    override fun onDoUpdateVerifyInfoError() {
+        ToastUtils.showShort("数据上传失败")
     }
 
     override fun onDoUpdateDemandInfoSuccess(updateDemandInfoBean: UpdateDemandInfoBean?) {
         demandCompleteLoad = true
 
         judgeLoading()
+
+        if (updateDemandInfoBean != null) {
+            if (updateDemandInfoBean.code != 200) {
+                ToastUtils.showShort("数据上传失败")
+            }
+        }
+
     }
 
     override fun onDoUpdateDemandInfoError() {
-
+        ToastUtils.showShort("数据上传失败")
     }
 
     override fun onDoUpdateMoreInfoSuccess(updateMoreInfoBean: UpdateMoreInfoBean?) {
         moreInfoCompleteLoad = true
 
         judgeLoading()
+
+        if (updateMoreInfoBean != null) {
+            if (updateMoreInfoBean.code != 200) {
+                ToastUtils.showShort("数据上传失败")
+            }
+        }
+
     }
 
     override fun onDoUpdateMoreInfoError() {
-
+        ToastUtils.showShort("数据上传失败")
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
         baseInfoCompleteLoad = true
 
         judgeLoading()
+
+        if (baseInfoUpdateBean != null) {
+            if (baseInfoUpdateBean.code != 200) {
+                ToastUtils.showShort("数据上传失败")
+            }
+        }
+
     }
 
     override fun onDoUpdateBaseInfoError() {
-
+        ToastUtils.showShort("数据上传失败")
     }
 
     override fun onDoFaceVerifySuccess(faceVerifyBean: FaceVerifyBean?) {

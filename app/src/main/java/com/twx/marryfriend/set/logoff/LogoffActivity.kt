@@ -10,22 +10,25 @@ import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.aigestudio.wheelpicker.WheelPicker
 import com.blankj.utilcode.util.ConvertUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.just.agentweb.AgentWeb
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.constant.DataProvider
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_logoff.*
 import kotlinx.android.synthetic.main.activity_safe.*
+import kotlinx.android.synthetic.main.activity_set_web.*
 
 class LogoffActivity : MainBaseViewActivity() {
+
+    private var mAgentWeb: AgentWeb? = null
 
     override fun getLayoutView(): Int = R.layout.activity_logoff
 
@@ -37,6 +40,15 @@ class LogoffActivity : MainBaseViewActivity() {
         super.initView()
 
         startCurrentDownTimer()
+
+        mAgentWeb = AgentWeb.with(this) //传入Activity
+            .setAgentWebParent(rl_logoff_container,
+                RelativeLayout.LayoutParams(-1, -1)) //传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams
+            .useDefaultIndicator() // 使用默认进度条
+            .createAgentWeb() //
+            .ready()
+            .go(DataProvider.WebUrlData[6].url)
+
     }
 
     override fun initLoadData() {
@@ -68,7 +80,6 @@ class LogoffActivity : MainBaseViewActivity() {
                 .show()
         }
     }
-
 
     // 验证码倒计时
     private fun startCurrentDownTimer() {

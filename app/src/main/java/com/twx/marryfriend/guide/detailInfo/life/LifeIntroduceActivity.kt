@@ -293,7 +293,11 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
             // 进行图片审核
             doFaceDetect()
         } else {
-            ToastUtils.showShort(textVerifyBean.error_msg)
+            if (textVerifyBean.error_msg != null) {
+                ToastUtils.showShort(textVerifyBean.error_msg)
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+            }
             et_life_introduce_introduce.setText("")
         }
 

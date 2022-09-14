@@ -2,15 +2,15 @@ package com.twx.marryfriend.set.web
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.webkit.*
+import android.widget.LinearLayout
+import com.just.agentweb.AgentWeb
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import kotlinx.android.synthetic.main.activity_set_web.*
 
-class SetWebActivity : MainBaseViewActivity() {
+open class SetWebActivity : MainBaseViewActivity() {
+
+    private var mAgentWeb: AgentWeb? = null
 
     override fun getLayoutView(): Int = R.layout.activity_set_web
 
@@ -34,9 +34,12 @@ class SetWebActivity : MainBaseViewActivity() {
 
         tv_web_name.text = name
 
-        val webSettings: WebSettings = wv_web_container.settings
-        webSettings.javaScriptEnabled = true
-        wv_web_container.loadUrl(url)
+        mAgentWeb = AgentWeb.with(this) //传入Activity
+            .setAgentWebParent(ll_web_container, LinearLayout.LayoutParams(-1, -1)) //传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams
+            .useDefaultIndicator() // 使用默认进度条
+            .createAgentWeb() //
+            .ready()
+            .go(url)
 
     }
 
@@ -57,10 +60,21 @@ class SetWebActivity : MainBaseViewActivity() {
 
     }
 
+
+    override fun onPause() {
+        mAgentWeb!!.webLifeCycle.onPause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        mAgentWeb!!.webLifeCycle.onResume()
+        super.onResume()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        wv_web_container.loadUrl("about:blank");
-        wv_web_container.destroy()
+        //mAgentWeb.destroy();
+        mAgentWeb!!.webLifeCycle.onDestroy()
     }
 
 }

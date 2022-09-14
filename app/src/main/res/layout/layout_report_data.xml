@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="112dp"
+    android:layout_height="112dp">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/riv_detail_report_pic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:riv_corner_radius="8dp" />
+
+    <ImageView
+        android:id="@+id/iv_detail_report_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_report_close" />
+
+</RelativeLayout>

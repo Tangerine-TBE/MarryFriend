@@ -67,6 +67,8 @@ import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
+import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 
 import java.util.Map;
@@ -366,6 +368,14 @@ public interface Api {
     // 刷新金币与会员
     @POST("/marryfriend/MemberCharge/refreshSelf")
     Call<RefreshSelfBean> doRefreshSelf(@QueryMap Map<String, Object> params);
+
+    // 上传用户反馈
+    @POST("/marryfriend/MemberCharge/uploadFeedback")
+    Call<UploadFeedbackBean> doUploadFeedback(@QueryMap Map<String, Object> params);
+
+    // 投诉举报其它人
+    @POST("/marryfriend/MemberCharge/uploadComplaint")
+    Call<ReportOtherBean> doReportOther(@QueryMap Map<String, Object> params);
 
 
     // 高德地图-地点检索

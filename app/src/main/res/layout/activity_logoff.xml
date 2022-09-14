@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginVertical="20dp"
-            android:text="消息通知"
+            android:text="账号注销"
             android:textColor="#101010"
             android:textSize="17sp" />
 
@@ -44,6 +44,12 @@
         android:background="@color/white"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:id="@+id/rl_logoff_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -81,6 +87,5 @@
         </LinearLayout>
 
     </RelativeLayout>
-
 
 </LinearLayout>

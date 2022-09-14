@@ -250,6 +250,9 @@ dependencies {
     //音视频处理工具
     implementation 'com.github.microshow:RxFFmpeg:4.9.0-lite'
 
+    // 第三方数据库
+    implementation 'com.github.Justson.AgentWeb:agentweb-core:v5.0.6-androidx'
+
 
     // 友盟基础组件库（所有友盟业务SDK都依赖基础组件库）
     implementation 'com.umeng.umsdk:common:9.5.1'// (必选)

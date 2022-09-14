@@ -19,7 +19,6 @@ object EmojiUtils {
         emojiList.add("1F602")
         emojiList.add("1F642")
         emojiList.add("1F643")
-        emojiList.add("1FAE0")
         emojiList.add("1F609")
         emojiList.add("1F60A")
         emojiList.add("1F60D")
@@ -31,7 +30,6 @@ object EmojiUtils {
         emojiList.add("1F917")
         emojiList.add("1F92D")
         emojiList.add("1F92B")
-        emojiList.add("1FAE3")
         emojiList.add("1F610")
         emojiList.add("1F60F")
         emojiList.add("1F612")
@@ -76,7 +74,7 @@ object EmojiUtils {
     }
 
     /** 获取可兼容的 emoji 字符串 */
-    fun getCompatEmojiString(code: String): CharSequence? {
+    fun getCompatEmojiString(code: String): CharSequence {
         //将当前 code 转换为 16 进制数
         val hex = code.toInt(16)
         //将当前 16 进制数转换成字符数组

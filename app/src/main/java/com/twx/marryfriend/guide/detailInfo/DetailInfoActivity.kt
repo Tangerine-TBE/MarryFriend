@@ -93,7 +93,7 @@ import kotlin.math.log
 class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJobCallback,
     IDoFaceDetectCallback, IDoIdentityVerifyCallback, IDoUpdateBaseInfoCallback,
     IDoUpdateMoreInfoCallback, IDoUpdateDemandInfoCallback, IDoUploadPhotoCallback,
-    IDoTextVerifyCallback, IDoDeletePhotoCallback {
+    IDoTextVerifyCallback, IDoDeletePhotoCallback, IDoUploadAvatarCallback {
 
     // 敏感字
     private var banTextList: MutableList<String> = arrayListOf()
@@ -140,6 +140,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     private lateinit var getIndustryPresent: getIndustryPresentImpl
     private lateinit var getJobPresent: getJobPresentImpl
+
 
     // -------------------  居住地和家乡界面  -----------------
 
@@ -429,6 +430,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
 
+    private lateinit var doUploadAvatarPresent: doUploadAvatarPresentImpl
+
     private lateinit var uploadPhotoPresent: doUploadPhotoPresentImpl
 
     private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
@@ -486,6 +489,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         updateDemandInfoPresent = doUpdateDemandInfoPresentImpl.getsInstance()
         updateDemandInfoPresent.registerCallback(this)
+
+        doUploadAvatarPresent = doUploadAvatarPresentImpl.getsInstance()
+        doUploadAvatarPresent.registerCallback(this)
 
         uploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         uploadPhotoPresent.registerCallback(this)
@@ -1857,6 +1863,18 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         return result
     }
 
+    // 上传头像
+    private fun updateAvatar(photoUrl: String, type: String, name: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
+
+    }
+
     // -------------------  我的生活界面  -----------------
 
 
@@ -2229,6 +2247,38 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     override fun onError() {
 
+    }
+
+    override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
+
+        ll_guide_detail_loading.visibility = View.GONE
+
+        if (uploadAvatarBean != null) {
+            if (uploadAvatarBean.code == 200) {
+
+                ToastUtils.showShort("头像上传成功")
+                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+
+
+                iv_photo_container.setImageBitmap(photoBitmap)
+
+                iv_photo_container.setOnClickListener(null)
+
+                tv_photo_reupload.visibility = View.VISIBLE
+                iv_photo_delete.visibility = View.VISIBLE
+
+                isFinishPhoto = true
+                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+
+            } else {
+                ToastUtils.showShort("头像上传失败")
+            }
+        }
+    }
+
+    override fun onDoUploadAvatarError() {
+        Log.i("guo","error")
+        ll_guide_detail_loading.visibility = View.GONE
     }
 
     override fun onDoDeletePhotoSuccess(deletePhotoBean: DeletePhotoBean?) {
@@ -2910,7 +2960,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
 
                     } else {
-                        ToastUtils.showShort(textVerifyBean.error_msg)
+                        if (textVerifyBean.error_msg != null) {
+                            ToastUtils.showShort(textVerifyBean.error_msg)
+                        } else {
+                            ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        }
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         isFinishIntroduce = false
                         haveBanText = false
@@ -2931,7 +2985,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         tsb_guide_detail_guide.setPercent(0.88f, "88")
                         SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
                     } else {
-                        ToastUtils.showShort(textVerifyBean.error_msg)
+                        if (textVerifyBean.error_msg != null) {
+                            ToastUtils.showShort(textVerifyBean.error_msg)
+                        } else {
+                            ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        }
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         isFinishHobby = false
                         haveBanText = false
@@ -2960,7 +3018,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     } else {
 
-                        ToastUtils.showShort(textVerifyBean.error_msg)
+                        if (textVerifyBean.error_msg != null) {
+                            ToastUtils.showShort(textVerifyBean.error_msg)
+                        } else {
+                            ToastUtils.showShort(textVerifyBean.data[0].msg)
+                        }
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
 
                         isFinishIdeal = false
@@ -3074,32 +3136,53 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
 
-        ll_guide_detail_loading.visibility = View.GONE
-
         if (isPhoto) {
             if (faceDetectBean.conclusion == "合规") {
 
-                iv_photo_container.setImageBitmap(photoBitmap)
-
-                iv_photo_container.setOnClickListener(null)
 
                 val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
                     BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
                 }
 
-                tv_photo_reupload.visibility = View.VISIBLE
-                iv_photo_delete.visibility = View.VISIBLE
-
                 FileUtils.delete(mPhotoPath)
 
                 bitmap?.let { saveBitmap(it, mPhotoPath) }
 
-                isFinishPhoto = true
+                Thread {
 
-                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
+                    //上传Object
+                    val file = File(mPhotoPath)
+                    // bucketName 为文件夹名 ，使用用户id来进行命名
+                    // key值为保存文件名，试用固定的几种格式来命名
+
+                    val putObjectFromFileResponse = client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID,
+                            "default")
+                    }",
+                        FileUtils.getFileName(mPhotoPath), file)
+
+                    Log.i("guo", FileUtils.getFileName(mPhotoPath))
+
+                    mPhotoUrl = client.generatePresignedUrl("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", FileUtils.getFileName(mPhotoPath), -1).toString()
+
+
+                    Log.i("guo", mPhotoUrl)
+
+                    updateAvatar(mPhotoUrl,
+                        FileUtils.getFileExtension(mPhotoPath),
+                        FileUtils.getFileNameNoExtension(mPhotoPath))
+
+                }.start()
 
             } else {
-                ToastUtils.showShort(faceDetectBean.error_msg)
+                if (faceDetectBean.error_msg != null) {
+                    ToastUtils.showShort(faceDetectBean.error_msg)
+                } else {
+                    ToastUtils.showShort(faceDetectBean.data[0].msg)
+                }
+
             }
         }
 
@@ -4142,12 +4225,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             all: Boolean,
                         ) {
 
-                            if (all){
+                            if (all) {
 
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
                                 startActivityForResult(intent, 3)
 
-                            }else{
+                            } else {
                                 ToastUtils.showShort("请授予应用相关权限")
                             }
 

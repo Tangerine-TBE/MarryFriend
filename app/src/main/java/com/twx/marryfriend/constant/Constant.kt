@@ -147,9 +147,6 @@ object Constant {
 
     const val TRUE_ID = "true_id"    // 真实ID
 
-    const val ME_TURE_NAME = "ME_true_name"  // 带有*号的真实名字
-
-    const val ME_TURE_ID = "ME_true_id"  // 带有*号的真实名字
 
     //         -----------  基础信息  ----------
 

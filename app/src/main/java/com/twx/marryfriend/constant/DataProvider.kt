@@ -96,6 +96,7 @@ object DataProvider {
         R.mipmap.gif_vip_4,
         R.mipmap.gif_vip_5,
         R.mipmap.gif_vip_6,
+        R.mipmap.gif_vip_7,
     )
 
     val SuperBannerData = arrayListOf(
@@ -111,6 +112,7 @@ object DataProvider {
         R.mipmap.gif_svip_10,
         R.mipmap.gif_svip_11,
         R.mipmap.gif_svip_12,
+        R.mipmap.gif_svip_13,
     )
 
 
@@ -180,6 +182,19 @@ object DataProvider {
         WebUrlBean("个人动态服务协议", "http://test.aisou.club/userManual/dynamic.html"),
         WebUrlBean("网络交友防骗指南", "http://test.aisou.club/userManual/preven.html"),
         WebUrlBean("人脸认证服务协议", "http://test.aisou.club/userManual/face_auth.html"),
+    )
+
+
+    // 举报列表
+    val ReportData = arrayListOf(
+        "其它",
+        "恶语辱骂",
+        "广告骚扰",
+        "投资诈骗",
+        "涉黄涉赌",
+        "资料作假",
+        "不当言论",
+        "其它平台违规"
     )
 
 

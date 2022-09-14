@@ -1923,9 +1923,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mDayList.add(1 + i)
         }
 
-        if (SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0) != 0) {
+        val defaultYear = 100 - (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
+            Calendar.YEAR) - 1990)
 
-            val year = mYearList[SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0)]
+        if (SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear) != defaultYear) {
+
+            val year = mYearList[SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear)]
             val month = mMonthList[SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0)]
             val day = mDayList[SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0)]
 
@@ -2642,7 +2645,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
 
         } else {
-            ToastUtils.showShort(faceDetectBean.data[0].msg)
+            if (faceDetectBean.error_msg != null) {
+                ToastUtils.showShort(faceDetectBean.error_msg)
+            } else {
+                ToastUtils.showShort(faceDetectBean.data[0].msg)
+            }
         }
 
     }
@@ -2928,7 +2935,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
                 haveBanText = false
@@ -3260,7 +3271,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_ideal_content).setText("")
                 haveBanText = false
@@ -3369,7 +3384,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 isNeedJump = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 name1 = ""
                 findViewById<EditText>(R.id.et_user_data_name_name).setText("")
                 haveBanText = false
@@ -3607,16 +3626,31 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             wheelTwo.data = mMonthList
             wheelThree.data = mDayList
 
-            mYearPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0)
+
+            val defaultYear = 100 - (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
+                Calendar.YEAR) - 1990)
+
+            Log.i("guo",
+                "default 1111 : ${
+                    TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
+                        Calendar.YEAR)
+                }")
+            Log.i("guo",
+                "default 2222 : ${
+                    TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
+                        Calendar.YEAR) - 1990
+                }")
+
+            Log.i("guo", "default 3333 : ${defaultYear}")
+
+            mYearPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear)
             mMonthPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0)
             mDayPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0)
 
-            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0), false)
-            getMonthData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0))
-            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0),
-                false)
-            getDayData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, 0),
-                SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0))
+            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear), false)
+            getMonthData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear))
+            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0), false)
+            getDayData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear), SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0))
             wheelThree.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0),
                 false)
 
