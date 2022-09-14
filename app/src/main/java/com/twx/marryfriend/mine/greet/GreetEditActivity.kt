@@ -10,10 +10,12 @@ import com.twx.marryfriend.bean.TextVerifyBean
 import com.twx.marryfriend.bean.UpdateGreetInfoBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
 import com.twx.marryfriend.net.callback.IDoUpdateGreetInfoCallback
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
+import com.twx.marryfriend.set.web.SetWebActivity
 import kotlinx.android.synthetic.main.activity_greet_edit.*
 import java.util.*
 
@@ -86,6 +88,12 @@ class GreetEditActivity : MainBaseViewActivity(), IDoTextVerifyCallback,
 
         })
 
+        tv_greet_edit_standard.setOnClickListener {
+            startActivity(SetWebActivity.getIntent(this,
+                "文字审核标准",
+                DataProvider.WebUrlData[4].url))
+        }
+
         tv_greet_edit_save.setOnClickListener {
 
             if (greet.length >= 10) {
@@ -156,7 +164,12 @@ class GreetEditActivity : MainBaseViewActivity(), IDoTextVerifyCallback,
 
         } else {
 
-            ToastUtils.showShort(textVerifyBean.error_msg)
+            if (textVerifyBean.error_msg != null) {
+                ToastUtils.showShort(textVerifyBean.error_msg)
+            } else {
+                ToastUtils.showShort(textVerifyBean.data[0].msg)
+            }
+
             greet = ""
 
             et_greet_edit_container.setText("")

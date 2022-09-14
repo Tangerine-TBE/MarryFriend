@@ -19,21 +19,22 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_guide_star"/>
+                android:src="@drawable/ic_guide_star" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
                 android:text="填写您的职业收入情况"
+                android:gravity="center"
                 android:textColor="#404040"
                 android:textSize="22sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_guide_star"/>
+                android:src="@drawable/ic_guide_star" />
 
         </LinearLayout>
 
@@ -61,17 +62,32 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/shape_bg_common_input">
 
+            <ImageView
+                android:id="@+id/iv_guide_income_job_Search1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                android:src="@drawable/ic_income_search"
+                android:visibility="invisible" />
+
             <TextView
                 android:id="@+id/tv_guide_income_job"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
                 android:layout_marginVertical="20dp"
+                android:layout_toStartOf="@+id/iv_guide_income_job_Search2"
+                android:layout_toEndOf="@+id/iv_guide_income_job_Search1"
+                android:ellipsize="middle"
+                android:gravity="center"
+                android:singleLine="true"
                 android:text="请输入职业名称"
                 android:textColor="#9A9A9A"
                 android:textSize="17sp" />
 
             <ImageView
+                android:id="@+id/iv_guide_income_job_Search2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"

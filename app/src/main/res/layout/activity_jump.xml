@@ -110,11 +110,10 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="18dp"
-        android:text="你给别人打招呼,又没有填打招呼语句的时候,每天一次"
+        android:text="当向异性打招呼/右滑卡片时,TA将收到你写的招呼语"
         android:textColor="#9A9A9A"
         android:textSize="13sp"
         android:visibility="gone" />
-
 
     <LinearLayout
         android:id="@+id/ll_jump_loading"

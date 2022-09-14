@@ -75,6 +75,7 @@ import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
 import com.twx.marryfriend.net.impl.doViewHeadFacePresentImpl
 import com.twx.marryfriend.net.impl.mine.getFourTotalPresentImpl
 import com.twx.marryfriend.set.SetActivity
+import com.twx.marryfriend.set.report.ReportReasonActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
@@ -152,6 +153,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             getFourTotal()
             // 回调触发弹窗刷新
             getDialogOrder()
+            tv_mine_nick.text = SPStaticUtils.getString(Constant.ME_NAME, "未填写")
 
         }
     }
@@ -393,7 +395,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0, 3) })
+            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0, 0) })
         }
 
         ll_mine_set_svip.setOnClickListener {
@@ -416,6 +418,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             startActivityForResult(intent, 4)
 
         }
+
+        ll_mine_set_share.setOnClickListener {
+            startActivity(context?.let { it1 -> ReportReasonActivity.getIntent(it1, "13", "8") })
+        }
+
     }
 
     private fun getDialogOrder() {
@@ -628,6 +635,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     getAvatar()
                     // 回调触发弹窗刷新
                     getDialogOrder()
+                    tv_mine_nick.text = SPStaticUtils.getString(Constant.ME_NAME, "未填写")
                 }
                 // 上传生活照
                 1 -> {
@@ -873,7 +881,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
             ll_mine_loading.visibility = View.GONE
 
-            ToastUtils.showShort(faceDetectBean.data[0].msg)
+            if (faceDetectBean.error_msg != null) {
+                ToastUtils.showShort(faceDetectBean.error_msg)
+            } else {
+                ToastUtils.showShort(faceDetectBean.data[0].msg)
+            }
 
         }
 
@@ -1099,7 +1111,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 ToastUtils.showShort("输入中存在敏感字，请重新输入")
                 findViewById<EditText>(R.id.et_user_data_name_name).setText("")
                 haveBanText = false
@@ -1239,7 +1255,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_hobby_content).setText("")
                 haveBanText = false
@@ -1379,7 +1399,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_greet_content).setText("")
                 haveBanText = false
@@ -1520,7 +1544,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 isNeedUpdate = true
                 dismiss()
             } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
+                if (textVerifyBean.error_msg != null) {
+                    ToastUtils.showShort(textVerifyBean.error_msg)
+                } else {
+                    ToastUtils.showShort(textVerifyBean.data[0].msg)
+                }
                 text = ""
                 findViewById<EditText>(R.id.et_dialog_set_introduce_content).setText("")
                 haveBanText = false

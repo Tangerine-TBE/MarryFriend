@@ -12,6 +12,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -112,6 +113,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     // 添加按钮是否可见
     private var addVisible = true
 
+    // 是否完成文字验证
+    private var doTextVerify = false
+
+    // 是否完成动态上传
+    private var doUploadTrend = false
+
     private var mDataList: ArrayList<String> = arrayListOf()
 
     private lateinit var mAdapter: PhotoPublishAdapter
@@ -190,13 +197,30 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         config.endpoint = "http://adrmf.gz.bcebos.com"
         client = BosClient(config)
 
+
     }
+
 
     override fun initEvent() {
         super.initEvent()
 
         iv_dynamic_send_finish.setOnClickListener {
             finish()
+        }
+
+
+        ll_send_container.setOnClickListener {
+            if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                ll_emoji_send_container.visibility = View.GONE
+            }
+        }
+
+        et_send_content.setOnClickListener {
+            if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                ll_emoji_send_container.visibility = View.GONE
+            }
         }
 
         et_send_content.addTextChangedListener(object : TextWatcher {
@@ -216,8 +240,25 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         })
 
+        rv_send_container.setOnTouchListener { v, event ->
+            if (v != null) {
+                if (v.id != 0) {
+                    if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                        iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                        ll_emoji_send_container.visibility = View.GONE
+                    }
+                }
+            }
+            false
+        }
+
         mAdapter.setOnNineGridViewListener(object : OnNineGridViewListener {
             override fun onAddPic(addCount: Int) {
+
+                if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                    iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                    ll_emoji_send_container.visibility = View.GONE
+                }
 
                 XPopup.Builder(this@DynamicSendActivity)
                     .dismissOnTouchOutside(false)
@@ -264,6 +305,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
             override fun onClickPic(data: String?, position: Int) {
 
+                if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                    iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                    ll_emoji_send_container.visibility = View.GONE
+                }
+
                 if (FileUtils.getFileExtension(data) != "mp4") {
                     startActivity(ImagePreviewActivity.getIntent(this@DynamicSendActivity,
                         mDataList,
@@ -280,6 +326,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 data: String?,
                 position: Int,
             ) {
+
+                if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                    iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                    ll_emoji_send_container.visibility = View.GONE
+                }
+
                 if (viewHolder!!.layoutPosition != mDataList.size) {
                     mItemTouchHelper.startDrag(viewHolder) //viewHolder开始拖动
                 }
@@ -325,6 +377,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         // 定位
         rl_send_location.setOnClickListener {
+
+            if (ll_emoji_send_container.visibility == View.VISIBLE) {
+                iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
+                ll_emoji_send_container.visibility = View.GONE
+            }
 
             // 保证只执行一次
             var x = true
@@ -522,8 +579,13 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         // emoji
         iv_send_emoji.setOnClickListener {
             if (ll_emoji_send_container.visibility == View.VISIBLE) {
+
+                iv_send_emoji.setImageResource(R.drawable.ic_dynamic_emoji)
                 ll_emoji_send_container.visibility = View.GONE
+
             } else {
+
+                iv_send_emoji.setImageResource(R.drawable.ic_dynamic_keyboard)
                 ll_emoji_send_container.visibility = View.VISIBLE
             }
         }
@@ -634,9 +696,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                     var size = 0
 
                                     if (FileUtils.getSize(mDataList[0]).contains("MB")) {
-                                        size = FileUtils.getSize(mDataList[0]).replace("MB", "").toFloat().toInt()
+                                        size = FileUtils.getSize(mDataList[0]).replace("MB", "")
+                                            .toFloat().toInt()
                                     } else if (FileUtils.getSize(mDataList[0]).contains("KB")) {
-                                        size = FileUtils.getSize(mDataList[0]).replace("KB", "").toFloat().toInt()
+                                        size = FileUtils.getSize(mDataList[0]).replace("KB", "")
+                                            .toFloat().toInt()
                                         if (size < 1000) {
                                             size = 1
                                         } else {
@@ -792,6 +856,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
     private fun doTextVerify(text: String) {
+        doTextVerify = false
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
@@ -800,7 +865,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     }
 
     private fun uploadTrend() {
-
+        doUploadTrend = false
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_INFO] = getUploadTrendInfo()
         doUploadTrendPresent.doUploadTrend(map)
@@ -997,16 +1062,26 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     }
 
     override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean?) {
+        if (!doTextVerify) {
 
-        if (textVerifyBean != null) {
-            if (textVerifyBean.conclusion == "合规") {
-                // 上传动态
-                uploadTrend()
-            } else {
-                ToastUtils.showShort(textVerifyBean.error_msg)
-                ll_send_loading.visibility = View.GONE
+            doTextVerify = true
+            Log.i("guo", "onDoTextVerifySuccess")
+
+            if (textVerifyBean != null) {
+                if (textVerifyBean.conclusion == "合规") {
+                    // 上传动态
+                    uploadTrend()
+                } else {
+                    if (textVerifyBean.error_msg != null) {
+                        ToastUtils.showShort(textVerifyBean.error_msg)
+                    } else {
+                        ToastUtils.showShort(textVerifyBean.data[0].msg)
+                    }
+                    ll_send_loading.visibility = View.GONE
+                }
             }
         }
+
 
     }
 
@@ -1015,22 +1090,28 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     }
 
     override fun onDoUploadTrendSuccess(uploadTrendBean: UploadTrendBean?) {
+        if (!doUploadTrend) {
+            doUploadTrend = true
 
-        ll_send_loading.visibility = View.GONE
+            Log.i("guo", "onDoUploadTrendSuccess")
 
-        if (uploadTrendBean != null) {
-            if (uploadTrendBean.code == 200) {
-                // 返回上一页
-                // 更新视图
+            ll_send_loading.visibility = View.GONE
 
-                val intent = intent
-                setResult(RESULT_OK, intent)
-                finish()
+            if (uploadTrendBean != null) {
+                if (uploadTrendBean.code == 200) {
+                    // 返回上一页
+                    // 更新视图
 
-            } else {
-                ToastUtils.showShort(uploadTrendBean.msg)
+                    val intent = intent
+                    setResult(RESULT_OK, intent)
+                    finish()
+
+                } else {
+                    ToastUtils.showShort(uploadTrendBean.msg)
+                }
             }
         }
+
 
     }
 

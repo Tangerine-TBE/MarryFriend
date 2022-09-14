@@ -37,167 +37,174 @@
 
     </RelativeLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
                 android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/et_greet_edit_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="130dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="24dp"
-                    android:background="@null"
-                    android:gravity="top"
-                    android:hint="一段用心、真诚的招呼语，可以让回复率增加60%"
-                    android:maxLength="1000"
-                    android:textColor="#101010"
-                    android:textColorHint="#9A9A9A"
-                    android:textSize="15sp" />
-
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="20dp">
+                    android:background="@color/white"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/et_greet_edit_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="130dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@null"
+                        android:gravity="top"
+                        android:hint="一段用心、真诚的招呼语，可以让回复率增加60%"
+                        android:maxLength="1000"
+                        android:textColor="#101010"
+                        android:textColorHint="#9A9A9A"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true">
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="20dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true">
+
+                            <TextView
+                                android:id="@+id/tv_greet_edit_sum"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:text="0"
+                                android:textColor="#9A9A9A"
+                                android:textSize="13sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="/1000"
+                                android:textColor="#9A9A9A"
+                                android:textSize="13sp" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/shape_bg_dialog"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp">
 
                         <TextView
-                            android:id="@+id/tv_greet_edit_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="15dp"
+                            android:text="填写建议"
+                            android:textColor="#101010"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_greet_edit_standard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
-                            android:text="0"
-                            android:textColor="#9A9A9A"
-                            android:textSize="13sp" />
+                            android:layout_marginEnd="12dp"
+                            android:text="查看招呼语审核标准"
+                            android:textColor="#717171"
+                            android:textSize="15sp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="/1000"
-                            android:textColor="#9A9A9A"
-                            android:textSize="13sp" />
-
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:background="@drawable/shape_bg_dialog"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp">
+                    </RelativeLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="15dp"
-                        android:text="填写建议"
+                        android:layout_marginTop="30dp"
+                        android:text="① 介绍一下自己"
                         android:textColor="#101010"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="12dp"
-                        android:text="查看招呼语审核标准"
-                        android:textColor="#717171"
-                        android:textSize="15sp" />
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="24dp"
+                        android:text="② 描述你期待的另一半"
+                        android:textColor="#101010"
+                        android:textSize="13sp" />
 
-                </RelativeLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="24dp"
+                        android:text="③ 礼貌、得体的表达"
+                        android:textColor="#101010"
+                        android:textSize="13sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="30dp"
-                    android:text="① 介绍一下自己"
-                    android:textColor="#101010"
-                    android:textSize="13sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="24dp"
+                        android:text="④ 为了你的征婚安全，请勿在初次联系时透露电话号码等联系方式"
+                        android:textColor="#101010"
+                        android:textSize="13sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="24dp"
-                    android:text="② 描述你期待的另一半"
-                    android:textColor="#101010"
-                    android:textSize="13sp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="24dp"
+                        android:layout_marginBottom="32dp"
+                        android:text="⑤ 不可填写违规内容"
+                        android:textColor="#101010"
+                        android:textSize="13sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="24dp"
-                    android:text="③ 礼貌、得体的表达"
-                    android:textColor="#101010"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="24dp"
-                    android:text="④ 为了你的征婚安全，请勿在初次联系时透露电话号码等联系方式"
-                    android:textColor="#101010"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="32dp"
-                    android:text="⑤ 不可填写违规内容"
-                    android:textColor="#101010"
-                    android:textSize="13sp" />
+                </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_greet_edit_save"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="50dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/shape_bg_common_next"
-                android:gravity="center"
-                android:paddingVertical="20dp"
-                android:text="保存"
-                android:textColor="@color/white"
-                android:textSize="17sp" />
+        </androidx.core.widget.NestedScrollView>
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_greet_edit_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="50dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/shape_bg_common_next"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="保存"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
 
-    </androidx.core.widget.NestedScrollView>
-
+    </RelativeLayout>
 
 </LinearLayout>

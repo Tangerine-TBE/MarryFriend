@@ -6,6 +6,6 @@ package com.twx.marryfriend.bean
  */
 data class UploadAvatarBean(
     val code: Int,
-    val data: List<Int>,
-    val msg: String
+    val data: List<Any>,
+    val msg: String,
 )

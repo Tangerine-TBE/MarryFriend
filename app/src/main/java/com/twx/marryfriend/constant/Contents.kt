@@ -200,6 +200,12 @@ object Contents {
     // 刷新金币与会员
     const val DO_REFRESH_SELF = "MemberCharge/refreshSelf"
 
+    // 上传用户反馈
+    const val DO_UPLOAD_FEEDBACK = "MemberCharge/uploadFeedback"
+
+    // 投诉举报其它人
+    const val DO_REPORT_OTHER = "MemberCharge/uploadComplaint"
+
     // ------------------------------- 高德地图 -------------------------------
 
     // 高德地图-地点检索
@@ -282,6 +288,10 @@ object Contents {
     //    const val USER_ID = "user_id"
     const val DEMAND_UPDATE = "demand_update"
 
+    // 修改认证信息
+    //    const val USER_ID = "user_id"
+    const val VERIFY_UPDATE = "verify_update"
+
     // 修改招呼语
     //    const val USER_ID = "user_id"
     const val GREET_UPDATE = "zhaohuyu_update"
@@ -341,6 +351,11 @@ object Contents {
     const val DISCUSS_ID = "discuss_id"  // 评论最大id
     const val LIKE_ID = "like_id"  // 点赞最大id
 
+
+    // 举报
+    const val REASON_CODE = "reason_code"  // 原因编码
+    const val REASON_TEXT = "reason_text"  // 原因文字
+    const val MARK_NOTICE = "mark_notice"  // 备注信息
 
     // ------------------------------------ 支付 ------------------------------------
 

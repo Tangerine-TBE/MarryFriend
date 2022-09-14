@@ -30,6 +30,7 @@ import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
+import com.twx.marryfriend.set.report.ReportReasonActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.TimeUtil
@@ -2006,6 +2007,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
             report.setOnClickListener {
                 ToastUtils.showShort("举报该动态")
+                startActivity(ReportReasonActivity.getIntent(
+                    this@DynamicOtherShowActivity,
+                    SPStaticUtils.getString(Constant.USER_ID, "13"),
+                    userId.toString()
+                ))
                 dismiss()
             }
 

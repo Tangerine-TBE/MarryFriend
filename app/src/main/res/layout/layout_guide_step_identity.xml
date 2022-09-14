@@ -25,6 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="8dp"
+                android:gravity="center"
                 android:text="最后，实名认证"
                 android:textColor="#404040"
                 android:textSize="22sp"
@@ -62,11 +63,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:textColor="#404040"
             android:background="@drawable/shape_bg_common_input"
             android:gravity="center"
             android:hint="请输入姓名"
             android:paddingVertical="20dp"
+            android:textColor="#404040"
             android:textColorHint="#9A9A9A"
             android:textSize="17sp" />
 
@@ -74,7 +75,6 @@
             android:id="@+id/et_guide_identity_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#404040"
             android:layout_marginTop="16dp"
             android:background="@drawable/shape_bg_common_input"
             android:digits="0123456789 X"
@@ -82,6 +82,7 @@
             android:hint="请输入身份证号"
             android:maxLength="18"
             android:paddingVertical="20dp"
+            android:textColor="#404040"
             android:textColorHint="#9A9A9A"
             android:textSize="17sp" />
 

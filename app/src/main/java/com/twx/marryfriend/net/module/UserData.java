@@ -67,6 +67,8 @@ import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
+import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 import com.twx.marryfriend.constant.Contents;
 import com.twx.marryfriend.net.utils.ApiMapUtil;
@@ -940,6 +942,32 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REFRESH_SELF + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REFRESH_SELF, currentTimeMillis, random, checkCode, map);
         mApi.doRefreshSelf(map1).enqueue(callback);
+    }
+
+
+    // 上传用户反馈
+    public void doUploadFeedback(Map<String, String> map, Callback<UploadFeedbackBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPLOAD_FEEDBACK + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPLOAD_FEEDBACK, currentTimeMillis, random, checkCode, map);
+        mApi.doUploadFeedback(map1).enqueue(callback);
+    }
+
+
+    // 投诉举报其它人
+    public void doReportOther(Map<String, String> map, Callback<ReportOtherBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REPORT_OTHER + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REPORT_OTHER, currentTimeMillis, random, checkCode, map);
+        mApi.doReportOther(map1).enqueue(callback);
     }
 
 

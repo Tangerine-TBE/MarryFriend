@@ -268,8 +268,7 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
                     .permission(Permission.CAMERA)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                            val intent = Intent(this@VerifyInputActivity,
-                                VerifyFaceLivenessExpActivity::class.java)
+                            val intent = Intent(this@VerifyInputActivity, VerifyFaceLivenessExpActivity::class.java)
                             startActivityForResult(intent, 1)
                         }
 

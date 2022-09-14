@@ -13,7 +13,7 @@ data class TextVerifyBean(
     val `data`: List<TextVerifyData>,
     val log_id: Long,
     val error_code: Int,
-    val error_msg: String
+    val error_msg: String?
 )
 
 data class TextVerifyData(
