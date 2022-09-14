@@ -75,7 +75,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         private const val VIP_MODE = "vip_mode"
         private const val TARGET_ID = "target_id"
         private const val TARGET_ITEM = "target_item"
-        fun getIntent(context: Context, mode: Int, id: Int? = 0, item: Int? = 0): Intent? {
+        fun getIntent(context: Context, mode: Int, id: Int? = 0, item: Int? = 0): Intent {
             val intent = Intent(context, VipActivity::class.java)
             intent.putExtra(VIP_MODE, mode)
             intent.putExtra(TARGET_ID, id)

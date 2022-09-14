@@ -10,9 +10,12 @@ import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.section.chat.activity.ChatActivity
 import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.constants.EaseConstant
+import com.message.ImUserInfoService
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.createDialog
 import com.xyzz.myutils.show.toast
 
@@ -28,14 +31,19 @@ class ImChatActivity: ChatActivity() {
          * @param headImage 头像
          * @param isRealName 是否实名
          */
-        fun getIntent(context: Context, conversationId: String, nickname:String?=null, headImage:String?=null, isRealName:Boolean): Intent {
+        fun getIntent(context: Context, conversationId: String, nickname:String?=null, headImage:String?=null, isRealName:Boolean?=null): Intent {
+            if (!UserInfo.isVip()){
+                return VipActivity.getIntent(context,0,conversationId.toIntOrNull())
+            }
+
             val intent= Intent(context,ImChatActivity::class.java)
             intent.putExtra(EaseConstant.EXTRA_CONVERSATION_ID,conversationId)
             intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE)
 
             intent.putExtra(NICKNAME_KEY,nickname?:conversationId)
             intent.putExtra(HEAD_IMAGE_KEY,headImage)
-            intent.putExtra(IS_REAL_NAME_KEY,isRealName)
+            val ext= ImUserInfoService.getExt(conversationId)
+            intent.putExtra(IS_REAL_NAME_KEY,isRealName?:ext?.isRealName)
             return intent
         }
     }
@@ -102,6 +110,14 @@ class ImChatActivity: ChatActivity() {
         }
         chatSetting.setOnClickListener {
             chatSettingDialog.show()
+        }
+    }
+
+    override fun onChatError(code: Int, errorMsg: String?) {
+        if(code==210){
+            toast("你已经被对方屏蔽")
+        }else{
+            super.onChatError(code, errorMsg)
         }
     }
 }

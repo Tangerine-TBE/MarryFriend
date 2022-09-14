@@ -14,7 +14,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailabilityLight
 import com.heytap.msp.push.HeytapPushManager
 import com.hyphenate.EMCallBack
-import com.hyphenate.EMValueCallBack
 import com.hyphenate.chat.*
 import com.hyphenate.chat.EMConversation.EMConversationType
 import com.hyphenate.cloud.EMHttpClient
@@ -316,7 +315,7 @@ class DemoHelper private constructor() {
             .setUserProvider { id ->
                 val userInfo=ImUserInfoService.getUser(id)
                 EaseUser(id).also { easeUser ->
-                    easeUser.ext=ImUserInfoService.getExt(id)
+                    easeUser.ext=ImUserInfoService.getExtStr(id)
                     userInfo?.avatar?.also {
                         easeUser.avatar=it
                     }
@@ -333,7 +332,7 @@ class DemoHelper private constructor() {
             ImUserInfoService.getUserAvatar(username)?.also {
                 user.avatar =it
             }
-            ImUserInfoService.getExt(username)?.also {
+            ImUserInfoService.getExtStr(username)?.also {
                 user.ext=it
             }
             //最后返回构建的 EaseUser 对象

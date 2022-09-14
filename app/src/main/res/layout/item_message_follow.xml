@@ -23,6 +23,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:riv_corner_radius="26dp"
                 tools:src="#000"
+                android:scaleType="centerCrop"
                 android:src="@{conversationsItemModel.userImage}"
                 android:layout_width="52dp"
                 android:layout_height="52dp"/>

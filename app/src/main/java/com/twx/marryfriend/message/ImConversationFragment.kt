@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -16,27 +17,25 @@ import com.hyphenate.easeui.adapter.EaseAdapterDelegate
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
-import com.twx.marryfriend.databinding.FragmentHxMessageBinding
+import com.twx.marryfriend.databinding.FragmentImMessageBinding
 import com.twx.marryfriend.databinding.ItemMessageFollowBinding
 import com.twx.marryfriend.getUserExt
 import com.twx.marryfriend.message.model.ConversationsModel
 import com.twx.marryfriend.mutual.MutualLikeActivity
-import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
-import kotlinx.android.synthetic.main.fragment_hx_message.*
-import kotlinx.coroutines.async
+import kotlinx.android.synthetic.main.fragment_im_message.*
 import kotlinx.coroutines.launch
 
-class HxConversationFragment: ConversationListFragment() {
+class ImConversationFragment: ConversationListFragment() {
     private val viewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)
     }
     private val conversationsModel by lazy {
         ConversationsModel()
     }
-    private var dataBinding: FragmentHxMessageBinding?=null
+    private var dataBinding: FragmentImMessageBinding?=null
 
     private val loadingDialog by lazy {
         LoadingDialogManager
@@ -46,7 +45,7 @@ class HxConversationFragment: ConversationListFragment() {
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
-        dataBinding=DataBindingUtil.inflate<FragmentHxMessageBinding>(LayoutInflater.from(requireContext()),R.layout.fragment_hx_message,llRoot,false)
+        dataBinding=DataBindingUtil.inflate<FragmentImMessageBinding>(LayoutInflater.from(requireContext()),R.layout.fragment_im_message,llRoot,false)
         dataBinding?.lifecycleOwner=this
         llRoot.addView(dataBinding?.root, 0)
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
@@ -66,7 +65,14 @@ class HxConversationFragment: ConversationListFragment() {
 
                     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
                         holder.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
-                        holder.setImage(R.id.messageHead,result.second,UserInfo.getReversedDefHeadImage())
+                        holder.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
+                        val imageView=holder.getView<ImageView>(R.id.messageHead)
+                        Glide.with(imageView)
+                            .load(result.second)
+                            .error(UserInfo.getReversedDefHeadImage())
+                            .placeholder(UserInfo.getReversedDefHeadImage())
+                            .into(imageView)
+//                        holder.setImage(R.id.messageHead,result.second,UserInfo.getReversedDefHeadImage())
                     }
 
                     override fun getItemCount(): Int {
@@ -99,12 +105,8 @@ class HxConversationFragment: ConversationListFragment() {
     }
 
     override fun toChatActivity(item: EMConversation) {
-        if (UserInfo.isVip()){
-            val isRealName=EaseIM.getInstance().userProvider.getUser(item.conversationId()).getUserExt()?.isRealName?:false
-            startActivity(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
-        }else{
-            startActivity(VipActivity.getIntent(requireContext(),0,item.conversationId()?.toIntOrNull()))
-        }
+        val isRealName=EaseIM.getInstance().userProvider.getUser(item.conversationId()).getUserExt()?.isRealName?:false
+        startActivity(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
     }
 
     override fun onResume() {

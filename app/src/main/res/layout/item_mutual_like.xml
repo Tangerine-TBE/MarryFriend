@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="com.twx.marryfriend.bean.message.mutual.MutualLikeData"/>
+        <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
         <variable
             name="mutualLikeData"
             type="MutualLikeData" />
@@ -113,6 +115,7 @@
                                 android:layout_marginStart="8dp"
                                 android:layout_marginEnd="8dp"
                                 android:background="#FFFFFFFF"
+                                android:visibility="@{TextUtils.isEmpty(mutualLikeData.ageText)?View.GONE:View.VISIBLE}"
                                 android:layout_marginTop="2dp"
                                 android:layout_marginBottom="2dp"
                                 android:layout_width="0.5dp"
@@ -132,6 +135,7 @@
                                 android:background="#FFFFFFFF"
                                 android:layout_marginTop="2dp"
                                 android:layout_marginBottom="2dp"
+                                android:visibility="@{TextUtils.isEmpty(mutualLikeData.occupation_str)?View.GONE:View.VISIBLE}"
                                 android:layout_width="0.5dp"
                                 android:layout_height="match_parent"/>
                             <TextView

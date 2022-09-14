@@ -36,7 +36,7 @@ object ImUserInfoService {
 //            userInfo.phoneNumber = "13333333333"
 //            userInfo.email = "123456@qq.com"
 //            userInfo.gender = 1
-            userInfo.ext=getExt(it.userId)
+            userInfo.ext=getExtStr(it.userId)
             EMClient.getInstance().userInfoManager()
                 .updateOwnInfo(userInfo, object : EMValueCallBack<String?> {
                     override fun onError(error: Int, errorMsg: String) {
@@ -64,9 +64,13 @@ object ImUserInfoService {
     private val gson by lazy {
         Gson()
     }
-    fun getExt(id:String):String?{
+    fun getExtStr(id:String):String?{
         return userInfoContainer[id]?.ext?.let {
             gson.toJson(it)
         }
+    }
+
+    fun getExt(id:String):Ext?{
+        return userInfoContainer[id]?.ext
     }
 }

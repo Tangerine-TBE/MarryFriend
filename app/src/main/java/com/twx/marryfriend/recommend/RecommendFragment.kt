@@ -80,7 +80,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         test.setOnClickListener {
             toast(UserInfo.getUserId().toString())
             if (BuildConfig.DEBUG){
-                startActivity(ImChatActivity.getIntent(requireContext(),"2", isRealName = false))
+                startActivity(ImChatActivity.getIntent(requireContext(),"2"))
             }
         }
         cardSwipeView.adapter=recommendAdapter

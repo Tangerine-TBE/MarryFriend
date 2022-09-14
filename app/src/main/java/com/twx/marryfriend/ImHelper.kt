@@ -88,7 +88,7 @@ object ImHelper {
                         })
                     }
                     CustomMessage.CustomEvent.openSuperVip -> {
-                        view.context.startActivity(VipActivity.getIntent(view.context,1,emMessage.from?.toIntOrNull()))
+                        view.context.startActivity(IntentManager.getSuperVipIntent(view.context))
                     }
                     CustomMessage.CustomEvent.upload_head -> {
                         view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))

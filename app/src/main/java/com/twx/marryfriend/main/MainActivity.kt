@@ -16,7 +16,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.likeme.LoveFragment
-import com.twx.marryfriend.message.HxConversationFragment
+import com.twx.marryfriend.message.ImConversationFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
@@ -29,7 +29,7 @@ class MainActivity : MainBaseViewActivity() {
     private var recommend: RecommendFragment? = null
     private var love: LoveFragment? = null
     private var dynamic: DynamicFragment? = null
-    private var conversationListFragment: HxConversationFragment? = null
+    private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
 
     override fun getLayoutView(): Int = R.layout.activity_main
@@ -113,7 +113,7 @@ class MainActivity : MainBaseViewActivity() {
     private fun initMessageFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (conversationListFragment == null) {
-            conversationListFragment = HxConversationFragment()
+            conversationListFragment = ImConversationFragment()
             transaction.add(R.id.fl_main_container, conversationListFragment!!)
         }else{
             conversationListFragment?.onResume()

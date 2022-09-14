@@ -24,11 +24,11 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object IntentManager {
-    fun getSuperVipIntent(context: Context):Intent?{
+    fun getSuperVipIntent(context: Context,pId:String?=null):Intent{
         return VipActivity.getIntent(context,1)
     }
 
-    fun getVipIntent(context: Context):Intent?{
+    fun getVipIntent(context: Context,pId:String?=null):Intent{
         return VipActivity.getIntent(context,0)
     }
 

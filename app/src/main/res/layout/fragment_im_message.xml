@@ -99,6 +99,7 @@
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/mutualLikeHead1"
                         app:riv_oval="true"
+                        android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </FrameLayout>
@@ -117,6 +118,7 @@
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/mutualLikeHead2"
                         app:riv_oval="true"
+                        android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </FrameLayout>
@@ -135,6 +137,7 @@
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/mutualLikeHead3"
                         app:riv_oval="true"
+                        android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </FrameLayout>
@@ -153,6 +156,7 @@
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/mutualLikeHead4"
                         app:riv_oval="true"
+                        android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </FrameLayout>
@@ -171,6 +175,7 @@
                     <com.makeramen.roundedimageview.RoundedImageView
                         android:id="@+id/mutualLikeHead5"
                         app:riv_oval="true"
+                        android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"/>
                 </FrameLayout>
@@ -195,5 +200,6 @@
             android:textSize="15sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 </layout>

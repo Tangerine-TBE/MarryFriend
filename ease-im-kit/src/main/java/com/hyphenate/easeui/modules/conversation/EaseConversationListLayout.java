@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -368,6 +369,10 @@ public class EaseConversationListLayout extends EaseBaseLayout implements IConve
     public void addHeaderAdapter(RecyclerView.Adapter adapter) {
         adapter.setHasStableIds(true);
         this.adapter.addAdapter(0, adapter);
+
+        View view=new View(getContext());
+        rvConversationList.addHeaderView(view);
+        rvConversationList.removeHeaderViews();
     }
 
     @Override

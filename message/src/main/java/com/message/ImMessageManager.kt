@@ -274,6 +274,8 @@ object ImMessageManager {
         val conversation = EMClient.getInstance().chatManager().getConversation(message.to)
         conversation.insertMessage(message)
         // 直接插入消息。
+        message.isDelivered=true
+        message.setStatus(EMMessage.Status.SUCCESS)
         EMClient.getInstance().chatManager().saveMessage(message)
     }
 
