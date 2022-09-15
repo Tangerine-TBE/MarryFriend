@@ -32,6 +32,10 @@ object IntentManager {
         return VipActivity.getIntent(context,0)
     }
 
+    fun getReportIntent(context: Context,id:Int):Intent?{
+        return null
+    }
+
     private const val DAY_ONE_FILL_IN="day_one_fill_in"
     fun isOpenOneFillIn():Boolean{
         val date=

@@ -32,6 +32,7 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
         loadSir.register(loveSwipeRefreshLayout
         ) {
             iLog("重加载")
+            refreshData()
         }
     }
     private val liveViewModel by lazy {
@@ -40,46 +41,69 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
     private val liveAdapter by lazy {
         LoveAdapter()
     }
-    private var pager=1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loveRecyclerView.layoutManager=GridLayoutManager(requireContext(),2)
         loveRecyclerView.adapter=liveAdapter
+        initListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshData()
+    }
+
+    private fun refreshData(){
         lifecycleScope.launch {
+            loveSwipeRefreshLayout.resetNoMoreData()
             loadingDialog.show()
             try {
-                val data=liveViewModel.loadLoveMe(pager)
+                val data=liveViewModel.refresh()
                 liveAdapter.setData(data?.list?: emptyList())
-
                 loveCount.text="${data?.total?:0}人喜欢我"
                 text2.text="${data?.total?:0}"
                 if (data?.list.isNullOrEmpty()){
                     loadService.showCallback(LiveEmptyData::class.java)
                 }
+                loveSwipeRefreshLayout.finishRefresh()
             }catch (e:Exception){
                 toast(e.message)
                 loadService.showCallback(LiveEmptyData::class.java)
+                loveSwipeRefreshLayout.finishRefresh(false)
             }
             loadingDialog.dismiss()
         }
-        initListener()
+    }
+
+    private fun getNextData(){
+        lifecycleScope.launch {
+            try {
+                val data=liveViewModel.getNextPage()?.list?: emptyList()
+                liveAdapter.addAllData(data)
+                if (data.isEmpty()){
+                    loveSwipeRefreshLayout.finishLoadMoreWithNoMoreData()
+                }else{
+                    loveSwipeRefreshLayout.finishLoadMore()
+                }
+            }catch (e:Exception){
+                toast(e.message)
+                loadService.showCallback(LiveEmptyData::class.java)
+                loveSwipeRefreshLayout.finishLoadMore(false)
+            }
+        }
     }
 
     private fun initListener(){
         loveSwipeRefreshLayout.setOnRefreshListener {
-            lifecycleScope.launch {
-//                pager++
-                loadingDialog.show()
-                liveViewModel.loadLoveMe(pager)
-                liveAdapter
-                loveSwipeRefreshLayout.isRefreshing=false
-                loadingDialog.dismiss()
-            }
+            refreshData()
+        }
+        loveSwipeRefreshLayout.setOnLoadMoreListener {
+            getNextData()
         }
         liveAdapter.itemAction={
             if (!UserInfo.isVip()){
-                toast("请先开通vip")
+                startActivity(IntentManager.getVipIntent(requireContext()))
             }else{
                 startActivity(FriendInfoActivity.getIntent(requireContext(),it.host_uid,true,true))
             }

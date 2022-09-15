@@ -83,7 +83,7 @@ class RecommendViewModel():ViewModel() {
             "province_code" to "9",
             "city_code" to "10")
         /**
-         * {"code":200,"msg":"success","data":[{"5":5}]}
+         * {"code":200,"msg":"success","data":{"5":5}}
          */
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -94,7 +94,11 @@ class RecommendViewModel():ViewModel() {
                 }
                 coroutine.resume(idList)
             }catch (e:Exception){
-                coroutine.resumeWithException(Exception("转换失败:${response}"))
+                if (e.message=="Value [] at data of type org.json.JSONArray cannot be converted to JSONObject"){
+                    coroutine.resume(emptyList())
+                }else {
+                    coroutine.resumeWithException(Exception("转换失败:${response}"))
+                }
             }
         },{
             coroutine.resumeWithException(Exception(it))
@@ -112,7 +116,7 @@ class RecommendViewModel():ViewModel() {
                 val recommendData=ArrayList<RecommendBean>()
                 val responseData=JSONObject(response)
                 try {
-                    //{"code":200,"msg":"success","data":[[]]}
+                    //{"code":200,"msg":"success","data":{}}
                     if (responseData.getJSONArray("data").getJSONArray(0).length()==0){
                         coroutine.resume(recommendData)
                         return@sendPostSecret
@@ -131,7 +135,7 @@ class RecommendViewModel():ViewModel() {
                 coroutine.resume(recommendData)
             }catch (e:Exception){
                 eLog(e.stackTraceToString())
-                coroutine.resumeWithException(Exception("转换失败:${response}"))
+                coroutine.resumeWithException(Exception("转换失败eachFive:${response}"))
             }
         },{
             coroutine.resumeWithException(Exception(it))

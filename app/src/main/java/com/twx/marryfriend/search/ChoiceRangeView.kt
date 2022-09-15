@@ -67,6 +67,7 @@ class ChoiceRangeView @JvmOverloads constructor(context: Context, attrs:Attribut
         Paint()
     }
     var rangeCall:((Float,Float)->Unit)?=null
+    var interceptUse:(()->Boolean)?=null
 
     fun reset(){
         startPoint=0f
@@ -112,6 +113,10 @@ class ChoiceRangeView @JvmOverloads constructor(context: Context, attrs:Attribut
     private var preX=0f
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         event?:return super.onTouchEvent(event)
+        if (interceptUse?.invoke()==true){
+            return super.onTouchEvent(event)
+        }
+
         when(event.action){
             MotionEvent.ACTION_DOWN->{
                 parent?.requestDisallowInterceptTouchEvent(true)

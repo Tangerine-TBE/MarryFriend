@@ -111,38 +111,4 @@ class OneClickHelloDialog(context: Context,private val data:List<OneClickHelloIt
             }
         }
     }
-    
-    class OneClickHelloAdapter(val data: List<OneClickHelloItemBean>,val choiceCall:(List<OneClickHelloItemBean>)->Unit):RecyclerView.Adapter<BaseViewHolder>(){
-        private val choiceData=ArrayList<OneClickHelloItemBean>(data)
-        init {
-            choiceCall.invoke(data)
-        }
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-            val itemView=LayoutInflater.from(parent.context).inflate(R.layout.item_one_click,parent,false)
-            return BaseViewHolder(itemView)
-        }
-
-        override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-            val item=data[position]
-//            holder.setImage(R.id.one_click_img,item.image_url)
-            holder.getView<ImageView>(R.id.one_click_img).also {
-                Glide.with(it).load(item.image_url).placeholder(UserInfo.getReversedDefHelloHeadImage()).into(it)
-            }
-            holder.setText(R.id.one_click_name,item.nick?:"")
-            holder.itemView.isSelected=choiceData.contains(item)
-            holder.itemView.setOnClickListener {
-                it.isSelected=!it.isSelected
-                if (it.isSelected){
-                    choiceData.add(item)
-                }else{
-                    choiceData.remove(item)
-                }
-                choiceCall.invoke(choiceData)
-            }
-        }
-
-        override fun getItemCount(): Int {
-            return data.size
-        }
-    }
 }

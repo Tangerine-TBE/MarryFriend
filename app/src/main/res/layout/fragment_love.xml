@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="44dp"
         android:gravity="center_vertical"
-        android:text="52人喜欢我"
+        android:text="--人喜欢我"
         android:textColor="#FF101010"
         android:textSize="17sp"
         android:textStyle="bold" />
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/text1"
-            android:text="135"
+            android:text="--"
             android:textColor="#FFFF4444"
             android:textSize="15sp" />
 
@@ -60,20 +60,25 @@
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/loveSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/loveDes"
         android:layout_marginTop="8dp">
-
+        <com.scwang.smart.refresh.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/loveRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingStart="4dp"
             android:paddingEnd="4dp" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
     <TextView
         android:id="@+id/openVip"

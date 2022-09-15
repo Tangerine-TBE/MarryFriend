@@ -90,6 +90,10 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 it.setFollowText("关注")
             }
             it.setFollowListener{ //关注或者取消关注
+                if (userId?.toString()==UserInfo.getUserId()){
+                    toast("自己不能关注自己")
+                    return@setFollowListener
+                }
                 lifecycleScope.launch {
                     if (userItem?.isFollow()==true){
                         try {
@@ -144,6 +148,11 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        life_view.refreshView(lifecycleScope)
+    }
+
     private fun loadData(){
         lifecycleScope.launch{
             loadingDialog.show()
@@ -162,15 +171,26 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             userItem=item
             initListener()
+
+            userIdText.text="用户ID:${item.getId()}"
+            report.setOnClickListener {
+                IntentManager.getReportIntent(this@FriendInfoActivity,item.getId())
+                toast(item.getId().toString())
+            }
             //简介模块
             briefIntroduction.apply {
                 itemSetting.setOnClickListener {
                     followReportDialog.show()
                     if (BuildConfig.DEBUG){
-                        toast(userId.toString())
+                        toast("用户id："+userId.toString())
                     }
                 }
-                Glide.with(this).load(item.getHeadImg()).into(recommendPhoto)
+                item.getUserSex()
+                Glide.with(this)
+                    .load(item.getHeadImg())
+                    .placeholder(item.getUserSex().homeBigHead)
+                    .error(item.getUserSex().homeBigHead)
+                    .into(recommendPhoto)
                 itemNickname.text=item.getNickname()
                 if (item.isRealName()){
                     realNameView.visibility= View.VISIBLE
@@ -359,12 +379,13 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     }else{
                         this.visibility= View.VISIBLE
                         myDynamicCount.text=("查看所有"+item.getDynamicCount().toString()+"条动态")
-                        val dynamic=list.first()
-                        val imageList=dynamic.image_url?.split(",")
-                        val video=dynamic.video_url?.let {
-                            it.split(",")
+                        val imageList=list.flatMap {
+                            it.image_url?.split(",")?: emptyList()
                         }
-                        if (imageList.isNullOrEmpty()){
+                        val video=list.flatMap {
+                            it.video_url?.split(",")?: emptyList()
+                        }
+                        if (imageList.isEmpty()){
                             myDynamic.visibility= View.GONE
                         }else {
                             dynamicPreview.setImageData(imageList,video)

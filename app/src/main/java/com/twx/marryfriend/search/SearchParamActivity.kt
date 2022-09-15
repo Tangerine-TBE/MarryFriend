@@ -2,6 +2,7 @@ package com.twx.marryfriend.search
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.twx.marryfriend.*
@@ -362,6 +363,9 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
                 }
             }
         }
+        heightSetValue.interceptUse={
+            isInterceptSeniorFun()
+        }
         incomeSetValue.rangeCall={first,last->
             salaryRange= IntRange(SearchViewModel.MIN_INCOME+(first*(SearchViewModel.MAX_INCOME-SearchViewModel.MIN_INCOME)+0.5f).toInt(),SearchViewModel.MIN_INCOME+(last*(SearchViewModel.MAX_INCOME-SearchViewModel.MIN_INCOME)+0.5f).toInt()).let {
                 if (it.first==SearchViewModel.MIN_INCOME&&it.last==SearchViewModel.MAX_INCOME){
@@ -371,9 +375,15 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
                 }
             }
         }
+        incomeSetValue.interceptUse={
+            isInterceptSeniorFun()
+        }
         unlimitedMarriage.isSelected=true
         marriagePair.forEach { pair->
             pair.first.setOnClickListener {view->
+                if (isInterceptSeniorFun()){
+                    return@setOnClickListener
+                }
                 MarriageEnum.changeChoice(pair.second,marriageState,!view.isSelected)
                 marriageState.toList().also {
                     marriageStateResult=it
@@ -381,42 +391,78 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             }
         }
         education.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             eduDialog.show()
         }
         workplace.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             occupationDialog?:return@setOnClickListener toast("获取城市数据失败")
             workPlaceDialog?.show()
         }
         occupation.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             occupationDialog?:return@setOnClickListener toast("获取岗位数据失败")
             occupationDialog?.show()
         }
         nativePlace.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             nativePlaceDialog?:return@setOnClickListener toast("获取城市数据失败")
             nativePlaceDialog?.show()
         }
         housing.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             housingDialog.show()
         }
         buyCar.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             buyCarDialog.show()
         }
         children.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             wantChildrenDialog.show()
         }
         headPortrait.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             havePortraitDialog.show()
         }
         constellation.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             constellationDialog.show()
         }
         isVip.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             isVipDialog.show()
         }
         isRealName.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             realNameDialog.show()
         }
         isSignIn.setOnClickListener {
+            if (isInterceptSeniorFun()){
+                return@setOnClickListener
+            }
             onLineDialog.show()
         }
         startSearch.setOnClickListener {
@@ -428,6 +474,29 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
         }
         accurateSearch.setOnClickListener {
             startActivity(Intent(this,AccurateSearchActivity::class.java))
+        }
+        gotoOpenVip.setOnClickListener {
+            startActivity(IntentManager.getVipIntent(this))
+        }
+    }
+
+    private fun isInterceptSeniorFun():Boolean{
+        val result=UserInfo.isVip()
+        if (!result){
+            toast("开通会员即可使用高级搜索")
+            startActivity(IntentManager.getVipIntent(this))
+        }
+        return !result
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (UserInfo.isVip()){
+            startSearch.text="高级搜索"
+            gotoOpenVip.visibility= View.GONE
+        }else{
+            startSearch.text="搜索"
+            gotoOpenVip.visibility= View.VISIBLE
         }
     }
 

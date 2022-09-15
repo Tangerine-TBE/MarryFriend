@@ -23,7 +23,7 @@
                 <!--           大图-->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/briefIntroduction"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <com.twx.marryfriend.recommend.widget.RecommendImage
@@ -31,7 +31,7 @@
                         android:scaleType="centerCrop"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:src="@drawable/ic_big_default_pic"
                         android:foreground="@drawable/shape_recommend_frame"
                         app:layout_constraintDimensionRatio="347:428"
@@ -199,7 +199,7 @@
                 <!--关于我-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/selfIntroduction"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -250,7 +250,7 @@
                             android:id="@+id/aboutMePhoto"
                             android:scaleType="centerCrop"
                             app:shapeAppearance="@style/roundedCornerStyle"
-                            tools:visibility="visible"
+                            tools:visibility="gone"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintDimensionRatio="319:148"
                             android:layout_width="match_parent"
@@ -262,7 +262,7 @@
                     android:id="@+id/voiceIntroduce"
                     android:layout_marginTop="16dp"
                     android:paddingBottom="24dp"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:background="@drawable/shape_recommend_about_me"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -357,7 +357,7 @@
                 <!--            我的相册-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myAlbum"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
@@ -405,14 +405,14 @@
                         android:layout_marginBottom="24dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <!--            我的标签-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myLabel"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_recommend_about_me"
@@ -494,7 +494,7 @@
 <!--                认证-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myAuthentication"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_recommend_about_me"
@@ -605,7 +605,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:background="@drawable/shape_recommend_about_me"
                     android:orientation="vertical">
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -660,7 +660,7 @@
                     android:layout_height="wrap_content"/>
                 <View
                     android:id="@+id/richang"
-                    tools:visibility="visible"
+                    tools:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"/>
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -715,12 +715,31 @@
                             android:layout_width="0dp"
                             android:layout_height="0dp"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/userId"
+                        android:text="用户ID：13245788525"
+                        android:textColor="#FF9A9A9A"
+                        android:textSize="13sp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="14dp"
+                        android:padding="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/report"
+                        android:text="屏蔽 / 举报"
+                        android:textColor="#FF9A9A9A"
+                        android:textSize="13sp"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="@dimen/adaptive_10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
             <ImageView
                 android:id="@+id/homeLike"
                 android:alpha="0"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 tools:alpha="100"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="41dp"
@@ -731,7 +750,7 @@
                 android:id="@+id/homeDislike"
                 android:alpha="0"
                 tools:alpha="100"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 android:layout_gravity="end"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="24dp"

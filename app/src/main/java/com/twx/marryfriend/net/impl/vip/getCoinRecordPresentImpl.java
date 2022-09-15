@@ -1,11 +1,8 @@
 package com.twx.marryfriend.net.impl.vip;
 
-import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
-import com.twx.marryfriend.net.callback.vip.IGetCoinPriceCallback;
 import com.twx.marryfriend.net.callback.vip.IGetCoinRecordCallback;
 import com.twx.marryfriend.net.module.UserData;
-import com.twx.marryfriend.net.present.vip.IGetCoinPricePresent;
 import com.twx.marryfriend.net.present.vip.IGetCoinRecordPresent;
 
 import java.net.HttpURLConnection;

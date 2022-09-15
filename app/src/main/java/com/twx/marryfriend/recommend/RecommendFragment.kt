@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -131,6 +132,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         //是否展示引导
         if (!RecommendGuideView.isShowGuide()){
             touchHelper?.attachToRecyclerView(cardSwipeView)
+            showFillInOrOneClickHello()
         }else{
             guideView.showGuide()
             recommendAdapter.itemAction={
@@ -143,36 +145,35 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendViewModel.haveMoreRecommend.observe(viewLifecycleOwner) {
 
         }
-        showFillInOrOneClickHello()
     }
 
     private fun showFillInOrOneClickHello(){
         viewLifecycleOwner.lifecycleScope.launch {
-            if (UserInfo.getNextNotFillIn(requireContext(),this)!=null&&IntentManager.isOpenOneFillIn()){
-                startActivity(IntentManager.toFillInDialogIntent(requireContext()))
-            }else{
-                //一键打招呼
-                if (OneClickHelloDialog.isSendHello()){
-                    try {
-                        val oneClickHelloBean=recommendViewModel.loadOneClickHelloUserInfo()
-                        val data=oneClickHelloBean.data
-                        if (!data.isNullOrEmpty()){
-                            OneClickHelloDialog(requireContext(),data) {
-                                it?:return@OneClickHelloDialog
-                                viewLifecycleOwner.lifecycleScope.launch {
-                                    loadingDialog.show()
-                                    try {
-                                        recommendViewModel.sendHello(it)
-                                    }catch (e:Exception){
-                                        toast(e.message)
-                                    }
-                                    loadingDialog.dismiss()
+            //一键打招呼
+            if (OneClickHelloDialog.isSendHello()){
+                try {
+                    val oneClickHelloBean=recommendViewModel.loadOneClickHelloUserInfo()
+                    val data=oneClickHelloBean.data
+                    if (!data.isNullOrEmpty()){
+                        OneClickHelloDialog(requireContext(),data) {
+                            it?:return@OneClickHelloDialog
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                loadingDialog.show()
+                                try {
+                                    recommendViewModel.sendHello(it)
+                                }catch (e:Exception){
+                                    toast(e.message)
                                 }
-                            }.show()
-                        }
-                    }catch (e:Exception){
-                        iLog("获取失败")
+                                loadingDialog.dismiss()
+                            }
+                        }.show()
                     }
+                }catch (e:Exception){
+                    iLog("获取失败")
+                }
+            }else{
+                if (UserInfo.getNextNotFillIn(requireContext(),this)!=null&&IntentManager.isOpenOneFillIn()){
+                    startActivity(IntentManager.toFillInDialogIntent(requireContext()))
                 }
             }
         }
@@ -271,9 +272,45 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     }
                 })
         }
-        recommendAdapter.superLikeAction={
-            guideView.guideComplete(HomeCardAction.clickFlower)
-            superLike(it)
+        recommendAdapter.superLikeAction={item,view->
+            superLike(item){
+                view
+                    .animate()
+                    ?.alpha(0f)
+                    ?.rotation(10f)
+                    ?.translationX(view.width /2f)
+                    ?.setDuration(500)
+                    ?.setListener(object : Animator.AnimatorListener{
+                        override fun onAnimationStart(animation: Animator?) {
+
+                        }
+
+                        override fun onAnimationEnd(animation: Animator?) {
+                            iLog("超级喜欢")
+                            guideView.guideComplete(HomeCardAction.clickFlower)
+                            view.apply {
+                                this.alpha=1f
+                                this.rotation=0f
+                                this.translationX=0f
+                            }
+
+                            recommendAdapter.removeAt(0)
+                            if (recommendAdapter.getData().isEmpty()){
+                                showView(ViewType.notContent)
+                            }
+                        }
+
+                        override fun onAnimationCancel(animation: Animator?) {
+
+                        }
+
+                        override fun onAnimationRepeat(animation: Animator?) {
+
+                        }
+
+                    })
+                    ?.start()
+            }
         }
         recommendAdapter.likeAction={item,view->
             if (recommendViewModel.haveMoreRecommend.value==false){
@@ -357,6 +394,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     ?.start()
             }
         }
+        recommendAdapter.reportAction={
+            IntentManager.getReportIntent(requireContext(),it.getId())
+            toast("举报:${it.getId()}")
+        }
         sendMsg.setOnClickListener {
             toast("给她发消息")
         }
@@ -383,6 +424,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             iLog("引导期间")
             return
         }
+        showUploadHeadDialog()
         if (BuildConfig.DEBUG){
             return
         }
@@ -399,6 +441,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
     }
 
+    private fun showUploadHeadDialog(){
+        if (!UserInfo.isHaveHeadImage()){
+            startActivity(IntentManager.getUpHeadImageIntent(requireContext()))
+        }
+    }
+
     /**
      * 右滑、喜欢
      */
@@ -407,6 +455,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             iLog("引导期间")
             return
         }
+        showUploadHeadDialog()
         if (BuildConfig.DEBUG){
             return
         }
@@ -433,11 +482,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     /**
      * 超级喜欢、送花
      */
-    private fun superLike(item: RecommendBean){
+    private fun superLike(item: RecommendBean,success:()->Unit){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
+            success.invoke()
             return
         }
+        showUploadHeadDialog()
         SendFlowerDialog.sendFlowerTip(requireContext()){
             viewLifecycleOwner.lifecycleScope.launch (){
                 loadingDialog.show()
@@ -446,6 +497,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                         coinInsufficientDialog.show()
                     }
                     ImMessageManager.sendFlower(item.getId().toString())
+                    success.invoke()
                     toast("送花成功")
                 }catch (e:Exception){
                     toast(e.message)

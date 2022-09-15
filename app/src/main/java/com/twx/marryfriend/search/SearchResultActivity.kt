@@ -101,15 +101,34 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         searchResultAdapter.itemAction={
             startActivity(FriendInfoActivity.getIntent(this,it.user_id))
         }
+        searchResultRefreshLayout.setOnLoadMoreListener {
+            lifecycleScope.launch {
+                val result=try {
+                    searchViewModel.nextPage()
+                }catch (e:Exception){
+                    null
+                }
+                if (result.isNullOrEmpty()){
+                    searchResultRefreshLayout.finishLoadMoreWithNoMoreData()
+                }else{
+                    searchResultRefreshLayout.finishLoadMore(true)
+                    searchResultAdapter.addAllData(result)
+                }
+            }
+        }
+        searchResultRefreshLayout.setOnRefreshListener {
+            startSearch()
+        }
     }
 
     private fun startSearch(){
         lifecycleScope.launch() {
             loadingDialog.show()
             try {
+                searchResultRefreshLayout.resetNoMoreData()
                 val result=if(searchMap!=null){
                     searchViewModel.setParameter(searchMap?:return@launch)
-                    searchViewModel.filtrateSearch()
+                    searchViewModel.refreshData()
                 }else if (searchText!=null){
                     searchViewModel.accurateSearch(searchText?:return@launch)
                 }else{
@@ -118,11 +137,9 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
                 searchResultAdapter.setData(result)
                 if(result.isEmpty()){
                     loadService.showCallback(SearchEmptyDataCallBack::class.java)
-                }
-                result.mapNotNull {
-                    it.user_id?.toString()
-                }.also {
-                    ImHelper.updateFriendInfo(it)
+                    searchResultRefreshLayout.finishRefresh()
+                }else{
+                    searchResultRefreshLayout.finishRefresh(false)
                 }
             }catch (e:Exception){
                 toast(e.message?:"")

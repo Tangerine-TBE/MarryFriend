@@ -32,6 +32,8 @@
         android:layout_marginTop="35dp"
         android:includeFontPadding="false"
         android:text="送花”后她会优先看到你,会增加相互喜欢\n的概率10佳偶币/次"
+        android:textColor="#FF404040"
+        android:textSize="17sp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"

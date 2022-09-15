@@ -13,8 +13,19 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class LiveViewModel():ViewModel() {
+    private var page=1
 
-    suspend fun loadLoveMe(page:Int)=suspendCoroutine<LikeMeData?>{ coroutine->
+    suspend fun refresh():LikeMeData?{
+        page=1
+        return loadLoveMe()
+    }
+
+    suspend fun getNextPage():LikeMeData?{
+        page++
+        return loadLoveMe()
+    }
+
+    suspend fun loadLoveMe()=suspendCoroutine<LikeMeData?>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/otherPutongXihuanMeList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))

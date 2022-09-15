@@ -28,6 +28,12 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         notifyDataSetChanged()
     }
 
+    fun addAllData(list: List<SearchResultItem>){
+//        R.layout.item_load_complete
+        listData.addAll(list)
+        notifyItemRangeInserted(listData.size-list.size,list.size)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val itemView=LayoutInflater.from(parent.context).inflate(R.layout.item_search_result,parent,false)
         return BaseViewHolder(itemView)
@@ -40,10 +46,23 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
             .load(item.getHeadImage())
             .placeholder(UserInfo.getReversedDefHeadImage())
             .into(holder.getView(R.id.searchItemHead))
-        holder.getView<View>(R.id.searchItemRealName).visibility=if (item.isRealName()) View.VISIBLE else View.GONE
-        holder.getView<View>(R.id.searchItemRealImage).visibility=if (item.isRealImage()) View.VISIBLE else View.GONE
+        if (!item.isRealName()&&!item.isRealImage()){
+            holder.getView<View>(R.id.searchItemRealInfo).visibility=View.GONE
+        }else{
+            holder.getView<View>(R.id.searchItemRealInfo).visibility=View.VISIBLE
+        }
+        if (item.isRealName()){
+            holder.getView<View>(R.id.searchItemRealName).visibility=View.VISIBLE
+        }else{
+            holder.getView<View>(R.id.searchItemRealName).visibility=View.GONE
+        }
+        if (item.isRealImage()){
+            holder.getView<View>(R.id.searchItemRealImage).visibility=View.VISIBLE
+        }else{
+            holder.getView<View>(R.id.searchItemRealImage).visibility=View.GONE
+        }
         holder.getView<View>(R.id.searchItemVip).visibility=if (item.isVip()) View.VISIBLE else View.GONE
-        holder.getView<TextView>(R.id.searchItemPhotoCount).text="${item.img_count}张照片"
+        holder.getView<TextView>(R.id.searchItemPhotoCount).text="${item.img_count?:0}张照片"
         holder.getView<TextView>(R.id.searchItemDynamicCount).text="${item.ted_count?:0}条动态"
 //        holder.getView<TextView>(R.id.searchItemViewpointCount).text="${item.ted_count}条观点"
 

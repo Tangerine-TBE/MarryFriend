@@ -46,7 +46,7 @@
                     <!--           大图-->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/briefIntroduction"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.twx.marryfriend.recommend.widget.RecommendImage
@@ -54,7 +54,7 @@
                             android:scaleType="centerCrop"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            tools:visibility="gone"
+                            tools:visibility="visible"
                             android:src="@drawable/ic_big_default_pic"
                             android:foreground="@drawable/shape_recommend_frame"
                             app:layout_constraintDimensionRatio="347:428"
@@ -738,6 +738,25 @@
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/userIdText"
+                            android:text="用户ID：13245788525"
+                            android:textColor="#FF9A9A9A"
+                            android:textSize="13sp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="14dp"
+                            android:padding="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:id="@+id/report"
+                            android:text="屏蔽 / 举报"
+                            android:textColor="#FF9A9A9A"
+                            android:textSize="13sp"
+                            android:layout_gravity="center_horizontal"
+                            android:padding="@dimen/adaptive_10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </com.twx.marryfriend.recommend.widget.MyNestedScrollView>

@@ -91,6 +91,7 @@
                         android:layout_height="30dp"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/gotoOpenVip"
                     tools:visibility="visible"
                     android:layout_marginStart="14dp"
                     android:layout_marginTop="18dp"

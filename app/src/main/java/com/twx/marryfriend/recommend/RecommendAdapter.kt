@@ -34,6 +34,7 @@ import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.setExpandableText
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
+import kotlinx.android.synthetic.main.item_recommend.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -62,7 +63,8 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
     var openLocationPermissionAction:(()->Unit)?=null
     var disLikeAction:((RecommendBean, View)->Unit)?=null
     var likeAction:((RecommendBean, View)->Unit)?=null
-    var superLikeAction:((RecommendBean)->Unit)?=null
+    var superLikeAction:((RecommendBean, View)->Unit)?=null
+    var reportAction:((RecommendBean)->Unit)?=null
     var myLongitude:Double?=null
     var myLatitude:Double?=null
     private var currentPlayVoiceItem: RecommendBean?=null
@@ -104,6 +106,11 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         holder.getView<View>(R.id.homeLike).alpha=0f
         holder.getView<View>(R.id.homeDislike).alpha=0f
         val item=listData[position]
+        holder.setText(R.id.userId,"用户ID:${item.getId()}")
+        holder.getView<View>(R.id.report).setOnClickListener {
+            reportAction?.invoke(item)
+        }
+
         //简介模块
         holder.getView<View>(R.id.briefIntroduction).apply {
             val taLongitude=item.getLongitude()
@@ -135,7 +142,12 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
             holder.getView<View>(R.id.itemSetting).setOnClickListener {
                 toast(it.context,"TODO 设置")
             }
-            holder.setImage(R.id.recommendPhoto,item.getHeadImg())
+            Glide
+                .with(recommendPhoto)
+                .load(item.getHeadImg())
+                .placeholder(item.getUserSex().homeBigHead)
+                .error(item.getUserSex().homeBigHead)
+                .into(recommendPhoto)
             holder.setText(R.id.itemNickname,item.getNickname())
             if (item.isRealName()){
                 holder.getView<View>(R.id.realNameView).visibility=View.VISIBLE
@@ -359,19 +371,18 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                 }else{
                     this.visibility=View.VISIBLE
                     holder.setText(R.id.myDynamicCount,"查看所有"+item.getDynamicCount().toString()+"条动态")
-                    val dynamic=list.first()
-                    val imageList=dynamic.image_url?.split(",")
-                    val video=dynamic.video_url?.let {
-                        it.split(",")
+                    val imageList=list.flatMap {
+                        it.image_url?.split(",")?: emptyList()
+                    }
+                    val video=list.flatMap {
+                        it.video_url?.split(",")?: emptyList()
                     }
                     if (position!=0){
                         holder.getView<PicturePreviewView>(R.id.dynamicPreview).clearImage()
-                    }else{
-                        if (imageList.isNullOrEmpty()){
-                            holder.getView<View>(R.id.myDynamic).visibility=View.GONE
-                        }else {
-                            holder.getView<PicturePreviewView>(R.id.dynamicPreview).setImageData(imageList,video)
-                        }
+                    }else if (imageList.isEmpty()){
+                        holder.getView<View>(R.id.myDynamic).visibility=View.GONE
+                    }else {
+                        holder.getView<PicturePreviewView>(R.id.dynamicPreview).setImageData(imageList,video)
                     }
                 }
             }
@@ -405,7 +416,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         //发出动作，喜欢、不喜欢、送花
         holder.getView<View>(R.id.sendAction).apply {
             holder.getView<View>(R.id.sendFlowers2).setOnClickListener {
-                superLikeAction?.invoke(item)
+                superLikeAction?.invoke(item,holder.itemView)
             }
             holder.getView<View>(R.id.care2).setOnClickListener {
                 likeAction?.invoke(item,holder.itemView)
@@ -415,7 +426,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
             }
 
             holder.getView<View>(R.id.sendFlowers).setOnClickListener {
-                superLikeAction?.invoke(item)
+                superLikeAction?.invoke(item,holder.itemView)
             }
             holder.getView<View>(R.id.care).setOnClickListener {
                 likeAction?.invoke(item,holder.itemView)
