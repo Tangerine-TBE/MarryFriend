@@ -44,8 +44,8 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loveRecyclerView.layoutManager=GridLayoutManager(requireContext(),2)
-        loveRecyclerView.adapter=liveAdapter
+        loveRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        loveRecyclerView.adapter = liveAdapter
         initListener()
     }
 
@@ -54,20 +54,20 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
         refreshData()
     }
 
-    private fun refreshData(){
+    private fun refreshData() {
         lifecycleScope.launch {
             loveSwipeRefreshLayout.resetNoMoreData()
             loadingDialog.show()
             try {
-                val data=liveViewModel.refresh()
-                liveAdapter.setData(data?.list?: emptyList())
-                loveCount.text="${data?.total?:0}人喜欢我"
-                text2.text="${data?.total?:0}"
-                if (data?.list.isNullOrEmpty()){
+                val data = liveViewModel.refresh()
+                liveAdapter.setData(data?.list ?: emptyList())
+                loveCount.text = "${data?.total ?: 0}人喜欢我"
+                text2.text = "${data?.total ?: 0}"
+                if (data?.list.isNullOrEmpty()) {
                     loadService.showCallback(LiveEmptyData::class.java)
                 }
                 loveSwipeRefreshLayout.finishRefresh()
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 toast(e.message)
                 loadService.showCallback(LiveEmptyData::class.java)
                 loveSwipeRefreshLayout.finishRefresh(false)
@@ -76,17 +76,17 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
         }
     }
 
-    private fun getNextData(){
+    private fun getNextData() {
         lifecycleScope.launch {
             try {
-                val data=liveViewModel.getNextPage()?.list?: emptyList()
+                val data = liveViewModel.getNextPage()?.list ?: emptyList()
                 liveAdapter.addAllData(data)
-                if (data.isEmpty()){
+                if (data.isEmpty()) {
                     loveSwipeRefreshLayout.finishLoadMoreWithNoMoreData()
-                }else{
+                } else {
                     loveSwipeRefreshLayout.finishLoadMore()
                 }
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 toast(e.message)
                 loadService.showCallback(LiveEmptyData::class.java)
                 loveSwipeRefreshLayout.finishLoadMore(false)
@@ -94,23 +94,26 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
         }
     }
 
-    private fun initListener(){
+    private fun initListener() {
         loveSwipeRefreshLayout.setOnRefreshListener {
             refreshData()
         }
         loveSwipeRefreshLayout.setOnLoadMoreListener {
             getNextData()
         }
-        liveAdapter.itemAction={
-            if (!UserInfo.isVip()){
+        liveAdapter.itemAction = {
+            if (!UserInfo.isVip()) {
                 startActivity(IntentManager.getVipIntent(requireContext()))
-            }else{
-                startActivity(FriendInfoActivity.getIntent(requireContext(),it.host_uid,true,true))
+            } else {
+                startActivity(FriendInfoActivity.getIntent(requireContext(),
+                    it.host_uid,
+                    true,
+                    true))
             }
         }
-        if (UserInfo.isVip()){
-            openVip.visibility=View.GONE
-        }else{
+        if (UserInfo.isVip()) {
+            openVip.visibility = View.GONE
+        } else {
             openVip.setOnClickListener {
                 startActivity(IntentManager.getVipIntent(requireContext()))
             }
