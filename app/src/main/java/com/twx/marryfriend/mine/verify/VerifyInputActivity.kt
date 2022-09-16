@@ -268,7 +268,8 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
                     .permission(Permission.CAMERA)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                            val intent = Intent(this@VerifyInputActivity, VerifyFaceLivenessExpActivity::class.java)
+                            val intent = Intent(this@VerifyInputActivity,
+                                VerifyFaceLivenessExpActivity::class.java)
                             startActivityForResult(intent, 1)
                         }
 
@@ -292,6 +293,13 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     override fun onDoIdentityVerifyError() {
         ll_verify_input_loading.visibility = View.GONE
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doIdentityVerifyPresent.unregisterCallback(this)
+
     }
 
 }

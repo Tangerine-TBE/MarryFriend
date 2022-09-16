@@ -177,4 +177,11 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getMeDiscussWhoPresent.unregisterCallback(this)
+
+    }
+
 }

@@ -585,4 +585,14 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getVipPricePresent.unregisterCallback(this)
+        getSVipPricePresent.unregisterCallback(this)
+        doPreviewOtherPresent.unregisterCallback(this)
+        doRefreshSelfPresent.unregisterCallback(this)
+
+    }
+
 }

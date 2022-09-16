@@ -898,4 +898,15 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         startActivityForResult(intent, 0)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getTrendSaloonPresent.unregisterCallback(this)
+        doLikeClickPresent.unregisterCallback(this)
+        doLikeCancelPresent.unregisterCallback(this)
+        doPlusFocusPresent.unregisterCallback(this)
+        getTotalCountPresent.unregisterCallback(this)
+
+    }
+
 }

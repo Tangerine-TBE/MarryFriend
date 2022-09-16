@@ -209,6 +209,10 @@ object Contents {
     // 屏蔽列表
     const val GET_BLACK_LIST = "TrendsNotice/blockSessionList"
 
+    // 删除屏蔽会话
+    const val DELETE_BLACK_LIST = "/marryfriend/TrendsNotice/deleteBlockSession"
+
+
     // ------------------------------- 高德地图 -------------------------------
 
     // 高德地图-地点检索
@@ -359,6 +363,16 @@ object Contents {
     const val REASON_CODE = "reason_code"  // 原因编码
     const val REASON_TEXT = "reason_text"  // 原因文字
     const val MARK_NOTICE = "mark_notice"  // 备注信息
+
+
+    // 意见反馈
+    const val CONTENT_TEXT = "content_text"   // 反馈内容
+    const val CONTACT_1 = "contact_1"   // 联系方式一
+    const val CONTACT_2 = "contact_2"   // 联系方式二
+    const val IMAGE_1 = "image_1"   // 图片地址一
+    const val IMAGE_2 = "image_2"   // 图片地址二
+    const val IMAGE_3 = "image_3"   // 图片地址一
+
 
     // ------------------------------------ 支付 ------------------------------------
 

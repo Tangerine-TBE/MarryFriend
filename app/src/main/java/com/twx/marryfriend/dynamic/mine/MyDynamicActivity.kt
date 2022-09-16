@@ -577,4 +577,13 @@ class MyDynamicActivity : MainBaseViewActivity(),
             .show()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getMyTrendsListPresent.unregisterCallback(this)
+
+        doDeleteTrendPresent.unregisterCallback(this)
+
+    }
+
 }

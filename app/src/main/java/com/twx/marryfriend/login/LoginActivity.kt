@@ -433,4 +433,13 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
         ToastUtils.showShort("验证码发送失败，请重试")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getVerifyCodePresent.unregisterCallback(this)
+        doPhoneLoginPresent.unregisterCallback(this)
+        doFaceVerifyPresent.unregisterCallback(this)
+
+    }
+
 }

@@ -363,4 +363,15 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doFaceVerifyPresent.unregisterCallback(this)
+        doUpdateMoreInfoPresent.unregisterCallback(this)
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+        updateDemandInfoPresent.unregisterCallback(this)
+        doUpdateVerifyInfoPresent.unregisterCallback(this)
+
+    }
+
 }

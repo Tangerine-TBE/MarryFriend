@@ -402,7 +402,7 @@ class ReportActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLifeFac
                             if (mErrorList.size != 0) {
                                 ToastUtils.showShort("共有${mErrorList.size}张图片违规")
                             }
-                            
+
                             if (reportText != "" && mList.size != 1) {
                                 iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit)
                             } else {
@@ -436,6 +436,15 @@ class ReportActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLifeFac
         if (mDetectList.size == mChooseList.size) {
             ll_report_load.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doTextVerifyPresent.unregisterCallback(this)
+        doFaceDetectPresent.unregisterCallback(this)
+        doReportOtherPresent.unregisterCallback(this)
+
     }
 
 }

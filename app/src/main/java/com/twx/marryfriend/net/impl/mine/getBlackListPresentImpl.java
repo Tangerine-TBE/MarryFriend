@@ -1,12 +1,9 @@
 package com.twx.marryfriend.net.impl.mine;
 
 import com.twx.marryfriend.bean.vip.BlackListBean;
-import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.net.callback.mine.IGetBlackListCallback;
-import com.twx.marryfriend.net.callback.vip.IGetCoinRecordCallback;
 import com.twx.marryfriend.net.module.UserData;
 import com.twx.marryfriend.net.present.mine.IGetBlackListPresent;
-import com.twx.marryfriend.net.present.vip.IGetCoinRecordPresent;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;

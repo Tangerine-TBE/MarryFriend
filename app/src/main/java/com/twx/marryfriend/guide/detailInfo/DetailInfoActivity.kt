@@ -2277,7 +2277,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     }
 
     override fun onDoUploadAvatarError() {
-        Log.i("guo","error")
+        Log.i("guo", "error")
         ll_guide_detail_loading.visibility = View.GONE
     }
 
@@ -3104,7 +3104,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 .permission(Permission.CAMERA)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent = Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        val intent =
+                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
                         startActivity(intent)
                     }
 
@@ -4379,6 +4380,35 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
 
 // ------------------- 实名认证界面  -----------------
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+
+        getIndustryPresent.unregisterCallback(this)
+
+        getJobPresent.unregisterCallback(this)
+
+        doFaceDetectPresent.unregisterCallback(this)
+
+        doIdentityVerifyPresent.unregisterCallback(this)
+
+        updateBaseInfoPresent.unregisterCallback(this)
+
+        updateMoreInfoPresent.unregisterCallback(this)
+
+        updateDemandInfoPresent.unregisterCallback(this)
+
+        doUploadAvatarPresent.unregisterCallback(this)
+
+        uploadPhotoPresent.unregisterCallback(this)
+
+        doTextVerifyPresent.unregisterCallback(this)
+        
+        doDeletePhotoPresent.unregisterCallback(this)
+
+    }
 
 
 }

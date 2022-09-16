@@ -282,4 +282,17 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getCityPresent.unregisterCallback(this)
+        getIndustryPresent.unregisterCallback(this)
+        getJobPresent.unregisterCallback(this)
+
+        getAccessTokenPresent.unregisterCallback(this)
+        getIdAccessTokenPresent.unregisterCallback(this)
+        getLifeAccessTokenPresent.unregisterCallback(this)
+
+    }
+
 }

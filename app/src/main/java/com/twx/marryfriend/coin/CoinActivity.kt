@@ -412,4 +412,13 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getCoinPricePresent.unregisterCallback(this)
+        doAliPayPresent.unregisterCallback(this)
+        doRefreshSelfPresent.unregisterCallback(this)
+
+    }
+
 }

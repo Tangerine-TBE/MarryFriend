@@ -702,4 +702,13 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getTrendFocusPresent.unregisterCallback(this)
+        doLikeClickPresent.unregisterCallback(this)
+        doLikeCancelPresent.unregisterCallback(this)
+
+    }
+
 }

@@ -1733,4 +1733,14 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateMoreInfoPresent.unregisterCallback(this)
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+        doFaceDetectPresent.unregisterCallback(this)
+        doUploadAvatarPresent.unregisterCallback(this)
+
+    }
+
 }

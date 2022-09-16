@@ -1725,4 +1725,15 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doCheckTrendPresent.unregisterCallback(this)
+        getCommentOnePresent.unregisterCallback(this)
+        doCommentOneCreatePresent.unregisterCallback(this)
+        getCommentTwoPresent.unregisterCallback(this)
+        doCommentTwoCreatePresent.unregisterCallback(this)
+
+    }
+
 }

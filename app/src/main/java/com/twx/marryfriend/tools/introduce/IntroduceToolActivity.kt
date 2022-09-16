@@ -100,7 +100,7 @@ class IntroduceToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback 
         if (baseInfoUpdateBean != null) {
             if (baseInfoUpdateBean.code == 200) {
 
-                SPStaticUtils.put(Constant.ME_INTRODUCE,introduce)
+                SPStaticUtils.put(Constant.ME_INTRODUCE, introduce)
 
                 introduce = ""
                 et_introduce_content.setText("")
@@ -115,4 +115,12 @@ class IntroduceToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback 
     override fun onDoUpdateBaseInfoError() {
         ll_introduce_loading.visibility = View.GONE
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+
+    }
+
 }

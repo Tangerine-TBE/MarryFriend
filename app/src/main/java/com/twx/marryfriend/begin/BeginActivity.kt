@@ -331,4 +331,9 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        doAutoLoginPresent.unregisterCallback(this)
+    }
+
 }

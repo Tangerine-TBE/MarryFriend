@@ -125,6 +125,7 @@ object DataProvider {
         ItemBean("20次喜欢次数", R.mipmap.icon_normal_6),
         ItemBean("尊贵会员标识", R.mipmap.icon_normal_7),
         ItemBean("无限次数评论", R.mipmap.icon_normal_8),
+        ItemBean("谁喜欢我", R.mipmap.icon_normal_9),
     )
 
     val SuperVipData = arrayListOf(
@@ -141,6 +142,7 @@ object DataProvider {
         ItemBean("查看关注", R.mipmap.icon_super_11),
         ItemBean("消息已读", R.mipmap.icon_super_12),
         ItemBean("随心畅聊", R.mipmap.icon_super_13),
+        ItemBean("谁喜欢我", R.mipmap.icon_super_14),
     )
 
     val FirstSetData = arrayListOf(

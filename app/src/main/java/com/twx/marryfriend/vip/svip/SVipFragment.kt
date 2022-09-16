@@ -371,5 +371,13 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
         ll_vip_super_loading?.visibility = View.GONE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doAliPayPresent.unregisterCallback(this)
+
+        doRefreshSelfPresent.unregisterCallback(this)
+
+    }
 
 }

@@ -3734,4 +3734,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
     override fun onDoUpdateDemandInfoError() {
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        updateDemandInfoPresent.unregisterCallback(this)
+        doPlusDemandAddressPresent.unregisterCallback(this)
+
+    }
+
 }

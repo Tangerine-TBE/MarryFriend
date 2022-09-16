@@ -163,4 +163,11 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getWhoFocusMePresent.unregisterCallback(this)
+
+    }
+
 }

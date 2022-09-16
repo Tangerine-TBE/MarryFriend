@@ -2037,4 +2037,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+       doFaceDetectPresent.unregisterCallback(this)
+       doUpdateGreetPresent.unregisterCallback(this)
+       doViewHeadFacePresent.unregisterCallback(this)
+       getFourTotalPresent.unregisterCallback(this)
+
+    }
+
 }

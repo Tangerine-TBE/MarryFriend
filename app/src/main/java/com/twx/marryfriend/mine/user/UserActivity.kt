@@ -490,4 +490,13 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getPhotoListPresent.unregisterCallback(this)
+        doGetDemandAddressPresent.unregisterCallback(this)
+        getFiveInfoPresent.unregisterCallback(this)
+
+    }
+
 }

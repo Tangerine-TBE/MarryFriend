@@ -62,6 +62,7 @@ import com.twx.marryfriend.bean.dynamic.TotalCountBean;
 import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
+import com.twx.marryfriend.bean.set.DeleteBlackListBean;
 import com.twx.marryfriend.bean.vip.AliPayBean;
 import com.twx.marryfriend.bean.vip.BlackListBean;
 import com.twx.marryfriend.bean.vip.BlackListData;
@@ -382,6 +383,13 @@ public interface Api {
     // 屏蔽列表
     @POST("/marryfriend/TrendsNotice/blockSessionList")
     Call<BlackListBean> getBlackList(@QueryMap Map<String, Object> params);
+
+
+    // 删除屏蔽会话
+    @POST("/marryfriend/TrendsNotice/deleteBlockSession")
+    Call<DeleteBlackListBean> doDeleteBlackList(@QueryMap Map<String, Object> params);
+
+
 
 
     // 高德地图-地点检索

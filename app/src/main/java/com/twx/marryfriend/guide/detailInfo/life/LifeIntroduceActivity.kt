@@ -309,4 +309,13 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
         ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doTextVerifyPresent.unregisterCallback(this)
+        doFaceDetectPresent.unregisterCallback(this)
+        doUploadPhotoPresent.unregisterCallback(this)
+
+    }
+
 }

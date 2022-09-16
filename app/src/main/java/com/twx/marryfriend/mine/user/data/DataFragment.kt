@@ -5372,4 +5372,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateMoreInfoPresent.unregisterCallback(this)
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+        doUploadAvatarPresent.unregisterCallback(this)
+        doFaceDetectPresent.unregisterCallback(this)
+        updateProportionPresent.unregisterCallback(this)
+        doUpdateGreetPresent.unregisterCallback(this)
+
+    }
+
 }

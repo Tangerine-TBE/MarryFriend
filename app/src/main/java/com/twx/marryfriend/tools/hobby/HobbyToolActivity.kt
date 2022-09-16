@@ -114,4 +114,11 @@ class HobbyToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback {
         ll_hobby_loading.visibility = View.GONE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+
+    }
+
 }
