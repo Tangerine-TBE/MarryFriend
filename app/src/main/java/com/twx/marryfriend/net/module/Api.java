@@ -63,6 +63,8 @@ import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
 import com.twx.marryfriend.bean.vip.AliPayBean;
+import com.twx.marryfriend.bean.vip.BlackListBean;
+import com.twx.marryfriend.bean.vip.BlackListData;
 import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
@@ -126,7 +128,6 @@ public interface Api {
     // 五个一起获取
     @POST("/marryfriend/LoginRegister/getFive")
     Call<FiveInfoBean> getFiveInfo(@QueryMap Map<String, Object> params);
-
 
 
     // 查看列表(头像,三张,相册)
@@ -376,6 +377,11 @@ public interface Api {
     // 投诉举报其它人
     @POST("/marryfriend/MemberCharge/uploadComplaint")
     Call<ReportOtherBean> doReportOther(@QueryMap Map<String, Object> params);
+
+
+    // 屏蔽列表
+    @POST("/marryfriend/TrendsNotice/blockSessionList")
+    Call<BlackListBean> getBlackList(@QueryMap Map<String, Object> params);
 
 
     // 高德地图-地点检索

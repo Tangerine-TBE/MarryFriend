@@ -15,6 +15,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.blankj.utilcode.util.ToastUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.twx.marryfriend.R
+import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.dynamic.saloon.friend.DynamicFriendFragment
 import com.twx.marryfriend.dynamic.saloon.recommned.DynamicRecommendFragment
 import com.twx.marryfriend.dynamic.send.DynamicSendActivity
@@ -131,4 +132,7 @@ class DynamicFragment : Fragment() {
 
     }
 
+    fun addData(trendData : TrendSaloonList){
+        Log.i("guo","1111")
+    }
 }

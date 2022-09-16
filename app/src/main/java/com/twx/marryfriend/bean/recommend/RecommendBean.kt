@@ -4,50 +4,51 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.enumeration.ConstellationEnum
+import com.twx.marryfriend.utils.TimeUtil
 import org.json.JSONArray
 import java.lang.IllegalStateException
 import java.text.NumberFormat
 
 
 data class RecommendBean(
-    val base: Base?=null,
-    val demand: Demand?=null,
-    val more: More?=null,
-    val photos: List<Photo>?=null,
-    val place: Place?=null,
-    val trends: List<Trends>?=null,//动态
-    val trends_total: Int=0,
-    val verify: Verify?=null,
-    val vip_info: VipInfo?=null,
-    val zhaohu: Zhaohu?=null,
-    val headface:List<HeadfaceBean>?=null,
-    val zo_place:List<Zo_place>?=null
-){
-    fun getId():Int{
-        return base?.user_id?:throw IllegalStateException("id为空")
+    val base: Base? = null,
+    val demand: Demand? = null,
+    val more: More? = null,
+    val photos: List<Photo>? = null,
+    val place: Place? = null,
+    val trends: List<Trends>? = null,//动态
+    val trends_total: Int = 0,
+    val verify: Verify? = null,
+    val vip_info: VipInfo? = null,
+    val zhaohu: Zhaohu? = null,
+    val headface: List<HeadfaceBean>? = null,
+    val zo_place: List<Zo_place>? = null,
+) {
+    fun getId(): Int {
+        return base?.user_id ?: throw IllegalStateException("id为空")
     }
 
-    fun isFollow():Boolean{//是否关注
-        return base?.focus_uid!=null
+    fun isFollow(): Boolean {//是否关注
+        return base?.focus_uid != null
     }
 
-    fun clearFollow(){
-        base?.focus_uid=null
+    fun clearFollow() {
+        base?.focus_uid = null
     }
 
-    fun addFollow(){
-        base?.focus_uid=getId()
+    fun addFollow() {
+        base?.focus_uid = getId()
     }
 
-    fun getDemandLabel():List<Label>{
-        val list=ArrayList<Label>()
+    fun getDemandLabel(): List<Label> {
+        val list = ArrayList<Label>()
         getAgeDemand()?.also {
             list.add(it)
         }
         getHeightDemand()?.also {
             list.add(it)
         }
-        when (getUserSex()){
+        when (getUserSex()) {
             Sex.male -> {
                 getFigure_nv(demand?.figure_nv)?.also {
                     list.add(it)
@@ -106,9 +107,9 @@ data class RecommendBean(
         return list
     }
 
-    fun getBaseLabel():List<Label>{
-        val list=ArrayList<Label>()
-        getAge(base?.age)?.also {
+    fun getBaseLabel(): List<Label> {
+        val list = ArrayList<Label>()
+        getAge(base?.birthday)?.also {
             list.add(it)
         }
         getIndustry_str(base?.industry_str)?.also {
@@ -133,25 +134,26 @@ data class RecommendBean(
             list.add(it)
         }
         more?.weight?.let {
-            if (it==0){
+            if (it == 0) {
                 null
-            }else{
-                it.toString()+"kg"
+            } else {
+                it.toString() + "kg"
             }
         }?.toLabel(R.mipmap.ic_label_weight)?.also {
             list.add(it)
         }
-        if (UserInfo.isSexMail(base?.user_sex)){
+        if (UserInfo.isSexMail(base?.user_sex)) {
             getFigure_nan(more?.figure_nan?.toIntOrNull())
-        }else{
+        } else {
             getFigure_nv(more?.figure_nv)
         }?.also {
             list.add(it)
         }
-        ConstellationEnum.findConstellation(more?.constellation?.toIntOrNull())?.title?.toLabel(R.mipmap.ic_label_constellation)?.also {
-            list.add(it)
-        }
-        getLove_target(more?.target_show,more?.love_target)?.also {
+        ConstellationEnum.findConstellation(more?.constellation?.toIntOrNull())?.title?.toLabel(R.mipmap.ic_label_constellation)
+            ?.also {
+                list.add(it)
+            }
+        getLove_target(more?.target_show, more?.love_target)?.also {
             list.add(it)
         }
         getNationality(more?.nationality?.toIntOrNull())?.also {
@@ -182,300 +184,329 @@ data class RecommendBean(
 //        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
     }
 
-    fun isLike():Boolean{
-        return base?.like_uid!=null
+    fun isLike(): Boolean {
+        return base?.like_uid != null
     }
-    fun isSuperLike():Boolean{
-        return base?.super_uid!=null
+
+    fun isSuperLike(): Boolean {
+        return base?.super_uid != null
     }
+
     /**
      * 头像
      */
-    fun getHeadImg():String?{
+    fun getHeadImg(): String? {
         return headface?.firstOrNull()?.image_url
     }
-    fun isHeadIdentification():Boolean{
-        return headface?.firstOrNull()?.real_status==1
+
+    fun isHeadIdentification(): Boolean {
+        return headface?.firstOrNull()?.real_status == 1
     }
-    
-    fun getLongitude():Double?{
+
+    fun getLongitude(): Double? {
 //        trends?.get(0)?.jingdu
         return place?.jingdu?.toDoubleOrNull()
     }
-    fun getLatitude():Double?{
+
+    fun getLatitude(): Double? {
         return place?.weidu?.toDoubleOrNull()
     }
-    fun getNickname():String{
-        return base?.nick?:""
+
+    fun getNickname(): String {
+        return base?.nick ?: ""
     }
-    fun getAge():Int{
-        return base?.age?:0
+
+    fun getAge(): Int {
+        return base?.age ?: 0
     }
-    fun isRealName():Boolean{
-        return verify?.identity_status==1
+
+    fun isRealName(): Boolean {
+        return verify?.identity_status == 1
     }
-    fun getRealNameNumber():String?{
+
+    fun getRealNameNumber(): String? {
         return verify?.identity_number
     }
-    fun getOccupation():String{
-        return base?.industry_str?:""
+
+    fun getOccupation(): String {
+        return base?.industry_str ?: ""
     }
-    fun getSchoolName():String{
-        return base?.school_name?:""
+
+    fun getSchoolName(): String {
+        return base?.school_name ?: ""
     }
-    fun getDynamicCount():Int{
+
+    fun getDynamicCount(): Int {
         return trends_total
     }
-    fun getDynamic()=trends?: emptyList()
-    fun isVip():Boolean{
-        return (vip_info?.level?:0)>0
+
+    fun getDynamic() = trends ?: emptyList()
+    fun isVip(): Boolean {
+        return (vip_info?.level ?: 0) > 0
     }
-    fun getAboutMeLife():String{
-        return base?.introduce_self?:""
+
+    fun getAboutMeLife(): String {
+        return base?.introduce_self ?: ""
     }
-    fun getAboutMeWork():String{
-        return base?.daily_hobbies?:""
+
+    fun getAboutMeWork(): String {
+        return base?.daily_hobbies ?: ""
     }
-    fun getAboutMeHobby():String{
-        return base?.ta_in_my_mind?:""
+
+    fun getAboutMeHobby(): String {
+        return base?.ta_in_my_mind ?: ""
     }
-    fun getAboutMeThreeOutlooks():String{
-        return base?.ta_in_my_mind?:""
+
+    fun getAboutMeThreeOutlooks(): String {
+        return base?.ta_in_my_mind ?: ""
     }
-    fun getAboutMePhoto():String?{
-        return photos?.find { it.kind==2 }?.image_url
+
+    fun getAboutMePhoto(): String? {
+        return photos?.find { it.kind == 2 }?.image_url
     }
-    fun getLifePhoto():List<Photo>{
-        return photos?.filter { /*it.kind == 3*/true }?: emptyList()
+
+    fun getLifePhoto(): List<Photo> {
+        return photos?.filter { /*it.kind == 3*/true } ?: emptyList()
     }
 
     fun getUserSex(): Sex {
         return Sex.toSex(base?.user_sex)
     }
 
-    fun getVoiceUrl():String?{
+    fun getVoiceUrl(): String? {
         return zhaohu?.voice_url
     }
 
-    fun getVoiceDurationStr():String{
-        val duration=((zhaohu?.voice_long?.toIntOrNull()?:0)+500)/1000
-        val numberFormat=NumberFormat.getNumberInstance().also {
-            it.minimumIntegerDigits=2
+    fun getVoiceDurationStr(): String {
+        val duration = ((zhaohu?.voice_long?.toIntOrNull() ?: 0) + 500) / 1000
+        val numberFormat = NumberFormat.getNumberInstance().also {
+            it.minimumIntegerDigits = 2
         }
-        return "${numberFormat.format(duration/60)}:${numberFormat.format(duration%60)}"
+        return "${numberFormat.format(duration / 60)}:${numberFormat.format(duration % 60)}"
     }
 
-    companion object{
-        private fun String.toLabel(icon: Int): Label?{
+    companion object {
+        private fun String.toLabel(icon: Int): Label? {
             return if (this.isBlank()) {
                 null
-            }else{
-                Label(icon,this)
+            } else {
+                Label(icon, this)
             }
         }
+
         /**
          * 0没填写, 1大专以下,2大专，3本科，4硕士，5博士,6博士以上
          */
-        fun getEducationStr(education:Int?): Label?{
-            return when(education){
-                0->{
+        fun getEducationStr(education: Int?): Label? {
+            return when (education) {
+                0 -> {
                     null
                 }
-                1->{
+                1 -> {
                     "大专以下"
                 }
-                2->{
+                2 -> {
                     "大专"
                 }
-                3->{
+                3 -> {
                     "本科"
                 }
-                4->{
+                4 -> {
                     "硕士"
                 }
-                5->{
+                5 -> {
                     "博士"
                 }
-                6->{
+                6 -> {
                     "博士以上"
                 }
-                else-> null
+                else -> null
             }?.toLabel(R.mipmap.ic_label_school)
         }
-        fun getEducationArrStr(education:List<Int>?): Label?{
+
+        fun getEducationArrStr(education: List<Int>?): Label? {
             return education?.map {
                 getEducationStr(it)?.label
             }.let {
-                val str=StringBuilder()
+                val str = StringBuilder()
                 it?.forEach {
-                    if (it!=null) {
-                        str.append(it+"、")
+                    if (it != null) {
+                        str.append(it + "、")
                     }
                 }
-                if (str.isEmpty()){
+                if (str.isEmpty()) {
                     null
-                }else{
+                } else {
                     str.removeSuffix("、").toString()
                 }
             }?.toLabel(R.mipmap.ic_label_school)
         }
-        fun getMarry_hadStr(marry_status:Int?): Label?{
-            return when(marry_status){
-                0->{
+
+        fun getMarry_hadStr(marry_status: Int?): Label? {
+            return when (marry_status) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "未婚"
                 }
-                2->{
+                2 -> {
                     "离异"
                 }
-                3->{
+                3 -> {
                     "丧偶"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_marriage)
         }
-        fun getMarry_hadArrStr(education:List<Int>?): Label?{
+
+        fun getMarry_hadArrStr(education: List<Int>?): Label? {
             return education?.map {
                 getMarry_hadStr(it)?.label
             }.let {
-                val str=StringBuilder()
+                val str = StringBuilder()
                 it?.forEach {
-                    if (it!=null) {
-                        str.append(it+"、")
+                    if (it != null) {
+                        str.append(it + "、")
                     }
                 }
-                if (str.isEmpty()){
+                if (str.isEmpty()) {
                     null
-                }else{
+                } else {
                     str.removeSuffix("、").toString()
                 }
             }?.toLabel(R.mipmap.ic_label_school)
         }
-        fun getChild_hadStr(child_had:Int?): Label?{
-            return when(child_had){
-                0->{
+
+        fun getChild_hadStr(child_had: Int?): Label? {
+            return when (child_had) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "没生过娃"
                 }
-                2->{
+                2 -> {
                     "有娃住一起"
                 }
-                3->{
+                3 -> {
                     "有娃偶尔在一起"
                 }
-                4->{
+                4 -> {
                     "有娃别人带着的"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_children)
         }
-        fun getChild_hadArrStr(education:List<Int>?): Label?{
+
+        fun getChild_hadArrStr(education: List<Int>?): Label? {
             return education?.map {
                 getChild_hadStr(it)?.label
             }.let {
-                val str=StringBuilder()
+                val str = StringBuilder()
                 it?.forEach {
-                    if (it!=null) {
-                        str.append(it+"、")
+                    if (it != null) {
+                        str.append(it + "、")
                     }
                 }
-                if (str.isEmpty()){
+                if (str.isEmpty()) {
                     null
-                }else{
+                } else {
                     str.removeSuffix("、").toString()
                 }
             }?.toLabel(R.mipmap.ic_label_school)
         }
-        fun getWant_childStr(want_child:Int?): Label?{
-            return when(want_child){
-                0->{
+
+        fun getWant_childStr(want_child: Int?): Label? {
+            return when (want_child) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "视情况而定"
                 }
-                2->{
+                2 -> {
                     "想要孩子"
                 }
-                3->{
+                3 -> {
                     "不想要孩子"
                 }
-                4->{
+                4 -> {
                     "以后再告诉你"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_children)
         }
-        fun getIs_smoking(is_smoking:Int?): Label?{
-            return when(is_smoking){
-                0->{
+
+        fun getIs_smoking(is_smoking: Int?): Label? {
+            return when (is_smoking) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "可以随意抽烟"
                 }
-                2->{
+                2 -> {
                     "偶尔抽烟"
                 }
-                3->{
+                3 -> {
                     "禁止抽烟"
                 }
-                4->{
+                4 -> {
                     "社交场合可以抽"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_smoking)
         }
-        fun getDrink_wine(drink_wine:Int?): Label?{
-            return when(drink_wine){
-                0->{
+
+        fun getDrink_wine(drink_wine: Int?): Label? {
+            return when (drink_wine) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "可以随意喝酒"
                 }
-                2->{
+                2 -> {
                     "偶尔喝酒"
                 }
-                3->{
+                3 -> {
                     "禁止喝酒"
                 }
-                4->{
+                4 -> {
                     "社交场合可以喝"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_drink)
         }
-        fun getIs_headface(is_headface:Int?): Label?{
-            return when(is_headface){
-                0->{
+
+        fun getIs_headface(is_headface: Int?): Label? {
+            return when (is_headface) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "需要头像"
                 }
-                2->{
+                2 -> {
                     "不用头像"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_head)
         }
+
         val salary by lazy {
             arrayOf(
                 0 to 0..5,
@@ -487,67 +518,78 @@ data class RecommendBean(
                 6 to 70..70
             )
         }
-        fun getSalary_range(salary_range:Int?): Label?{
-            return when(salary_range){
-                0->{
+
+        fun getSalary_range(salary_range: Int?): Label? {
+            return when (salary_range) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
-                    "五千及以下"
+                1 -> {
+                    "5k及以下"
                 }
-                2->{
-                    "五千一万"
+                2 -> {
+                    "5k~8k"
                 }
-                3->{
-                    "一万~两万"
+                3 -> {
+                    "8k~12k"
                 }
-                4->{
-                    "两万~四万"
+                4 -> {
+                    "12k~16k"
                 }
-                5->{
-                    "四万到七万"
+                5 -> {
+                    "16k~20k"
                 }
-                6->{
-                    "七万及以上"
+                6 -> {
+                    "20k~35k"
                 }
-                else->{
+                7 -> {
+                    "35k~50k"
+                }
+                8 -> {
+                    "50k~70k"
+                }
+                9 -> {
+                    "70k及以上"
+                }
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_income)
         }
-        fun getSalary_range(salary_range:String?): Label?{
-            if (salary_range.isNullOrBlank()){
+
+        fun getSalary_range(salary_range: String?): Label? {
+            if (salary_range.isNullOrBlank()) {
                 return null
             }
-            val jsonArray=JSONArray(salary_range)
-            if (jsonArray.length()>0){
-                val first=jsonArray.getInt(0)
-                val last=jsonArray.getInt(jsonArray.length()-1)
-                if (last== salary.last().first){
+            val jsonArray = JSONArray(salary_range)
+            if (jsonArray.length() > 0) {
+                val first = jsonArray.getInt(0)
+                val last = jsonArray.getInt(jsonArray.length() - 1)
+                if (last == salary.last().first) {
                     "七万及以上"
-                }else{
-                    val min=salary.find {
-                        it.first==first
-                    }?.second?.first?:0
-                    val max= salary.find {
-                        it.first==last
-                    }?.second?.last?:0
-                    if (min==0){
-                        if (max<10){
+                } else {
+                    val min = salary.find {
+                        it.first == first
+                    }?.second?.first ?: 0
+                    val max = salary.find {
+                        it.first == last
+                    }?.second?.last ?: 0
+                    if (min == 0) {
+                        if (max < 10) {
                             "${max}千以下"
-                        }else{
-                            "${max/10}万以下"
+                        } else {
+                            "${max / 10}万以下"
                         }
-                    }else{
-                        val m=if (min<10){
+                    } else {
+                        val m = if (min < 10) {
                             "${min}千"
-                        }else{
-                            "${min/10}万"
+                        } else {
+                            "${min / 10}万"
                         }
-                        val ma=if (max<10){
+                        val ma = if (max < 10) {
                             "${max}千"
-                        }else{
-                            "${max/10}万"
+                        } else {
+                            "${max / 10}万"
                         }
                         "${m}到${ma}"
                     }
@@ -555,153 +597,160 @@ data class RecommendBean(
             }
             return null
         }
-        fun getFigure_nan(figure_nan:Int?): Label?{
-            return when(figure_nan){
-                1->{
+
+        fun getFigure_nan(figure_nan: Int?): Label? {
+            return when (figure_nan) {
+                1 -> {
                     "一般"
                 }
-                2->{
+                2 -> {
                     "瘦长"
                 }
-                3->{
+                3 -> {
                     "运动员型"
                 }
-                4->{
+                4 -> {
                     "比较魁梧"
                 }
-                5->{
+                5 -> {
                     "壮实"
                 }
-                6->{
+                6 -> {
                     null//"不限"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_figure)
         }
-        fun getFigure_nv(figure_nv:Int?): Label?{
-            return when(figure_nv){
-                1->{
+
+        fun getFigure_nv(figure_nv: Int?): Label? {
+            return when (figure_nv) {
+                1 -> {
                     "一般"
                 }
-                2->{
+                2 -> {
                     "瘦长"
                 }
-                3->{
+                3 -> {
                     "苗条"
                 }
-                4->{
+                4 -> {
                     "高大美丽"
                 }
-                5->{
+                5 -> {
                     "丰满"
                 }
-                6->{
+                6 -> {
                     "富线条美"
                 }
-                0->{
+                0 -> {
                     null//"不限"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_figure)
         }
-        fun getMarry_time(marry_time:Int?): Label?{
-            return when(marry_time){
-                0->{
+
+        fun getMarry_time(marry_time: Int?): Label? {
+            return when (marry_time) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "闪婚"
                 }
-                2->{
+                2 -> {
                     "一年内结婚"
                 }
-                3->{
+                3 -> {
                     "两年内结婚"
                 }
-                4->{
+                4 -> {
                     "三年内结婚"
                 }
-                5->{
+                5 -> {
                     "时机成熟就结婚"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_card)
         }
-        fun getBuy_car(buy_car:Int?): Label?{
-            return when(buy_car){
-                0->{
+
+        fun getBuy_car(buy_car: Int?): Label? {
+            return when (buy_car) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "买了"
                 }
-                2->{
+                2 -> {
                     "没买"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_vehicle)
         }
-        fun getBuy_house(buy_house:Int?): Label?{
-            return when(buy_house){
-                0->{
+
+        fun getBuy_house(buy_house: Int?): Label? {
+            return when (buy_house) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "和家人同住"
                 }
-                2->{
+                2 -> {
                     "已购房"
                 }
-                3->{
+                3 -> {
                     "租房"
                 }
-                4->{
+                4 -> {
                     "打算婚后购房"
                 }
-                5->{
+                5 -> {
                     "住在单位宿舍"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_house)
         }
-        fun getIndustry_str(industry_str:String?): Label?{
+
+        fun getIndustry_str(industry_str: String?): Label? {
             return industry_str?.toLabel(R.mipmap.ic_label_work)
         }
-        fun getIs_drinking(is_drinking:Int?): Label?{
-            return when(is_drinking){
-                0->{
+
+        fun getIs_drinking(is_drinking: Int?): Label? {
+            return when (is_drinking) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "经常喝酒"
                 }
-                2->{
+                2 -> {
                     "偶尔喝酒"
                 }
-                3->{
+                3 -> {
                     "完全不喝酒"
                 }
-                4->{
+                4 -> {
                     "社交场合会喝"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_drink)
         }
 
-        fun getNationality(nationality:Int?): Label?{
-            return listOf<Pair<Int,String?>>(
+        fun getNationality(nationality: Int?): Label? {
+            return listOf<Pair<Int, String?>>(
                 0 to null,
                 1 to "汉族",
                 2 to "壮族",
@@ -759,90 +808,93 @@ data class RecommendBean(
                 54 to "高山族",
                 55 to "珞巴族",
                 56 to "塔塔尔族"
-                ).find {
-                    nationality==it.first
+            ).find {
+                nationality == it.first
             }?.second?.toLabel(R.mipmap.ic_label_nation)
         }
 
-        fun getLove_target(target_show:Int?,love_target:Int?): Label?{
-            if (target_show==2){
+        fun getLove_target(target_show: Int?, love_target: Int?): Label? {
+            if (target_show == 2) {
                 return null
             }
-            return when(love_target){
-                0->{
+            return when (love_target) {
+                0 -> {
                     null//"不限"
                 }
-                1->{
+                1 -> {
                     "短期内想结婚"
                 }
-                2->{
+                2 -> {
                     "先认真恋爱,合适就考虑结婚"
                 }
-                3->{
+                3 -> {
                     "先认真恋爱,后期再说"
                 }
-                4->{
+                4 -> {
                     "没考虑清楚,视情况而定"
                 }
-                else->{
+                else -> {
                     null
                 }
             }?.toLabel(R.mipmap.ic_label_love)
         }
 
-        fun getAge(age:Int?):Label?{
-            return age?.toString()?.let {
-                "${it}岁"
-            }?.toLabel(R.mipmap.ic_label_age)
+        fun getAge(birthday: String?): Label? {
+            return "${birthday?.let { TimeUtil.birthdayToAge(it) }}岁".toLabel(R.mipmap.ic_label_age)
         }
     }
+
 
     /**
      * 工作城市
      */
-    fun getCurrentResidence(): Label?{
+    fun getCurrentResidence(): Label? {
 //        return findIndustry(base?.work_city_num?.toIntOrNull()?:0)
-        return "${base?.work_province_str}${base?.work_city_str}".toLabel(R.mipmap.ic_label_residence)?.also { it.label="${it.label}工作" }
+        return "${base?.work_province_str}${base?.work_city_str}".toLabel(R.mipmap.ic_label_residence)
+            ?.also { it.label = "${it.label}工作" }
     }
 
-    fun getHeight(): Label?{
-        return ((base?.height?:return null).toString()+"cm").toLabel(R.mipmap.ic_label_height)
-    }
-    fun getHometown(): Label?{
-        return "${base?.hometown_province_str?:""}${base?.hometown_city_str?:""}".toLabel(R.mipmap.ic_label_hometown)?.also { it.label="${it.label}人" }
+    fun getHeight(): Label? {
+        return ((base?.height ?: return null).toString() + "cm").toLabel(R.mipmap.ic_label_height)
     }
 
-    fun getHeightDemand(): Label?{
-        val min_high=demand?.min_high?.toIntOrNull()?:0
-        val max_high=demand?.max_high?.toIntOrNull()?:0
-        if (max_high==0){
+    fun getHometown(): Label? {
+        return "${base?.hometown_province_str ?: ""}${base?.hometown_city_str ?: ""}".toLabel(R.mipmap.ic_label_hometown)
+            ?.also { it.label = "${it.label}人" }
+    }
+
+    fun getHeightDemand(): Label? {
+        val min_high = demand?.min_high?.toIntOrNull() ?: 0
+        val max_high = demand?.max_high?.toIntOrNull() ?: 0
+        if (max_high == 0) {
             return null
-        }else {
+        } else {
             return "${min_high}-${max_high}cm".toLabel(R.mipmap.ic_label_height)
         }
     }
-    fun getAgeDemand(): Label?{
-        val age_min=demand?.age_min?:0
-        val age_max=demand?.age_max?:0
-        if (age_max==0){
+
+    fun getAgeDemand(): Label? {
+        val age_min = demand?.age_min ?: 0
+        val age_max = demand?.age_max ?: 0
+        if (age_max == 0) {
             return null
-        }else {
+        } else {
             return "${age_min}-${age_max}岁".toLabel(R.mipmap.ic_label_age)
         }
     }
 
-    fun getDemandWork_place_str(): Label?{
-        val stringBuilder=StringBuilder()
+    fun getDemandWork_place_str(): Label? {
+        val stringBuilder = StringBuilder()
         zo_place?.forEach {
             if (!it.work_city_str.isNullOrBlank()) {
                 stringBuilder.append(it.work_city_str)
                 stringBuilder.append("、")
             }
-        }?:return null
-        return if (stringBuilder.isBlank()){
+        } ?: return null
+        return if (stringBuilder.isBlank()) {
             null
-        }else{
-            stringBuilder.removeSuffix("、").toString()+"工作"
+        } else {
+            stringBuilder.removeSuffix("、").toString() + "工作"
         }?.toLabel(R.mipmap.ic_label_residence)
     }
 }

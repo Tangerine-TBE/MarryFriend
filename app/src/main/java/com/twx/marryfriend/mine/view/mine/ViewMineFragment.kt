@@ -163,11 +163,11 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
-            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+            startActivity(context?.let { VipActivity.getVipIntent(it) })
         } else {
             startActivity(context?.let {
                 FriendInfoActivity.getIntent(it,
-                    mList[position].guest_uid)
+                    mList[position].host_uid)
             })
         }
 
@@ -180,7 +180,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 
-            startActivity(context?.let { VipActivity.getIntent(it, 0) })
+            startActivity(context?.let { VipActivity.getVipIntent(it) })
 
         } else {
 
@@ -188,7 +188,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
             startActivity(context?.let {
                 ChatActivity.getIntent(
                     it,
-                    mList[position].guest_uid.toString(),
+                    mList[position].host_uid.toString(),
                     mList[position].nick,
                     mList[position].image_url,
                     identity)

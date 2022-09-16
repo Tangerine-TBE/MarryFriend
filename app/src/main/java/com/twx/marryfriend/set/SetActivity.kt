@@ -5,6 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.hyphenate.easeim.section.login.activity.LoginActivity
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.set.SetDataBean
@@ -20,6 +21,7 @@ import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.message.MessageActivity
 import com.twx.marryfriend.set.safe.SafeActivity
 import com.twx.marryfriend.set.web.SetWebActivity
+import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.activity_set.*
 
@@ -100,7 +102,6 @@ class SetActivity : MainBaseViewActivity() {
         })
 
 
-
         adapter2.setOnItemClickListener(object : SetSwitchAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 when (position) {
@@ -111,7 +112,7 @@ class SetActivity : MainBaseViewActivity() {
                             adapter2.notifyDataSetChanged()
                         } else {
                             ToastUtils.showShort("您还不是会员，请先前往开通会员")
-                            startActivity(VipActivity.getIntent(this@SetActivity, 0, 0))
+                            startActivity(VipActivity.getVipIntent(this@SetActivity, 0))
                         }
                     }
                     1 -> {
@@ -121,7 +122,7 @@ class SetActivity : MainBaseViewActivity() {
                             adapter2.notifyDataSetChanged()
                         } else {
                             ToastUtils.showShort("您还不是会员，请先前往开通会员")
-                            startActivity(VipActivity.getIntent(this@SetActivity, 0, 0))
+                            startActivity(VipActivity.getVipIntent(this@SetActivity, 0))
                         }
                     }
                 }
@@ -219,6 +220,15 @@ class SetActivity : MainBaseViewActivity() {
                 }
             }
         })
+
+
+        tv_set_logout.setOnClickListener {
+            SpUtil.deleteUserInfo()
+
+            // 有问题，需要修改
+            startActivity(Intent(this, LoginActivity::class.java))
+            this.finish()
+        }
 
     }
 

@@ -672,8 +672,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                         imageUrl = x.replace("]", "")
 
                                         if (content != "") {
+
+                                            Log.i("guo", "文字 ----图片 ")
                                             doTextVerify(content)
                                         } else {
+
+                                            Log.i("guo", "上传 ----图片 ")
                                             uploadTrend()
                                         }
 
@@ -683,36 +687,33 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                 2 -> {
 
-
                                     Log.i("guo",
                                         "time : ${VideoUtil.getLocalVideoDuration(mDataList[0])}")
-
-
 
                                     if (VideoUtil.getLocalVideoDuration(mDataList[0]) > 120) {
                                         ToastUtils.showShort("视频时长大于120秒")
                                     }
 
-                                    var size = 0
+                                    var size = 0F
 
                                     if (FileUtils.getSize(mDataList[0]).contains("MB")) {
                                         size = FileUtils.getSize(mDataList[0]).replace("MB", "")
-                                            .toFloat().toInt()
+                                            .toFloat()
                                     } else if (FileUtils.getSize(mDataList[0]).contains("KB")) {
                                         size = FileUtils.getSize(mDataList[0]).replace("KB", "")
-                                            .toFloat().toInt()
+                                            .toFloat()
                                         if (size < 1000) {
-                                            size = 1
+                                            size = 1F
                                         } else {
                                             size /= 1000
                                         }
                                     }
 
                                     Log.i("guo",
-                                        "soze : ${FileUtils.getSize(mDataList[0])} chcange to $size")
+                                        "size : ${FileUtils.getSize(mDataList[0])} change to $size")
 
 
-                                    if (size <= 10) {
+                                    if (size <= 10F) {
 
                                         // 正常符合流程的视频，直接上传
 
@@ -747,8 +748,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
                                             if (content != "") {
+
+                                                Log.i("guo", "文字 ----视频 ")
+
                                                 doTextVerify(content)
                                             } else {
+                                                Log.i("guo", "上传 ----视频 ")
                                                 uploadTrend()
                                             }
 
@@ -789,16 +794,18 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                         } else {
                             // 不需要上传图片，直接上传文字即可
 
+                            ll_send_loading.visibility = View.VISIBLE
+
                             trendsType = 3
 
                             if (content != "") {
+                                Log.i("guo", "文字 ---- 空")
                                 doTextVerify(content)
                             } else {
                                 ToastUtils.showShort("请输入动态内容")
                             }
 
                         }
-
 
                     } else {
                         ToastUtils.showShort("点击太频繁了，请稍后再评论")
@@ -813,7 +820,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                         .asCustom(IdentityDialog(this@DynamicSendActivity))
                         .show()
                 }
-
             } else {
                 ToastUtils.showShort("请输入您想发布的动态内容")
             }
@@ -856,7 +862,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
     private fun doTextVerify(text: String) {
-        doTextVerify = false
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
@@ -962,8 +968,15 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
                             if (content != "") {
+
+
+                                Log.i("guo", "文字 ----压缩 ")
+
                                 doTextVerify(content)
                             } else {
+
+                                Log.i("guo", "上传 ----压缩 ")
+
                                 uploadTrend()
                             }
 
@@ -988,7 +1001,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         cmdList.append("-i")
         cmdList.append(VideoPath)
         cmdList.append("-s")
-        cmdList.append("vga")
+        cmdList.append(vga)
         cmdList.append(targetFile)
         return cmdList.build()
     }
@@ -1063,13 +1076,14 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
     override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean?) {
         if (!doTextVerify) {
-
             doTextVerify = true
-            Log.i("guo", "onDoTextVerifySuccess")
 
             if (textVerifyBean != null) {
                 if (textVerifyBean.conclusion == "合规") {
                     // 上传动态
+
+                    Log.i("guo", "上传 ----onDoTextVerifySuccess ")
+
                     uploadTrend()
                 } else {
                     if (textVerifyBean.error_msg != null) {
@@ -1081,7 +1095,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 }
             }
         }
-
 
     }
 
@@ -1111,7 +1124,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 }
             }
         }
-
 
     }
 
@@ -1418,4 +1430,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 DataProvider.WebUrlData[8].url))
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        doTextVerifyPresent.unregisterCallback(this)
+        doUploadTrendPresent.unregisterCallback(this)
+    }
+
 }
