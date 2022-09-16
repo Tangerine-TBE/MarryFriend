@@ -50,11 +50,14 @@ import com.twx.marryfriend.bean.TextVerifyBean
 import com.twx.marryfriend.bean.UpdateGreetInfoBean
 import com.twx.marryfriend.bean.ViewHeadfaceBean
 import com.twx.marryfriend.bean.mine.FourTotalBean
+import com.twx.marryfriend.bean.vip.SVipGifEnum
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.coin.CoinActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
+import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
@@ -123,6 +126,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     // 剪切后图像文件
     private var mDestination: Uri? = null
 
+
+    // 是否完成图片审核
+    private var isDoFaceDetect = false
+
     private lateinit var client: BosClient
 
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
@@ -160,6 +167,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
     private fun initView() {
 
+        Log.i("guo", "audit  : ${SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "")}")
+        Log.i("guo", "audit  : ${SPStaticUtils.getString(Constant.ME_AVATAR, "")}")
+
         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 Glide.with(requireContext())
@@ -176,10 +186,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             }
             tv_mine_avatar_check.visibility = View.VISIBLE
         } else {
-            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
-                    Constant.ME_AVATAR_AUDIT,
-                    "") != ""
-            ) {
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
@@ -359,6 +366,100 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             }
         }
 
+        iv_mine_bottom_info.setOnClickListener {
+
+            when (SPStaticUtils.getInt(Constant.SET_INFO_DIALOG_SUM, 3)) {
+                0 -> {
+                    // 上传头像
+
+                    XPopup.Builder(context)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(PhotoGuideDialog(requireContext()))
+                        .show()
+
+                }
+                1 -> {
+                    // 上传生活照,留一个返回值
+
+                    val intent = Intent(context, LifePhotoActivity::class.java)
+                    startActivityForResult(intent, 1)
+
+                }
+                2 -> {
+                    // 实名认证
+                    val intent = Intent(context, VerifyActivity::class.java)
+                    startActivityForResult(intent, 3)
+                }
+                3 -> {
+                    // 添加爱好
+
+                    XPopup.Builder(context)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(HobbyDialog(requireContext()))
+                        .show()
+
+                }
+                4 -> {
+                    // 添加招呼语
+
+                    XPopup.Builder(context)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(GreetDialog(requireContext()))
+                        .show()
+
+                }
+                5 -> {
+                    // 添加自我介绍
+                    XPopup.Builder(context)
+                        .dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false)
+                        .isDestroyOnDismiss(true)
+                        .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                        .asCustom(IntroduceDialog(requireContext()))
+                        .show()
+
+                }
+                6 -> {
+                    // 录语音
+
+                    XXPermissions.with(context)
+                        .permission(Permission.RECORD_AUDIO)
+                        .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                        .request(object : OnPermissionCallback {
+                            override fun onGranted(
+                                permissions: MutableList<String>?,
+                                all: Boolean,
+                            ) {
+                                XPopup.Builder(context)
+                                    .dismissOnTouchOutside(false)
+                                    .dismissOnBackPressed(false)
+                                    .isDestroyOnDismiss(true)
+                                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                                    .asCustom(VoiceDialog(requireContext()))
+                                    .show()
+                            }
+
+                            override fun onDenied(
+                                permissions: MutableList<String>?,
+                                never: Boolean,
+                            ) {
+                                ToastUtils.showShort("请授予应用所需权限。")
+                            }
+                        })
+                }
+            }
+
+        }
+
 
         ll_mine_date.setOnClickListener {
             startActivityForResult(Intent(context, UserActivity::class.java), 0)
@@ -381,7 +482,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         rl_mine_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0, 4) })
+            startActivity(context?.let { it1 ->
+                VipActivity.getVipIntent(it1,
+                    0,
+                    VipGifEnum.Highlight)
+            })
         }
 
         ll_mine_set_dynamic.setOnClickListener {
@@ -395,11 +500,15 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_vip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 0, 0, 0) })
+            startActivity(context?.let { it1 -> VipActivity.getVipIntent(it1, 0) })
         }
 
         ll_mine_set_svip.setOnClickListener {
-            startActivity(context?.let { it1 -> VipActivity.getIntent(it1, 1, 0, 7) })
+            startActivity(context?.let { it1 ->
+                VipActivity.getSVipIntent(it1,
+                    0,
+                    SVipGifEnum.SeeMe)
+            })
         }
 
         ll_mine_set_coin.setOnClickListener {
@@ -410,6 +519,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         ll_mine_set_set.setOnClickListener {
             val intent = Intent(context, SetActivity::class.java)
             startActivity(intent)
+
+            // 动态添加数据点
+//            val activity = activity as MainActivity
+//            activity.addDynamicFragment()
+
         }
 
         ll_mine_set_greet.setOnClickListener {
@@ -438,35 +552,82 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         // 若介绍完成 ， 则为6
         // 若语音完成 ， 则隐藏所有相关UI
 
-        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") == "") {
+        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") == "" && SPStaticUtils.getString(
+                Constant.ME_AVATAR_AUDIT,
+                "") == ""
+        ) {
             SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 0)
             iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_avatar)
+            iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_head_image_l)
+
         } else {
+
+            if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
+                        .into(iv_mine_avatar)
+                } else {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                        .placeholder(R.drawable.ic_mine_female_default)
+                        .error(R.drawable.ic_mine_female_default)
+                        .into(iv_mine_avatar)
+                }
+                tv_mine_avatar_check.visibility = View.VISIBLE
+            } else {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
+                        .into(iv_mine_avatar)
+                } else {
+                    Glide.with(requireContext())
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
+                        .into(iv_mine_avatar)
+                }
+                tv_mine_avatar_check.visibility = View.GONE
+
+            }
+
+
             if (SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "") == "") {
                 SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 1)
                 iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_life)
+                iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_load_life_l)
             } else {
                 if (!SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
                     SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 2)
                     iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_verify)
+                    iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_real_name_l)
                 } else {
                     if (SPStaticUtils.getString(Constant.ME_HOBBY, "") == "") {
                         SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 3)
                         iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_hobby)
+                        iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_fill_in_hobby_l)
                     } else {
                         if (SPStaticUtils.getString(Constant.ME_GREET, "") == "") {
                             SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 4)
                             iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_greet)
+                            iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_fill_in_greet_l)
                         } else {
                             if (SPStaticUtils.getString(Constant.ME_INTRODUCE, "") == "") {
                                 SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 5)
                                 iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_introduce)
+                                iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_fill_in_introduce_l)
                             } else {
                                 if (SPStaticUtils.getString(Constant.ME_VOICE, "") == "") {
                                     SPStaticUtils.put(Constant.SET_INFO_DIALOG_SUM, 6)
                                     iv_mine_dialog_info.setImageResource(R.mipmap.icon_set_dialog_voice)
+                                    iv_mine_bottom_info.setImageResource(R.mipmap.ic_item_up_fill_in_voice_l)
                                 } else {
                                     iv_mine_dialog_info.visibility = View.GONE
+                                    iv_mine_bottom_info.visibility = View.GONE
                                 }
                             }
                         }
@@ -482,7 +643,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         doViewHeadFacePresent.doViewHeadFace(map)
     }
 
-    fun getFourTotal() {
+    private fun getFourTotal() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getFourTotalPresent.getFourTotal(map)
@@ -572,6 +733,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
             map[Contents.IMAGE] = bitmapToBase64(bitmap)
+
+            isDoFaceDetect = false
+
             doFaceDetectPresent.doFaceDetect(map)
 
             ll_mine_loading.visibility = View.VISIBLE
@@ -768,6 +932,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 .into(iv_mine_avatar)
                         }
                         tv_mine_avatar_check.visibility = View.GONE
+
+                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+
                     }
                     1 -> {
 
@@ -785,41 +953,171 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 .into(iv_mine_avatar)
                         }
 
-                        if (viewHeadfaceBean.data[0].status == 0) {
-                            tv_mine_avatar_check.visibility = View.VISIBLE
 
-                            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
-                                viewHeadfaceBean.data[0].image_url)
-                        } else {
-                            tv_mine_avatar_check.visibility = View.GONE
+                        when (viewHeadfaceBean.data[0].status) {
+                            0 -> {
+                                tv_mine_avatar_check.visibility = View.VISIBLE
 
-                            SPStaticUtils.put(Constant.ME_AVATAR,
-                                viewHeadfaceBean.data[0].image_url)
+                                SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                    viewHeadfaceBean.data[0].image_url)
+                            }
+                            1 -> {
+                                tv_mine_avatar_check.visibility = View.GONE
+
+                                SPStaticUtils.put(Constant.ME_AVATAR,
+                                    viewHeadfaceBean.data[0].image_url)
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                            }
+                            2 -> {
+                                tv_mine_avatar_check.visibility = View.GONE
+
+                                SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                            }
+
                         }
+
 
                     }
                     2 -> {
 
-                        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                            Glide.with(requireContext())
-                                .load(viewHeadfaceBean.data[1].image_url)
-                                .error(R.drawable.ic_mine_male_default)
-                                .placeholder(R.drawable.ic_mine_male_default)
-                                .into(iv_mine_avatar)
-                        } else {
-                            Glide.with(requireContext())
-                                .load(viewHeadfaceBean.data[1].image_url)
-                                .error(R.drawable.ic_mine_female_default)
-                                .placeholder(R.drawable.ic_mine_female_default)
-                                .into(iv_mine_avatar)
+                        when (viewHeadfaceBean.data[0].status) {
+                            0 -> {
+                                // 第一张为审核中
+                                when (viewHeadfaceBean.data[1].status) {
+                                    0 -> {
+                                        // 第二张为审核中
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            viewHeadfaceBean.data[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                    }
+                                    1 -> {
+                                        // 第二张为审核通过
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            viewHeadfaceBean.data[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            viewHeadfaceBean.data[1].image_url)
+                                    }
+                                    2 -> {
+                                        // 第二张为审核拒绝
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            viewHeadfaceBean.data[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                    }
+                                }
+
+                            }
+
+                            1 -> {
+                                // 第一张为审核通过
+
+                                when (viewHeadfaceBean.data[1].status) {
+                                    0 -> {
+                                        // 第二张为审核中
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            viewHeadfaceBean.data[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            viewHeadfaceBean.data[0].image_url)
+                                    }
+                                    1 -> {
+                                        // 第二张为审核通过
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            viewHeadfaceBean.data[0].image_url)
+                                    }
+                                    2 -> {
+                                        // 第二张为审核拒绝
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            viewHeadfaceBean.data[0].image_url)
+                                    }
+                                }
+
+                            }
+
+                            2 -> {
+                                // 第一张为审核拒绝
+                                when (viewHeadfaceBean.data[1].status) {
+                                    0 -> {
+                                        // 第二张为审核中
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            viewHeadfaceBean.data[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                    }
+                                    1 -> {
+                                        // 第二张为审核通过
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            viewHeadfaceBean.data[1].image_url)
+                                    }
+                                    2 -> {
+                                        // 第二张为审核拒绝
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                    }
+                                }
+
+                            }
+
                         }
 
-                        tv_mine_avatar_check.visibility = View.VISIBLE
 
-                        SPStaticUtils.put(Constant.ME_AVATAR, viewHeadfaceBean.data[0].image_url)
+                        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+                            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                Glide.with(requireContext())
+                                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                                    .placeholder(R.drawable.ic_mine_male_default)
+                                    .error(R.drawable.ic_mine_male_default)
+                                    .into(iv_mine_avatar)
+                            } else {
+                                Glide.with(requireContext())
+                                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                                    .placeholder(R.drawable.ic_mine_female_default)
+                                    .error(R.drawable.ic_mine_female_default)
+                                    .into(iv_mine_avatar)
+                            }
+                            tv_mine_avatar_check.visibility = View.VISIBLE
+                        } else {
+                            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                    Glide.with(requireContext())
+                                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                                        .placeholder(R.drawable.ic_mine_male_default)
+                                        .error(R.drawable.ic_mine_male_default)
+                                        .into(iv_mine_avatar)
+                                } else {
+                                    Glide.with(requireContext())
+                                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                                        .placeholder(R.drawable.ic_mine_male_default)
+                                        .error(R.drawable.ic_mine_male_default)
+                                        .into(iv_mine_avatar)
+                                }
+                                tv_mine_avatar_check.visibility = View.GONE
+                            } else {
+                                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                    Glide.with(requireContext())
+                                        .load(R.drawable.ic_mine_male_default)
+                                        .into(iv_mine_avatar)
+                                } else {
+                                    Glide.with(requireContext())
+                                        .load(R.drawable.ic_mine_female_default)
+                                        .into(iv_mine_avatar)
+                                }
+                                tv_mine_avatar_check.visibility = View.GONE
+                            }
+                        }
 
-                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
-                            viewHeadfaceBean.data[1].image_url)
+
                     }
                 }
             }
@@ -832,59 +1130,69 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
     }
 
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
-
+        if (updateGreetInfoBean != null) {
+            if (updateGreetInfoBean.code == 200) {
+                getDialogOrder()
+            } else {
+                ToastUtils.showShort("语音文件上传失败")
+            }
+        }
     }
 
     override fun onDoUpdateGreetInfoError() {
-
+        ToastUtils.showShort("语音文件上传失败")
     }
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
+        if (!isDoFaceDetect) {
+            isDoFaceDetect = true
 
-        if (faceDetectBean.conclusion == "合规") {
+            if (faceDetectBean.conclusion == "合规") {
 
-            ll_mine_loading.visibility = View.GONE
-            iv_mine_avatar.setImageBitmap(mBitmap)
-            tv_mine_avatar_check.visibility = View.VISIBLE
+                ll_mine_loading.visibility = View.GONE
+                iv_mine_avatar.setImageBitmap(mBitmap)
+                tv_mine_avatar_check.visibility = View.VISIBLE
 
-            val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
-                BitmapUtil.createWaterMarkBitmap(mBitmap, it)
-            }
+                val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                    BitmapUtil.createWaterMarkBitmap(mBitmap, it)
+                }
 
-            FileUtils.delete(mPhotoPath)
-            bitmap?.let { saveBitmap(it, mPhotoPath) }
+                FileUtils.delete(mPhotoPath)
+                bitmap?.let { saveBitmap(it, mPhotoPath) }
 
-            Thread {
+                Thread {
 
-                //上传Object
-                val file = File(mPhotoPath)
-                // bucketName 为文件夹名 ，使用用户id来进行命名
-                // key值为保存文件名，试用固定的几种格式来命名
+                    //上传Object
+                    val file = File(mPhotoPath)
+                    // bucketName 为文件夹名 ，使用用户id来进行命名
+                    // key值为保存文件名，试用固定的几种格式来命名
 
-                val putObjectFromFileResponse =
-                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}",
-                        FileUtils.getFileName(mPhotoPath),
-                        file)
+                    val putObjectFromFileResponse =
+                        client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}",
+                            FileUtils.getFileName(mPhotoPath),
+                            file)
 
-                mPhotoUrl = client.generatePresignedUrl("user${
-                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", FileUtils.getFileName(mPhotoPath), -1).toString()
+                    mPhotoUrl = client.generatePresignedUrl("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", FileUtils.getFileName(mPhotoPath), -1).toString()
 
-                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+                    SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
-                getDialogOrder()
+                    getDialogOrder()
 
-            }.start()
+                }.start()
 
 
-        } else {
-
-            ll_mine_loading.visibility = View.GONE
-
-            if (faceDetectBean.error_msg != null) {
-                ToastUtils.showShort(faceDetectBean.error_msg)
             } else {
-                ToastUtils.showShort(faceDetectBean.data[0].msg)
+
+                ll_mine_loading.visibility = View.GONE
+
+                if (faceDetectBean.error_msg != null) {
+                    ToastUtils.showShort(faceDetectBean.error_msg)
+                } else {
+                    ToastUtils.showShort(faceDetectBean.data[0].msg)
+                }
+
             }
 
         }

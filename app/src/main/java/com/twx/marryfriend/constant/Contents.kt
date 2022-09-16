@@ -206,6 +206,9 @@ object Contents {
     // 投诉举报其它人
     const val DO_REPORT_OTHER = "MemberCharge/uploadComplaint"
 
+    // 屏蔽列表
+    const val GET_BLACK_LIST = "TrendsNotice/blockSessionList"
+
     // ------------------------------- 高德地图 -------------------------------
 
     // 高德地图-地点检索

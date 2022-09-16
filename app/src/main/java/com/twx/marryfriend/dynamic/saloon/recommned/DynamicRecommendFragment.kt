@@ -25,6 +25,7 @@ import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.*
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
@@ -38,6 +39,7 @@ import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
 import com.twx.marryfriend.utils.AnimalUtils
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
 import kotlinx.android.synthetic.main.fragment_dynamic_recommend.*
 import java.io.Serializable
@@ -67,16 +69,18 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
 
-
     // 点赞时选择的position
     private var mLikePosition: Int = 0
-
 
     // 未读评论数据
     private var commentSum = 0
 
     // 未读评论数据
     private var likeSum = 0
+
+    // 关注的position
+    private var focusPosition = 0
+
 
     // 关注与点赞数据
     private var mDiyList: MutableList<LikeBean> = arrayListOf()
@@ -547,9 +551,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             override fun onFocusClick(v: View?, position: Int) {
                 if (!mDiyList[position].focus) {
                     // 点关注
-                    mDiyList[position].focus = true
+
+                    focusPosition = position
+
                     doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"),
                         mTrendList[position].user_id)
+
                 } else {
                     ToastUtils.showShort("消息界面")
 
@@ -560,20 +567,32 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                     val identity = mTrendList[position].identity_status == 1
 
-                    startActivity(context?.let {
-                        ChatActivity.getIntent(
-                            it,
-                            mTrendList[position].user_id,
-                            mTrendList[position].nick,
-                            mTrendList[position].headface,
-                            identity
-                        )
-                    })
+
+                    if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                        startActivity(context?.let {
+                            VipActivity.getVipIntent(it,
+                                mTrendList[position].user_id.toInt(),
+                                VipGifEnum.Message)
+                        })
+                    } else {
+
+                        startActivity(context?.let {
+                            ChatActivity.getIntent(
+                                it,
+                                mTrendList[position].user_id,
+                                mTrendList[position].nick,
+                                mTrendList[position].headface,
+                                identity
+                            )
+                        })
+                    }
                 }
                 adapter.notifyDataSetChanged()
             }
         })
     }
+
+    // 添加数据
 
     private fun autoRefresh() {
         srl_dynamic_recommend_refresh.autoRefresh()
@@ -673,6 +692,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         if (plusFocusBean != null) {
             if (plusFocusBean.code == 200) {
 
+                mDiyList[focusPosition].focus = true
+
                 val focusId = plusFocusBean.data[0]
 
                 for (i in 0.until(mDiyList.size)) {
@@ -693,8 +714,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                 // 关注
 
-
+            } else {
+                ToastUtils.showShort(plusFocusBean.msg)
             }
+
         }
     }
 

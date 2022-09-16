@@ -186,7 +186,8 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
                 SPStaticUtils.put(Constant.ME_INCOME, fiveInfoBean.data.base.salary_range)
 
-                SPStaticUtils.put(Constant.ME_WORK, fiveInfoBean.data.base.industry_str)
+                SPStaticUtils.put(Constant.ME_WORK,
+                    "${fiveInfoBean.data.base.work_province_str}-${fiveInfoBean.data.base.work_city_str}")
 
                 SPStaticUtils.put(Constant.ME_EDU, fiveInfoBean.data.base.education)
 

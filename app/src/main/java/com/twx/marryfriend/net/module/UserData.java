@@ -63,6 +63,7 @@ import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
 import com.twx.marryfriend.bean.vip.AliPayBean;
+import com.twx.marryfriend.bean.vip.BlackListBean;
 import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
@@ -968,6 +969,19 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REPORT_OTHER + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REPORT_OTHER, currentTimeMillis, random, checkCode, map);
         mApi.doReportOther(map1).enqueue(callback);
+    }
+
+
+    // 屏蔽列表
+    public void getBlackList(Map<String, String> map, Integer page, Callback<BlackListBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_BLACK_LIST + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_BLACK_LIST, currentTimeMillis, random, checkCode, map, page, 10);
+        mApi.getBlackList(map1).enqueue(callback);
     }
 
 

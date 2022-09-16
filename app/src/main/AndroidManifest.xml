@@ -52,6 +52,9 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".set.black.BlackListActivity"
+            android:exported="false" />
+        <activity
             android:name=".set.report.ReportActivity"
             android:exported="false" />
         <activity

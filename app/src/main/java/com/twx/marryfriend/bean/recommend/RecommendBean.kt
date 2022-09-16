@@ -106,9 +106,9 @@ data class RecommendBean(
         return list
     }
 
-    fun getBaseLabel():List<Label>{
-        val list=ArrayList<Label>()
-        getAge(base?.age)?.also {
+    fun getBaseLabel(): List<Label> {
+        val list = ArrayList<Label>()
+        getAge(base?.birthday)?.also {
             list.add(it)
         }
         getIndustry_str(base?.industry_str)?.also {
@@ -197,7 +197,7 @@ data class RecommendBean(
     fun isHeadIdentification():Boolean{
         return headface?.firstOrNull()?.real_status==1
     }
-
+    
     fun getLongitude():Double?{
 //        trends?.get(0)?.jingdu
         return place?.jingdu?.toDoubleOrNull()
@@ -481,23 +481,32 @@ data class RecommendBean(
                 0->{
                     null//"不限"
                 }
-                1->{
-                    "五千及以下"
+                1 -> {
+                    "5k及以下"
                 }
-                2->{
-                    "五千一万"
+                2 -> {
+                    "5k~8k"
                 }
-                3->{
-                    "一万~两万"
+                3 -> {
+                    "8k~12k"
                 }
-                4->{
-                    "两万~四万"
+                4 -> {
+                    "12k~16k"
                 }
-                5->{
-                    "四万到七万"
+                5 -> {
+                    "16k~20k"
                 }
-                6->{
-                    "七万及以上"
+                6 -> {
+                    "20k~35k"
+                }
+                7 -> {
+                    "35k~50k"
+                }
+                8 -> {
+                    "50k~70k"
+                }
+                9 -> {
+                    "70k及以上"
                 }
                 else->{
                     null
@@ -750,8 +759,8 @@ data class RecommendBean(
                 54 to "高山族",
                 55 to "珞巴族",
                 56 to "塔塔尔族"
-            ).find {
-                nationality==it.first
+                ).find {
+                    nationality==it.first
             }?.second?.toLabel(R.mipmap.ic_label_nation)
         }
 
@@ -781,10 +790,8 @@ data class RecommendBean(
             }?.toLabel(R.mipmap.ic_label_love)
         }
 
-        fun getAge(age:Int?):Label?{
-            return age?.toString()?.let {
-                "${it}岁"
-            }?.toLabel(R.mipmap.ic_label_age)
+        fun getAge(birthday: String?): Label? {
+            return "${birthday?.let { TimeUtil.birthdayToAge(it) }}岁".toLabel(R.mipmap.ic_label_age)
         }
     }
 

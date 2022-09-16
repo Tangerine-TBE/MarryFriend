@@ -647,7 +647,11 @@ class SaloonAdapter(
             if (mList[position].video_url != "") {
                 // 有视频信息
                 holder.llVideo.visibility = View.VISIBLE
-                Glide.with(mContext).load(mList[position].video_url).into(holder.video)
+                Glide.with(mContext)
+                    .load(mList[position].video_url)
+                    .error(R.drawable.ic_pic_default)
+                    .placeholder(R.drawable.ic_pic_default)
+                    .into(holder.video)
                 holder.llOne.visibility = View.GONE
                 holder.llTwo.visibility = View.GONE
                 holder.llThree.visibility = View.GONE

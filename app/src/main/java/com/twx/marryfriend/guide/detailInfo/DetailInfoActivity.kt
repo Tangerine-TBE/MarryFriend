@@ -3104,8 +3104,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 .permission(Permission.CAMERA)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent =
-                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        val intent = Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
                         startActivity(intent)
                     }
 

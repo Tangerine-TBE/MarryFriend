@@ -34,7 +34,7 @@ class ImChatActivity: ChatActivity() {
          */
         fun getIntent(context: Context, conversationId: String, nickname:String?=null, headImage:String?=null, isRealName:Boolean?=null): Intent {
             if (!UserInfo.isVip()){
-                return VipActivity.getIntent(context,0,conversationId.toIntOrNull())
+                return VipActivity.getVipIntent(context,conversationId.toIntOrNull())
             }
 
             val intent= Intent(context,ImChatActivity::class.java)

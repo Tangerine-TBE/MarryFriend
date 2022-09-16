@@ -14,9 +14,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.vip.PreviewOtherBean
-import com.twx.marryfriend.bean.vip.RefreshSelfBean
-import com.twx.marryfriend.bean.vip.VipPriceBean
+import com.twx.marryfriend.bean.vip.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
@@ -75,13 +73,31 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         private const val VIP_MODE = "vip_mode"
         private const val TARGET_ID = "target_id"
         private const val TARGET_ITEM = "target_item"
-        fun getIntent(context: Context, mode: Int, id: Int? = 0, item: Int? = 0): Intent {
+
+        fun getVipIntent(
+            context: Context,
+            id: Int? = 0,
+            vip: VipGifEnum? = VipGifEnum.Inbox,
+        ): Intent {
             val intent = Intent(context, VipActivity::class.java)
-            intent.putExtra(VIP_MODE, mode)
+            intent.putExtra(VIP_MODE, 0)
             intent.putExtra(TARGET_ID, id)
-            intent.putExtra(TARGET_ITEM, item)
+            intent.putExtra(TARGET_ITEM, vip?.code)
             return intent
         }
+
+        fun getSVipIntent(
+            context: Context,
+            id: Int? = 0,
+            SVip: SVipGifEnum? = SVipGifEnum.Inbox,
+        ): Intent {
+            val intent = Intent(context, VipActivity::class.java)
+            intent.putExtra(VIP_MODE, 1)
+            intent.putExtra(TARGET_ID, id)
+            intent.putExtra(TARGET_ITEM, SVip?.code)
+            return intent
+        }
+
     }
 
     override fun getLayoutView(): Int = R.layout.activity_vip
@@ -107,6 +123,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
         normal = VipFragment().newInstance(this, targetItem)
         svip = SVipFragment().newInstance(this, targetItem)
+
 
         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
             Glide.with(this)
@@ -165,6 +182,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
     override fun initPresent() {
         super.initPresent()
+
     }
 
     override fun initEvent() {

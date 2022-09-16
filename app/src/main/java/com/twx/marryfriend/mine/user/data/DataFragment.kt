@@ -274,10 +274,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
             tv_user_data_avatar_check.visibility = View.VISIBLE
         } else {
-            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
-                    Constant.ME_AVATAR_AUDIT,
-                    "") != ""
-            ) {
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR))
