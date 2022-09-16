@@ -4,6 +4,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.enumeration.ConstellationEnum
+import com.twx.marryfriend.utils.TimeUtil
 import org.json.JSONArray
 import java.lang.IllegalStateException
 import java.text.NumberFormat
