@@ -26,6 +26,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.dialog.FollowReportDialog
+import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
@@ -126,6 +127,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         }
     }
     private var userItem: RecommendBean?=null
+    private val coinInsufficientDialog by lazy {
+        ReChargeCoinDialog(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -575,12 +579,12 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 loadingDialog.show()
                 try {
                     recommendViewModel.superLike(userId?:return@launch toast("id 为空")){
-
+                        coinInsufficientDialog.show()
                     }
+                    toast("送花成功")
                 }catch (e:Exception){
                     toast(e.message)
                 }
-                toast("送花成功")
                 loadingDialog.dismiss()
             }
         }
