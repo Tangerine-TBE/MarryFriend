@@ -197,7 +197,7 @@ data class RecommendBean(
     fun isHeadIdentification():Boolean{
         return headface?.firstOrNull()?.real_status==1
     }
-    
+
     fun getLongitude():Double?{
 //        trends?.get(0)?.jingdu
         return place?.jingdu?.toDoubleOrNull()
@@ -476,17 +476,6 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_head)
         }
-        val salary by lazy {
-            arrayOf(
-                0 to 0..5,
-                1 to 0..5,
-                2 to 5..10,
-                3 to 10..20,
-                4 to 20..40,
-                5 to 40..70,
-                6 to 70..70
-            )
-        }
         fun getSalary_range(salary_range:Int?): Label?{
             return when(salary_range){
                 0->{
@@ -515,45 +504,47 @@ data class RecommendBean(
                 }
             }?.toLabel(R.mipmap.ic_label_income)
         }
+        private val salary by lazy {
+            listOf(1 to 5000,
+                2 to 8000,
+                3 to 12000,
+                4 to 16000,
+                5 to 20000,
+                6 to 35000,
+                7 to 50000,
+                8 to 70000)
+        }
         fun getSalary_range(salary_range:String?): Label?{
             if (salary_range.isNullOrBlank()){
                 return null
             }
             val jsonArray=JSONArray(salary_range)
-            if (jsonArray.length()>0){
+            val length=jsonArray.length()
+            if (length<=0){
+                return null
+            }else{
                 val first=jsonArray.getInt(0)
-                val last=jsonArray.getInt(jsonArray.length()-1)
-                if (last== salary.last().first){
-                    "七万及以上"
-                }else{
-                    val min=salary.find {
-                        it.first==first
-                    }?.second?.first?:0
-                    val max= salary.find {
+                val last=jsonArray.getInt(length-1)
+                return if (last==0){
+                    null
+                }else if (first==0){
+                    salary.find {
                         it.first==last
-                    }?.second?.last?:0
-                    if (min==0){
-                        if (max<10){
-                            "${max}千以下"
-                        }else{
-                            "${max/10}万以下"
-                        }
-                    }else{
-                        val m=if (min<10){
-                            "${min}千"
-                        }else{
-                            "${min/10}万"
-                        }
-                        val ma=if (max<10){
-                            "${max}千"
-                        }else{
-                            "${max/10}万"
-                        }
-                        "${m}到${ma}"
-                    }
-                }.toLabel(R.mipmap.ic_label_income)
+                    }?.let {
+                        "${it.second/1000}k 以下"
+                    }?.toLabel(R.mipmap.ic_label_income)
+                }else if (first== salary.last().first){
+                    "${salary.last().second/1000}k 以上".toLabel(R.mipmap.ic_label_income)
+                }else{
+                    val d=salary.find {
+                        it.first==first
+                    }?: salary.first()
+                    val u=salary.find {
+                        it.first==last
+                    }?: salary.last()
+                    "${d.second/1000}k-${u.second/1000}k".toLabel(R.mipmap.ic_label_income)
+                }
             }
-            return null
         }
         fun getFigure_nan(figure_nan:Int?): Label?{
             return when(figure_nan){
@@ -759,8 +750,8 @@ data class RecommendBean(
                 54 to "高山族",
                 55 to "珞巴族",
                 56 to "塔塔尔族"
-                ).find {
-                    nationality==it.first
+            ).find {
+                nationality==it.first
             }?.second?.toLabel(R.mipmap.ic_label_nation)
         }
 
