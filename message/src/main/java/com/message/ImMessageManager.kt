@@ -20,7 +20,7 @@ import com.xyzz.myutils.show.iLog
 //http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
 
-    val newMessageLiveData=MutableLiveData<List<Message<out EMMessageBody>>>()//收到新消息
+    val newMessageLiveData=MutableLiveData<List<Message<out EMMessageBody>>?>()//收到新消息
     private val fromConversationRead=MutableLiveData<String>()
     private val messageRead=MutableLiveData<List<EMMessage>>()
 
@@ -36,7 +36,7 @@ object ImMessageManager {
         fromConversationRead.observe(owner,observer)
     }
 
-    fun observeNewMessage(owner: LifecycleOwner,observer: Observer<List<Message<out EMMessageBody>>>){
+    fun observeNewMessage(owner: LifecycleOwner,observer: Observer<List<Message<out EMMessageBody>>?>){
         newMessageLiveData.value=null
         newMessageLiveData.observe(owner,observer)
     }
@@ -172,6 +172,10 @@ object ImMessageManager {
         }
     }
 
+    fun getAllUnreadMessage():Int{
+        return EMClient.getInstance().chatManager().unreadMessageCount
+    }
+
     fun markAllMsgAsRead(username: String){
         val conversation = EMClient.getInstance().chatManager().getConversation(username)
         //指定会话消息未读数清零
@@ -270,6 +274,7 @@ object ImMessageManager {
     }
 
     fun insertMessage(message: EMMessage){
+        message.msgTime=System.currentTimeMillis()+50000
         // 将消息插入到指定会话中。
         val conversation = EMClient.getInstance().chatManager().getConversation(message.to)
         conversation.insertMessage(message)

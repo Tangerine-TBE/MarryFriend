@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +17,6 @@ import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import com.hyphenate.easeim.MainActivity
 import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.BuildConfig
@@ -26,10 +24,9 @@ import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
-import com.twx.marryfriend.dialog.OneClickHelloDialog
-import com.twx.marryfriend.dialog.ReChargeCoinDialog
-import com.twx.marryfriend.dialog.SendFlowerDialog
+import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
+import com.twx.marryfriend.friend.FriendInfoViewModel
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.recommend.widget.*
@@ -72,9 +69,18 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             .setMessage("请稍后...")
     }
     private val coinInsufficientDialog by lazy {
-        ReChargeCoinDialog(requireContext())
+        ReChargeCoinDialog(requireActivity())
     }
     private var touchHelper:ItemTouchHelper?=null
+    private val followReportDialog by lazy {
+        FollowReportDialog(requireContext())
+    }
+    private val friendInfoViewModel by lazy {
+        ViewModelProvider(this).get(FriendInfoViewModel::class.java)
+    }
+    private val uploadHeadDialog by lazy {
+        UploadHeadDialog(requireContext())
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -92,18 +98,22 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 recommendAdapter.notifyDataSetChanged()
                 openVip()
             }else{
-                val e=recommendAdapter.removeAt(0)
-                if (it==ItemTouchHelper.LEFT){
-                    guideActionCompleteHandler(HomeCardAction.leftSlide)
-                    iLog("不喜欢")
-                    disLike(e)
-                }else if (it==ItemTouchHelper.RIGHT){
-                    guideActionCompleteHandler(HomeCardAction.rightSlide)
-                    iLog("喜欢")
-                    like(e)
-                }
-                if (recommendAdapter.getData().isEmpty()){
-                    showView(ViewType.notContent)
+                if (showUploadHeadDialog()){
+                    recommendAdapter.notifyDataSetChanged()
+                }else{
+                    val e=recommendAdapter.removeAt(0)
+                    if (it==ItemTouchHelper.LEFT){
+                        guideActionCompleteHandler(HomeCardAction.leftSlide)
+                        iLog("不喜欢")
+                        disLike(e)
+                    }else if (it==ItemTouchHelper.RIGHT){
+                        guideActionCompleteHandler(HomeCardAction.rightSlide)
+                        iLog("喜欢")
+                        like(e)
+                    }
+                    if (recommendAdapter.getData().isEmpty()){
+                        showView(ViewType.notContent)
+                    }
                 }
             }
         }
@@ -161,6 +171,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                                 loadingDialog.show()
                                 try {
                                     recommendViewModel.sendHello(it)
+                                    toast("打招呼已发出")
                                 }catch (e:Exception){
                                     toast(e.message)
                                 }
@@ -242,13 +253,17 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
     private fun initListener(){
         recommendSetting.setOnClickListener {
-            startActivity(Intent(requireContext(),ILikeActivity::class.java))
+            if(!showUploadHeadDialog()){
+                startActivity(Intent(requireContext(),ILikeActivity::class.java))
+            }
         }
         swipeRefreshLayout.setOnRefreshListener {
             loadData()
         }
         heartbeat.setOnClickListener {
-            startActivity(Intent(requireContext(),SearchParamActivity::class.java))
+            if(!showUploadHeadDialog()){
+                startActivity(Intent(requireContext(),SearchParamActivity::class.java))
+            }
         }
         recommendAdapter.openLocationPermissionAction={
             XXPermissions.with(this)
@@ -273,48 +288,52 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 })
         }
         recommendAdapter.superLikeAction={item,view->
-            superLike(item){
-                view
-                    .animate()
-                    ?.alpha(0f)
-                    ?.rotation(10f)
-                    ?.translationX(view.width /2f)
-                    ?.setDuration(500)
-                    ?.setListener(object : Animator.AnimatorListener{
-                        override fun onAnimationStart(animation: Animator?) {
+            if(!showUploadHeadDialog()){
+                superLike(item){
+                    view
+                        .animate()
+                        ?.alpha(0f)
+                        ?.rotation(10f)
+                        ?.translationX(view.width /2f)
+                        ?.setDuration(500)
+                        ?.setListener(object : Animator.AnimatorListener{
+                            override fun onAnimationStart(animation: Animator?) {
 
-                        }
-
-                        override fun onAnimationEnd(animation: Animator?) {
-                            iLog("超级喜欢")
-                            guideView.guideComplete(HomeCardAction.clickFlower)
-                            view.apply {
-                                this.alpha=1f
-                                this.rotation=0f
-                                this.translationX=0f
                             }
 
-                            recommendAdapter.removeAt(0)
-                            if (recommendAdapter.getData().isEmpty()){
-                                showView(ViewType.notContent)
+                            override fun onAnimationEnd(animation: Animator?) {
+                                iLog("超级喜欢")
+                                guideView.guideComplete(HomeCardAction.clickFlower)
+                                view.apply {
+                                    this.alpha=1f
+                                    this.rotation=0f
+                                    this.translationX=0f
+                                }
+
+                                recommendAdapter.removeAt(0)
+                                if (recommendAdapter.getData().isEmpty()){
+                                    showView(ViewType.notContent)
+                                }
                             }
-                        }
 
-                        override fun onAnimationCancel(animation: Animator?) {
+                            override fun onAnimationCancel(animation: Animator?) {
 
-                        }
+                            }
 
-                        override fun onAnimationRepeat(animation: Animator?) {
+                            override fun onAnimationRepeat(animation: Animator?) {
 
-                        }
+                            }
 
-                    })
-                    ?.start()
+                        })
+                        ?.start()
+                }
             }
         }
         recommendAdapter.likeAction={item,view->
             if (recommendViewModel.haveMoreRecommend.value==false){
                 openVip()
+            }else if(showUploadHeadDialog()){
+
             }else{
                 view
                     .animate()
@@ -356,6 +375,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendAdapter.disLikeAction={item,view->
             if (recommendViewModel.haveMoreRecommend.value==false){
                 openVip()
+            }else if(showUploadHeadDialog()){
+
             }else{
                 view
                     .animate()
@@ -398,6 +419,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             IntentManager.getReportIntent(requireContext(),it.getId())
             toast("举报:${it.getId()}")
         }
+        recommendAdapter.settingAction={
+            settingDialog(it)
+        }
+
         sendMsg.setOnClickListener {
             toast("给她发消息")
         }
@@ -405,6 +430,51 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             showView(ViewType.content)
         }
         LocationUtils.frontBackstageLiveData(this)
+    }
+
+    private fun settingDialog(userItem:RecommendBean){
+        followReportDialog.also {
+            if (userItem.isFollow()==true){
+                it.setFollowText("取消关注")
+            }else{
+                it.setFollowText("关注")
+            }
+            val guest_uid=userItem.getId()
+            it.setFollowListener{ //关注或者取消关注
+                if (guest_uid?.toString()== UserInfo.getUserId()){
+                    toast("自己不能关注自己")
+                    return@setFollowListener
+                }
+                lifecycleScope.launch {
+                    if (userItem?.isFollow()==true){
+                        try {
+                            friendInfoViewModel.unFollow(guest_uid?:return@launch)
+                            userItem?.clearFollow()
+                            toast("取消关注成功")
+                        }catch (e:Exception){
+                            toast("取消关注失败，${e.message}")
+                        }
+                    }else{
+                        try {
+                            friendInfoViewModel.follow(guest_uid?:return@launch)
+                            userItem?.addFollow()
+                            toast("关注成功")
+                        }catch (e:Exception){
+                            toast("关注失败，${e.message}")
+                        }
+                    }
+                    if (userItem?.isFollow()==true){
+                        it.setFollowText("取消关注")
+                    }else{
+                        it.setFollowText("关注")
+                    }
+                }
+            }
+
+            it.setReportListener { //举报
+                toast("举报")
+            }
+        }.show()
     }
 
     override fun onResume() {
@@ -424,7 +494,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             iLog("引导期间")
             return
         }
-        showUploadHeadDialog()
         if (BuildConfig.DEBUG){
             return
         }
@@ -441,9 +510,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
     }
 
-    private fun showUploadHeadDialog(){
-        if (!UserInfo.isHaveHeadImage()){
-            startActivity(IntentManager.getUpHeadImageIntent(requireContext()))
+    private fun showUploadHeadDialog():Boolean{
+        return if (!UserInfo.isHaveHeadImage()){
+            uploadHeadDialog.show()
+            true
+        }else{
+            false
         }
     }
 
@@ -455,7 +527,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             iLog("引导期间")
             return
         }
-        showUploadHeadDialog()
         if (BuildConfig.DEBUG){
             return
         }
@@ -488,13 +559,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             success.invoke()
             return
         }
-        showUploadHeadDialog()
         SendFlowerDialog.sendFlowerTip(requireContext()){
             viewLifecycleOwner.lifecycleScope.launch (){
                 loadingDialog.show()
                 try {
                     recommendViewModel.superLike(item.getId()) {
-                        coinInsufficientDialog.show()
+                        coinInsufficientDialog.show(item.getHeadImg())
                     }
                     ImMessageManager.sendFlower(item.getId().toString())
                     success.invoke()

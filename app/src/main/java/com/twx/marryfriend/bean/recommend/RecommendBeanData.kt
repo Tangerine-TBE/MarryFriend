@@ -1,29 +1,6 @@
 package com.twx.marryfriend.bean.recommend
 
-import com.twx.marryfriend.R
 import org.json.JSONArray
-
-enum class Sex(val code: Int, val homeBigHead: Int, val smallHead: Int) {
-    male(1, R.mipmap.ic_user_not_man_head, R.drawable.ic_mine_male_default),
-    female(2, R.mipmap.ic_user_not_woman_head, R.drawable.ic_mine_female_default),
-    unknown(0, R.mipmap.ic_user_not_woman_head, R.drawable.ic_mine_female_default);
-
-    companion object {
-        fun toSex(sexCode: Int?): Sex {
-            return when (sexCode) {
-                1 -> {
-                    male
-                }
-                2 -> {
-                    female
-                }
-                else -> {
-                    unknown
-                }
-            }
-        }
-    }
-}
 
 data class HeadfaceBean(
     var content: String? = "",
@@ -73,7 +50,7 @@ data class Base(
     val work_province_num: String? = null,
     val work_province_str: String? = null,
 ) {
-    var like_uid: Int? = null
+    var like_uid: Int? = null//我是否喜欢他
     var super_uid: Int? = null
     var focus_uid: Int? = null
 }

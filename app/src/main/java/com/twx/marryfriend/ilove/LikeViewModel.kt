@@ -9,6 +9,7 @@ import com.twx.marryfriend.bean.ilike.ILikeItemBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.wLog
 import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -29,7 +30,7 @@ class LikeViewModel:ViewModel() {
         superLikeChangeListener.add(listener)
     }
 
-    suspend fun superLike(guest_uid: Int)=suspendCoroutine<Unit>{coroutine->
+    suspend fun superLike(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/unconcernToLike"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -37,11 +38,23 @@ class LikeViewModel:ViewModel() {
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-                val jsonObject= JSONObject(response)
+                val jsonObject=JSONObject(response)
                 if (jsonObject.getInt("code")==200) {
                     coroutine.resume(Unit)
                 }else{
-                    coroutine.resumeWithException(Exception(response))
+                    val tip=try {
+                        jsonObject.getString("msg")
+                    }catch (e:Exception){
+                        response
+                    }
+                    try {
+                        if (jsonObject.getInt("code")==444){
+                            coinInsufficient?.invoke()
+                        }
+                    }catch (e:Exception){
+                        wLog(e.stackTraceToString())
+                    }
+                    coroutine.resumeWithException(Exception(tip))
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

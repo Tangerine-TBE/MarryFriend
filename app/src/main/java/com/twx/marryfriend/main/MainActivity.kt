@@ -4,13 +4,16 @@ import android.content.Intent
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.View
 import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
+import com.message.ImMessageManager
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
@@ -31,6 +34,7 @@ class MainActivity : MainBaseViewActivity() {
     private var dynamic: DynamicFragment? = null
     private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
+    private var currentFragment:Fragment?=null
 
     override fun getLayoutView(): Int = R.layout.activity_main
 
@@ -41,6 +45,20 @@ class MainActivity : MainBaseViewActivity() {
         initRecommendFragment()
         Thread { PushHelper.init(applicationContext) }.start()
         PushAgent.getInstance(this).onAppStart()
+
+        if (ImMessageManager.getAllUnreadMessage()>0){
+            messageNumNew.visibility= View.VISIBLE
+            messageNumNew.text=ImMessageManager.getAllUnreadMessage().toString()
+        }else{
+            messageNumNew.visibility= View.GONE
+        }
+        ImMessageManager.newMessageLiveData.observe(this){
+            if(currentFragment==conversationListFragment){
+                return@observe
+            }
+            messageNumNew.visibility= View.VISIBLE
+            messageNumNew.text=ImMessageManager.getAllUnreadMessage().toString()
+        }
     }
 
     override fun initLoadData() {
@@ -67,6 +85,7 @@ class MainActivity : MainBaseViewActivity() {
         }
 
         rb_main_message.setOnClickListener {
+            messageNumNew.visibility=View.GONE
             initMessageFragment()
         }
 
@@ -83,6 +102,7 @@ class MainActivity : MainBaseViewActivity() {
             recommend = RecommendFragment()
             transaction.add(R.id.fl_main_container, recommend!!)
         }
+        currentFragment=recommend
         hideFragment(transaction)
         transaction.show(recommend!!)
         transaction.commit()
@@ -94,6 +114,7 @@ class MainActivity : MainBaseViewActivity() {
             love = LoveFragment()
             transaction.add(R.id.fl_main_container, love!!)
         }
+        currentFragment=love
         hideFragment(transaction)
         transaction.show(love!!)
         transaction.commit()
@@ -105,6 +126,7 @@ class MainActivity : MainBaseViewActivity() {
             dynamic = DynamicFragment().newInstance(this)
             transaction.add(R.id.fl_main_container, dynamic!!)
         }
+        currentFragment=dynamic
         hideFragment(transaction)
         transaction.show(dynamic!!)
         transaction.commit()
@@ -118,6 +140,7 @@ class MainActivity : MainBaseViewActivity() {
         }else{
             conversationListFragment?.onResume()
         }
+        currentFragment=conversationListFragment
         hideFragment(transaction)
         transaction.show(conversationListFragment!!)
         transaction.commit()
@@ -129,6 +152,7 @@ class MainActivity : MainBaseViewActivity() {
             mine = MineFragment()
             transaction.add(R.id.fl_main_container, mine!!)
         }
+        currentFragment=mine
         hideFragment(transaction)
         transaction.show(mine!!)
         transaction.commit()

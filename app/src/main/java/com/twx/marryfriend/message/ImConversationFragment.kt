@@ -17,6 +17,7 @@ import com.hyphenate.chat.EMConversation
 import com.hyphenate.easeim.section.conversation.ConversationListFragment
 import com.hyphenate.easeui.EaseIM
 import com.hyphenate.easeui.adapter.EaseAdapterDelegate
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
@@ -30,6 +31,7 @@ import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import kotlinx.android.synthetic.main.fragment_im_message.*
 import kotlinx.coroutines.launch
+import kotlin.concurrent.thread
 
 class ImConversationFragment: ConversationListFragment() {
     private val viewModel by lazy {
@@ -52,49 +54,12 @@ class ImConversationFragment: ConversationListFragment() {
         dataBinding?.lifecycleOwner=this
         llRoot.addView(dataBinding?.root, 0)
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
-        lifecycleScope.launch {
-            val result=try {
-                viewModel.getFollowCountAndImg()
-            }catch (e:Exception){
-                null
-            }
-            if (result!=null){
-                conversationListLayout.addHeaderAdapter(object :RecyclerView.Adapter<BaseViewHolder>(){
-
-                    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-                        val followView=DataBindingUtil.inflate<ItemMessageFollowBinding>(LayoutInflater.from(requireContext()),R.layout.item_message_follow,conversationListLayout,false)
-                        return BaseViewHolder(followView.root)
-                    }
-
-                    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-                        holder.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
-                        holder.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
-                        val imageView=holder.getView<ImageView>(R.id.messageHead)
-                        Glide.with(imageView)
-                            .load(result.second)
-                            .error(UserInfo.getReversedDefHeadImage())
-                            .placeholder(UserInfo.getReversedDefHeadImage())
-                            .into(imageView)
-//                        holder.setImage(R.id.messageHead,result.second,UserInfo.getReversedDefHeadImage())
-                    }
-
-                    override fun getItemCount(): Int {
-                        return 1
-                    }
-
-                })
-            }else{
-
-            }
-        }
-
-//        findViewById<EaseRecyclerView>(com.hyphenate.easeui.R.id.rv_conversation_list).also {
-//            val followView=DataBindingUtil.inflate<ItemMessageFollowBinding>(LayoutInflater.from(requireContext()),R.layout.item_message_follow,it,false)
-//            it.addHeaderView(followView.root)
-//        }
         dataBinding?.conversationsModel=conversationsModel
     }
 
+    /**
+     * 会话适配器
+     */
     override fun getConversationDelegate(): EaseAdapterDelegate<*, *> {
         return MySingleConversationDelegate()
     }
@@ -145,6 +110,12 @@ class ImConversationFragment: ConversationListFragment() {
 
     override fun onResume() {
         super.onResume()
+        refreshMutualLike()
+        refreshFollow()
+        conversationListLayout.refreshList()
+    }
+
+    private fun refreshMutualLike(){
         iLog("加载一下")
         loadingDialog.show()
         lifecycleScope.launch {
@@ -185,6 +156,57 @@ class ImConversationFragment: ConversationListFragment() {
                 eLog(e.stackTraceToString())
             }
             loadingDialog.dismiss()
+        }
+    }
+
+    private var followHolder:BaseViewHolder?=null
+    private var isAdd=false
+    private fun refreshFollow(){
+        lifecycleScope.launch {
+            val result=try {
+                viewModel.getFollowCountAndImg()
+            }catch (e:Exception){
+                null
+            }
+            if (result!=null){
+                if (followHolder==null&&!isAdd){
+                    isAdd=true
+                    conversationListLayout.addHeaderAdapter(object :RecyclerView.Adapter<BaseViewHolder>(){
+
+                        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+                            return BaseViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_message_follow,parent,false))
+                        }
+
+                        override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+                            followHolder=holder
+                            holder.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
+                            holder.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
+                            val imageView=holder.getView<ImageView>(R.id.messageHead)
+                            Glide.with(imageView)
+                                .load(result.second)
+                                .error(UserInfo.getReversedDefHeadImage())
+                                .placeholder(UserInfo.getReversedDefHeadImage())
+                                .into(imageView)
+                            holder.itemView.setOnClickListener {
+                                it.context.startActivity(IntentManager.getFocusIntent(it.context))
+                            }
+                        }
+
+                        override fun getItemCount(): Int {
+                            return 1
+                        }
+
+                    })
+                }
+                followHolder?.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
+                followHolder?.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
+                val imageView=followHolder?.getView<ImageView>(R.id.messageHead)?:return@launch
+                Glide.with(imageView)
+                    .load(result.second)
+                    .error(UserInfo.getReversedDefHeadImage())
+                    .placeholder(UserInfo.getReversedDefHeadImage())
+                    .into(imageView)
+            }
         }
     }
 }

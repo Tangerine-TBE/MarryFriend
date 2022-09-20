@@ -28,13 +28,13 @@ data class SearchResultItem(
     var work_city_str: String? = ""
 ){
     fun getHeadImage():String?{
-        return if (isRealImage()){
+        return if (isImageStatus()){
             image_url
         }else{
-            UserInfo.getDefHeadImage(user_sex?:UserInfo.reversalSex(UserInfo.getUserSex()))
+            UserInfo.getDefHeadImage(user_sex?:UserInfo.reversalSex(UserInfo.getOriginalUserSex()))
         }
     }
-    fun isRealImage():Boolean{
+    private fun isImageStatus():Boolean{
         return img_status==1
     }
 

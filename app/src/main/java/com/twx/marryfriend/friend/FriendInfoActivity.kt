@@ -134,8 +134,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loadData()
-        isLikeMe.visibility=View.GONE
-        Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+        Glide.with(myHead).load(UserInfo.getHeadPortrait())
+            .placeholder(UserInfo.getUserSex().smallHead)
+            .error(UserInfo.getUserSex().smallHead).into(myHead)
         if (isShowLike){
             care2.visibility=View.VISIBLE
             care.visibility=View.VISIBLE
@@ -175,7 +176,11 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             userItem=item
             initListener()
-
+            isLikeMe.visibility=if (item.isTaLikeMe()){
+                View.VISIBLE
+            }else{
+                View.GONE
+            }
             userIdText.text="用户ID:${item.getId()}"
             report.setOnClickListener {
                 IntentManager.getReportIntent(this@FriendInfoActivity,item.getId())
@@ -206,7 +211,13 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 }else{
                     vipLabel.visibility= View.GONE
                 }
-                age.text=(item.getAge().toString()+"岁")
+                item.getAge().also {
+                    if (it==null){
+                        age.visibility=View.GONE
+                    }else{
+                        age.text=(it.toString()+"岁")
+                    }
+                }
                 occupation.text=(item.getOccupation())
                 education.text=(item.getSchoolName())
                 dynamicCount.text=(item.getDynamicCount().toString()+"条动态")//上面的
@@ -504,7 +515,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     toast("已经喜欢过了")
                     return@setOnClickListener
                 }
-                like()
+                like(userItem?:return@setOnClickListener)
             }
             dislike.setOnClickListener {
                 disLike(userItem?:return@setOnClickListener)
@@ -528,6 +539,11 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 friendViewSwitcher.showNext()
             }
         }
+
+        if (UserInfo.getUserId()==userId?.toString()){
+            sendFlowers2.visibility=View.GONE
+            sendFlowers.visibility=View.GONE
+        }
     }
 
     /**
@@ -549,14 +565,16 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     /**
      * 右滑、喜欢
      */
-    private fun like() {
+    private fun like(item: RecommendBean) {
         loadingDialog.show()
         lifecycleScope.launch (){
             try {
                 toast(recommendViewModel.otherLike(userId?:return@launch toast("id 为空")){
                     if (friendViewSwitcher.currentView!=mutualLike){
                         friendViewSwitcher.showNext()
-                        Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
+                        Glide.with(taHead).load(item.getHeadImg())
+                            .placeholder(UserInfo.getUserSex().reversal().smallHead)
+                            .placeholder(UserInfo.getUserSex().reversal().smallHead).into(taHead)
                     }
                 })
                 care.isSelected=true

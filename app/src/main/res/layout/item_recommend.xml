@@ -23,18 +23,18 @@
                 <!--           大图-->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/briefIntroduction"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <com.twx.marryfriend.recommend.widget.RecommendImage
                         android:id="@+id/recommendPhoto"
-                        android:scaleType="centerCrop"
+                        android:scaleType="fitXY"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         tools:visibility="gone"
                         android:src="@drawable/ic_big_default_pic"
                         android:foreground="@drawable/shape_recommend_frame"
-                        app:layout_constraintDimensionRatio="347:428"
+                        app:layout_constraintDimensionRatio="347:347"
                         app:layout_constraintTop_toTopOf="parent"
                         tools:layout_editor_absoluteX="-16dp" />
                     <androidx.appcompat.widget.LinearLayoutCompat
@@ -262,7 +262,7 @@
                     android:id="@+id/voiceIntroduce"
                     android:layout_marginTop="16dp"
                     android:paddingBottom="24dp"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:background="@drawable/shape_recommend_about_me"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -334,6 +334,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
+                        android:visibility="gone"
                         app:layout_constraintTop_toBottomOf="@id/playVoice"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"

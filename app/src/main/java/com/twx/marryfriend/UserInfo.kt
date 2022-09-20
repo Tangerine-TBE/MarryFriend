@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.SPStaticUtils
+import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
@@ -13,6 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.random.Random
 
 object UserInfo {
     val userInfo=MutableLiveData<Data>()
@@ -24,7 +26,7 @@ object UserInfo {
     fun updateUserInfo(){
         val url="${Contents.USER_URL}/marryfriend/LoginRegister/getFive"
         val map= mapOf(
-            "user_id" to (UserInfo.getUserId()?:return?:return)
+            "user_id" to (UserInfo.getUserId()?:return)
         )
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
@@ -79,18 +81,21 @@ object UserInfo {
     }
     fun getHeadPortrait():String{
         return SPStaticUtils.getString(
-            Constant.ME_AVATAR,
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.touxiangzhan.com%2Fupload%2Fimage%2F6a3584291326n2706035469t26.jpg&refer=http%3A%2F%2Fimg.touxiangzhan.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1660122823&t=4b34ed46057ad1bdde5370d18c273ffa")
+            Constant.ME_AVATAR)
     }
     /**
      * 1：男
      * 2：女
      */
-    fun getUserSex():Int{
+    fun getOriginalUserSex():Int{
         if(BuildConfig.DEBUG){
             return 1//3,4,6,11,16//
         }
         return SPStaticUtils.getInt(Constant.ME_SEX, 2)
+    }
+
+    fun getUserSex():Sex{
+        return Sex.toSex(getOriginalUserSex())
     }
 
     fun isSexMail(c:Int?):Boolean{
@@ -102,7 +107,7 @@ object UserInfo {
     }
 
     fun getDefHeadImage():Int{
-        val sex= getUserSex()
+        val sex= getOriginalUserSex()
         return if (sex==1){
             R.drawable.ic_mine_male_default
         }else{
@@ -111,7 +116,7 @@ object UserInfo {
     }
 
     fun getReversedDefHeadImage():Int{
-        val sex= reversalSex(getUserSex())
+        val sex= reversalSex(getOriginalUserSex())
         return if (sex==1){
             R.drawable.ic_mine_male_default
         }else{
@@ -120,7 +125,7 @@ object UserInfo {
     }
 
     fun getReversedDefHelloHeadImage():Int{
-        val sex= reversalSex(getUserSex())
+        val sex= reversalSex(getOriginalUserSex())
         return if (sex==1){
             R.mipmap.ic_def_hello_male
         }else{

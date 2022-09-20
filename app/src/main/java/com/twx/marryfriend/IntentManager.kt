@@ -9,6 +9,7 @@ import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.guide.jumpInfo.JumpActivity
+import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
@@ -125,5 +126,13 @@ object IntentManager {
                     it.resume(null)
                 }
             })
+    }
+
+    fun getFocusIntent(context: Context):Intent{
+        return if (UserInfo.isVip()){
+            Intent(context, RecentFocusActivity::class.java)
+        }else{
+            getVipIntent(context)
+        }
     }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
+import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.xyzz.myutils.show.iLog
@@ -41,6 +42,9 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
     }
     private val likeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LikeViewModel::class.java)
+    }
+    private val coinInsufficientDialog by lazy {
+        ReChargeCoinDialog(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -94,7 +98,9 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
             lifecycleScope.launch {
                 loadingDialog.show()
                 try {
-                    recommendViewModel.superLike(it.guest_uid)
+                    recommendViewModel.superLike(it.guest_uid){
+                        coinInsufficientDialog.show(it.image_url)
+                    }
                     toast("送花成功")
                 }catch (e:Exception){
                     toast(e.message)

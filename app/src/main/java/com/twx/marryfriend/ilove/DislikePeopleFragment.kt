@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
+import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -37,6 +38,9 @@ class DislikePeopleFragment:Fragment(R.layout.fragment_dis_like_people) {
     }
     private val likeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LikeViewModel::class.java)
+    }
+    private val coinInsufficientDialog by lazy {
+        ReChargeCoinDialog(requireActivity())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,7 +80,9 @@ class DislikePeopleFragment:Fragment(R.layout.fragment_dis_like_people) {
             lifecycleScope.launch {
                 loadingDialog.show()
                 try {
-                    likeViewModel.superLike(it.guest_uid)
+                    likeViewModel.superLike(it.guest_uid){
+                        coinInsufficientDialog.show(it.image_url)
+                    }
                     likeViewModel.onSuperLikeChange(it)
                     toast("送花成功")
                 }catch (e:Exception){

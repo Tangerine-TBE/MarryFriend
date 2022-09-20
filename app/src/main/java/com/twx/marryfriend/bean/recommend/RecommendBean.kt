@@ -4,6 +4,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.enumeration.ConstellationEnum
+import com.twx.marryfriend.getAgeFromBirthday
 import com.twx.marryfriend.utils.TimeUtil
 import org.json.JSONArray
 import java.lang.IllegalStateException
@@ -189,6 +190,10 @@ data class RecommendBean(
     fun isSuperLike():Boolean{
         return base?.super_uid!=null
     }
+
+    fun isTaLikeMe():Boolean{
+        return base?.like_uid!=null
+    }
     /**
      * 头像
      */
@@ -209,8 +214,8 @@ data class RecommendBean(
     fun getNickname():String{
         return base?.nick?:""
     }
-    fun getAge():Int{
-        return base?.age?:0
+    fun getAge():Int?{
+        return base?.birthday?.getAgeFromBirthday()?:base?.age
     }
     fun isRealName():Boolean{
         return verify?.identity_status==1

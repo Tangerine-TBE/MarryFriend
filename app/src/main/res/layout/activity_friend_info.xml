@@ -51,13 +51,13 @@
                         android:layout_height="wrap_content">
                         <com.twx.marryfriend.recommend.widget.RecommendImage
                             android:id="@+id/recommendPhoto"
-                            android:scaleType="centerCrop"
+                            android:scaleType="fitXY"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             tools:visibility="visible"
-                            android:src="@drawable/ic_big_default_pic"
+                            tools:src="@drawable/default_head"
                             android:foreground="@drawable/shape_recommend_frame"
-                            app:layout_constraintDimensionRatio="347:428"
+                            app:layout_constraintDimensionRatio="347:347"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:layout_editor_absoluteX="-16dp" />
                         <androidx.appcompat.widget.LinearLayoutCompat
@@ -124,7 +124,7 @@
                                     android:layout_width="12dp"
                                     android:layout_height="11dp"/>
                                 <TextView
-                                    android:text="实名·真实头像"
+                                    android:text="实名认证"
                                     android:textColor="#FFFFFFFF"
                                     android:textSize="11dp"
                                     android:layout_width="wrap_content"
@@ -355,6 +355,7 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginStart="20dp"
                             android:layout_marginEnd="20dp"
+                            android:visibility="gone"
                             app:layout_constraintTop_toBottomOf="@id/playVoice"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
@@ -626,7 +627,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="18dp"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         android:background="@drawable/shape_recommend_about_me"
                         android:orientation="vertical">
                         <androidx.constraintlayout.widget.ConstraintLayout

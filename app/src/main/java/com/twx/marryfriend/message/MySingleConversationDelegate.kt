@@ -39,7 +39,11 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         super.onBindViewHolder(holder, position, bean)
         val item = bean?.info as? EMConversation?:return
         holder?:return
-
+        if (bean.isTop) {
+            holder.itemView.setBackgroundResource(com.hyphenate.easeui.R.drawable.ease_conversation_top_bg)
+        } else {
+            holder.itemView.background = ColorDrawable(Color.WHITE)
+        }
         val username = item.conversationId()
         val defaultAvatar=UserInfo.getReversedDefHeadImage()
 

@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.dialog_one_click_hello.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OneClickHelloDialog(context: Context,private val data:List<OneClickHelloItemBean>,private val sendAction:(List<OneClickHelloItemBean>?)->Unit):Dialog(context) {
+class OneClickHelloDialog constructor(context: Context,private val data:List<OneClickHelloItemBean>,private val sendAction:(List<OneClickHelloItemBean>?)->Unit):Dialog(context) {
     companion object{
         private const val ONE_CLICK_HELLO="one_click_hello"
         fun isSendHello():Boolean{

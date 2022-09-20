@@ -79,7 +79,7 @@ class RecommendViewModel():ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/commendList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "user_sex" to UserInfo.getUserSex().toString(),
+            "user_sex" to UserInfo.getOriginalUserSex().toString(),
             "province_code" to "9",
             "city_code" to "10")
         /**
@@ -300,7 +300,7 @@ class RecommendViewModel():ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/everydayLuckList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "user_sex" to UserInfo.getUserSex().toString())
+            "user_sex" to UserInfo.getOriginalUserSex().toString())
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -318,7 +318,7 @@ class RecommendViewModel():ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/oneClickHello"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "host_sex" to UserInfo.getUserSex().toString(),
+            "host_sex" to UserInfo.getOriginalUserSex().toString(),
             "uid_array" to list.map { it.user_id }.let { Gson().toJson(it) })
 
         NetworkUtil.sendPostSecret(url,map,{ response ->

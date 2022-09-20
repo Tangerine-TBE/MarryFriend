@@ -20,6 +20,7 @@ import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.createDialog
 import com.xyzz.myutils.show.toast
 
+//R.drawable.ease_default_avatar
 class ImChatActivity: ChatActivity() {
     companion object{
         private const val NICKNAME_KEY="nickname_key"

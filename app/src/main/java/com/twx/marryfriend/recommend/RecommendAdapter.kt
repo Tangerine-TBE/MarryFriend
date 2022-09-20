@@ -65,6 +65,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
     var likeAction:((RecommendBean, View)->Unit)?=null
     var superLikeAction:((RecommendBean, View)->Unit)?=null
     var reportAction:((RecommendBean)->Unit)?=null
+    var settingAction:((RecommendBean)->Unit)?=null
     var myLongitude:Double?=null
     var myLatitude:Double?=null
     private var currentPlayVoiceItem: RecommendBean?=null
@@ -140,7 +141,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                 distanceView.visibility=View.GONE
             }
             holder.getView<View>(R.id.itemSetting).setOnClickListener {
-                toast(it.context,"TODO 设置")
+                settingAction?.invoke(item)
             }
             Glide
                 .with(recommendPhoto)
@@ -396,6 +397,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         holder.getView<LifeView>(R.id.life_view).apply {
             if (position==0){
                 lifeView=this
+                lifeView?.refreshView(scope)
             }
             item.getLifePhoto().also {
                 if(position!=0){
