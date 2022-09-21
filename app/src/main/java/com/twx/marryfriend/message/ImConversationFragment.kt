@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultCallback
@@ -21,6 +22,8 @@ import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
+import com.twx.marryfriend.bean.vip.SVipGifEnum
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.databinding.FragmentImMessageBinding
 import com.twx.marryfriend.databinding.ItemMessageFollowBinding
 import com.twx.marryfriend.getUserExt
@@ -40,7 +43,6 @@ class ImConversationFragment: ConversationListFragment() {
     private val conversationsModel by lazy {
         ConversationsModel()
     }
-    private var dataBinding: FragmentImMessageBinding?=null
 
     private val loadingDialog by lazy {
         LoadingDialogManager
@@ -50,15 +52,14 @@ class ImConversationFragment: ConversationListFragment() {
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
-        dataBinding=DataBindingUtil.inflate<FragmentImMessageBinding>(LayoutInflater.from(requireContext()),R.layout.fragment_im_message,llRoot,false)
-        dataBinding?.lifecycleOwner=this
-        llRoot.addView(dataBinding?.root, 0)
+        llRoot.addView(LayoutInflater.from(requireContext()).inflate(R.layout.fragment_im_message,llRoot,false), 0)
+
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
-        dataBinding?.conversationsModel=conversationsModel
     }
 
     /**
      * 会话适配器
+     * ConversationViewModel#getFriendsInfo 用户信息接口
      */
     override fun getConversationDelegate(): EaseAdapterDelegate<*, *> {
         return MySingleConversationDelegate()
@@ -67,7 +68,7 @@ class ImConversationFragment: ConversationListFragment() {
 
      override fun initListener(){
          super.initListener()
-        mutualLike.setOnClickListener {
+         mutualLikeView.setOnClickListener {
             startActivity(Intent(requireContext(), MutualLikeActivity::class.java))
         }
     }
@@ -103,9 +104,14 @@ class ImConversationFragment: ConversationListFragment() {
             }
         })
     override fun toChatActivity(item: EMConversation) {
-        val isRealName=EaseIM.getInstance().userProvider.getUser(item.conversationId()).getUserExt()?.isRealName?:false
-//        startActivity(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
-        startActivityForResult.launch(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
+        val imUserInfo=EaseIM.getInstance().userProvider.getUser(item.conversationId())
+        val ext=imUserInfo.getUserExt()
+        if (UserInfo.isVip()||ext?.isSuperVip==true||ext?.isMutualLike==true){
+            val isRealName=ext?.isRealName?:false
+            startActivityForResult.launch(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
+        }else{
+            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Inbox))
+        }
     }
 
     override fun onResume() {
@@ -123,6 +129,39 @@ class ImConversationFragment: ConversationListFragment() {
                 val mutualLike=viewModel.getMutualLike()
                 conversationsModel.laterLikeCount = mutualLike.total?:0
                 conversationsModel.list = mutualLike.list
+
+                mutualLikeView.visibility=if (!conversationsModel.list.isNullOrEmpty()){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
+                laterLikeCountView.text=conversationsModel.laterLikeCount.toString()
+
+                mutualLikeView1.visibility=if (conversationsModel.imageHead1!=null){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
+                mutualLikeView2.visibility=if (conversationsModel.imageHead2!=null){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
+                mutualLikeView3.visibility=if (conversationsModel.imageHead3!=null){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
+                mutualLikeView4.visibility=if (conversationsModel.imageHead4!=null){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
+                mutualLikeView5.visibility=if (conversationsModel.imageHead5!=null){
+                    View.VISIBLE
+                }else{
+                    View.GONE
+                }
                 Glide.with(mutualLikeHead1)
                     .load(conversationsModel.imageHead1)
                     .error(UserInfo.getReversedDefHeadImage())
@@ -136,19 +175,19 @@ class ImConversationFragment: ConversationListFragment() {
                     .into(mutualLikeHead2)
 
                 Glide.with(mutualLikeHead3)
-                    .load(conversationsModel.imageHead1)
+                    .load(conversationsModel.imageHead3)
                     .error(UserInfo.getReversedDefHeadImage())
                     .placeholder(UserInfo.getReversedDefHeadImage())
                     .into(mutualLikeHead3)
 
                 Glide.with(mutualLikeHead4)
-                    .load(conversationsModel.imageHead1)
+                    .load(conversationsModel.imageHead4)
                     .error(UserInfo.getReversedDefHeadImage())
                     .placeholder(UserInfo.getReversedDefHeadImage())
                     .into(mutualLikeHead4)
 
                 Glide.with(mutualLikeHead5)
-                    .load(conversationsModel.imageHead1)
+                    .load(conversationsModel.imageHead5)
                     .error(UserInfo.getReversedDefHeadImage())
                     .placeholder(UserInfo.getReversedDefHeadImage())
                     .into(mutualLikeHead5)
@@ -179,17 +218,7 @@ class ImConversationFragment: ConversationListFragment() {
 
                         override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
                             followHolder=holder
-                            holder.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
-                            holder.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
-                            val imageView=holder.getView<ImageView>(R.id.messageHead)
-                            Glide.with(imageView)
-                                .load(result.second)
-                                .error(UserInfo.getReversedDefHeadImage())
-                                .placeholder(UserInfo.getReversedDefHeadImage())
-                                .into(imageView)
-                            holder.itemView.setOnClickListener {
-                                it.context.startActivity(IntentManager.getFocusIntent(it.context))
-                            }
+                            holder.bindView(result)
                         }
 
                         override fun getItemCount(): Int {
@@ -198,15 +227,27 @@ class ImConversationFragment: ConversationListFragment() {
 
                     })
                 }
-                followHolder?.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
-                followHolder?.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
-                val imageView=followHolder?.getView<ImageView>(R.id.messageHead)?:return@launch
-                Glide.with(imageView)
-                    .load(result.second)
-                    .error(UserInfo.getReversedDefHeadImage())
-                    .placeholder(UserInfo.getReversedDefHeadImage())
-                    .into(imageView)
+                followHolder?.bindView(result)
             }
         }
     }
+
+    private fun BaseViewHolder.bindView(result:Pair<Int,String>){
+        this.setText(R.id.messageUserNickname,result.first.toString()+"人关注了我")
+        this.setImage(R.id.messageHead,UserInfo.getReversedDefHeadImage())
+        val imageView=this.getView<ImageView>(R.id.messageHead)
+        Glide.with(imageView)
+            .load(result.second)
+            .error(UserInfo.getReversedDefHeadImage())
+            .placeholder(UserInfo.getReversedDefHeadImage())
+            .into(imageView)
+        this.itemView.setOnClickListener {
+            if (UserInfo.isVip()){
+                it.context.startActivity(IntentManager.getFocusIntent(it.context))
+            }else{
+                it.context.startActivity(IntentManager.getSuperVipIntent(it.context, sVipGifEnum = SVipGifEnum.FocusMe))
+            }
+        }
+    }
+
 }

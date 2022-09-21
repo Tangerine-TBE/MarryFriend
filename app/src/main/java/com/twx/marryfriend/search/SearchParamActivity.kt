@@ -9,6 +9,7 @@ import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
 import com.twx.marryfriend.bean.post.OccupationDataBean
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.*
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -469,14 +470,14 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             if (!searchViewModel.isNeedVip()){
                 startActivity(SearchResultActivity.getIntent(this@SearchParamActivity,searchViewModel.getParameter()))
             }else{
-                startActivity(IntentManager.getVipIntent(this))
+                startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Search))
             }
         }
         accurateSearch.setOnClickListener {
             startActivity(Intent(this,AccurateSearchActivity::class.java))
         }
         gotoOpenVip.setOnClickListener {
-            startActivity(IntentManager.getVipIntent(this))
+            startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Search))
         }
     }
 
@@ -484,7 +485,7 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
         val result=UserInfo.isVip()
         if (!result){
             toast("开通会员即可使用高级搜索")
-            startActivity(IntentManager.getVipIntent(this))
+            startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Search))
         }
         return !result
     }

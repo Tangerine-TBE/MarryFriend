@@ -19,11 +19,9 @@ import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
-import com.twx.marryfriend.BuildConfig
-import com.twx.marryfriend.IntentManager
-import com.twx.marryfriend.R
-import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.friend.FriendInfoViewModel
@@ -98,7 +96,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 recommendAdapter.notifyDataSetChanged()
                 openVip()
             }else{
-                if (showUploadHeadDialog()){
+                if (uploadHeadDialog.showUploadHeadDialog()){
                     recommendAdapter.notifyDataSetChanged()
                 }else{
                     val e=recommendAdapter.removeAt(0)
@@ -253,17 +251,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
     private fun initListener(){
         recommendSetting.setOnClickListener {
-            if(!showUploadHeadDialog()){
-                startActivity(Intent(requireContext(),ILikeActivity::class.java))
-            }
+            startActivity(Intent(requireContext(),ILikeActivity::class.java))
         }
         swipeRefreshLayout.setOnRefreshListener {
             loadData()
         }
         heartbeat.setOnClickListener {
-            if(!showUploadHeadDialog()){
-                startActivity(Intent(requireContext(),SearchParamActivity::class.java))
-            }
+            startActivity(Intent(requireContext(),SearchParamActivity::class.java))
         }
         recommendAdapter.openLocationPermissionAction={
             XXPermissions.with(this)
@@ -288,7 +282,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 })
         }
         recommendAdapter.superLikeAction={item,view->
-            if(!showUploadHeadDialog()){
+            if(!uploadHeadDialog.showUploadHeadDialog()){
                 superLike(item){
                     view
                         .animate()
@@ -332,7 +326,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendAdapter.likeAction={item,view->
             if (recommendViewModel.haveMoreRecommend.value==false){
                 openVip()
-            }else if(showUploadHeadDialog()){
+            }else if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
                 view
@@ -375,7 +369,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendAdapter.disLikeAction={item,view->
             if (recommendViewModel.haveMoreRecommend.value==false){
                 openVip()
-            }else if(showUploadHeadDialog()){
+            }else if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
                 view
@@ -416,8 +410,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }
         recommendAdapter.reportAction={
-            IntentManager.getReportIntent(requireContext(),it.getId())
-            toast("举报:${it.getId()}")
+            startActivity(IntentManager.getReportIntent(requireContext(),it.getId()))
+        }
+        recommendAdapter.blacklistAction={
+            toast("黑名单")
         }
         recommendAdapter.settingAction={
             settingDialog(it)
@@ -471,9 +467,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 }
             }
 
-            it.setReportListener { //举报
-                toast("举报")
-            }
+            it.setReportId (userItem.getId())
         }.show()
     }
 
@@ -507,15 +501,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 toast(e.message)
             }
             loadingDialog.dismiss()
-        }
-    }
-
-    private fun showUploadHeadDialog():Boolean{
-        return if (!UserInfo.isHaveHeadImage()){
-            uploadHeadDialog.show()
-            true
-        }else{
-            false
         }
     }
 
@@ -578,16 +563,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun openVip(){
-        startActivity(IntentManager.getVipIntent(requireContext()))
-//        AlertDialog.Builder(requireContext())
-//            .setMessage("需要开通会员解锁更多")
-//            .setPositiveButton("去开通"){_,_->
-//                startActivity(IntentManager.getVipIntent(requireContext()))
-//            }
-//            .setNegativeButton("取消"){_,_->
-//
-//            }
-//            .show()
+        startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Like))
     }
 
     enum class ViewType{

@@ -9,7 +9,7 @@ object ImUserInfoService {
     class ImUserInfo(val userId:String,val nickname:String?=null,val avatar:String?=null,val ext:Ext?=null){
 
     }
-    data class Ext(val age:Int = 0,
+    data class Ext constructor(val age:Int = 0,
                    val isRealName:Boolean = false,
                    val isVip:Boolean=false,
                    val isSuperVip:Boolean=false,

@@ -1,17 +1,13 @@
 package com.twx.marryfriend.message.model
 
-import androidx.databinding.BaseObservable
 import com.twx.marryfriend.bean.message.mutual.MutualLikeData
 
-class ConversationsModel:BaseObservable() {
+class ConversationsModel {
 //    val laterLike= ObservableField<List<String>>()
     var laterLikeCount=0
-    set(value) {
-        field=value
-        notifyChange()
-    }
     var list: List<MutualLikeData>? = null
-        set(value) {
+        set(v) {
+            val value=v?.filter { it.image_url!=null }
             if (value==null){
 
             }else{
@@ -48,7 +44,6 @@ class ConversationsModel:BaseObservable() {
             }
 
             field=value
-            notifyChange()
         }
 
     var imageHead1:String?=null

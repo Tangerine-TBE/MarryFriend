@@ -12,8 +12,10 @@ import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
+import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.recommend.RecommendViewModel
+import com.twx.marryfriend.showUploadHeadDialog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
@@ -45,6 +47,9 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
     }
     private val coinInsufficientDialog by lazy {
         ReChargeCoinDialog(requireActivity())
+    }
+    private val uploadHeadDialog by lazy {
+        UploadHeadDialog(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,18 +100,21 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
             toast("聊天")
         }
         likeAdapter.sendFlowerAction={
-            lifecycleScope.launch {
-                loadingDialog.show()
-                try {
-                    recommendViewModel.superLike(it.guest_uid){
-                        coinInsufficientDialog.show(it.image_url)
+            if (!uploadHeadDialog.showUploadHeadDialog()){
+                lifecycleScope.launch {
+                    loadingDialog.show()
+                    try {
+                        recommendViewModel.superLike(it.guest_uid){
+                            coinInsufficientDialog.show(it.image_url)
+                        }
+                        toast("送花成功")
+                    }catch (e:Exception){
+                        toast(e.message)
                     }
-                    toast("送花成功")
-                }catch (e:Exception){
-                    toast(e.message)
+                    loadingDialog.dismiss()
                 }
-                loadingDialog.dismiss()
             }
+
         }
         likeViewModel.addSuperLikeChangeListener {
             loadData()

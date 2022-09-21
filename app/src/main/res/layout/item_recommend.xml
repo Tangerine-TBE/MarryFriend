@@ -199,7 +199,7 @@
                 <!--关于我-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/selfIntroduction"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
@@ -241,21 +241,42 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"/>
                     </FrameLayout>
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_marginTop="30dp"
+                </androidx.appcompat.widget.LinearLayoutCompat>
+<!--                我心中的TA-->
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/expectedTA"
+                    tools:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="26dp"
+                    android:background="@drawable/shape_recommend_about_me"
+                    android:orientation="vertical">
+                    <TextView
+                        android:text="[我心目中的Ta]"
+                        android:textColor="#FF0D0D0D"
+                        android:textSize="15sp"
+                        android:lineSpacingExtra="4dp"
+                        android:letterSpacing="0.25"
+                        android:layout_marginTop="27dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <FrameLayout
+                        android:layout_marginTop="16dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:id="@+id/aboutMePhoto"
-                            android:scaleType="centerCrop"
-                            app:shapeAppearance="@style/roundedCornerStyle"
-                            tools:visibility="gone"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintDimensionRatio="319:148"
+                        <TextView
+                            android:id="@+id/expectedTAText"
+                            android:textColor="#FF101010"
+                            android:textSize="15sp"
+                            android:lineSpacingExtra="4dp"
+                            android:letterSpacing="0.25"
+                            tools:text="幽默大方，体贴善良有趣，性格的话比较温顺逗比包开心辣种事业上有自己的规划，不钓鱼！不钓鱼！不钓鱼！不钓鱼！不钓鱼！不钓鱼！不钓鱼！不钓鱼！"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"/>
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                            android:layout_height="wrap_content"/>
+                    </FrameLayout>
                 </androidx.appcompat.widget.LinearLayoutCompat>
                 <!--语音介绍-->
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -726,15 +747,35 @@
                         android:padding="10dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-                    <TextView
-                        android:id="@+id/report"
-                        android:text="屏蔽 / 举报"
-                        android:textColor="#FF9A9A9A"
-                        android:textSize="13sp"
-                        android:layout_gravity="center_horizontal"
-                        android:padding="@dimen/adaptive_10dp"
+                    <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/blacklist"
+                            android:text="屏蔽"
+                            android:textColor="#FF9A9A9A"
+                            android:textSize="13sp"
+                            android:padding="@dimen/adaptive_10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:text=" / "
+                            android:textColor="#FF9A9A9A"
+                            android:textSize="13sp"
+                            android:padding="@dimen/adaptive_10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                        <TextView
+                            android:id="@+id/report"
+                            android:text="举报"
+                            android:textColor="#FF9A9A9A"
+                            android:textSize="13sp"
+                            android:padding="@dimen/adaptive_10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
             <ImageView

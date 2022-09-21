@@ -1,14 +1,8 @@
 package com.twx.marryfriend.recommend
 
 import android.Manifest
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.AnimationDrawable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,9 +25,7 @@ import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
-import com.xyzz.myutils.setExpandableText
 import com.xyzz.myutils.show.iLog
-import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.item_recommend.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -65,6 +57,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
     var likeAction:((RecommendBean, View)->Unit)?=null
     var superLikeAction:((RecommendBean, View)->Unit)?=null
     var reportAction:((RecommendBean)->Unit)?=null
+    var blacklistAction:((RecommendBean)->Unit)?=null
     var settingAction:((RecommendBean)->Unit)?=null
     var myLongitude:Double?=null
     var myLatitude:Double?=null
@@ -110,6 +103,9 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         holder.setText(R.id.userId,"用户ID:${item.getId()}")
         holder.getView<View>(R.id.report).setOnClickListener {
             reportAction?.invoke(item)
+        }
+        holder.getView<View>(R.id.blacklist).setOnClickListener {
+            blacklistAction?.invoke(item)
         }
 
         //简介模块
@@ -169,17 +165,14 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         //关于我
         holder.getView<View>(R.id.selfIntroduction).apply {
             val stringBuilder=StringBuilder()
-            if (item.getAboutMeLife().isNotBlank()){
-                stringBuilder.append(item.getAboutMeLife()+"\n\n")
+            if (!item.getAboutMe().isNullOrBlank()){
+                stringBuilder.append(item.getAboutMe()+"\n\n")
             }
-            if (item.getAboutMeWork().isNotBlank()){
-                stringBuilder.append(item.getAboutMeWork()+"\n\n")
-            }
-            if (item.getAboutMeHobby().isNotBlank()){
+            if (!item.getAboutMeHobby().isNullOrBlank()){
                 stringBuilder.append(item.getAboutMeHobby())
             }
             stringBuilder.toString().also { text->
-                if (text.isNullOrBlank()&&item.getAboutMePhoto().isNullOrBlank()){
+                if (text.isBlank()){
                     this.visibility=View.GONE
                     return@apply
                 }else{
@@ -188,23 +181,22 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                 holder.getView<TextView>(R.id.aboutMe).also { textView ->
                     if (text.isNotBlank()){
                         textView.visibility=View.VISIBLE
-                        textView.setExpandableText(text, 3, "查看更多>", "收起")
+                        textView.text=text
+//                        textView.setExpandableText(text, 3, "查看更多>", "收起")
                     }else{
                         textView.visibility=View.GONE
                     }
                 }
             }
-            holder.getView<ImageView>(R.id.aboutMePhoto).also {
-                if (position!=0){
-                    it.setImageBitmap(null)
+        }
+        //我心中的TA
+        holder.getView<View>(R.id.expectedTA).apply {
+            item.getExpectedTa().also {
+                if(it.isNullOrBlank()){
+                    this.visibility=View.GONE
                 }else{
-
-                }
-                if (item.getAboutMePhoto().isNullOrBlank()){
-                    it.visibility=View.GONE
-                }else{
-                    it.visibility=View.VISIBLE
-                    Glide.with(it).load(item.getAboutMePhoto()).placeholder(R.drawable.ic_big_default_pic).into(it)
+                    this.visibility=View.VISIBLE
+                    holder.setText(R.id.expectedTAText,it)
                 }
             }
         }

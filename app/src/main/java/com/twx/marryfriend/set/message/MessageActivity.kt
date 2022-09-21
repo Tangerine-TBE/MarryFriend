@@ -3,6 +3,7 @@ package com.twx.marryfriend.set.message
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
+import com.hyphenate.easeim.section.me.activity.MessageReceiveSetActivity
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.set.MessageSwitchBean
@@ -149,6 +150,7 @@ class MessageActivity : MainBaseViewActivity() {
                         mBottomList[1].switch = !mBottomList[1].switch
                         SPStaticUtils.put(Constant.MESSAGE_TIP, mBottomList[1].switch)
                         adapter2.notifyDataSetChanged()
+                        MessageReceiveSetActivity.actionStart(this@MessageActivity)
                     }
                     2 -> {
                         mBottomList[2].switch = !mBottomList[2].switch

@@ -12,8 +12,10 @@ import com.kingja.loadsir.core.LoadSir
 import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
+import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.recommend.RecommendViewModel
+import com.twx.marryfriend.showUploadHeadDialog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
@@ -45,6 +47,9 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
     }
     private val coinInsufficientDialog by lazy {
         ReChargeCoinDialog(requireActivity())
+    }
+    private val uploadHeadDialog by lazy {
+        UploadHeadDialog(requireContext())
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,19 +86,21 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
             closeView.visibility=View.GONE
         }
         likeAdapter.sendFlowerAction={
-            lifecycleScope.launch {
-                loadingDialog.show()
-                try {
-                    recommendViewModel.superLike(it.guest_uid){
-                        coinInsufficientDialog.show(it.image_url)
+            if (!uploadHeadDialog.showUploadHeadDialog()){
+                lifecycleScope.launch {
+                    loadingDialog.show()
+                    try {
+                        recommendViewModel.superLike(it.guest_uid){
+                            coinInsufficientDialog.show(it.image_url)
+                        }
+                        likeViewModel.onSuperLikeChange(it)
+                        toast("送花成功")
+                    }catch (e:Exception){
+                        toast(e.message)
                     }
-                    likeViewModel.onSuperLikeChange(it)
-                    toast("送花成功")
-                }catch (e:Exception){
-                    toast(e.message)
+                    loadingDialog.dismiss()
+                    loadData()
                 }
-                loadingDialog.dismiss()
-                loadData()
             }
         }
         likeAdapter.itemAction={

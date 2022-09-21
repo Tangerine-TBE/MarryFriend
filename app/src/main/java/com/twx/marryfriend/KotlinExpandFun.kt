@@ -6,6 +6,8 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.core.content.FileProvider
+import com.twx.marryfriend.dialog.UploadHeadDialog
+import com.xyzz.myutils.show.wLog
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,5 +59,30 @@ fun String.getAgeFromBirthday():Int?{
         }else{
             it-1
         }
+    }
+}
+
+private val simpleDateFormat by lazy {
+    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
+}
+/**
+ * 将 yyyy-MM-dd HH:mm:ss
+ * 转换为 long类型
+ */
+fun String.textTimeToTimeInMillis():Long?{
+    return try {
+        simpleDateFormat.parse(this)?.time
+    }catch (e:Exception){
+        wLog(e.stackTraceToString())
+        null
+    }
+}
+
+fun UploadHeadDialog.showUploadHeadDialog():Boolean{
+    return if (!UserInfo.isHaveHeadImage()){
+        this.show()
+        true
+    }else{
+        false
     }
 }

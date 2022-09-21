@@ -20,14 +20,13 @@ import com.google.android.material.chip.Chip
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import com.twx.marryfriend.BuildConfig
-import com.twx.marryfriend.IntentManager
-import com.twx.marryfriend.R
-import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.*
+import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
+import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendViewModel
@@ -121,14 +120,15 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 }
             }
 
-            it.setReportListener { //举报
-                toast("举报")
-            }
+            it.setReportId (userItem?.getId()?:return@also )
         }
     }
     private var userItem: RecommendBean?=null
     private val coinInsufficientDialog by lazy {
         ReChargeCoinDialog(this)
+    }
+    private val uploadHeadDialog by lazy {
+        UploadHeadDialog(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -183,8 +183,10 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             userIdText.text="用户ID:${item.getId()}"
             report.setOnClickListener {
-                IntentManager.getReportIntent(this@FriendInfoActivity,item.getId())
-                toast(item.getId().toString())
+                startActivity(IntentManager.getReportIntent(this@FriendInfoActivity,item.getId()))
+            }
+            blacklist.setOnClickListener {
+                toast("黑名单")
             }
             //简介模块
             briefIntroduction.apply {
@@ -226,17 +228,14 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             //关于我
             selfIntroduction.apply {
                 val stringBuilder=StringBuilder()
-                if (item.getAboutMeLife().isNotBlank()){
-                    stringBuilder.append(item.getAboutMeLife()+"\n\n")
+                if (!item.getAboutMe().isNullOrBlank()){
+                    stringBuilder.append(item.getAboutMe()+"\n\n")
                 }
-                if (item.getAboutMeWork().isNotBlank()){
-                    stringBuilder.append(item.getAboutMeWork()+"\n\n")
-                }
-                if (item.getAboutMeHobby().isNotBlank()){
+                if (!item.getAboutMeHobby().isNullOrBlank()){
                     stringBuilder.append(item.getAboutMeHobby())
                 }
                 stringBuilder.toString().also { text->
-                    if (text.isNullOrBlank()&&item.getAboutMePhoto().isNullOrBlank()){
+                    if (text.isBlank()){
                         this.visibility=View.GONE
                         return@apply
                     }else{
@@ -249,11 +248,16 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                         aboutMe.visibility=View.GONE
                     }
                 }
-                if (item.getAboutMePhoto().isNullOrBlank()){
-                    aboutMePhoto.visibility=View.GONE
-                }else{
-                    aboutMePhoto.visibility=View.VISIBLE
-                    Glide.with(aboutMePhoto).load(item.getAboutMePhoto()).placeholder(R.drawable.ic_big_default_pic).into(aboutMePhoto)
+            }
+            //我心中的TA
+            expectedTA.apply {
+                item.getExpectedTa().also {
+                    if(it.isNullOrBlank()){
+                        this.visibility=View.GONE
+                    }else{
+                        this.visibility=View.VISIBLE
+                        expectedTAText.text=(it)
+                    }
                 }
             }
             //语音介绍
@@ -508,9 +512,15 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             care.isSelected=(userItem?.isLike()?:false)
             care2.isSelected=(userItem?.isLike()?:false)
             sendFlowers.setOnClickListener {
+                if (uploadHeadDialog.showUploadHeadDialog()){
+                    return@setOnClickListener
+                }
                 superLike(userItem?:return@setOnClickListener)
             }
             care.setOnClickListener {
+                if (uploadHeadDialog.showUploadHeadDialog()){
+                    return@setOnClickListener
+                }
                 if (it.isSelected){
                     toast("已经喜欢过了")
                     return@setOnClickListener
@@ -518,16 +528,28 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 like(userItem?:return@setOnClickListener)
             }
             dislike.setOnClickListener {
+                if (uploadHeadDialog.showUploadHeadDialog()){
+                    return@setOnClickListener
+                }
                 disLike(userItem?:return@setOnClickListener)
             }
 
             sendFlowers2.setOnClickListener {
+                if (uploadHeadDialog.showUploadHeadDialog()){
+                    return@setOnClickListener
+                }
                 sendFlowers.performClick()
             }
             care2.setOnClickListener {
+                if (uploadHeadDialog.showUploadHeadDialog()){
+                    return@setOnClickListener
+                }
                 care.performClick()
             }
             dislike2.setOnClickListener {
+                if (uploadHeadDialog.showUploadHeadDialog()){
+                    return@setOnClickListener
+                }
                 dislike.performClick()
             }
         }
@@ -573,8 +595,8 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     if (friendViewSwitcher.currentView!=mutualLike){
                         friendViewSwitcher.showNext()
                         Glide.with(taHead).load(item.getHeadImg())
-                            .placeholder(UserInfo.getUserSex().reversal().smallHead)
-                            .placeholder(UserInfo.getUserSex().reversal().smallHead).into(taHead)
+                            .placeholder(item.getUserSex().smallHead)
+                            .placeholder(item.getUserSex().smallHead).into(taHead)
                     }
                 })
                 care.isSelected=true

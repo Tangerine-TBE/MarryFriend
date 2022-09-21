@@ -399,12 +399,9 @@ class DemoHelper private constructor() {
          */
         val builder = EMPushConfig.Builder(context)
         builder.enableVivoPush() // 需要在AndroidManifest.xml中配置appId和appKey
-            .enableMeiZuPush("134952", "f00e7e8499a549e09731a60a4da399e3")
-            .enableMiPush("2882303761517426801", "5381742660801")
-            .enableOppoPush(
-                "0bb597c5e9234f3ab9f821adbeceecdb",
-                "cd93056d03e1418eaa6c3faf10fd7537"
-            )
+            .enableMeiZuPush("149579", "e1bccfc8ccde4d23acc9aa979ab5e3cb")//已配
+            .enableMiPush("2882303761520176390", "fMX8N2t7qtx+q80Ei0PVQQ==")//已配
+            .enableOppoPush("ddfbd322e5f84b9f9518011417970964", "0dd23bca2294417ea0f49d822dc8df29")//已配
             .enableHWPush() // 需要在AndroidManifest.xml中配置appId
             .enableFCM("782795210914")
         options.pushConfig = builder.build()

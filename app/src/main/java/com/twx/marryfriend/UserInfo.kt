@@ -155,7 +155,8 @@ object UserInfo {
         return SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)
     }
     fun isHaveHeadImage():Boolean{
-        return !SPStaticUtils.getString(Constant.ME_AVATAR).isNullOrBlank()
+        return !SPStaticUtils.getString(Constant.ME_AVATAR).isNullOrBlank()||
+                !SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT).isNullOrBlank()
     }
     fun isFillInHobby():Boolean{//爱好
         return !SPStaticUtils.getString(Constant.ME_HOBBY).isNullOrBlank()

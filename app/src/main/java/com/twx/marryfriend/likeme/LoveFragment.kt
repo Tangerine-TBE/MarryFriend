@@ -10,6 +10,7 @@ import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -103,7 +104,7 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
         }
         liveAdapter.itemAction = {
             if (!UserInfo.isVip()) {
-                startActivity(IntentManager.getVipIntent(requireContext()))
+                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Inbox))
             } else {
                 startActivity(FriendInfoActivity.getIntent(requireContext(),
                     it.host_uid,

@@ -12,6 +12,7 @@ import com.google.android.material.chip.ChipGroup
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
+import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.search.SearchResultItem
 import com.xyzz.myutils.show.toast
 
@@ -44,7 +45,7 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         holder.setText(R.id.searchItemName,item.nick?:"")
         Glide.with(holder.itemView)
             .load(item.getHeadImage())
-            .placeholder(UserInfo.getReversedDefHeadImage())
+            .placeholder(Sex.toSex(item.user_sex).smallHead)
             .into(holder.getView(R.id.searchItemHead))
         if (!item.isRealName()){
             holder.getView<View>(R.id.searchItemRealInfo).visibility=View.GONE

@@ -34,10 +34,6 @@ class ImChatActivity: ChatActivity() {
          * @param isRealName 是否实名
          */
         fun getIntent(context: Context, conversationId: String, nickname:String?=null, headImage:String?=null, isRealName:Boolean?=null): Intent {
-            if (!UserInfo.isVip()){
-                return VipActivity.getVipIntent(context,conversationId.toIntOrNull())
-            }
-
             val intent= Intent(context,ImChatActivity::class.java)
             intent.putExtra(EaseConstant.EXTRA_CONVERSATION_ID,conversationId)
             intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE)

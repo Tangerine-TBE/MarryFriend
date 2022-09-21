@@ -1,5 +1,7 @@
 package com.twx.marryfriend.bean.message
 
+import com.twx.marryfriend.textTimeToTimeInMillis
+
 data class FriendInfo(
 //    var id: Int? = null,
     var user_id: Int? = null,
@@ -43,11 +45,11 @@ data class FriendInfo(
     var identity_status: Int? = null
 ){
     fun isVip():Boolean{
-        return level_low!=null
+        return (close_time_low?.textTimeToTimeInMillis()?:0L)>System.currentTimeMillis()
     }
 
     fun isSuperVip():Boolean{
-        return level_high!=null
+        return (close_time_high?.textTimeToTimeInMillis()?:0L)>System.currentTimeMillis()
     }
 
     fun isRealName():Boolean{

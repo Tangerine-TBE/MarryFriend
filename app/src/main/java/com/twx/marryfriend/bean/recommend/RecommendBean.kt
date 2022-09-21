@@ -5,7 +5,6 @@ import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.enumeration.ConstellationEnum
 import com.twx.marryfriend.getAgeFromBirthday
-import com.twx.marryfriend.utils.TimeUtil
 import org.json.JSONArray
 import java.lang.IllegalStateException
 import java.text.NumberFormat
@@ -236,20 +235,14 @@ data class RecommendBean(
     fun isVip():Boolean{
         return (vip_info?.level?:0)>0
     }
-    fun getAboutMeLife():String{
-        return base?.introduce_self?:""
+    fun getAboutMe():String?{
+        return base?.introduce_self
     }
-    fun getAboutMeWork():String{
-        return base?.daily_hobbies?:""
+    fun getAboutMeHobby():String?{
+        return base?.daily_hobbies
     }
-    fun getAboutMeHobby():String{
-        return base?.ta_in_my_mind?:""
-    }
-    fun getAboutMeThreeOutlooks():String{
-        return base?.ta_in_my_mind?:""
-    }
-    fun getAboutMePhoto():String?{
-        return photos?.find { it.kind==2 }?.image_url
+    fun getExpectedTa():String?{
+        return base?.ta_in_my_mind
     }
     fun getLifePhoto():List<Photo>{
         return photos?.filter { /*it.kind == 3*/true }?: emptyList()
@@ -797,7 +790,9 @@ data class RecommendBean(
         }
 
         fun getAge(birthday: String?): Label? {
-            return "${birthday?.let { TimeUtil.birthdayToAge(it) }}岁".toLabel(R.mipmap.ic_label_age)
+            return birthday?.getAgeFromBirthday()?.let {
+                "${it}岁"
+            }?.toLabel(R.mipmap.ic_label_age)
         }
     }
 
