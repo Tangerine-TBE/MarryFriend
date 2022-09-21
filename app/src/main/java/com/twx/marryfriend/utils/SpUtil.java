@@ -108,11 +108,7 @@ public class SpUtil {
 
     // 删除本地存储信息
     public static void deleteUserInfo() {
-        SPStaticUtils.put(Constant.USER_IS_LOGIN, false);
-        SPStaticUtils.put(Constant.USER_ID, "");
-        SPStaticUtils.put(Constant.USER_VIP_LEVEL, 0);
-        SPStaticUtils.put(Constant.USER_VIP_TIME, "");
-        SPStaticUtils.put(Constant.USER_ACCOUNT, "");
+        SPStaticUtils.clear();
     }
 
 

@@ -152,13 +152,13 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
 
     override fun onItemClick(v: View?, position: Int) {
 
-        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
-            startActivity(context?.let { VipActivity.getVipIntent(it) })
-        } else {
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 2) {
             startActivity(context?.let {
                 FriendInfoActivity.getIntent(it,
                     mList[position].host_uid)
             })
+        } else {
+            startActivity(context?.let { VipActivity.getSVipIntent(it) })
         }
 
     }

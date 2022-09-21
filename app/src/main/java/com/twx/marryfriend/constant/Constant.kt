@@ -360,4 +360,10 @@ object Constant {
     const val GREET_TIP = "greet_tip"                      // 打招呼(收到超级喜欢、超级消息提醒)
 
 
+
+    // 外部SDK常量
+
+    const val DEVICE_TOKEN = "device_Token"
+
+
 }

@@ -206,6 +206,9 @@ object Contents {
     // 投诉举报其它人
     const val DO_REPORT_OTHER = "MemberCharge/uploadComplaint"
 
+    // 修改友盟token
+    const val DO_UPDATE_TOKEN = "MemberCharge/updateToken"
+
     // 屏蔽列表
     const val GET_BLACK_LIST = "TrendsNotice/blockSessionList"
 
@@ -369,6 +372,7 @@ object Contents {
     const val CONTENT_TEXT = "content_text"   // 反馈内容
     const val CONTACT_1 = "contact_1"   // 联系方式一
     const val CONTACT_2 = "contact_2"   // 联系方式二
+    const val IMAGES_URL = "images_url"   // 图片地址一
     const val IMAGE_1 = "image_1"   // 图片地址一
     const val IMAGE_2 = "image_2"   // 图片地址二
     const val IMAGE_3 = "image_3"   // 图片地址一
@@ -383,6 +387,9 @@ object Contents {
     const val BUY_ORDER_NUMBER = "buy_order_number" // 订单号
     const val FEE = "fee" // 金额
     const val BODY = "body" // 描述
+
+
+    const val UMENG_TOKEN = "token" // 友盟token
 
 
     // ------------------------------------ 外部的api ------------------------------------

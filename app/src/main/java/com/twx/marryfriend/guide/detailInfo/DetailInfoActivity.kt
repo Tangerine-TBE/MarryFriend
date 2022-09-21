@@ -1435,7 +1435,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 }
 
-                if (s.length == 1000) {
+                if (s.length == 100) {
                     ToastUtils.showShort("已达到输入文字最大数量")
                     KeyboardUtils.hideSoftInput(this@DetailInfoActivity)
                 }
@@ -1470,7 +1470,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }
 
 
-                if (s.length == 1000) {
+                if (s.length == 100) {
                     ToastUtils.showShort("已达到输入文字最大数量")
                     KeyboardUtils.hideSoftInput(this@DetailInfoActivity)
                 }
@@ -1506,9 +1506,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }
 
 
-
-
-                if (s.length == 1000) {
+                if (s.length == 100) {
                     ToastUtils.showShort("已达到输入文字最大数量")
                     KeyboardUtils.hideSoftInput(this@DetailInfoActivity)
                 }
@@ -3177,6 +3175,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }.start()
 
             } else {
+
+                ll_guide_detail_loading.visibility = View.GONE
+
                 if (faceDetectBean.error_msg != null) {
                     ToastUtils.showShort(faceDetectBean.error_msg)
                 } else {
@@ -4405,7 +4406,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         uploadPhotoPresent.unregisterCallback(this)
 
         doTextVerifyPresent.unregisterCallback(this)
-        
+
         doDeletePhotoPresent.unregisterCallback(this)
 
     }

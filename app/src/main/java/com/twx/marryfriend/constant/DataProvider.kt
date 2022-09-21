@@ -97,6 +97,7 @@ object DataProvider {
         R.mipmap.gif_vip_5,
         R.mipmap.gif_vip_6,
         R.mipmap.gif_vip_7,
+        R.mipmap.gif_vip_8,
     )
 
     val SuperBannerData = arrayListOf(
@@ -113,6 +114,7 @@ object DataProvider {
         R.mipmap.gif_svip_11,
         R.mipmap.gif_svip_12,
         R.mipmap.gif_svip_13,
+        R.mipmap.gif_svip_14,
     )
 
 

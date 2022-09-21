@@ -66,33 +66,33 @@ class FocusMineAdapter(private val mList: MutableList<WhoFocusMeList>) :
         holder.itemView.tag = position
 
         if (mList[position].user_sex == 1) {
-            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 2) {
                 Glide.with(mContext)
                     .load(mList[position].image_url)
                     .error(R.drawable.ic_mine_male_default)
                     .placeholder(R.drawable.ic_mine_male_default)
-                    .apply(bitmapTransform(BlurTransformation(25)))
                     .into(holder.avatar)
             } else {
                 Glide.with(mContext)
                     .load(mList[position].image_url)
                     .error(R.drawable.ic_mine_male_default)
                     .placeholder(R.drawable.ic_mine_male_default)
+                    .apply(bitmapTransform(BlurTransformation(25)))
                     .into(holder.avatar)
             }
         } else {
-            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+            if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 2) {
                 Glide.with(mContext)
                     .load(mList[position].image_url)
                     .error(R.drawable.ic_mine_female_default)
                     .placeholder(R.drawable.ic_mine_female_default)
-                    .apply(bitmapTransform(BlurTransformation(25)))
                     .into(holder.avatar)
             } else {
                 Glide.with(mContext)
                     .load(mList[position].image_url)
                     .error(R.drawable.ic_mine_female_default)
                     .placeholder(R.drawable.ic_mine_female_default)
+                    .apply(bitmapTransform(BlurTransformation(25)))
                     .into(holder.avatar)
             }
         }

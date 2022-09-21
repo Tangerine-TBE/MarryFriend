@@ -70,6 +70,7 @@ import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 import com.twx.marryfriend.constant.Contents;
@@ -970,6 +971,19 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REPORT_OTHER + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REPORT_OTHER, currentTimeMillis, random, checkCode, map);
         mApi.doReportOther(map1).enqueue(callback);
+    }
+
+
+    // 修改友盟token
+    public void doUpdateToken(Map<String, String> map, Callback<UpdateTokenBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPDATE_TOKEN + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPDATE_TOKEN, currentTimeMillis, random, checkCode, map);
+        mApi.doUpdateToken(map1).enqueue(callback);
     }
 
 

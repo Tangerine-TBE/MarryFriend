@@ -412,7 +412,7 @@
                 <!--            我的标签-->
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/myLabel"
-                    tools:visibility="gone"
+                    tools:visibility="visible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_recommend_about_me"

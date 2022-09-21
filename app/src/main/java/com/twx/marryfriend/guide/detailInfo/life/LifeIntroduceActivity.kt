@@ -9,10 +9,7 @@ import android.view.View
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -30,6 +27,7 @@ import com.twx.marryfriend.net.impl.doLifeFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
 import com.twx.marryfriend.utils.BitmapUtil
+import com.twx.marryfriend.utils.TimeUtil
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.activity_life_introduce.*
 import kotlinx.android.synthetic.main.layout_guide_step_name.*
@@ -112,6 +110,8 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
             // 文字审核
             introduce = et_life_introduce_introduce.text.toString().trim { it <= ' ' }
 
+            Log.i("guo", "doTextVerify")
+
             if (introduce.isNotEmpty()) {
                 val map: MutableMap<String, String> = TreeMap()
                 map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
@@ -120,6 +120,10 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                 doTextVerifyPresent.doTextVerify(map)
 
             } else {
+
+                Log.i("guo", "doFaceDetect")
+
+                haveUpload = false
                 doFaceDetect()
             }
 
@@ -197,11 +201,16 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
         if (faceDetectBean != null) {
             if (faceDetectBean.conclusion != "合规") {
+                ll_life_introduce_loading.visibility = View.GONE
                 ToastUtils.showShort("图片审核失败，请稍后再试")
             } else {
                 // 图片合规，开始进行上传
 
+                Log.i("guo", "图片合规，开始进行上传")
+
                 if (!haveUpload) {
+
+                    Log.i("guo", "haveUpload")
 
                     haveUpload = true
 
@@ -233,12 +242,15 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
                             }
 
+                        // 时间戳，防止重复上传时传不上去
+                        val span = TimeUtils.getNowMills()
+
                         val putObjectFromFileResponse = client.putObject("user${name}",
-                            FileUtils.getFileName(picPath),
+                            "${FileUtils.getFileName(picPath)}_${span}",
                             File(mPhotoPath))
 
                         picUrl = client.generatePresignedUrl("user${name}",
-                            FileUtils.getFileName(picPath), -1).toString()
+                            "${FileUtils.getFileName(picPath)}_${span}", -1).toString()
 
                         Log.i("guo", "mLifeSecondUrl :$picUrl")
 
@@ -277,6 +289,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                 finish()
 
             } else {
+                ll_life_introduce_loading.visibility = View.GONE
                 ToastUtils.showShort(uploadPhotoBean.msg)
             }
         }
@@ -291,6 +304,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
         if (textVerifyBean.conclusion == "合规") {
             // 进行图片审核
+            haveUpload = false
             doFaceDetect()
         } else {
             if (textVerifyBean.error_msg != null) {

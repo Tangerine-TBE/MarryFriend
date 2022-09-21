@@ -11,20 +11,28 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.vip.UpdateTokenBean
+import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.likeme.LoveFragment
 import com.twx.marryfriend.message.ImConversationFragment
 import com.twx.marryfriend.mine.MineFragment
+import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
+import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.umeng.message.PushAgent
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
-class MainActivity : MainBaseViewActivity() {
+class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     private var recommend: RecommendFragment? = null
     private var love: LoveFragment? = null
@@ -32,19 +40,54 @@ class MainActivity : MainBaseViewActivity() {
     private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
 
+    private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
+
     override fun getLayoutView(): Int = R.layout.activity_main
 
     override fun initView() {
         super.initView()
+
+        doUpdateTokenPresent = doUpdateTokenPresentImpl.getsInstance()
+        doUpdateTokenPresent.registerCallback(this)
+
         initEmojiCompat()
         ImHelper.init()
         initRecommendFragment()
-        Thread { PushHelper.init(applicationContext) }.start()
+        Thread {
+            PushHelper.init(applicationContext)
+//            Bugly.init(applicationContext, "2128c50665", true);
+        }.start()
+
+
+
         PushAgent.getInstance(this).onAppStart()
+
+
     }
 
     override fun initLoadData() {
         super.initLoadData()
+
+        val task: TimerTask = object : TimerTask() {
+            override fun run() {
+
+                Log.i("guo",
+                    "main_device_token : ${SPStaticUtils.getString(Constant.DEVICE_TOKEN, "")}")
+
+                val token = SPStaticUtils.getString(Constant.DEVICE_TOKEN, "")
+
+                if (token != "") {
+                    updateToken(token)
+                } else {
+                    ToastUtils.showShort("获取友盟推送token失败")
+                }
+
+            }
+        }
+        val timer = Timer()
+        //10秒后执行
+        timer.schedule(task, 3 * 1000)
+
     }
 
     override fun initPresent() {
@@ -74,6 +117,14 @@ class MainActivity : MainBaseViewActivity() {
             initMineFragment()
         }
 
+    }
+
+
+    private fun updateToken(token: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.UMENG_TOKEN] = token
+        doUpdateTokenPresent.doUpdateToken(map)
     }
 
 
@@ -115,7 +166,7 @@ class MainActivity : MainBaseViewActivity() {
         if (conversationListFragment == null) {
             conversationListFragment = ImConversationFragment()
             transaction.add(R.id.fl_main_container, conversationListFragment!!)
-        }else{
+        } else {
             conversationListFragment?.onResume()
         }
         hideFragment(transaction)
@@ -205,6 +256,26 @@ class MainActivity : MainBaseViewActivity() {
             AppUtils.exitApp()
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onLoading() {
+
+    }
+
+    override fun onError() {
+
+    }
+
+    override fun onDoUpdateTokenSuccess(updateTokenBean: UpdateTokenBean?) {
+        if (updateTokenBean != null) {
+            if (updateTokenBean.code == 200) {
+                ToastUtils.showShort("token上传")
+            }
+        }
+    }
+
+    override fun onDoUpdateTokenError() {
+
     }
 
 

@@ -71,6 +71,7 @@ import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 
@@ -379,6 +380,9 @@ public interface Api {
     @POST("/marryfriend/MemberCharge/uploadComplaint")
     Call<ReportOtherBean> doReportOther(@QueryMap Map<String, Object> params);
 
+    // 修改友盟token
+    @POST("/marryfriend/MemberCharge/updateToken")
+    Call<UpdateTokenBean> doUpdateToken(@QueryMap Map<String, Object> params);
 
     // 屏蔽列表
     @POST("/marryfriend/TrendsNotice/blockSessionList")

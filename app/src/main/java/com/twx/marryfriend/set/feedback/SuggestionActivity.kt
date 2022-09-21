@@ -44,8 +44,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLifeFaceDetectCallback,
-    IDoUploadFeedbackCallback,
+class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
     SuggestionAdapter.OnItemClickListener {
 
 
@@ -59,26 +58,21 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
 
     private var suggestion = ""
 
+    private var contact = ""
+
+    private var mChooseList: MutableList<String> = arrayListOf()
     private var mList: MutableList<String> = arrayListOf()
 
     private lateinit var adapter: SuggestionAdapter
 
     private lateinit var client: BosClient
 
-    private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
-    private lateinit var doFaceDetectPresent: doLifeFaceDetectPresentImpl
     private lateinit var doUploadFeedbackPresent: doUploadFeedbackPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_suggestion
 
     override fun initView() {
         super.initView()
-
-        doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
-        doTextVerifyPresent.registerCallback(this)
-
-        doFaceDetectPresent = doLifeFaceDetectPresentImpl.getsInstance()
-        doFaceDetectPresent.registerCallback(this)
 
         doUploadFeedbackPresent = doUploadFeedbackPresentImpl.getsInstance()
         doUploadFeedbackPresent.registerCallback(this)
@@ -131,54 +125,59 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
 
                 tv_suggestion_text_sum.text = "${suggestion.length.toString()}/500"
 
-                val havePhoto = !(mList.size == 1 && mList.contains("add"))
+                mList.remove("add")
 
-                if (suggestion != "" && havePhoto) {
-                    iv_suggestion_commit.setBackgroundResource(R.drawable.shape_bg_commit)
+                Log.i("guo", "true : ${suggestion != "" || mList.isNotEmpty()}")
+
+                if (suggestion != "" || mList.isNotEmpty()) {
+                    iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit)
                 } else {
-                    iv_suggestion_commit.setBackgroundResource(R.drawable.shape_bg_commit_non)
+                    iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit_non)
                 }
+
+                mList.add("add")
 
             }
 
         })
 
+        et_suggestion_contact.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                contact = s.toString()
+
+            }
+
+        })
+
+
         iv_suggestion_commit.setOnClickListener {
+
+            mList.remove("add")
 
             var mUrl = ""
             for (i in 0.until(mList.size)) {
                 mUrl = "$mUrl,${mList[i]}"
             }
 
-            val havePhoto = !(mList.size == 1 && mList.contains("add"))
 
-            if (suggestion != "" && havePhoto) {
+            if (suggestion != "" || mList.isNotEmpty()) {
                 ll_suggestion_load.visibility = View.VISIBLE
-                doTextDetect(suggestion)
+                doUploadFeedback(suggestion, contact, mUrl)
             } else {
                 ToastUtils.showShort("请填写完整信息")
             }
+            mList.add("add")
 
         }
 
-    }
-
-    // 生活照 百度云审核
-    private fun doFaceDetect(picPath: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
-        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-        map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(picPath))
-        doFaceDetectPresent.doLifeFaceDetect(map)
-    }
-
-    // 文字审核
-    private fun doTextDetect(text: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-        map[Contents.TEXT] = text
-        doTextVerifyPresent.doTextVerify(map)
     }
 
 
@@ -186,10 +185,7 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
     private fun doUploadFeedback(
         suggestion: String,
         contact1: String,
-        contact2: String,
-        image1: String,
-        image2: String,
-        image3: String,
+        image: String,
     ) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
@@ -197,41 +193,10 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
         map[Contents.PLATFORM] = "360"
         map[Contents.VERSION] = "1.0"
         map[Contents.CONTACT_1] = contact1
-        map[Contents.CONTACT_2] = contact2
-        map[Contents.IMAGE_1] = image1
-        map[Contents.IMAGE_2] = image2
-        map[Contents.IMAGE_3] = image3
+        map[Contents.IMAGES_URL] = image
         doUploadFeedbackPresent.doUploadFeedback(map)
     }
 
-    // 将图片转换成Base64编码的字符串
-    private fun bitmapToBase64(bitmap: Bitmap?): String {
-        var result: String = ""
-        var baos: ByteArrayOutputStream? = null
-        try {
-            if (bitmap != null) {
-                baos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                baos.flush()
-                baos.close()
-                val bitmapBytes = baos.toByteArray()
-                result =
-                    android.util.Base64.encodeToString(bitmapBytes, android.util.Base64.NO_WRAP)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.flush()
-                    baos.close()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        return result
-    }
 
     override fun onLoading() {
 
@@ -241,116 +206,12 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
 
     }
 
-    override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean?) {
-        if (textVerifyBean != null) {
-            if (textVerifyBean.conclusion == "合规") {
-
-                if (mList.contains("add")) {
-                    mList.remove("add")
-                }
-
-                when (mList.size) {
-                    1 -> {
-                        mImageUrl1 = mList[0]
-                        mImageUrl2 = ""
-                        mImageUrl3 = ""
-                    }
-                    2 -> {
-                        mImageUrl1 = mList[0]
-                        mImageUrl2 = mList[1]
-                        mImageUrl3 = ""
-                    }
-                    3 -> {
-                        mImageUrl1 = mList[0]
-                        mImageUrl2 = mList[1]
-                        mImageUrl3 = mList[2]
-                    }
-                }
-
-                doUploadFeedback(suggestion, "", "", mImageUrl1, mImageUrl2, mImageUrl3)
-
-            } else {
-
-                if (textVerifyBean.error_msg != null) {
-                    ToastUtils.showShort(textVerifyBean.error_msg)
-                } else {
-                    ToastUtils.showShort(textVerifyBean.data[0].msg)
-                }
-                ll_suggestion_load.visibility = View.GONE
-            }
-        }
-    }
-
-    override fun onDoTextVerifyError() {
-        ll_suggestion_load.visibility = View.GONE
-    }
-
-    override fun onDoLifeFaceDetectSuccess(faceDetectBean: FaceDetectBean?) {
-        if (faceDetectBean != null) {
-            if (faceDetectBean.conclusion == "合规") {
-
-                Thread {
-
-                    val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }",
-                        "${FileUtils.getFileNameNoExtension(mChoosePath)}.jpg",
-                        File(mChoosePath))
-
-                    mList.add(0, client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", "${FileUtils.getFileNameNoExtension(mChoosePath)}.jpg", -1)
-                        .toString())
-
-                    ThreadUtils.runOnUiThread {
-
-                        if (mList.size == 4) {
-                            mList.removeAt(3)
-                        }
-
-                        if (mList.size != 3) {
-                            tv_suggestion_photo_size.text = "${mList.size - 1}/3张"
-                        } else {
-                            tv_suggestion_photo_size.text = "${mList.size}/3张"
-                        }
-
-                        adapter.notifyDataSetChanged()
-
-                        val havePhoto = !(mList.size == 1 && mList.contains("add"))
-
-                        if (suggestion != "" && havePhoto) {
-                            iv_suggestion_commit.setBackgroundResource(R.drawable.shape_bg_commit)
-                        } else {
-                            iv_suggestion_commit.setBackgroundResource(R.drawable.shape_bg_commit_non)
-                        }
-
-                    }
-
-                }.start()
-
-            } else {
-
-                if (faceDetectBean.error_msg != null) {
-                    ToastUtils.showShort(faceDetectBean.error_msg)
-                } else {
-                    ToastUtils.showShort(faceDetectBean.data[0].msg)
-                }
-            }
-        }
-
-        ll_suggestion_load.visibility = View.GONE
-    }
-
-    override fun onDoLifeFaceDetectError() {
-        ToastUtils.showShort("图片审核失败，请稍后重新选择上传")
-        ll_suggestion_load.visibility = View.GONE
-    }
-
     override fun onDoUploadFeedbackSuccess(uploadFeedbackBean: UploadFeedbackBean?) {
         ll_suggestion_load.visibility = View.GONE
         if (uploadFeedbackBean != null) {
             if (uploadFeedbackBean.code == 200) {
                 ToastUtils.showShort("反馈成功，请耐心等待反馈")
+                finish()
             } else {
                 ToastUtils.showShort("反馈失败，请等到网络稳定后重新尝试")
             }
@@ -359,9 +220,11 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
 
     override fun onDoUploadFeedbackError() {
         ll_suggestion_load.visibility = View.GONE
+        ToastUtils.showShort("举报失败，请等到网络稳定后重新尝试")
     }
 
     override fun onItemClick(v: View?, position: Int) {
+
         if (position == mList.size - 1 && mList.contains("add")) {
             ToastUtils.showShort("文件点击事件")
 
@@ -372,13 +235,15 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
             animationStyle.setActivityExitAnimation(R.anim.ps_anim_down_out)
             selectorStyle.windowAnimationStyle = animationStyle
 
+            val maxSize = 10 - mList.size
+
             PictureSelector.create(this)
                 .openGallery(SelectMimeType.TYPE_IMAGE)
                 .setImageEngine(GlideEngine.createGlideEngine())
                 .setSelectionMode(SelectModeConfig.MULTIPLE)
                 .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
                 .setImageSpanCount(3)
-                .setMaxSelectNum(1)
+                .setMaxSelectNum(maxSize)
                 .setMinSelectNum(1)
                 .isDisplayCamera(true)
                 .isPreviewImage(true)
@@ -392,10 +257,56 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
 
                             ll_suggestion_load.visibility = View.VISIBLE
 
-                            mChoosePath = result[0].realPath
+                            mChooseList.clear()
 
-                            doFaceDetect(result[0].realPath)
+                            mList.remove("add")
 
+                            for (i in 0.until(result.size)) {
+                                mChooseList.add(result[i].realPath)
+                            }
+
+                            Thread {
+
+                                for (i in 0.until(mChooseList.size)) {
+
+                                    val putObjectFromFileResponse = client.putObject("user${
+                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                    }",
+                                        "${FileUtils.getFileNameNoExtension(mChooseList[i])}.jpg",
+                                        File(mChooseList[i]))
+
+                                    mList.add(0, client.generatePresignedUrl("user${
+                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                    }",
+                                        "${FileUtils.getFileNameNoExtension(mChooseList[i])}.jpg",
+                                        -1)
+                                        .toString())
+
+                                }
+
+                                ThreadUtils.runOnUiThread {
+
+                                    Log.i("guo", "size : ${mList.size}")
+
+                                    tv_suggestion_photo_size.text = "${mList.size}/9张"
+
+                                    if (suggestion != "" || mList.isNotEmpty()) {
+                                        iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit)
+                                    } else {
+                                        iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit_non)
+                                    }
+
+                                    if (mList.size < 9) {
+                                        mList.add("add")
+                                    }
+
+                                    ll_suggestion_load.visibility = View.GONE
+
+                                    adapter.notifyDataSetChanged()
+
+                                }
+
+                            }.start()
 
                         }
 
@@ -422,8 +333,8 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
 
         tv_suggestion_photo_size.text = "${mList.size - 1}/3张"
 
-        if (mList.size == 1 && mList.contains("add")) {
-            iv_suggestion_commit.setBackgroundResource(R.drawable.shape_bg_commit_non)
+        if (mList.size == 1 || mList.contains("add")) {
+            iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit_non)
         }
 
         adapter.notifyDataSetChanged()
@@ -433,8 +344,6 @@ class SuggestionActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLif
     override fun onDestroy() {
         super.onDestroy()
 
-        doTextVerifyPresent.unregisterCallback(this)
-        doFaceDetectPresent.unregisterCallback(this)
         doUploadFeedbackPresent.unregisterCallback(this)
 
     }

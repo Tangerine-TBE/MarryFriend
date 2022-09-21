@@ -73,13 +73,25 @@ class ReportReasonActivity : MainBaseViewActivity() {
 
         adapter.setOnItemClickListener(object : ReportAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                startActivity(ReportActivity.getIntent(this@ReportReasonActivity,
-                    "13",
-                    "8",
-                    position))
+                startActivityForResult(ReportActivity.getIntent(this@ReportReasonActivity,
+                    hostId,
+                    guestId,
+                    position), 0)
             }
         })
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    finish()
+                }
+
+            }
+        }
     }
 
 }

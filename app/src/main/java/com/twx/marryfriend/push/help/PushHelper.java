@@ -6,7 +6,9 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.blankj.utilcode.util.SPStaticUtils;
 import com.luck.picture.lib.utils.ToastUtils;
+import com.twx.marryfriend.constant.Constant;
 import com.umeng.commonsdk.UMConfigure;
 import com.umeng.commonsdk.utils.UMUtils;
 import com.umeng.message.PushAgent;
@@ -40,6 +42,7 @@ public class PushHelper {
         // 参数三：发布渠道名称；
         // 参数四：设备类型，UMConfigure.DEVICE_TYPE_PHONE：手机；UMConfigure.DEVICE_TYPE_BOX：盒子；默认为手机
         // 参数五：Push推送业务的secret，填写Umeng Message Secret对应信息
+
         UMConfigure.init(context, "62e74fde1f47e265d4e8aa28", "_360", UMConfigure.DEVICE_TYPE_PHONE, "5e603f6a1afa1a199b2bfb7cded74761");
 
 
@@ -57,8 +60,13 @@ public class PushHelper {
 
             @Override
             public void onSuccess(String deviceToken) {
+
                 //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
-//                Log.i("guo", "deviceToken --> " + deviceToken);
+                Log.i("guo", "deviceToken --> " + deviceToken);
+
+
+                SPStaticUtils.put(Constant.DEVICE_TOKEN,deviceToken);
+
 //                //获取deviceToken可通过接口：
 //                PushAgent.getInstance(context).getRegistrationId();
 //                //可设置别名，推送时使用别名推送
