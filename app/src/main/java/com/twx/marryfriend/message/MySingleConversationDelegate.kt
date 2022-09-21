@@ -39,24 +39,16 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         super.onBindViewHolder(holder, position, bean)
         val item = bean?.info as? EMConversation?:return
         holder?:return
-
+        if (bean.isTop) {
+            holder.itemView.setBackgroundResource(com.hyphenate.easeui.R.drawable.ease_conversation_top_bg)
+        } else {
+            holder.itemView.background = ColorDrawable(Color.WHITE)
+        }
         val username = item.conversationId()
         val defaultAvatar=UserInfo.getReversedDefHeadImage()
 
         holder.avatar.setImageResource(defaultAvatar)
         holder.name.text = username
-
-        if(UserInfo.isVip()){
-            holder.msgLock.visibility=View.GONE
-
-            holder.lastMsgView.visibility=View.VISIBLE
-            holder.notVipShowView.visibility=View.GONE
-        }else{
-            holder.msgLock.visibility=View.VISIBLE
-
-            holder.lastMsgView.visibility=View.GONE
-            holder.notVipShowView.visibility=View.VISIBLE
-        }
 
         val infoProvider = EaseIM.getInstance().conversationInfoProvider
         if (infoProvider != null) {
@@ -69,60 +61,69 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                     .into(holder.avatar)
             }
         }
+
         // add judgement for conversation type
         if (item.type == EMConversation.EMConversationType.Chat) {
             val userProvider = EaseIM.getInstance().userProvider
-            if (userProvider != null) {
-                val user = userProvider.getUser(username)
-                if (user != null) {
-                    if (!TextUtils.isEmpty(user.nickname)) {
-                        holder.name.text = user.nickname
-                    }
-                    if (!TextUtils.isEmpty(user.avatar)) {
-                        val drawable = holder.avatar.drawable
-                        Glide.with(holder.mContext)
-                            .load(user.avatar)
-                            .error(drawable)
-                            .into(holder.avatar)
-                    }
+            val user = userProvider.getUser(username)
+            val ext=user.getUserExt()
+            if(UserInfo.isVip()||ext?.isSuperVip==true||ext?.isMutualLike==true){
+                holder.msgLock.visibility=View.GONE
 
-                    (user.getUserExt()?:ImUserInfoService.Ext()).also {
-                        if (it?.isMutualLike!=true&&it?.isFlower!=true){
-                            holder.messageMutualLikeIcon.visibility=View.GONE
-                        }else{
-                            holder.messageMutualLikeIcon.visibility=View.VISIBLE
-                            if (it.isMutualLike){
-                                holder.messageMutualLikeIcon.isSelected=true
-                            }else if (it.isFlower){
-                                holder.messageMutualLikeIcon.isSelected=false
-                            }
-                        }
-                        if (it.isRealName==true){
-                            holder.isMessageRealName.visibility=View.VISIBLE
-                        }else{
-                            holder.isMessageRealName.visibility=View.GONE
-                        }
-                        if (it.isSuperVip){
-                            holder.vipIdentification2.visibility=View.VISIBLE
-                            holder.superVipHead.visibility=View.VISIBLE
+                holder.lastMsgView.visibility=View.VISIBLE
+                holder.notVipShowView.visibility=View.GONE
+            }else{
+                holder.msgLock.visibility=View.VISIBLE
 
-                            holder.vipIdentification.visibility=View.GONE
-                        }else{
-                            if (it.isVip){
-                                holder.vipIdentification.visibility=View.VISIBLE
-                            }else{
-                                holder.vipIdentification.visibility=View.GONE
-                            }
-                            holder.vipIdentification2.visibility=View.GONE
-                            holder.superVipHead.visibility=View.GONE
-                        }
-                        holder.apply {
-                            conversationCity.text=it.city
-                            conversationAge.text=it.age.toString()+"岁"
-                            conversationOccupation.text=it.occupation
-                            conversationEducation.text=it.education
-                        }
+                holder.lastMsgView.visibility=View.GONE
+                holder.notVipShowView.visibility=View.VISIBLE
+            }
+
+            if (!TextUtils.isEmpty(user.nickname)) {
+                holder.name.text = user.nickname
+            }
+            if (!TextUtils.isEmpty(user.avatar)) {
+                val drawable = holder.avatar.drawable
+                Glide.with(holder.mContext)
+                    .load(user.avatar)
+                    .error(drawable)
+                    .into(holder.avatar)
+            }
+            (ext?:ImUserInfoService.Ext()).also {
+                if (it?.isMutualLike!=true&&it?.isFlower!=true){
+                    holder.messageMutualLikeIcon.visibility=View.GONE
+                }else{
+                    holder.messageMutualLikeIcon.visibility=View.VISIBLE
+                    if (it.isMutualLike){
+                        holder.messageMutualLikeIcon.isSelected=true
+                    }else if (it.isFlower){
+                        holder.messageMutualLikeIcon.isSelected=false
                     }
+                }
+                if (it.isRealName==true){
+                    holder.isMessageRealName.visibility=View.VISIBLE
+                }else{
+                    holder.isMessageRealName.visibility=View.GONE
+                }
+                if (it.isSuperVip){
+                    holder.vipIdentification2.visibility=View.VISIBLE
+                    holder.superVipHead.visibility=View.VISIBLE
+
+                    holder.vipIdentification.visibility=View.GONE
+                }else{
+                    if (it.isVip){
+                        holder.vipIdentification.visibility=View.VISIBLE
+                    }else{
+                        holder.vipIdentification.visibility=View.GONE
+                    }
+                    holder.vipIdentification2.visibility=View.GONE
+                    holder.superVipHead.visibility=View.GONE
+                }
+                holder.apply {
+                    conversationCity.text=it.city
+                    conversationAge.text=it.age.toString()+"岁"
+                    conversationOccupation.text=it.occupation
+                    conversationEducation.text=it.education
                 }
             }
         }

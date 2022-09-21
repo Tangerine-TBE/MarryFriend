@@ -20,6 +20,7 @@ import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.createDialog
 import com.xyzz.myutils.show.toast
 
+//R.drawable.ease_default_avatar
 class ImChatActivity: ChatActivity() {
     companion object{
         private const val NICKNAME_KEY="nickname_key"
@@ -33,10 +34,6 @@ class ImChatActivity: ChatActivity() {
          * @param isRealName 是否实名
          */
         fun getIntent(context: Context, conversationId: String, nickname:String?=null, headImage:String?=null, isRealName:Boolean?=null): Intent {
-            if (!UserInfo.isVip()){
-                return VipActivity.getVipIntent(context,conversationId.toIntOrNull())
-            }
-
             val intent= Intent(context,ImChatActivity::class.java)
             intent.putExtra(EaseConstant.EXTRA_CONVERSATION_ID,conversationId)
             intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE)

@@ -44,16 +44,12 @@ class ImChatFragment: ChatFragment() {
         }
     }
 
-    private var isSuperVip =UserInfo.isSuperVip()
     private var isSendSecurity=false
-    private var isSendSuperVip= false
-    private var isSendHead=false
-    private var isUploadHead=false
     private val recommendViewModel by lazy {
         ViewModelProvider(this).get(RecommendViewModel::class.java)
     }
     private val coinInsufficientDialog by lazy {
-        ReChargeCoinDialog(requireContext())
+        ReChargeCoinDialog(requireActivity())
     }
 
     override fun initView() {
@@ -136,8 +132,10 @@ class ImChatFragment: ChatFragment() {
         polling()
     }
 
+    private var isSendSuperVip= false
+    private var isSendHead=false
     private fun polling(){
-        if (!isSuperVip&&!isSendSuperVip){
+        if (!UserInfo.isSuperVip()&&!isSendSuperVip){
             lifecycleScope.launch {
                 while (!UserInfo.isSuperVip()&&!isSendSuperVip){
                     val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launch,10).take(3)
@@ -153,10 +151,9 @@ class ImChatFragment: ChatFragment() {
                 }
             }
         }
-        isUploadHead=UserInfo.isHaveHeadImage()
-        if (!isUploadHead&&!isSendHead){
+        if (!UserInfo.isHaveHeadImage()&&!isSendHead){
             lifecycleScope.launch {
-                while (!UserInfo.isHaveHeadImage()){
+                while (!UserInfo.isHaveHeadImage()&&!isSendHead){
                     val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launch,10).take(3)
                     if (ms.firstOrNull()?.emMessage?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
                         ImMessageManager.getCustomMessage(conversationId?:return@launch,

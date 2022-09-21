@@ -6,13 +6,17 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.twx.marryfriend.bean.vip.SVipGifEnum
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.guide.jumpInfo.JumpActivity
+import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.verify.VerifyActivity
 import com.twx.marryfriend.mine.voice.VoiceActivity
+import com.twx.marryfriend.set.report.ReportReasonActivity
 import com.twx.marryfriend.tools.avatar.AvatarToolActivity
 import com.twx.marryfriend.tools.hobby.HobbyToolActivity
 import com.twx.marryfriend.tools.introduce.IntroduceToolActivity
@@ -24,16 +28,16 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 object IntentManager {
-    fun getSuperVipIntent(context: Context,pId:String?=null):Intent{
+    fun getSuperVipIntent(context: Context,pId:String?=null,sVipGifEnum: SVipGifEnum?=null):Intent{
         return VipActivity.getSVipIntent(context)
     }
 
-    fun getVipIntent(context: Context,pId:String?=null):Intent{
+    fun getVipIntent(context: Context,pId:String?=null,vipGif: VipGifEnum?=null):Intent{
         return VipActivity.getVipIntent(context)
     }
 
     fun getReportIntent(context: Context,id:Int):Intent?{
-        return null
+        return ReportReasonActivity.getIntent(context,UserInfo.getUserId().toString(),id.toString())
     }
 
     private const val DAY_ONE_FILL_IN="day_one_fill_in"
@@ -125,5 +129,13 @@ object IntentManager {
                     it.resume(null)
                 }
             })
+    }
+
+    fun getFocusIntent(context: Context):Intent{
+        return if (UserInfo.isVip()){
+            Intent(context, RecentFocusActivity::class.java)
+        }else{
+            getVipIntent(context)
+        }
     }
 }

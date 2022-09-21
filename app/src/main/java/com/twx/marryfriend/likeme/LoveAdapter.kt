@@ -12,7 +12,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.likeme.LikeMeItemBean
-import com.twx.marryfriend.bean.recommend.Sex
+import com.twx.marryfriend.bean.Sex
 import com.xyzz.myutils.display.DateDisplayManager
 import com.xyzz.myutils.rsBlur
 import com.xyzz.myutils.show.iLog

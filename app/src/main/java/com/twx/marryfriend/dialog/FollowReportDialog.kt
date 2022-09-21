@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import kotlinx.android.synthetic.main.dialog_friends_setting.*
 
@@ -37,9 +38,9 @@ class FollowReportDialog(context: Context):Dialog(context) {
         }
     }
 
-    fun setReportListener(action:()->Unit){
+    fun setReportId(id:Int){
         report.setOnClickListener {
-            action.invoke()
+            context.startActivity(IntentManager.getReportIntent(context,id))
             dismiss()
         }
     }

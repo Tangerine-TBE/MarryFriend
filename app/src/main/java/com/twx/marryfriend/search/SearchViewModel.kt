@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.UserInfo.getUserSex
+import com.twx.marryfriend.UserInfo.getOriginalUserSex
 import com.twx.marryfriend.UserInfo.reversalSex
 import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
-import com.twx.marryfriend.bean.post.OccupationBean
 import com.twx.marryfriend.bean.post.OccupationDataBean
 import com.twx.marryfriend.bean.search.SearchResultBean
 import com.twx.marryfriend.bean.search.SearchResultItem
@@ -31,14 +30,12 @@ class SearchViewModel:ViewModel() {
     }
     private var page=1
     private val searchParameterMap by lazy {
-        HashMap<String,String>().apply {
-            this["page"]="${page}"
-            this["size"]="20"
-            this["guest_sex"]= reversalSex(getUserSex()).toString()
-        }
+        HashMap<String,String>()
     }
+    var searchText:String?=null
 
-    fun setParameter(map: Map<String,String>){
+    fun setParameter(map: Map<String,String>?){
+        map?:return
         searchParameterMap.clear()
         searchParameterMap.putAll(map)
     }
@@ -58,7 +55,27 @@ class SearchViewModel:ViewModel() {
         }.isNotEmpty()
     }
 
+    suspend fun refreshData():List<SearchResultItem>{
+        page=1
+        return searchText?.let {
+            accurateSearch(it)
+        }?:filtrateSearch()
+    }
+
+    suspend fun nextPage():List<SearchResultItem>{
+        page++
+        searchParameterMap["page"]="$page"
+        return searchText
+            ?.let {
+                accurateSearch(it)
+            }?:filtrateSearch()
+    }
+
     private suspend fun filtrateSearch()= suspendCoroutine<List<SearchResultItem>>{ coroutine->
+        searchParameterMap["page"]="$page"
+        searchParameterMap["size"]="20"
+        searchParameterMap["guest_sex"]= reversalSex(getOriginalUserSex()).toString()
+
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/filtrateSearch"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -84,19 +101,7 @@ class SearchViewModel:ViewModel() {
         },searchParameterMap)
     }
 
-    suspend fun refreshData():List<SearchResultItem>{
-        page=1
-        searchParameterMap["page"]="$page"
-        return filtrateSearch()
-    }
-
-    suspend fun nextPage():List<SearchResultItem>{
-        page++
-        searchParameterMap["page"]="$page"
-        return filtrateSearch()
-    }
-
-    suspend fun accurateSearch(text:String) = suspendCoroutine<List<SearchResultItem>> {coroutine->
+    private suspend fun accurateSearch(text:String) = suspendCoroutine<List<SearchResultItem>> {coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/idNickSearch"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -105,13 +110,21 @@ class SearchViewModel:ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val gson=Gson()
-                coroutine.resume(gson.fromJson(response,SearchResultBean::class.java).data?.list?: emptyList())
+                val result=gson.fromJson(response,SearchResultBean::class.java).data?.list?: emptyList()
+                coroutine.resume(result)
+
+                //给环信用户预加载头像昵称等信息
+                result.mapNotNull {
+                    it.user_id?.toString()
+                }.also {
+                    ImHelper.updateFriendInfo(it)
+                }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf("page" to "1","size" to "20"))
+        }, mapOf("page" to "${page}","size" to "20"))
     }
 
     fun setAgeParameter(intRange:IntRange?){

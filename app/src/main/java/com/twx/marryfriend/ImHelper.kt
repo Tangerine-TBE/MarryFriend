@@ -6,6 +6,7 @@ import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.easeim.section.base.WebViewActivity
 import com.message.ImLoginHelper
 import com.message.ImMessageManager
 import com.message.ImUserInfoService
@@ -83,9 +84,7 @@ object ImHelper {
 
                     }
                     CustomMessage.CustomEvent.security -> {
-                        view.context.startActivity(Intent(Intent.ACTION_VIEW).also {
-                            it.data = Uri.parse("http://test.aisou.club/userManual/fraud.html")
-                        })
+                        WebViewActivity.actionStart(view.context,"http://test.aisou.club/userManual/fraud.html")
                     }
                     CustomMessage.CustomEvent.openSuperVip -> {
                         view.context.startActivity(IntentManager.getSuperVipIntent(view.context))
@@ -102,9 +101,9 @@ object ImHelper {
     private fun updateFriendInfo() {
         ImMessageManager.newMessageLiveData.observeForever { list ->
             iLog("准备获取用户资料")
-            list.map {
+            list?.map {
                 it.from
-            }.also {
+            }?.also {
                 iLog("已准备好获取用户资料,${it}")
                 updateFriendInfo(it)
             }

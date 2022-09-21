@@ -50,7 +50,10 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         }
     }
     private val searchViewModel by lazy {
-        ViewModelProvider(this).get(SearchViewModel::class.java)
+        ViewModelProvider(this).get(SearchViewModel::class.java).also {
+            it.setParameter(searchMap)
+            it.searchText=searchText
+        }
     }
     private val recommendViewModel by lazy {
         ViewModelProvider(this).get(RecommendViewModel::class.java)
@@ -125,15 +128,9 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         lifecycleScope.launch() {
             loadingDialog.show()
             try {
+
                 searchResultRefreshLayout.resetNoMoreData()
-                val result=if(searchMap!=null){
-                    searchViewModel.setParameter(searchMap?:return@launch)
-                    searchViewModel.refreshData()
-                }else if (searchText!=null){
-                    searchViewModel.accurateSearch(searchText?:return@launch)
-                }else{
-                    null
-                }?:return@launch
+                val result=searchViewModel.refreshData()
                 searchResultAdapter.setData(result)
                 if(result.isEmpty()){
                     loadService.showCallback(SearchEmptyDataCallBack::class.java)

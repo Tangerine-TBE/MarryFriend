@@ -56,6 +56,7 @@
             android:orientation="horizontal">
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/searchItemRealName"
+                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
@@ -63,7 +64,7 @@
                     android:layout_width="10dp"
                     android:layout_height="10dp"/>
                 <TextView
-                    android:text="实名"
+                    android:text="实名认证"
                     android:includeFontPadding="false"
                     android:textColor="#FFFFFFFF"
                     android:textSize="11dp"
@@ -71,15 +72,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
             </androidx.appcompat.widget.LinearLayoutCompat>
-            <TextView
-                android:id="@+id/searchItemRealImage"
-                android:text="·真实头像"
-                android:includeFontPadding="false"
-                android:textColor="#FFFFFFFF"
-                android:textSize="11dp"
-                android:layout_marginStart="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
         <ImageView
             android:id="@+id/searchItemVip"
