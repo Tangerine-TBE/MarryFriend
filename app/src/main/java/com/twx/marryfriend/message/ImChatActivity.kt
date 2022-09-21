@@ -13,8 +13,10 @@ import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.constants.EaseConstant
 import com.message.ImUserInfoService
 import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.createDialog
@@ -69,7 +71,11 @@ class ImChatActivity: ChatActivity() {
                     dialog.dismiss()
                 }
                 dialog.findViewById<View>(R.id.setTop).setOnClickListener {
-                    setResult(RESULT_OK,intent)
+                    if (UserInfo.isSuperVip()){
+                        setResult(RESULT_OK,intent)
+                    }else{
+                        startActivity(IntentManager.getSuperVipIntent(this, sVipGifEnum = SVipGifEnum.TopMessage))
+                    }
                     dialog.dismiss()
                 }
                 dialog.findViewById<View>(R.id.blockFriends).setOnClickListener {
