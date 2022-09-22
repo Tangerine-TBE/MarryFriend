@@ -188,6 +188,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         Log.i("guo", "audit  : ${SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "")}")
         Log.i("guo", "audit  : ${SPStaticUtils.getString(Constant.ME_AVATAR, "")}")
 
+
+        tv_mine_uid.text = "用户ID：${SPStaticUtils.getString(Constant.USER_ID, "")}"
+
         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 Glide.with(requireContext())
@@ -202,7 +205,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     .error(R.drawable.ic_mine_female_default)
                     .into(iv_mine_avatar)
             }
+
             tv_mine_avatar_check.visibility = View.VISIBLE
+            tv_mine_avatar_fail.visibility = View.GONE
+            iv_mine_avatar_fail.visibility = View.GONE
+
         } else {
             if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
@@ -218,17 +225,52 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         .error(R.drawable.ic_mine_male_default)
                         .into(iv_mine_avatar)
                 }
+
                 tv_mine_avatar_check.visibility = View.GONE
+                tv_mine_avatar_fail.visibility = View.GONE
+                iv_mine_avatar_fail.visibility = View.GONE
+
             } else {
-                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                    Glide.with(requireContext())
-                        .load(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+
+                // 考虑一下未审核状态
+                if (SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, "") != "") {
+
+                    if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                        Glide.with(requireContext())
+                            .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, ""))
+                            .placeholder(R.drawable.ic_mine_male_default)
+                            .error(R.drawable.ic_mine_male_default)
+                            .into(iv_mine_avatar)
+                    } else {
+                        Glide.with(requireContext())
+                            .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, ""))
+                            .placeholder(R.drawable.ic_mine_female_default)
+                            .error(R.drawable.ic_mine_female_default)
+                            .into(iv_mine_avatar)
+                    }
+
+                    tv_mine_avatar_check.visibility = View.GONE
+                    tv_mine_avatar_fail.visibility = View.VISIBLE
+                    iv_mine_avatar_fail.visibility = View.VISIBLE
+
                 } else {
-                    Glide.with(requireContext())
-                        .load(R.drawable.ic_mine_female_default)
-                        .into(iv_mine_avatar)
+                    if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                        Glide.with(requireContext())
+                            .load(R.drawable.ic_mine_male_default)
+                            .into(iv_mine_avatar)
+                    } else {
+                        Glide.with(requireContext())
+                            .load(R.drawable.ic_mine_female_default)
+                            .into(iv_mine_avatar)
+                    }
+
+                    tv_mine_avatar_check.visibility = View.GONE
+                    tv_mine_avatar_fail.visibility = View.GONE
+                    iv_mine_avatar_fail.visibility = View.GONE
+
                 }
+
+
                 tv_mine_avatar_check.visibility = View.GONE
             }
         }
@@ -571,6 +613,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         ll_mine_set_share.setOnClickListener {
             startActivity(context?.let { it1 -> ReportReasonActivity.getIntent(it1, "13", "8") })
+        }
+
+
+        ll_mine_uid.setOnClickListener {
+            ToastUtils.showShort("已复制您的用户ID")
+            ClipboardUtils.copyText(SPStaticUtils.getString(Constant.USER_ID, ""))
         }
 
     }
@@ -958,6 +1006,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             if (viewHeadfaceBean.code == 200) {
                 when (viewHeadfaceBean.data.size) {
                     0 -> {
+
                         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                             Glide.with(requireContext())
                                 .load(R.drawable.ic_mine_male_default)
@@ -967,6 +1016,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 .load(R.drawable.ic_mine_female_default)
                                 .into(iv_mine_avatar)
                         }
+
                         tv_mine_avatar_check.visibility = View.GONE
 
                         SPStaticUtils.put(Constant.ME_AVATAR, "")
@@ -997,6 +1047,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 SPStaticUtils.put(Constant.ME_AVATAR, "")
                                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
                                     viewHeadfaceBean.data[0].image_url)
+                                SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
                             }
                             1 -> {
                                 tv_mine_avatar_check.visibility = View.GONE
@@ -1004,12 +1055,15 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 SPStaticUtils.put(Constant.ME_AVATAR,
                                     viewHeadfaceBean.data[0].image_url)
                                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
                             }
                             2 -> {
                                 tv_mine_avatar_check.visibility = View.GONE
 
                                 SPStaticUtils.put(Constant.ME_AVATAR, "")
                                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                    viewHeadfaceBean.data[0].image_url)
                             }
 
                         }
@@ -1028,6 +1082,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
                                             viewHeadfaceBean.data[0].image_url)
                                         SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
                                     }
                                     1 -> {
                                         // 第二张为审核通过
@@ -1036,6 +1091,8 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                             viewHeadfaceBean.data[0].image_url)
                                         SPStaticUtils.put(Constant.ME_AVATAR,
                                             viewHeadfaceBean.data[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+
                                     }
                                     2 -> {
                                         // 第二张为审核拒绝
@@ -1043,6 +1100,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
                                             viewHeadfaceBean.data[0].image_url)
                                         SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            viewHeadfaceBean.data[1].image_url)
+
                                     }
                                 }
 
@@ -1059,6 +1119,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                             viewHeadfaceBean.data[1].image_url)
                                         SPStaticUtils.put(Constant.ME_AVATAR,
                                             viewHeadfaceBean.data[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
                                     }
                                     1 -> {
                                         // 第二张为审核通过
@@ -1066,6 +1127,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
                                         SPStaticUtils.put(Constant.ME_AVATAR,
                                             viewHeadfaceBean.data[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
                                     }
                                     2 -> {
                                         // 第二张为审核拒绝
@@ -1073,6 +1135,8 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
                                         SPStaticUtils.put(Constant.ME_AVATAR,
                                             viewHeadfaceBean.data[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            viewHeadfaceBean.data[1].image_url)
                                     }
                                 }
 
@@ -1087,6 +1151,8 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
                                             viewHeadfaceBean.data[1].image_url)
                                         SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            viewHeadfaceBean.data[0].image_url)
                                     }
                                     1 -> {
                                         // 第二张为审核通过
@@ -1094,18 +1160,24 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
                                         SPStaticUtils.put(Constant.ME_AVATAR,
                                             viewHeadfaceBean.data[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            viewHeadfaceBean.data[0].image_url)
                                     }
                                     2 -> {
                                         // 第二张为审核拒绝
 
                                         SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
                                         SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            viewHeadfaceBean.data[0].image_url)
                                     }
                                 }
 
                             }
 
                         }
+
+
 
 
                         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
@@ -1122,7 +1194,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                     .error(R.drawable.ic_mine_female_default)
                                     .into(iv_mine_avatar)
                             }
+
                             tv_mine_avatar_check.visibility = View.VISIBLE
+                            tv_mine_avatar_fail.visibility = View.GONE
+                            iv_mine_avatar_fail.visibility = View.GONE
+
                         } else {
                             if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
                                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
@@ -1138,21 +1214,56 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                         .error(R.drawable.ic_mine_male_default)
                                         .into(iv_mine_avatar)
                                 }
+
                                 tv_mine_avatar_check.visibility = View.GONE
+                                tv_mine_avatar_fail.visibility = View.GONE
+                                iv_mine_avatar_fail.visibility = View.GONE
+
                             } else {
-                                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                                    Glide.with(requireContext())
-                                        .load(R.drawable.ic_mine_male_default)
-                                        .into(iv_mine_avatar)
+
+                                // 考虑一下未审核状态
+                                if (SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, "") != "") {
+
+                                    if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                        Glide.with(requireContext())
+                                            .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL,
+                                                ""))
+                                            .placeholder(R.drawable.ic_mine_male_default)
+                                            .error(R.drawable.ic_mine_male_default)
+                                            .into(iv_mine_avatar)
+                                    } else {
+                                        Glide.with(requireContext())
+                                            .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL,
+                                                ""))
+                                            .placeholder(R.drawable.ic_mine_female_default)
+                                            .error(R.drawable.ic_mine_female_default)
+                                            .into(iv_mine_avatar)
+                                    }
+
+                                    tv_mine_avatar_check.visibility = View.GONE
+                                    tv_mine_avatar_fail.visibility = View.VISIBLE
+                                    iv_mine_avatar_fail.visibility = View.VISIBLE
+
                                 } else {
-                                    Glide.with(requireContext())
-                                        .load(R.drawable.ic_mine_female_default)
-                                        .into(iv_mine_avatar)
+                                    if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                                        Glide.with(requireContext())
+                                            .load(R.drawable.ic_mine_male_default)
+                                            .into(iv_mine_avatar)
+                                    } else {
+                                        Glide.with(requireContext())
+                                            .load(R.drawable.ic_mine_female_default)
+                                            .into(iv_mine_avatar)
+                                    }
+
+                                    tv_mine_avatar_check.visibility = View.GONE
+                                    tv_mine_avatar_fail.visibility = View.GONE
+                                    iv_mine_avatar_fail.visibility = View.GONE
+
                                 }
+
                                 tv_mine_avatar_check.visibility = View.GONE
                             }
                         }
-
 
                     }
                 }

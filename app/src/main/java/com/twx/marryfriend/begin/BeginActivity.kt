@@ -36,6 +36,7 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.info.GetInfoActivity
 import com.twx.marryfriend.login.LoginActivity
+import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.IDoAutoLoginCallback
 import com.twx.marryfriend.net.callback.IGetAccessTokenCallback
 import com.twx.marryfriend.net.callback.IGetBanCallback
@@ -245,9 +246,9 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
                 SpUtil.saveUserInfo(autoLoginBean)
 
-                val intent = Intent(this, GetInfoActivity::class.java)
-                startActivity(intent)
-                this.finish()
+                startActivity(GetInfoActivity.getIntent(this, autoLoginBean.data.kind_type))
+
+
             } else {
                 ToastUtils.showShort(autoLoginBean.msg)
             }

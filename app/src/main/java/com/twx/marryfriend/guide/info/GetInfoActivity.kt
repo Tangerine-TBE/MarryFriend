@@ -1,5 +1,6 @@
 package com.twx.marryfriend.guide.info
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.blankj.utilcode.util.GsonUtils
@@ -17,6 +18,7 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
 import com.twx.marryfriend.guide.detailInfo.DetailInfoActivity
 import com.twx.marryfriend.main.MainActivity
+import com.twx.marryfriend.mutual.MutualLikeDialogActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import java.util.*
@@ -25,6 +27,9 @@ import java.util.*
 class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCallback,
     IGetJobCallback, IGetAccessTokenCallback, IGetIdAccessTokenCallback,
     IGetLifeAccessTokenCallback {
+
+    // 跳转模式
+    private var jumpMode = 0
 
     // 是否加载城市
     private var isLoadCity = false
@@ -43,6 +48,21 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     private lateinit var getAccessTokenPresent: getAccessTokenPresentImpl
     private lateinit var getIdAccessTokenPresent: getIdAccessTokenPresentImpl
     private lateinit var getLifeAccessTokenPresent: getLifeAccessTokenPresentImpl
+
+
+    /**
+     * mode : 跳转模式
+     * 0 : 注册流程，去注册界面
+     * 1 : 登录流程，直接去首页
+     * */
+    companion object {
+        private const val MODE = "mode"
+        fun getIntent(context: Context, mode: Int): Intent {
+            val intent = Intent(context, GetInfoActivity::class.java)
+            intent.putExtra(MODE, mode)
+            return intent
+        }
+    }
 
     override fun getLayoutView(): Int = R.layout.activity_get_info
 
@@ -66,6 +86,8 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
         getLifeAccessTokenPresent = getLifeAccessTokenPresentImpl.getsInstance()
         getLifeAccessTokenPresent.registerCallback(this)
+
+        jumpMode = intent.getIntExtra("mode", 0)
 
     }
 
@@ -137,24 +159,59 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
         ThreadUtils.runOnUiThread {
 
-            if (SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) &&
-                SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) &&
-                SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
-            ) {
-                if (!SPStaticUtils.getBoolean(Constant.BASE_INFO_FINISH, false)) {
-                    val intent = Intent(this, BaseInfoActivity::class.java)
+            when(jumpMode) {
+                0 -> {
+                    // 走注册流程
+                    if (SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) &&
+                        SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) &&
+                        SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+                    ) {
+                        if (!SPStaticUtils.getBoolean(Constant.BASE_INFO_FINISH, false)) {
+                            val intent = Intent(this, BaseInfoActivity::class.java)
+                            startActivity(intent)
+                            this.finish()
+                        } else {
+                            if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
+                                val intent = Intent(this, DetailInfoActivity::class.java)
+                                startActivity(intent)
+                                this.finish()
+                            } else {
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                this.finish()
+                                ToastUtils.showShort("资料填写完成，前往首页")
+                            }
+                        }
+                    }
+                }
+                1 -> {
+                    // 直接去首页
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     this.finish()
-                } else {
-                    if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
-                        val intent = Intent(this, DetailInfoActivity::class.java)
-                        startActivity(intent)
-                        this.finish()
-                    } else {
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        this.finish()
-                        ToastUtils.showShort("资料填写完成，前往首页")
+                }
+                else -> {
+                    // 走注册流程
+                    if (SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) &&
+                        SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) &&
+                        SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+                    ) {
+                        if (!SPStaticUtils.getBoolean(Constant.BASE_INFO_FINISH, false)) {
+                            val intent = Intent(this, BaseInfoActivity::class.java)
+                            startActivity(intent)
+                            this.finish()
+                        } else {
+                            if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
+                                val intent = Intent(this, DetailInfoActivity::class.java)
+                                startActivity(intent)
+                                this.finish()
+                            } else {
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                this.finish()
+                                ToastUtils.showShort("资料填写完成，前往首页")
+                            }
+                        }
                     }
                 }
             }

@@ -95,6 +95,9 @@ object Constant {
     // 审核中的头像
     const val ME_AVATAR_AUDIT = "ME_avatar_audit"
 
+    // 审核失败的头像
+    const val ME_AVATAR_FAIL = "ME_avatar_fail"
+
     // 生活照
     const val ME_LIFE_PHOTO_ONE = "ME_life_photo_one" // 第一张生活照(url)
 
@@ -340,7 +343,8 @@ object Constant {
 
     const val LAST_COMMENT_ME_TIME_REQUEST = "last_comment_me_time_request" // 上次去请求"谁评论我"数据的时间
 
-    const val LAST_COMMENT_OTHER_TIME_REQUEST = "last_comment_other_time_request" // 上次去请求"我评论谁"数据的时间
+    const val LAST_COMMENT_OTHER_TIME_REQUEST =
+        "last_comment_other_time_request" // 上次去请求"我评论谁"数据的时间
 
 
     const val HIDE_STATE = "hide_state" // 是否隐藏在线状态
@@ -358,7 +362,6 @@ object Constant {
     const val LIKE_ALL_TIP = "like_all_tip"                // 互相喜欢(相互喜欢配对成功后提醒)
     const val MESSAGE_TIP = "message_tip"                  // 聊天消息
     const val GREET_TIP = "greet_tip"                      // 打招呼(收到超级喜欢、超级消息提醒)
-
 
 
     // 外部SDK常量

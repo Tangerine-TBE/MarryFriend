@@ -179,6 +179,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
 
+    // 上传
+    private var needUpdateBase = true
+    private var baseUpdateMode = ""
+
     private var lastBaseInfo = ""
     private var lastMoreInfo = ""
 
@@ -476,8 +480,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //                .asCustom(AvatarDialog(requireContext()))
 //                .show()
 //        }
-
-
 
 
         iv_user_data_avatar.setOnClickListener {
@@ -2459,6 +2461,37 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // ---------------------------------- 上传信息 ----------------------------------
 
+
+    // 上传自我介绍
+    private fun updateIntroduce(introduce: String) {
+
+        baseUpdateMode = "introduce"
+        needUpdateBase = true
+
+        val introduceInfo = " {\"introduce_self\":    \"$introduce\"}"     // 我心目中的Ta
+
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = introduceInfo
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+    }
+
+
+    // 上传我心目中的他
+    private fun updateIdea(ta: String) {
+
+        baseUpdateMode = "idea"
+        needUpdateBase = true
+
+        val taInfo = " {\"ta_in_my_mind\":    \"$ta\"}"                // 我心目中的Ta
+
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = taInfo
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+    }
+
+
     // 开始上传信息
     private fun update() {
 
@@ -2467,6 +2500,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
         doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
+
+        baseUpdateMode = "all"
+        needUpdateBase = true
 
         val baseInfoMap: MutableMap<String, String> = TreeMap()
         baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
@@ -2762,13 +2798,27 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
 
-        if (baseInfoUpdateBean != null) {
-            if (baseInfoUpdateBean.code == 200) {
-                lastBaseInfo = getBaseInfo()
-                lastMoreInfo = getMoreInfo()
-            } else {
-                ToastUtils.showShort(baseInfoUpdateBean.msg)
+        if (needUpdateBase) {
+            needUpdateBase = false
+
+            if (baseInfoUpdateBean != null) {
+                if (baseInfoUpdateBean.code == 200) {
+
+                    when (baseUpdateMode) {
+                        "introduce" -> {}
+                        "idea" -> {}
+                        "all" -> {
+                            lastBaseInfo = getBaseInfo()
+                            lastMoreInfo = getMoreInfo()
+                        }
+                    }
+
+
+                } else {
+                    ToastUtils.showShort(baseInfoUpdateBean.msg)
+                }
             }
+
         }
 
     }
@@ -2996,24 +3046,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (text.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        text = ""
-//                        content.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
-
                     val map: MutableMap<String, String> = TreeMap()
                     map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                     map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
@@ -3029,6 +3061,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         override fun onDismiss() {
             super.onDismiss()
+
+            doTextVerifyPresent.unregisterCallback(this)
+
             // 更新数据
             if (isNeedUpdate) {
                 iv_user_data_introduce.visibility = View.GONE
@@ -3045,6 +3080,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             if (textVerifyBean.conclusion == "合规") {
                 // 保存数据
                 SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+
+                updateIntroduce(text)
+
                 isNeedUpdate = true
                 dismiss()
             } else {
@@ -3417,6 +3455,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         override fun onDismiss() {
             super.onDismiss()
+
+            doTextVerifyPresent.unregisterCallback(this)
+
             // 更新数据
             if (isNeedUpdate) {
                 iv_user_data_ideal.visibility = View.GONE
@@ -3433,6 +3474,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             if (textVerifyBean.conclusion == "合规") {
                 // 保存数据
                 SPStaticUtils.put(Constant.ME_TA, text)
+
+                updateIdea(text)
+
                 isNeedUpdate = true
                 dismiss()
             } else {

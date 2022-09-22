@@ -65,7 +65,7 @@ public class PushHelper {
                 Log.i("guo", "deviceToken --> " + deviceToken);
 
 
-                SPStaticUtils.put(Constant.DEVICE_TOKEN,deviceToken);
+                SPStaticUtils.put(Constant.DEVICE_TOKEN, deviceToken);
 
 //                //获取deviceToken可通过接口：
 //                PushAgent.getInstance(context).getRegistrationId();
@@ -164,6 +164,41 @@ public class PushHelper {
             public void dealWithCustomAction(Context context, UMessage uMessage) {
                 super.dealWithCustomAction(context, uMessage);
                 Log.i("guo", uMessage.custom);
+
+                switch (uMessage.custom) {
+                    case "shenhe_tongzhi":
+                        Log.i("guo","审核通知，跳小秘书");
+                        break;
+                    case "ta_gang_xihuan_ni":
+                        Log.i("guo","它刚喜欢你 通知");
+                        break;
+                    case "pinglun_dongtai":
+                        Log.i("guo","评论动态");
+                        break;
+                    case "dianzan_dongtai":
+                        Log.i("guo","点赞动态");
+                        break;
+                    case "kanle_nide_ziliao":
+                        Log.i("guo","看了你的资料");
+
+//                        startActivity(Intent(context, RecentViewActivity::class.java))
+
+                        break;
+                    case "nixihuande_shangxian":
+                        Log.i("guo","你喜欢的人 上线了");
+                        break;
+                    case "xianghu_xihuan_shangxian":
+                        Log.i("guo","相互喜欢的 上线了");
+                        break;
+                    case "dianji_xianghu_xihuan":
+                        Log.i("guo","点击相互喜欢 通知");
+                        break;
+                    case "shoudao_liwu_tongzhi":
+                        Log.i("guo","收到礼物通知");
+                        break;
+                }
+
+
             }
         };
         pushAgent.setNotificationClickHandler(notificationClickHandler);

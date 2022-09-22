@@ -21,8 +21,10 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.*
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.net.callback.dynamic.IDoLikeCancelCallback
@@ -39,6 +41,7 @@ import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.utils.AnimalUtils
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
 import java.io.Serializable
 import java.util.*
@@ -183,16 +186,25 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
                 val identity = mFocusTrendList[position].identity_status == 1
 
-                startActivity(context?.let {
-                    ChatActivity.getIntent(
-                        it,
-                        mFocusTrendList[position].user_id,
-                        mFocusTrendList[position].nick,
-                        mFocusTrendList[position].headface,
-                        identity
-                    )
-                })
 
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                    startActivity(context?.let {
+                        VipActivity.getVipIntent(it,
+                            mFocusTrendList[position].user_id.toInt(),
+                            VipGifEnum.Message)
+                    })
+                } else {
+
+                    startActivity(context?.let {
+                        ChatActivity.getIntent(
+                            it,
+                            mFocusTrendList[position].user_id,
+                            mFocusTrendList[position].nick,
+                            mFocusTrendList[position].headface,
+                            identity
+                        )
+                    })
+                }
             }
         })
 
@@ -601,6 +613,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
                     val mIdList: MutableList<Int> = arrayListOf()
 
+                    val mFocusUserIdList: MutableList<String> = arrayListOf()
+
                     if (mode == "first") {
                         mFocusTrendList.clear()
                         mFocusDiyList.clear()
@@ -609,6 +623,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                     for (i in 0.until(trendFocusBean.data.list.size)) {
                         mFocusTrendList.add(trendFocusBean.data.list[i])
                         mIdList.add(trendFocusBean.data.list[i].id)
+                        mFocusUserIdList.add(trendFocusBean.data.list[i].user_id.toString())
 
                         val focus = true
                         val like = trendFocusBean.data.list[i].guest_uid != null
@@ -617,6 +632,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                             focus, like, trendFocusBean.data.list[i].like_count))
 
                     }
+
+                    ImHelper.updateFriendInfo(mFocusUserIdList)
 
                     max = Collections.max(mIdList)
                     min = Collections.min(mIdList)

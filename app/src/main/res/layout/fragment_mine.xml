@@ -75,6 +75,18 @@
                         android:textSize="15sp"
                         android:visibility="gone" />
 
+                    <TextView
+                        android:id="@+id/tv_mine_avatar_fail"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/shape_bg_avatar_check"
+                        android:gravity="center"
+                        android:text="审核失败"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:visibility="gone" />
+
                 </FrameLayout>
 
                 <RelativeLayout
@@ -126,6 +138,14 @@
                             android:layout_width="63dp"
                             android:layout_height="21dp"
                             android:src="@mipmap/icon_identify_non" />
+
+                        <ImageView
+                            android:id="@+id/iv_mine_avatar_fail"
+                            android:layout_width="96dp"
+                            android:layout_height="21dp"
+                            android:layout_marginStart="5dp"
+                            android:src="@mipmap/icon_avatar_fail"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
@@ -580,10 +600,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
-                    android:layout_marginBottom="30dp"
                     android:src="@mipmap/ic_item_up_head_image_l">
 
                 </ImageView>
+
+                <LinearLayout
+                    android:id="@+id/ll_mine_uid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:id="@+id/tv_mine_uid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="用户ID：13245788525"
+                        android:textColor="#80101010"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:src="@mipmap/icon_uid_copy" />
+
+                </LinearLayout>
+
 
             </LinearLayout>
 
