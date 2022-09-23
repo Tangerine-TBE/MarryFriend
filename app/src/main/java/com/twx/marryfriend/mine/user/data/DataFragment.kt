@@ -4264,21 +4264,17 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             confirm.setOnClickListener {
 
-                val work =
-                    " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
+                val work = " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
 
                 ToastUtils.showShort(work)
 
                 SPStaticUtils.put(Constant.ME_WORK, work)
 
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME,
-                    mCityFirstList[mCityFirstPosition])
-                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE,
-                    mCityIdFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, mCityFirstList[mCityFirstPosition])
+                SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, mCityIdFirstList[mCityFirstPosition])
                 SPStaticUtils.put(Constant.ME_WORK_PROVINCE_PICK, mCityFirstPosition)
                 SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, mCitySecondList[mCitySecondPosition])
-                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE,
-                    mCityIdSecondList[mCitySecondPosition])
+                SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, mCityIdSecondList[mCitySecondPosition])
                 SPStaticUtils.put(Constant.ME_WORK_CITY_PICK, mCitySecondPosition)
 
                 isNeedJump = true
