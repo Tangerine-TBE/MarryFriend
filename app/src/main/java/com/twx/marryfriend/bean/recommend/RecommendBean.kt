@@ -183,15 +183,18 @@ data class RecommendBean(
 //        return listOf("黑龙江牡丹江人","现居深圳","180cm","年收入30~60万","年收入30~60万","年收入30~60万","年收入30~60万")
     }
 
-    fun isLike():Boolean{
-        return base?.like_uid!=null
+    fun isILikeTa():Boolean{
+        return base?.like_uid!=null||isISuperLikeTa()
     }
-    fun isSuperLike():Boolean{
+    fun isISuperLikeTa():Boolean{
         return base?.super_uid!=null
+    }
+    fun isIFocusTa():Boolean{
+        return base?.focus_uid!=null
     }
 
     fun isTaLikeMe():Boolean{
-        return base?.like_uid!=null
+        return base?.ta_like_wo!=null
     }
     /**
      * 头像
@@ -211,7 +214,7 @@ data class RecommendBean(
         return place?.weidu?.toDoubleOrNull()
     }
     fun getNickname():String{
-        return base?.nick?:""
+        return (base?.nick?:"")
     }
     fun getAge():Int?{
         return base?.birthday?.getAgeFromBirthday()?:base?.age

@@ -24,7 +24,6 @@ import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.getUserExt
-import com.twx.marryfriend.message.model.ConversationsModel
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
@@ -35,9 +34,6 @@ import kotlinx.coroutines.launch
 class ImConversationFragment: ConversationListFragment() {
     private val viewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)
-    }
-    private val conversationsModel by lazy {
-        ConversationsModel()
     }
 
     private val loadingDialog by lazy {
@@ -106,70 +102,27 @@ class ImConversationFragment: ConversationListFragment() {
         lifecycleScope.launch {
             try {
                 val mutualLike=viewModel.getMutualLike()
-                conversationsModel.laterLikeCount = mutualLike.total?:0
-                conversationsModel.list = mutualLike.list
-
-                mutualLikeView.visibility=if (!conversationsModel.list.isNullOrEmpty()){
+                mutualLikeView.visibility=if (!mutualLike.list.isNullOrEmpty()){
                     View.VISIBLE
                 }else{
                     View.GONE
                 }
-                laterLikeCountView.text=conversationsModel.laterLikeCount.toString()
+                laterLikeCountView.text=(mutualLike.total?:0).toString()
+                val list=mutualLike.list?: emptyList()
 
-                mutualLikeView1.visibility=if (conversationsModel.imageHead1!=null){
-                    View.VISIBLE
-                }else{
-                    View.GONE
+                val listView= listOf(mutualLikeView1,mutualLikeView2,mutualLikeView3,mutualLikeView4,mutualLikeView5)
+                for (i in 0 until 5){
+                    if (list.size>i){
+                        listView[i].visibility=View.VISIBLE
+                        Glide.with(mutualLikeHead1)
+                            .load(list[i])
+                            .error(list[i].getSex().smallHead)
+                            .placeholder(list[i].getSex().smallHead)
+                            .into(mutualLikeHead1)
+                    }else{
+                        listView[i].visibility=View.GONE
+                    }
                 }
-                mutualLikeView2.visibility=if (conversationsModel.imageHead2!=null){
-                    View.VISIBLE
-                }else{
-                    View.GONE
-                }
-                mutualLikeView3.visibility=if (conversationsModel.imageHead3!=null){
-                    View.VISIBLE
-                }else{
-                    View.GONE
-                }
-                mutualLikeView4.visibility=if (conversationsModel.imageHead4!=null){
-                    View.VISIBLE
-                }else{
-                    View.GONE
-                }
-                mutualLikeView5.visibility=if (conversationsModel.imageHead5!=null){
-                    View.VISIBLE
-                }else{
-                    View.GONE
-                }
-                Glide.with(mutualLikeHead1)
-                    .load(conversationsModel.imageHead1)
-                    .error(UserInfo.getReversedDefHeadImage())
-                    .placeholder(UserInfo.getReversedDefHeadImage())
-                    .into(mutualLikeHead1)
-
-                Glide.with(mutualLikeHead2)
-                    .load(conversationsModel.imageHead2)
-                    .error(UserInfo.getReversedDefHeadImage())
-                    .placeholder(UserInfo.getReversedDefHeadImage())
-                    .into(mutualLikeHead2)
-
-                Glide.with(mutualLikeHead3)
-                    .load(conversationsModel.imageHead3)
-                    .error(UserInfo.getReversedDefHeadImage())
-                    .placeholder(UserInfo.getReversedDefHeadImage())
-                    .into(mutualLikeHead3)
-
-                Glide.with(mutualLikeHead4)
-                    .load(conversationsModel.imageHead4)
-                    .error(UserInfo.getReversedDefHeadImage())
-                    .placeholder(UserInfo.getReversedDefHeadImage())
-                    .into(mutualLikeHead4)
-
-                Glide.with(mutualLikeHead5)
-                    .load(conversationsModel.imageHead5)
-                    .error(UserInfo.getReversedDefHeadImage())
-                    .placeholder(UserInfo.getReversedDefHeadImage())
-                    .into(mutualLikeHead5)
             }catch (e:Exception){
                 eLog(e.stackTraceToString())
             }
@@ -221,7 +174,7 @@ class ImConversationFragment: ConversationListFragment() {
             .placeholder(UserInfo.getReversedDefHeadImage())
             .into(imageView)
         this.itemView.setOnClickListener {
-            if (UserInfo.isVip()){
+            if (UserInfo.isSuperVip()){
                 it.context.startActivity(IntentManager.getFocusIntent(it.context))
             }else{
                 it.context.startActivity(IntentManager.getSuperVipIntent(it.context, sVipGifEnum = SVipGifEnum.FocusMe))

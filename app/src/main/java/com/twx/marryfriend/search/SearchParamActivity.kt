@@ -467,10 +467,10 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             onLineDialog.show()
         }
         startSearch.setOnClickListener {
-            if (!searchViewModel.isNeedVip()){
-                startActivity(SearchResultActivity.getIntent(this@SearchParamActivity,searchViewModel.getParameter()))
-            }else{
+            if (searchViewModel.isNeedVip()&&!UserInfo.isVip()){
                 startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Search))
+            }else{
+                startActivity(SearchResultActivity.getIntent(this@SearchParamActivity,searchViewModel.getParameter()))
             }
         }
         accurateSearch.setOnClickListener {

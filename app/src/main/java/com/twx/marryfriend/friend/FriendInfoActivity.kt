@@ -21,6 +21,7 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.*
+import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
@@ -177,9 +178,22 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }else{
                 myActionBar.setTitle(item.getNickname())
             }
+            //同性不能喜欢
+            if(item.getUserSex()==UserInfo.getUserSex()){
+                dislike2.visibility=View.GONE
+                dislike.visibility=View.GONE
+                sendFlowers.visibility=View.GONE
+                sendFlowers2.visibility=View.GONE
+            }
+            sexIcon.setImageResource(item.getUserSex().sexIcon)
             userItem=item
             initListener()
             isLikeMe.visibility=if (item.isTaLikeMe()){
+                if(item.isILikeTa()){
+                    likeTip.text="你们相互喜欢！"
+                }else{
+                    likeTip.text="${if (item.getUserSex()==Sex.male) "他" else "她"}喜欢了你！"
+                }
                 View.VISIBLE
             }else{
                 View.GONE
@@ -519,8 +533,8 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
 
         //发出动作，喜欢、不喜欢、送花
         sendAction.apply {
-            care.isSelected=(userItem?.isLike()?:false)
-            care2.isSelected=(userItem?.isLike()?:false)
+            care.isSelected=(userItem?.isILikeTa()?:false)
+            care2.isSelected=(userItem?.isILikeTa()?:false)
             sendFlowers.setOnClickListener {
                 if (uploadHeadDialog.showUploadHeadDialog()){
                     return@setOnClickListener

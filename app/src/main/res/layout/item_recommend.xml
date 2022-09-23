@@ -125,20 +125,33 @@
                             android:src="@mipmap/ic_item_vip"
                             android:layout_width="43dp"
                             android:layout_height="21dp"/>
-                        <TextView
-                            android:id="@+id/age"
-                            android:text="28岁"
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/ageView"
                             app:layout_constraintStart_toStartOf="@id/itemNickname"
                             app:layout_constraintTop_toBottomOf="@id/itemNickname"
-                            android:layout_marginTop="12dp"
-                            android:textColor="#FF404040"
-                            android:textSize="15sp"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:id="@+id/age"
+                                android:text="28岁"
+                                android:textColor="#FF404040"
+                                android:textSize="15sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                            <ImageView
+                                android:id="@+id/sexIcon"
+                                android:layout_marginStart="@dimen/adaptive_8dp"
+                                tools:src="@mipmap/ic_sex_woman"
+                                android:layout_width="17dp"
+                                android:layout_height="17dp"/>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/doing"
-                            app:layout_constraintStart_toStartOf="@id/age"
-                            app:layout_constraintTop_toBottomOf="@id/age"
+                            app:layout_constraintStart_toStartOf="@id/ageView"
+                            app:layout_constraintTop_toBottomOf="@id/ageView"
                             android:layout_marginTop="12dp"
                             android:gravity="center"
                             android:layout_width="wrap_content"
