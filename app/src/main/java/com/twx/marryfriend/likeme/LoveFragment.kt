@@ -104,7 +104,7 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
         }
         liveAdapter.itemAction = {
             if (!UserInfo.isVip()) {
-                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Inbox))
+                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.LoveMe))
             } else {
                 startActivity(FriendInfoActivity.getIntent(requireContext(),
                     it.host_uid,
@@ -116,7 +116,7 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
             openVip.visibility = View.GONE
         } else {
             openVip.setOnClickListener {
-                startActivity(IntentManager.getVipIntent(requireContext()))
+                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.LoveMe))
             }
         }
     }

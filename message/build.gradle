@@ -107,9 +107,6 @@ dependencies {
 
     implementation project(path: ':myutils')
 
-    // 百度定位
-    api 'com.baidu.lbsyun:BaiduMapSDK_Location:9.1.8'
-
     //友盟Push依赖
     api 'com.umeng.umsdk:push:6.5.4'
     // 小米渠道推送

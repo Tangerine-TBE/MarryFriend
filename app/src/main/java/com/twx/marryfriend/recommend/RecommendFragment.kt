@@ -21,6 +21,7 @@ import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
@@ -570,10 +571,15 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun openVip(){
-        if (UserInfo.isVip()){
-            startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.Like))
+        if (UserInfo.isSuperVip()){
+            toast("今天暂无推荐")
+            return
         }else{
-            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Like))
+            if (UserInfo.isVip()){
+                startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
+            }else{
+                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+            }
         }
     }
 
