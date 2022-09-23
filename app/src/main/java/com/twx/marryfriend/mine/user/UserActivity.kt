@@ -212,14 +212,13 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
                 } else {
 
-                    if (fiveInfoBean.data.base.work_city_str != "") { SPStaticUtils.put(Constant.ME_WORK, "")
-                    } else {
+                    if (fiveInfoBean.data.base.work_city_str != "") {
                         SPStaticUtils.put(Constant.ME_WORK, "${fiveInfoBean.data.base.work_city_str}")
+                    } else {
+                        SPStaticUtils.put(Constant.ME_WORK, "")
                     }
 
                 }
-
-
 
                 SPStaticUtils.put(Constant.ME_EDU, fiveInfoBean.data.base.education)
 
