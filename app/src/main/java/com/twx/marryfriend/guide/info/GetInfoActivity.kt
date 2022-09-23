@@ -159,7 +159,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
         ThreadUtils.runOnUiThread {
 
-            when(jumpMode) {
+            when (jumpMode) {
                 0 -> {
                     // 走注册流程
                     if (SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) &&
@@ -179,12 +179,16 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
                                 this.finish()
-                                ToastUtils.showShort("资料填写完成，前往首页")
                             }
                         }
                     }
                 }
                 1 -> {
+
+
+                    SPStaticUtils.put(Constant.BASE_INFO_FINISH, true)
+                    SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
+
                     // 直接去首页
                     val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
@@ -209,7 +213,6 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                                 val intent = Intent(this, MainActivity::class.java)
                                 startActivity(intent)
                                 this.finish()
-                                ToastUtils.showShort("资料填写完成，前往首页")
                             }
                         }
                     }

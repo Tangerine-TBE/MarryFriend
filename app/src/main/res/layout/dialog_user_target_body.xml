@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="你期望她的体型?"
+            android:text="你期望TA的体型?"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />

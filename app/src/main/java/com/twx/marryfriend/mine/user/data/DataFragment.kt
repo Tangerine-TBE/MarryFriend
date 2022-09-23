@@ -4264,8 +4264,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             confirm.setOnClickListener {
 
-                val work =
-                    " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
+                val work = " ${mCityFirstList[mCityFirstPosition]}-${mCitySecondList[mCitySecondPosition]}"
 
                 ToastUtils.showShort(work)
 
