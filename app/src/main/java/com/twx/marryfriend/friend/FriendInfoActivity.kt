@@ -21,12 +21,12 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.*
-import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.dialog.UploadHeadDialog
+import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendViewModel
@@ -130,6 +130,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     private val uploadHeadDialog by lazy {
         UploadHeadDialog(this)
     }
+    private val imChatViewModel by lazy {
+        ViewModelProvider(this).get(ImChatViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -186,7 +189,14 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 startActivity(IntentManager.getReportIntent(this@FriendInfoActivity,item.getId()))
             }
             blacklist.setOnClickListener {
-                toast("黑名单")
+                lifecycleScope.launch{
+                    try {
+                        imChatViewModel.addBlockList(item.getId().toString())
+                        toast("屏蔽成功")
+                    }catch (e:Exception){
+                        toast(e.message)
+                    }
+                }
             }
             //简介模块
             briefIntroduction.apply {

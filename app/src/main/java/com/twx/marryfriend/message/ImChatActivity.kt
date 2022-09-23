@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.hyphenate.chat.EMClient
 import com.hyphenate.easeim.DemoHelper
 import com.hyphenate.easeim.common.constant.DemoConstant
@@ -17,31 +19,27 @@ import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.vip.SVipGifEnum
+import com.twx.marryfriend.dialog.ChatSettingDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.createDialog
 import com.xyzz.myutils.show.toast
+import kotlinx.coroutines.launch
 
 //R.drawable.ease_default_avatar
 class ImChatActivity: ChatActivity() {
     companion object{
-        private const val NICKNAME_KEY="nickname_key"
-        private const val HEAD_IMAGE_KEY="head_image_key"
         private const val IS_REAL_NAME_KEY="head_image_key"
 
         /**
          * @param conversationId 对方id
-         * @param nickname 昵称
-         * @param headImage 头像
          * @param isRealName 是否实名
          */
-        fun getIntent(context: Context, conversationId: String, nickname:String?=null, headImage:String?=null, isRealName:Boolean?=null): Intent {
+        fun getIntent(context: Context, conversationId: String, isRealName: Boolean? = null): Intent {
             val intent= Intent(context,ImChatActivity::class.java)
             intent.putExtra(EaseConstant.EXTRA_CONVERSATION_ID,conversationId)
             intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE)
 
-            intent.putExtra(NICKNAME_KEY,nickname?:conversationId)
-            intent.putExtra(HEAD_IMAGE_KEY,headImage)
             val ext= ImUserInfoService.getExt(conversationId)
             intent.putExtra(IS_REAL_NAME_KEY,isRealName?:ext?.isRealName)
             return intent
@@ -59,33 +57,21 @@ class ImChatActivity: ChatActivity() {
     private val chatSetting by lazy {
         findViewById<View>(R.id.chatSetting)
     }
+    private val imChatViewModel by lazy {
+        ViewModelProvider(this).get(ImChatViewModel::class.java)
+    }
     private val chatSettingDialog by lazy {
-        createDialog(R.layout.dialog_chat_setting)
-            .also {dialog->
-                dialog.window?.setGravity(Gravity.BOTTOM)
-                dialog.findViewById<View>(R.id.closeDialog).setOnClickListener {
-                    dialog.dismiss()
-                }
-                dialog.findViewById<View>(R.id.seeTaInfo).setOnClickListener {
-                    startActivity(FriendInfoActivity.getIntent(this,conversationId?.toIntOrNull()?:return@setOnClickListener))
-                    dialog.dismiss()
-                }
-                dialog.findViewById<View>(R.id.setTop).setOnClickListener {
-                    if (UserInfo.isSuperVip()){
-                        setResult(RESULT_OK,intent)
-                    }else{
-                        startActivity(IntentManager.getSuperVipIntent(this, sVipGifEnum = SVipGifEnum.TopMessage))
+        ChatSettingDialog(this,conversationId?:return@lazy null)
+            .also {
+                it.setBlockFriendsListener {
+                    lifecycleScope.launch{
+                        try {
+                            imChatViewModel.addBlockList(conversationId?:return@launch)
+                            toast("屏蔽成功")
+                        }catch (e:Exception){
+                            toast(e.message)
+                        }
                     }
-                    dialog.dismiss()
-                }
-                dialog.findViewById<View>(R.id.blockFriends).setOnClickListener {
-                    EMClient.getInstance().contactManager().addUserToBlackList(conversationId,true)
-                    toast("加入黑名单成功")
-                    dialog.dismiss()
-                }
-                dialog.findViewById<View>(R.id.report).setOnClickListener {
-                    toast("举报")
-                    dialog.dismiss()
                 }
             }
     }
@@ -117,7 +103,7 @@ class ImChatActivity: ChatActivity() {
             friendRealName.visibility=View.GONE
         }
         chatSetting.setOnClickListener {
-            chatSettingDialog.show()
+            chatSettingDialog?.show()
         }
     }
 

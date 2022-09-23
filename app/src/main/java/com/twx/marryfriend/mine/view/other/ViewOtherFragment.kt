@@ -14,18 +14,12 @@ import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.MeSeeWhoBean
 import com.twx.marryfriend.bean.mine.MeSeeWhoList
-import com.twx.marryfriend.bean.mine.WhoSeeMeList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
-import com.twx.marryfriend.mine.view.mine.ViewMineAdapter
-import com.twx.marryfriend.mine.view.mine.ViewMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetMeSeeWhoCallback
 import com.twx.marryfriend.net.impl.mine.getMeSeeWhoPresentImpl
-import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
-import kotlinx.android.synthetic.main.fragment_like_mine.*
-import kotlinx.android.synthetic.main.fragment_view_mine.*
 import kotlinx.android.synthetic.main.fragment_view_other.*
 import java.util.*
 
@@ -161,9 +155,8 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
             ChatActivity.getIntent(
                 it,
                 mList[position].guest_uid.toString(),
-                mList[position].nick,
-                mList[position].image_url,
-                identity)
+                identity
+            )
         })
     }
 

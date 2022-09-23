@@ -20,19 +20,14 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean
 import com.twx.marryfriend.bean.mine.MeFocusWhoBean
 import com.twx.marryfriend.bean.mine.MeFocusWhoList
-import com.twx.marryfriend.bean.mine.WhoFocusMeList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
-import com.twx.marryfriend.mine.focus.mine.FocusMineAdapter
-import com.twx.marryfriend.mine.focus.mine.FocusMineFragment
 import com.twx.marryfriend.net.callback.dynamic.IDoCancelFocusCallback
 import com.twx.marryfriend.net.callback.mine.IGetMeFocusWhoCallback
 import com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl
 import com.twx.marryfriend.net.impl.mine.getMeFocusWhoPresentImpl
-import com.twx.marryfriend.net.impl.mine.getWhoFocusMePresentImpl
-import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import kotlinx.android.synthetic.main.fragment_focus_other.*
 import java.util.*
 
@@ -179,9 +174,8 @@ class FocusOtherFragment : Fragment(), IGetMeFocusWhoCallback,
             ChatActivity.getIntent(
                 it,
                 mList[position].guest_uid.toString(),
-                mList[position].nick,
-                mList[position].image_url,
-                identity)
+                identity
+            )
         })
     }
 

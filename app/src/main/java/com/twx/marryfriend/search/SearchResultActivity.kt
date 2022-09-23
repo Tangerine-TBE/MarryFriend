@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.kingja.loadsir.core.LoadSir
-import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
@@ -86,7 +85,11 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         searchResultAdapter.chatAction={
             val userid=it.user_id
             if (userid!=null){
-                startActivity(ChatActivity.getIntent(this,userid.toString(),it.nick,it.getHeadImage(),it.isRealName()))
+                startActivity(ChatActivity.getIntent(
+                    this,
+                    userid.toString(),
+                    it.isRealName()
+                ))
             }
         }
         searchResultAdapter.likeAction={item,view->

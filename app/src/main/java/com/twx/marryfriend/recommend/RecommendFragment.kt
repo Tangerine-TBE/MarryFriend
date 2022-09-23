@@ -27,6 +27,7 @@ import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.friend.FriendInfoViewModel
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.message.ImChatActivity
+import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -50,6 +51,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //            .addCallback(NotContentCallback())
             .setDefaultCallback(LoadingCallback::class.java)
             .build()
+    }
+    private val imChatViewModel by lazy {
+        ViewModelProvider(this).get(ImChatViewModel::class.java)
     }
     private val loadService by lazy {
         loadSir.register(contentViewSwitch
@@ -85,7 +89,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         test.setOnClickListener {
             toast(UserInfo.getUserId().toString())
             if (BuildConfig.DEBUG){
-                startActivity(ImChatActivity.getIntent(requireContext(),"2"))
+                startActivity(ImChatActivity.getIntent(requireContext(), "2"))
             }
         }
         cardSwipeView.adapter=recommendAdapter
@@ -413,7 +417,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             startActivity(IntentManager.getReportIntent(requireContext(),it.getId()))
         }
         recommendAdapter.blacklistAction={
-            toast("黑名单")
+            lifecycleScope.launch{
+                try {
+                    imChatViewModel.addBlockList(it.getId().toString())
+                    toast("屏蔽成功")
+                }catch (e:Exception){
+                    toast(e.message)
+                }
+            }
         }
         recommendAdapter.settingAction={
             settingDialog(it)
@@ -494,9 +505,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         viewLifecycleOwner.lifecycleScope.launch (){
             loadingDialog.show()
             try {
-                recommendViewModel.disLike(item.getId(),{
-                    openVip()
-                })
+                recommendViewModel.disLike(item.getId())
             }catch (e:Exception){
                 toast(e.message)
             }
@@ -518,14 +527,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {
-                val str=recommendViewModel.like(item.getId(),{
+                val str=recommendViewModel.like(item.getId()) {
                     showView(ViewType.mutual)
                     Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
-                },{
-                    openVip()
-                })
+                }
 //                ImMessageManager.sendTextMsg(item.getId().toString(), UserInfo.getGreetText())
-                toast(str)
+//                toast(str)
             }catch (e:Exception){
                 e.message?.also {
                     toast(it)

@@ -26,27 +26,9 @@ object ImMessageManager {
 
     private val messageDelivered=MutableLiveData< MutableList<EMMessage>?>()
 
-    fun observeMessageRead(owner: LifecycleOwner,observer: Observer<List<EMMessage>>){
-        messageRead.value=null
-        messageRead.observe(owner,observer)
-    }
-
-    fun observeConversationMessage(owner: LifecycleOwner,observer: Observer<String>){
-        fromConversationRead.value=null
-        fromConversationRead.observe(owner,observer)
-    }
-
     fun observeNewMessage(owner: LifecycleOwner,observer: Observer<List<Message<out EMMessageBody>>?>){
         newMessageLiveData.value=null
         newMessageLiveData.observe(owner,observer)
-    }
-
-    /**
-     * 已送达
-     */
-    private fun observeMessageDelivered(owner: LifecycleOwner,observer: Observer<MutableList<EMMessage>?>){
-        messageDelivered.value=null
-        messageDelivered.observe(owner,observer)
     }
 
     private val msgListener by lazy {

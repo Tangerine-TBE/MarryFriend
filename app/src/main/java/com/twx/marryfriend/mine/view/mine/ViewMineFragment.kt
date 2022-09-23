@@ -13,21 +13,15 @@ import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
-import com.twx.marryfriend.bean.mine.WhoFocusMeList
 import com.twx.marryfriend.bean.mine.WhoSeeMeBean
 import com.twx.marryfriend.bean.mine.WhoSeeMeList
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
-import com.twx.marryfriend.mine.focus.mine.FocusMineAdapter
-import com.twx.marryfriend.mine.focus.mine.FocusMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetWhoSeeMeCallback
-import com.twx.marryfriend.net.impl.mine.getWhoFocusMePresentImpl
 import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
 import com.twx.marryfriend.vip.VipActivity
-import kotlinx.android.synthetic.main.fragment_focus_mine.*
-import kotlinx.android.synthetic.main.fragment_like_mine.*
 import kotlinx.android.synthetic.main.fragment_view_mine.*
 import java.util.*
 
@@ -189,9 +183,8 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
                 ChatActivity.getIntent(
                     it,
                     mList[position].host_uid.toString(),
-                    mList[position].nick,
-                    mList[position].image_url,
-                    identity)
+                    identity
+                )
             })
 
         }

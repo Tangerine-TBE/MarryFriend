@@ -12,6 +12,7 @@ import com.hyphenate.easeui.EaseIM;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.domain.EaseAvatarOptions;
 import com.hyphenate.easeui.domain.EaseUser;
+import com.hyphenate.easeui.modules.chat.model.EaseChatItemStyleHelper;
 import com.hyphenate.easeui.provider.EaseUserProfileProvider;
 import com.hyphenate.easeui.widget.EaseImageView;
 
@@ -69,7 +70,11 @@ public class EaseUserUtils {
                         .into(imageView);
             }
         }else{
-            Glide.with(context).load(R.drawable.ease_default_avatar).into(imageView);
+            EaseChatItemStyleHelper.getInstance().getAvatarDefaultSrc();
+            Glide.with(context).load(EaseChatItemStyleHelper.getInstance().getAvatarDefaultSrc())
+                    .error(R.drawable.ease_default_avatar)
+                    .placeholder(R.drawable.ease_default_avatar)
+                    .into(imageView);
         }
     }
 

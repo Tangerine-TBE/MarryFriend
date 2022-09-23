@@ -8,8 +8,11 @@ import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
 import com.baidu.location.LocationClientOption
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.getCityData
 import com.xyzz.myutils.LifecycleCallbacks
 import com.xyzz.myutils.MyUtils
 import com.xyzz.myutils.NetworkUtil
@@ -21,11 +24,32 @@ import kotlin.math.*
 object LocationUtils {
     private const val PRE_UP_TIME="pre_up_time"
     private var isFirst=true
+    private const val CITY_CODE_KEY="location_k"
+    fun putLocation(location:MyLocation){
+        val gson=GsonBuilder()
+            .serializeNulls()
+            .create()
+        SPUtil.instance.putString(CITY_CODE_KEY,gson.toJson(location))
+    }
+    fun getLocation():MyLocation?{
+        return locationLiveData.value?:try {
+            Gson().fromJson(SPUtil.instance.getString(CITY_CODE_KEY),MyLocation::class.java)
+        }catch (e:Exception){
+            null
+        }
+    }
 
     private val context by lazy {
         MyUtils.application
     }
-    data class MyLocation constructor(val longitude:Double,val latitude:Double,val address:String)
+    data class MyLocation constructor(val longitude:Double,
+                                      val latitude:Double,
+                                      val address:String){
+        var province:String?=null
+        var provinceCode:Int?=null
+        var city:String?=null
+        var cityCode:Int?=null
+    }
     private val locationLiveData by lazy {
         MutableLiveData<MyLocation?>()
     }
@@ -73,7 +97,24 @@ object LocationUtils {
                     locationLiveData.value=null
                     return
                 }
-                locationLiveData.value=MyLocation(location.longitude,location.latitude,location.addrStr?:"")
+                locationLiveData.value=MyLocation(location.longitude,location.latitude,location.addrStr?:"").also { myLocation ->
+                    myLocation.city=location.city
+                    var provinceCode:Int?=null
+                    var cityCode:Int?=null
+                    getCityData()?.data?.find {
+                        val result=it.name.removeSuffix("省")==location.province.removeSuffix("省")
+                        provinceCode=it.id
+                        result
+                    }?.child?.find {
+                        val result=it.name.removeSuffix("市")==location.city.removeSuffix("市")
+                        cityCode=it.id
+                        result
+                    }
+                    myLocation.provinceCode=provinceCode
+                    myLocation.cityCode=cityCode
+
+                    putLocation(myLocation)
+                }
             }
         })
         val option = LocationClientOption()
