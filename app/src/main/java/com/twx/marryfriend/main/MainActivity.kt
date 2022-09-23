@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.DeviceUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.message.ImMessageManager
@@ -47,6 +48,9 @@ import com.umeng.message.entity.UMessage
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import org.android.agoo.huawei.HuaWeiRegister
+import org.android.agoo.mezu.MeizuRegister
+import org.android.agoo.oppo.OppoRegister
+import org.android.agoo.vivo.VivoRegister
 import org.android.agoo.xiaomi.MiPushRegistar
 import java.util.*
 
@@ -456,17 +460,57 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
      * 注册设备推送通道（小米、华为等设备的推送）
      */
     private fun registerDeviceChannel(context: Context) {
-        //小米推送：填写您在小米后台APP对应的xiaomi id和key
-        MiPushRegistar.register(context, "2882303761520176390", "5612017666390")
 
-        //华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
-        HuaWeiRegister.register(context.applicationContext)
 
-//        //OPPO推送：填写您在OPPO后台APP对应的app key和secret
-//        OppoRegister.register(context, PushConstants.OPPO_KEY, PushConstants.OPPO_SECRET);
+        Log.i("guo", "设备厂商 :${DeviceUtils.getManufacturer()}")
 
-//        //vivo推送：注意vivo推送的初始化参数在AndroidManifest.xml中配置
-//        VivoRegister.register(context);
+
+        when (DeviceUtils.getManufacturer()) {
+
+            "Xiaomi" -> {
+                Log.i("guo", "XIAOMI推送")
+
+//                小米推送：填写您在小米后台APP对应的xiaomi id和key
+                MiPushRegistar.register(context, "2882303761520176390", "5612017666390")
+            }
+
+
+            "vivo" -> {
+                Log.i("guo", "VIVO推送")
+
+//                vivo推送：注意vivo推送的初始化参数在AndroidManifest.xml中配置
+                VivoRegister.register(context);
+            }
+
+            "OPPO" -> {
+                Log.i("guo", "OPPO推送")
+
+//                OPPO推送：填写您在OPPO后台APP对应的app key和secret
+                OppoRegister.register(context,
+                    "ddfbd322e5f84b9f9518011417970964",
+                    "0dd23bca2294417ea0f49d822dc8df29");
+            }
+
+            "HUAWEI" -> {
+                Log.i("guo", "华为推送")
+
+//                华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
+                HuaWeiRegister.register(context.applicationContext)
+            }
+
+            "HONOR" -> {
+                Log.i("guo", "荣耀推送")
+
+                //荣耀推送：注意荣耀推送的初始化参数在AndroidManifest.xml中配置
+//                HonorRegister.register(context);
+            }
+
+
+//            MeizuRegister.register(context, "149579", "41e4f6a38cb24c9aa9a83d2041be6555");
+
+
+        }
+
 
     }
 

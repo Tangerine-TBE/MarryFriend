@@ -570,7 +570,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun openVip(){
-        startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Like))
+        startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
     }
 
     enum class ViewType{
