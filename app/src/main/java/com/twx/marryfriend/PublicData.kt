@@ -9,11 +9,15 @@ import com.twx.marryfriend.constant.Constant
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
+private var cityBean:CityBean?=null
 fun getCityData(): CityBean?{
-    return try {
+    return cityBean?:
+     try {
         val jsonString= SPStaticUtils.getString(Constant.CITY_JSON_DATE)
         val gson= Gson()
-        gson.fromJson(jsonString, CityBean::class.java)
+        val c=gson.fromJson(jsonString, CityBean::class.java)
+         cityBean=c
+         c
     }catch (e:Exception){
         null
     }

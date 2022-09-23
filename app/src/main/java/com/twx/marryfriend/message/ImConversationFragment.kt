@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -24,8 +23,6 @@ import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
-import com.twx.marryfriend.databinding.FragmentImMessageBinding
-import com.twx.marryfriend.databinding.ItemMessageFollowBinding
 import com.twx.marryfriend.getUserExt
 import com.twx.marryfriend.message.model.ConversationsModel
 import com.twx.marryfriend.mutual.MutualLikeActivity
@@ -34,7 +31,6 @@ import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import kotlinx.android.synthetic.main.fragment_im_message.*
 import kotlinx.coroutines.launch
-import kotlin.concurrent.thread
 
 class ImConversationFragment: ConversationListFragment() {
     private val viewModel by lazy {
@@ -73,33 +69,12 @@ class ImConversationFragment: ConversationListFragment() {
         }
     }
 
-    fun makeConversationTop(item: EMConversation){
-        val index=conversationListLayout.listAdapter.data.indexOfFirst {
-            it.info==item
-        }
-        if (index!=-1){
-            val info=conversationListLayout.getItem(index)
-            conversationListLayout.makeConversationTop(index,info)
-        }
-    }
-
-    /**
-     * TODO
-     */
-    fun makeConversationTop(conversationId: String){
-        val item=conversationListLayout.listAdapter.data.find {
-            val i=it.info
-            i is EMConversation&&i.conversationId()==conversationId
-        }?.info as? EMConversation
-        makeConversationTop(item?:return)
-    }
-
     private val startActivityForResult =   registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
         ActivityResultCallback {
             if (it.resultCode==Activity.RESULT_OK){
                 val cid=ImChatActivity.getConversationId(it.data)
                 if (cid!=null){
-                    makeConversationTop(cid)
+//                    makeConversationTop(cid)
                 }
             }
         })
@@ -108,7 +83,11 @@ class ImConversationFragment: ConversationListFragment() {
         val ext=imUserInfo.getUserExt()
         if (UserInfo.isVip()||ext?.isSuperVip==true||ext?.isMutualLike==true){
             val isRealName=ext?.isRealName?:false
-            startActivityForResult.launch(ImChatActivity.getIntent(requireContext(),item.conversationId(), isRealName = isRealName))
+            startActivityForResult.launch(ImChatActivity.getIntent(
+                requireContext(),
+                item.conversationId(),
+                isRealName = isRealName
+            ))
         }else{
             startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Inbox))
         }

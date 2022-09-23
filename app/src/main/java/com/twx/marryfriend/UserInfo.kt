@@ -73,10 +73,16 @@ object UserInfo {
     }
 
     fun isVip():Boolean{
+        if (BuildConfig.DEBUG){
+
+        }
         return getUserVipLevel()>0
     }
 
     fun isSuperVip():Boolean{
+        if (BuildConfig.DEBUG){
+
+        }
         return getUserVipLevel()>1
     }
     fun getHeadPortrait():String{

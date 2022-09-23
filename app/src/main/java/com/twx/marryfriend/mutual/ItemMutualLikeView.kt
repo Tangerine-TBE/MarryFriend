@@ -37,7 +37,10 @@ class ItemMutualLikeView @JvmOverloads constructor(context: Context, attributeSe
             Glide.with(sexIcon).load(R.mipmap.ic_mutual_women).into(sexIcon)
         }
         mutualChat.setOnClickListener {
-            it.context.startActivity(ImChatActivity.getIntent(it.context,mutualLikeData.user_id?.toString()?:return@setOnClickListener))
+            it.context.startActivity(ImChatActivity.getIntent(
+                it.context,
+                mutualLikeData.user_id?.toString()?:return@setOnClickListener
+            ))
         }
         this.setOnClickListener {
             it.context.startActivity(FriendInfoActivity.getIntent(it.context,mutualLikeData.user_id?:return@setOnClickListener))

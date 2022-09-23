@@ -270,11 +270,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 // 关注了，需要跳转到聊天界面
                 ToastUtils.showShort("聊天")
                 val identity = info.identity_status == 1
-                startActivity(ChatActivity.getIntent(this,
+                startActivity(ChatActivity.getIntent(
+                    this,
                     info.user_id,
-                    info.nick,
-                    info.headface,
-                    identity))
+                    identity
+                ))
 
             } else {
                 // 未关注了，需要关注

@@ -54,11 +54,9 @@ class ChatActivity:AppCompatActivity(/*R.layout.activity_chat*/) {
 
         /**
          * @param conversationId 对方id
-         * @param nickname 昵称
-         * @param headImage 头像
          * @param isRealName 是否实名
          */
-        fun getIntent(context: Context, conversationId: String, nickname:String?, headImage:String?, isRealName:Boolean):Intent{
+        fun getIntent(context: Context,conversationId: String,isRealName: Boolean):Intent{
 //            val intent=Intent(context,ChatActivity::class.java)
 //            intent.putExtra(FRIEND_ID_KEY,conversationId)
 //            intent.putExtra(NICKNAME_KEY,nickname?:conversationId)
@@ -67,7 +65,7 @@ class ChatActivity:AppCompatActivity(/*R.layout.activity_chat*/) {
 //
 //            ImMessageManager.ackConversationRead(conversationId)
 //            return intent
-            return ImChatActivity.getIntent(context,conversationId,nickname,headImage,isRealName)
+            return ImChatActivity.getIntent(context, conversationId, isRealName)
         }
 
         private const val PICK_IMAGE_CODE=1

@@ -77,11 +77,16 @@ class RecommendViewModel():ViewModel() {
 
     suspend fun loadRecommendUserId()=suspendCoroutine<List<Int>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/commendList"
-        val map= mapOf(
+        val map= mutableMapOf<String,String>(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "user_sex" to UserInfo.getOriginalUserSex().toString(),
-            "province_code" to "9",
-            "city_code" to "10")
+            "user_sex" to UserInfo.getOriginalUserSex().toString())
+
+        LocationUtils.getLocation()?.provinceCode?.also {
+            map["province_code"] = it.toString()
+        }
+        LocationUtils.getLocation()?.cityCode?.also {
+            map["city_code"] = it.toString()
+        }
         /**
          * {"code":200,"msg":"success","data":{"5":5}}
          */
@@ -160,11 +165,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun disLike(guest_uid: Int,openVip:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
-        if (surplusRecommend<=0){
-            coroutine.resumeWithException(Exception())
-            return@suspendCoroutine
-        }
+    suspend fun disLike(guest_uid: Int)=suspendCoroutine<Unit>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -175,10 +176,6 @@ class RecommendViewModel():ViewModel() {
             try {
                 val jsonObject=JSONObject(response)
                 if (jsonObject.getInt("code")==200) {
-                    surplusRecommend--
-                    if (surplusRecommend<=0){
-                        openVip?.invoke()
-                    }
                     preDisLike=guest_uid
                     coroutine.resume(Unit)
                 }else{
@@ -192,12 +189,10 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun like(guest_uid: Int,mutualLikeAction:(()->Unit)?=null,openVip:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
-        if (surplusRecommend<=0){
-            coroutine.resumeWithException(Exception())
-            return@suspendCoroutine
-        }
-
+    suspend fun like(
+        guest_uid: Int,
+        mutualLikeAction: (() -> Unit)? = null
+    )=suspendCoroutine<String>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -211,10 +206,6 @@ class RecommendViewModel():ViewModel() {
                     val code=jsonObject.getJSONArray("data").getInt(0)
                     if (code==2){
                         mutualLikeAction?.invoke()
-                    }
-                    surplusRecommend--
-                    if (surplusRecommend<=0){
-                        openVip?.invoke()
                     }
                     iLog("返回的状态code:${code},2为相互喜欢")
                     coroutine.resume("喜欢成功")

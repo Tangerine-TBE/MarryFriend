@@ -89,6 +89,10 @@ public class EaseChatItemStyleHelper {
         style.setAvatarDefaultSrc(avatarDefaultSrc);
     }
 
+    public Drawable getAvatarDefaultSrc(){
+        return style.getAvatarDefaultSrc();
+    }
+
     public void setShowNickname(boolean showNickname) {
         style.setShowNickname(showNickname);
     }
