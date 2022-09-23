@@ -182,8 +182,6 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
         startActivity(
             ChatActivity.getIntent(this,
                 mList[position].guest_uid.toString(),
-                mList[position].nick,
-                mList[position].image_url,
                 true
             )
         )

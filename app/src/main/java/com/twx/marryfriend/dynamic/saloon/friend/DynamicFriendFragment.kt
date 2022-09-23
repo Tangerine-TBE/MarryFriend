@@ -199,8 +199,6 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                         ChatActivity.getIntent(
                             it,
                             mFocusTrendList[position].user_id,
-                            mFocusTrendList[position].nick,
-                            mFocusTrendList[position].headface,
                             identity
                         )
                     })
