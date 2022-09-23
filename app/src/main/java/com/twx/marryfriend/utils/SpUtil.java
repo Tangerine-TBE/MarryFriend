@@ -14,10 +14,16 @@ public class SpUtil {
         SPStaticUtils.put(Constant.USER_IS_LOGIN, true);
         String id = String.valueOf(loginBean.getData().getUser_id());
         SPStaticUtils.put(Constant.USER_ID, id);
+
         SPStaticUtils.put(Constant.USER_ACCOUNT, loginBean.getData().getUser_mobile());
         SPStaticUtils.put(Constant.CLOSE_TIME_LOW, loginBean.getData().getClose_time_low());
         SPStaticUtils.put(Constant.CLOSE_TIME_HIGH, loginBean.getData().getClose_time_high());
         SPStaticUtils.put(Constant.USER_LOGIN_TIME, System.currentTimeMillis());
+
+        SPStaticUtils.put(Constant.ME_NAME, loginBean.getData().getNick());
+        SPStaticUtils.put(Constant.ME_AGE, loginBean.getData().getAge());
+        SPStaticUtils.put(Constant.ME_SEX, loginBean.getData().getSex());
+        SPStaticUtils.put(Constant.COIN_SUM, loginBean.getData().getJinbi_goldcoin());
 
         // 更新会员等级
         if (TimeUtils.getTimeSpan(TimeUtils.getNowString(), loginBean.getData().getClose_time_high(), TimeConstants.SEC) < 0) {
@@ -33,10 +39,16 @@ public class SpUtil {
         SPStaticUtils.put(Constant.USER_IS_LOGIN, true);
         String id = String.valueOf(autoLoginBean.getData().getUser_id());
         SPStaticUtils.put(Constant.USER_ID, id);
+
         SPStaticUtils.put(Constant.USER_ACCOUNT, autoLoginBean.getData().getUser_mobile());
         SPStaticUtils.put(Constant.CLOSE_TIME_LOW, autoLoginBean.getData().getClose_time_low());
         SPStaticUtils.put(Constant.CLOSE_TIME_HIGH, autoLoginBean.getData().getClose_time_high());
         SPStaticUtils.put(Constant.USER_LOGIN_TIME, System.currentTimeMillis());
+
+        SPStaticUtils.put(Constant.ME_NAME, autoLoginBean.getData().getNick());
+        SPStaticUtils.put(Constant.ME_AGE, autoLoginBean.getData().getAge());
+        SPStaticUtils.put(Constant.ME_SEX, autoLoginBean.getData().getSex());
+        SPStaticUtils.put(Constant.COIN_SUM, autoLoginBean.getData().getJinbi_goldcoin());
 
         // 更新会员等级
         if (TimeUtils.getTimeSpan(TimeUtils.getNowString(), autoLoginBean.getData().getClose_time_high(), TimeConstants.SEC) < 0) {
@@ -108,11 +120,7 @@ public class SpUtil {
 
     // 删除本地存储信息
     public static void deleteUserInfo() {
-        SPStaticUtils.put(Constant.USER_IS_LOGIN, false);
-        SPStaticUtils.put(Constant.USER_ID, "");
-        SPStaticUtils.put(Constant.USER_VIP_LEVEL, 0);
-        SPStaticUtils.put(Constant.USER_VIP_TIME, "");
-        SPStaticUtils.put(Constant.USER_ACCOUNT, "");
+        SPStaticUtils.clear();
     }
 
 

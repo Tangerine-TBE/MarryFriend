@@ -192,4 +192,11 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getWhoSeeMePresent.unregisterCallback(this)
+
+    }
+
 }

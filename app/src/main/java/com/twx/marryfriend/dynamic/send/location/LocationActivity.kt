@@ -275,4 +275,12 @@ class LocationActivity : MainBaseViewActivity(),
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doPlaceSearch.unregisterCallback(this)
+        mBaiduSearchPresent.unregisterCallback(this)
+
+    }
+
 }

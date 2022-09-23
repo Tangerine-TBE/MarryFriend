@@ -1,5 +1,7 @@
 package com.twx.marryfriend.net.impl;
 
+import android.util.Log;
+
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.net.callback.IDoLifeFaceDetectCallback;
@@ -46,6 +48,9 @@ public class doLifeFaceDetectPresentImpl implements IDoLifeFaceDetectPresent {
 
             @Override
             public void onResponse(Call<FaceDetectBean> call, Response<FaceDetectBean> response) {
+
+                Log.i("guo", "11111");
+
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mBody = response.body();
                     if (mBody != null) {
@@ -58,6 +63,7 @@ public class doLifeFaceDetectPresentImpl implements IDoLifeFaceDetectPresent {
 
             @Override
             public void onFailure(Call<FaceDetectBean> call, Throwable t) {
+                Log.i("guo", "error :" + t);
                 for (IDoLifeFaceDetectCallback callback : mCallback) {
                     callback.onDoLifeFaceDetectError();
                 }

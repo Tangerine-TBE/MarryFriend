@@ -545,8 +545,8 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
                 holder.llVideo.visibility = View.VISIBLE
                 Glide.with(mContext)
                     .load(mList[position].video_url)
-                    .error(R.drawable.ic_pic_default)
-                    .placeholder(R.drawable.ic_pic_default)
+                    .error(R.drawable.ic_video_default)
+                    .placeholder(R.drawable.ic_video_default)
                     .into(holder.video)
                 holder.llOne.visibility = View.GONE
                 holder.llTwo.visibility = View.GONE

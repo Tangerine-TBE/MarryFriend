@@ -239,4 +239,11 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateGreetPresent.unregisterCallback(this)
+
+    }
+
 }

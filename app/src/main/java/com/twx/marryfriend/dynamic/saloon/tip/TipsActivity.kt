@@ -172,4 +172,11 @@ class TipsActivity : MainBaseViewActivity(), IDoDeleteTipsCallback {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doDeleteTipsPresent.unregisterCallback(this)
+
+    }
+
 }

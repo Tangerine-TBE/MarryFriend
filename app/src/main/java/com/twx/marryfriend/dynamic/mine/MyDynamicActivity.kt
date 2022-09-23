@@ -36,6 +36,7 @@ import com.twx.marryfriend.net.callback.dynamic.IDoDeleteTrendCallback
 import com.twx.marryfriend.net.impl.dynamic.doDeleteTrendPresentImpl
 import kotlinx.android.synthetic.main.activity_hobby_tool.*
 import kotlinx.android.synthetic.main.activity_my_dynamic.*
+import kotlinx.android.synthetic.main.fragment_mine.*
 import java.util.*
 
 
@@ -67,19 +68,50 @@ class MyDynamicActivity : MainBaseViewActivity(),
     override fun initView() {
         super.initView()
 
-        if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-            Glide.with(this)
-                .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                .error(R.drawable.ic_mine_male_default)
-                .placeholder(R.drawable.ic_mine_male_default)
-                .into(iv_dynamic_mine_avatar)
+
+        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
+            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                Glide.with(this)
+                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                    .placeholder(R.drawable.ic_mine_male_default)
+                    .error(R.drawable.ic_mine_male_default)
+                    .into(iv_dynamic_mine_avatar)
+            } else {
+                Glide.with(this)
+                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                    .placeholder(R.drawable.ic_mine_female_default)
+                    .error(R.drawable.ic_mine_female_default)
+                    .into(iv_dynamic_mine_avatar)
+            }
         } else {
-            Glide.with(this)
-                .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                .error(R.drawable.ic_mine_female_default)
-                .placeholder(R.drawable.ic_mine_female_default)
-                .into(iv_dynamic_mine_avatar)
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(this)
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
+                        .into(iv_dynamic_mine_avatar)
+                } else {
+                    Glide.with(this)
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .error(R.drawable.ic_mine_male_default)
+                        .into(iv_dynamic_mine_avatar)
+                }
+            } else {
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                    Glide.with(this)
+                        .load(R.drawable.ic_mine_male_default)
+                        .into(iv_dynamic_mine_avatar)
+                } else {
+                    Glide.with(this)
+                        .load(R.drawable.ic_mine_female_default)
+                        .into(iv_dynamic_mine_avatar)
+                }
+            }
         }
+
+
 
         tv_dynamic_mine_name.text = SPStaticUtils.getString(Constant.ME_NAME)
 
@@ -575,6 +607,15 @@ class MyDynamicActivity : MainBaseViewActivity(),
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(DynamicEditDialog(this@MyDynamicActivity, position))
             .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getMyTrendsListPresent.unregisterCallback(this)
+
+        doDeleteTrendPresent.unregisterCallback(this)
+
     }
 
 }

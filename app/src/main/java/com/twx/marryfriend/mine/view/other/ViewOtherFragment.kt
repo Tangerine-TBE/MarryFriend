@@ -160,4 +160,11 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getMeSeeWhoPresent.unregisterCallback(this)
+
+    }
+
 }

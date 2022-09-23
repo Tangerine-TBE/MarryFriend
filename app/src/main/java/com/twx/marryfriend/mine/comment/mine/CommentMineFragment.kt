@@ -197,4 +197,9 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
         }, 0)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        getWhoDiscussMePresent.unregisterCallback(this)
+    }
+
 }

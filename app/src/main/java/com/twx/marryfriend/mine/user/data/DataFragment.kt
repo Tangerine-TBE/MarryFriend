@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.AnimationDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaPlayer
 import android.net.Uri
@@ -46,23 +47,31 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.mine.life.LifePhotoActivity
 import com.twx.marryfriend.mine.record.AudioRecorder
+import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataLifePhotoAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
+import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
+import com.twx.marryfriend.utils.VideoUtil
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
+import com.xyzz.myutils.show.iLog
 import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_dynamic_send.*
+import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.fragment_data.*
 import java.io.*
 import java.util.*
+import kotlin.math.log
 
 
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
@@ -97,6 +106,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 是否正在播放
     private var isPlaying = false
+
+    // 播放时是否在暂停
+    private var isPause = false
 
     private var isCurrentDown = false
     private var mCountDownTimer: CountDownTimer? = null
@@ -166,6 +178,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var updateProportionPresent: doUpdateProportionPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
+
+    // 上传
+    private var needUpdateBase = true
+    private var baseUpdateMode = ""
 
     private var lastBaseInfo = ""
     private var lastMoreInfo = ""
@@ -449,10 +465,24 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private fun initEvent() {
 
-        showNextDialog(0)
+
+//        // 此时需要验证是否有头像
+//        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" ||
+//            SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+//        ) {
+//            showNextDialog(0)
+//        } else {
+//            XPopup.Builder(context)
+//                .dismissOnTouchOutside(false)
+//                .dismissOnBackPressed(false)
+//                .isDestroyOnDismiss(true)
+//                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+//                .asCustom(AvatarDialog(requireContext()))
+//                .show()
+//        }
+
 
         iv_user_data_avatar.setOnClickListener {
-            ToastUtils.showShort("上传头像")
 
             XPopup.Builder(context)
                 .dismissOnTouchOutside(false)
@@ -524,45 +554,83 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         iv_user_data_voice.setOnClickListener {
 
-            if (!isPlaying) {
-                // 开始播放
-                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_pause)
+            val videoUrl = SPStaticUtils.getString(Constant.ME_VOICE, "")
 
-                startCurrentDownTimer((SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0")
-                    .toLong()))
+            if (videoUrl != "") {
 
-                mediaPlayer.reset()
-                mediaPlayer.setDataSource(recordPath);
-                mediaPlayer.prepare();
-                mediaPlayer.start();
+                if (!isPause) {
 
-                isPlaying = !isPlaying
-            } else {
-                // 暂停播放
-                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
-                mediaPlayer.stop();
+                    Log.i("guo", "暂停")
 
-                mCountDownTimer?.cancel()
+                    isPause = true
+                    iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+                    pauseVoice()
 
-                val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
-                var formatTime = if (time.div(1000) / 60 >= 10) {
-                    if (time.div(1000) % 60 >= 10) {
-                        "${time.div(1000) / 60} : ${time.div(1000) % 60}"
-                    } else {
-                        "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
-                    }
+
                 } else {
-                    if (time.div(1000) % 60 >= 10) {
-                        "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
-                    } else {
-                        "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
-                    }
+
+                    Log.i("guo", "播放")
+
+                    playVoice(videoUrl,
+                        {
+                            //playAnim
+
+                            isPause = false
+                            iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_pause)
+
+//                        startCurrentDownTimer((SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()))
+                        },
+                        {
+                            isPause = true
+
+                            iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+
+//                            val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+//                            var formatTime = if (time.div(1000) / 60 >= 10) {
+//                                if (time.div(1000) % 60 >= 10) {
+//                                    "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+//                                } else {
+//                                    "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+//                                }
+//                            } else {
+//                                if (time.div(1000) % 60 >= 10) {
+//                                    "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+//                                } else {
+//                                    "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+//                                }
+//                            }
+//
+//                            tv_user_data_voice.text = formatTime
+
+                        },
+                        {
+                            isPause = true
+
+                            ToastUtils.showShort("播放错误")
+                        })
                 }
 
-                tv_user_data_voice.text = formatTime
-
-                isPlaying = !isPlaying
+            } else {
+                ToastUtils.showShort("数据解析失败，请重新上传招呼语")
             }
+
+
+//            if (!isPlaying) {
+//                // 开始播放
+//
+//
+//                isPlaying = !isPlaying
+//            } else {
+//                // 暂停播放
+//                iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+//                mediaPlayer.stop();
+//
+//                mCountDownTimer?.cancel()
+//
+//
+//
+//                isPlaying = !isPlaying
+//            }
 
         }
 
@@ -1585,6 +1653,24 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    // 播放录音文件
+    private fun playVoice(
+        path: String,
+        onPlay: () -> Unit,
+        onCompletion: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        PlayAudio.play(path, onPlay, onCompletion, onError)
+    }
+
+
+    private fun pauseVoice() {
+        PlayAudio.pause()
+    }
+
+    private fun stopVoice() {
+        PlayAudio.stop()
+    }
 
     // 获取、更新生活照
     fun updateLife() {
@@ -2375,6 +2461,37 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // ---------------------------------- 上传信息 ----------------------------------
 
+
+    // 上传自我介绍
+    private fun updateIntroduce(introduce: String) {
+
+        baseUpdateMode = "introduce"
+        needUpdateBase = true
+
+        val introduceInfo = " {\"introduce_self\":    \"$introduce\"}"     // 我心目中的Ta
+
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = introduceInfo
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+    }
+
+
+    // 上传我心目中的他
+    private fun updateIdea(ta: String) {
+
+        baseUpdateMode = "idea"
+        needUpdateBase = true
+
+        val taInfo = " {\"ta_in_my_mind\":    \"$ta\"}"                // 我心目中的Ta
+
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = taInfo
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+    }
+
+
     // 开始上传信息
     private fun update() {
 
@@ -2383,6 +2500,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
         doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
+
+        baseUpdateMode = "all"
+        needUpdateBase = true
 
         val baseInfoMap: MutableMap<String, String> = TreeMap()
         baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
@@ -2678,13 +2798,27 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
 
-        if (baseInfoUpdateBean != null) {
-            if (baseInfoUpdateBean.code == 200) {
-                lastBaseInfo = getBaseInfo()
-                lastMoreInfo = getMoreInfo()
-            } else {
-                ToastUtils.showShort(baseInfoUpdateBean.msg)
+        if (needUpdateBase) {
+            needUpdateBase = false
+
+            if (baseInfoUpdateBean != null) {
+                if (baseInfoUpdateBean.code == 200) {
+
+                    when (baseUpdateMode) {
+                        "introduce" -> {}
+                        "idea" -> {}
+                        "all" -> {
+                            lastBaseInfo = getBaseInfo()
+                            lastMoreInfo = getMoreInfo()
+                        }
+                    }
+
+
+                } else {
+                    ToastUtils.showShort(baseInfoUpdateBean.msg)
+                }
             }
+
         }
 
     }
@@ -2797,6 +2931,38 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_like_avatar
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
+                dismiss()
+
+                XPopup.Builder(context)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(PhotoGuideDialog(requireContext()))
+                    .show()
+
+            }
+
+        }
+
+        override fun onDismiss() {
+            super.onDismiss()
+        }
+
+    }
+
     // 添加自我介绍
     inner class IntroduceDialog(context: Context) : FullScreenPopupView(context),
         IDoTextVerifyCallback {
@@ -2870,7 +3036,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         confirm.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                     }
 
-                    if (s.length >= 1000) {
+                    if (s.length >= 100) {
                         ToastUtils.showShort("已达到输入文字最大数量")
                         KeyboardUtils.hideSoftInput(requireActivity())
                     }
@@ -2879,24 +3045,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             confirm.setOnClickListener {
                 if (size >= 10) {
-
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (text.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        text = ""
-//                        content.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
 
                     val map: MutableMap<String, String> = TreeMap()
                     map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
@@ -2913,6 +3061,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         override fun onDismiss() {
             super.onDismiss()
+
+            doTextVerifyPresent.unregisterCallback(this)
+
             // 更新数据
             if (isNeedUpdate) {
                 iv_user_data_introduce.visibility = View.GONE
@@ -2929,6 +3080,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             if (textVerifyBean.conclusion == "合规") {
                 // 保存数据
                 SPStaticUtils.put(Constant.ME_INTRODUCE, text)
+
+                updateIntroduce(text)
+
                 isNeedUpdate = true
                 dismiss()
             } else {
@@ -3008,6 +3162,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         Log.i("guo",
                             "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
 
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+
                         // 存储录音文件的长度
                         SPStaticUtils.put(Constant.ME_VOICE_LONG,
                             (SystemClock.elapsedRealtime() - timer.base).toString())
@@ -3051,6 +3208,41 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             }
 
+            timer.onChronometerTickListener =
+                Chronometer.OnChronometerTickListener { chronometer ->
+                    // 如果从开始计时到现在超过了60s
+                    if (chronometer != null) {
+                        if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
+                            ToastUtils.showShort("超过最大时间，自动上传")
+                            Log.i("guo", "超过60s了")
+
+                            chronometer.stop()
+                            timer.stop()
+                            audioRecorder.stopRecord()
+
+                            Log.i("guo",
+                                "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+
+                            Log.i("guo",
+                                "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+
+                            // 存储录音文件的长度
+                            SPStaticUtils.put(Constant.ME_VOICE_LONG,
+                                (SystemClock.elapsedRealtime() - timer.base).toString())
+                            SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+
+                            mode.text = "点击播放"
+                            delete.visibility = View.VISIBLE
+                            confirm.visibility = View.VISIBLE
+                            recordMode = "listen"
+                            state.visibility = View.VISIBLE
+                            animation.visibility = View.GONE
+                            state.setImageResource(R.drawable.ic_record_play)
+
+                        }
+                    }
+                }
+
             delete.setOnClickListener {
                 delete.visibility = View.GONE
                 confirm.visibility = View.GONE
@@ -3065,40 +3257,54 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             confirm.setOnClickListener {
 
-                ToastUtils.showShort("录音选择完成，开始上传")
+                if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000 < 2) {
+                    Log.i("guo",
+                        "不让    ${
+                            SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
+                        }")
+                    ToastUtils.showShort("录音时长需大于2s")
+                    isNeedUpdate = false
+                    dismiss()
+                } else {
+                    Log.i("guo",
+                        "让    ${
+                            SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
+                        }")
 
-                Thread {
+                    Thread {
 
-                    //上传Object
-                    val file = File(recordPath)
-                    // bucketName 为文件夹名 ，使用用户id来进行命名
-                    // key值为保存文件名，试用固定的几种格式来命名
+                        //上传Object
+                        val file = File(recordPath)
+                        // bucketName 为文件夹名 ，使用用户id来进行命名
+                        // key值为保存文件名，试用固定的几种格式来命名
 
-                    val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
-                    }", FileUtils.getFileName(recordPath), file)
+                        val putObjectFromFileResponse = client.putObject("user${
+                            SPStaticUtils.getString(Constant.USER_ID,
+                                "default")
+                        }", FileUtils.getFileName(recordPath), file)
 
-                    val mVoiceUrl = client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
-                    }", FileUtils.getFileName(recordPath), -1).toString()
+                        val mVoiceUrl = client.generatePresignedUrl("user${
+                            SPStaticUtils.getString(Constant.USER_ID,
+                                "default")
+                        }", FileUtils.getFileName(recordPath), -1).toString()
 
-                    Log.i("guo", mVoiceUrl)
+                        Log.i("guo", mVoiceUrl)
 
-                    SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+                        SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                    map[Contents.GREET_UPDATE] = getGreetInfo()
-                    doUpdateGreetPresent.doUpdateGreetInfo(map)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                        map[Contents.GREET_UPDATE] = getGreetInfo()
+                        doUpdateGreetPresent.doUpdateGreetInfo(map)
 
-                }.start()
+                    }.start()
 
-                isNeedUpdate = true
-                dismiss()
+                    isNeedUpdate = true
+                    dismiss()
+                }
 
             }
+
 
         }
 
@@ -3205,7 +3411,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         confirm.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                     }
 
-                    if (s.length >= 1000) {
+                    if (s.length >= 100) {
                         ToastUtils.showShort("已达到输入文字最大数量")
                         KeyboardUtils.hideSoftInput(requireActivity())
                     }
@@ -3249,6 +3455,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         override fun onDismiss() {
             super.onDismiss()
+
+            doTextVerifyPresent.unregisterCallback(this)
+
             // 更新数据
             if (isNeedUpdate) {
                 iv_user_data_ideal.visibility = View.GONE
@@ -3265,6 +3474,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             if (textVerifyBean.conclusion == "合规") {
                 // 保存数据
                 SPStaticUtils.put(Constant.ME_TA, text)
+
+                updateIdea(text)
+
                 isNeedUpdate = true
                 dismiss()
             } else {
@@ -3644,10 +3856,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mMonthPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0)
             mDayPosition = SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0)
 
-            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear), false)
+            wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR,
+                defaultYear), false)
             getMonthData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear))
-            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0), false)
-            getDayData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear), SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0))
+            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0),
+                false)
+            getDayData(SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear),
+                SPStaticUtils.getInt(Constant.ME_BIRTH_MONTH, 0))
             wheelThree.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_BIRTH_DAY, 0),
                 false)
 
@@ -5369,6 +5584,20 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             updateDateUI()
             ToastUtils.showShort("刷新界面")
         }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateMoreInfoPresent.unregisterCallback(this)
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+        doUploadAvatarPresent.unregisterCallback(this)
+        doFaceDetectPresent.unregisterCallback(this)
+        updateProportionPresent.unregisterCallback(this)
+        doUpdateGreetPresent.unregisterCallback(this)
+
+        stopVoice()
 
     }
 

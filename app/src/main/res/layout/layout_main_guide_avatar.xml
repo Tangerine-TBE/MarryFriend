@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="17dp"
-        android:text="没有头绪，异性将看不到你的资料"
+        android:text="没有头像，异性将看不到你的资料"
         android:textColor="#101010"
         android:textSize="15sp" />
 

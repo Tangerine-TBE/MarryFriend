@@ -457,4 +457,11 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
         ll_avatar_loading.visibility = View.GONE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doFaceDetectPresent.unregisterCallback(this)
+        doUploadAvatarPresent.unregisterCallback(this)
+    }
+
 }

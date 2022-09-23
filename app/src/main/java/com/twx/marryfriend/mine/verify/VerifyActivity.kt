@@ -206,4 +206,12 @@ class VerifyActivity : MainBaseViewActivity(), IDoUpdateVerifyInfoCallback,
         ToastUtils.showShort("数据上传失败，请重新认证")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateVerifyInfoPresent.unregisterCallback(this)
+        doUpdateBaseInfoPresent.unregisterCallback(this)
+
+    }
+
 }

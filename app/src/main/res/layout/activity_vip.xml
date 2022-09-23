@@ -243,7 +243,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
-                            android:text="阿桂"
                             android:textColor="#404040"
                             android:textSize="17sp"
                             android:textStyle="bold" />
@@ -262,7 +261,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="上海·27岁·销售·1.2-2w·163cm"
                         android:textColor="#9A9A9A"
                         android:textSize="13sp" />
 
@@ -296,7 +294,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="她上传了18张照片"
                 android:textColor="#101010"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -314,7 +311,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="14dp"
-                android:text="她上传了2条动态"
                 android:textColor="#101010"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -335,7 +331,6 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:padding="14dp"
-                    android:text="疫情期间不能乱跑，待在家里，不添..."
                     android:textColor="#717171"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -389,7 +384,6 @@
                 android:ellipsize="end"
                 android:maxLines="3"
                 android:padding="14dp"
-                android:text="情绪稳定的成熟的女生，比我年纪大，样貌端正，不要太胖，身高178+不抽烟不喝酒不赌博...(共389字）"
                 android:textColor="#9A9A9A"
                 android:textSize="15sp"
                 android:textStyle="bold" />

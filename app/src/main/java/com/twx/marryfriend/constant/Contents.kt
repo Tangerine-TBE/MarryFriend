@@ -206,8 +206,15 @@ object Contents {
     // 投诉举报其它人
     const val DO_REPORT_OTHER = "MemberCharge/uploadComplaint"
 
+    // 修改友盟token
+    const val DO_UPDATE_TOKEN = "MemberCharge/updateToken"
+
     // 屏蔽列表
     const val GET_BLACK_LIST = "TrendsNotice/blockSessionList"
+
+    // 删除屏蔽会话
+    const val DELETE_BLACK_LIST = "/marryfriend/TrendsNotice/deleteBlockSession"
+
 
     // ------------------------------- 高德地图 -------------------------------
 
@@ -360,6 +367,17 @@ object Contents {
     const val REASON_TEXT = "reason_text"  // 原因文字
     const val MARK_NOTICE = "mark_notice"  // 备注信息
 
+
+    // 意见反馈
+    const val CONTENT_TEXT = "content_text"   // 反馈内容
+    const val CONTACT_1 = "contact_1"   // 联系方式一
+    const val CONTACT_2 = "contact_2"   // 联系方式二
+    const val IMAGES_URL = "images_url"   // 图片地址一
+    const val IMAGE_1 = "image_1"   // 图片地址一
+    const val IMAGE_2 = "image_2"   // 图片地址二
+    const val IMAGE_3 = "image_3"   // 图片地址一
+
+
     // ------------------------------------ 支付 ------------------------------------
 
     const val PLATFORM = "platform"  // 充值渠道
@@ -369,6 +387,9 @@ object Contents {
     const val BUY_ORDER_NUMBER = "buy_order_number" // 订单号
     const val FEE = "fee" // 金额
     const val BODY = "body" // 描述
+
+
+    const val UMENG_TOKEN = "token" // 友盟token
 
 
     // ------------------------------------ 外部的api ------------------------------------

@@ -190,4 +190,11 @@ class LikeFragment : Fragment(), IGetTrendTipsCallback {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getTrendTipsPresent.unregisterCallback(this)
+
+    }
+
 }

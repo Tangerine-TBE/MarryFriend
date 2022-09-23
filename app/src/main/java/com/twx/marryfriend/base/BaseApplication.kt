@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Handler
 import com.twx.marryfriend.push.help.PushHelper
 import com.umeng.commonsdk.UMConfigure
-import com.umeng.commonsdk.utils.UMUtils
 
 open class BaseApplication : Application() {
 
@@ -52,9 +51,10 @@ open class BaseApplication : Application() {
 
         //日志开关
         UMConfigure.setLogEnabled(true)
-        //预初始化
-        PushHelper.preInit(this)
 
+        //预初始化
+//        PushHelper.preInit(this)
+        UMConfigure.preInit(this, "62e74fde1f47e265d4e8aa28", "_360")
 
 
         initChild()

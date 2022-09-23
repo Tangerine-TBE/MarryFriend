@@ -351,4 +351,11 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getSchoolPresent.unregisterCallback(this)
+
+    }
+
 }

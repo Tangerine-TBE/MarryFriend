@@ -459,4 +459,12 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        updateBaseInfoPresent.unregisterCallback(this)
+        doTextVerifyPresent.unregisterCallback(this)
+
+    }
+
 }

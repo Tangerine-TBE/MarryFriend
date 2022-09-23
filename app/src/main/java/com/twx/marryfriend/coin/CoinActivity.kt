@@ -174,7 +174,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.BUY_ORDER_NUMBER] = getOrder("JIN", mMode, mPay)
         map[Contents.FEE] = mPrice
-        map[Contents.BODY] = "会员"
+        map[Contents.BODY] = "金币"
         map[Contents.USER_SYSTEM] = "1"
         doAliPayPresent.doAliPay(map)
 
@@ -409,6 +409,15 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
     }
 
     override fun onGetCoinPriceCodeError() {
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getCoinPricePresent.unregisterCallback(this)
+        doAliPayPresent.unregisterCallback(this)
+        doRefreshSelfPresent.unregisterCallback(this)
 
     }
 

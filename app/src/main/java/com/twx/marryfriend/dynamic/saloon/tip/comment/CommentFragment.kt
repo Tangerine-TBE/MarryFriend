@@ -188,4 +188,11 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getCommentTipsPresent.unregisterCallback(this)
+
+    }
+
 }

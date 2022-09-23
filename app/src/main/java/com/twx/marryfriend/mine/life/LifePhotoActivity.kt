@@ -857,7 +857,8 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                             } else if (!haveFivePic) {
 
-                                val intent = Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
+                                val intent = Intent(this@LifePhotoActivity,
+                                    LifeIntroduceActivity::class.java)
                                 intent.putExtra("path", lifeChoosePath)
                                 intent.putExtra("introduce", "")
                                 startActivityForResult(intent, 555)
@@ -1592,6 +1593,13 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
             finish()
         }
         return super.onKeyDown(keyCode, event)
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doDeletePhotoPresent.unregisterCallback(this)
 
     }
 

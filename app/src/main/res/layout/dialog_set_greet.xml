@@ -57,7 +57,7 @@
             android:background="@null"
             android:gravity="top"
             android:hint="添加一段打招呼语,消息被回复概率加倍。"
-            android:maxLength="1000"
+            android:maxLength="100"
             android:textColor="#404040"
             android:textColorHint="#9A9A9A"
             android:textSize="15sp" />
@@ -87,7 +87,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="/1000"
+                android:text="/100"
                 android:textColor="#9A9A9A"
                 android:textSize="13sp" />
 

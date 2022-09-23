@@ -22,6 +22,7 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.info.GetInfoActivity
 import com.twx.marryfriend.login.retrieve.RetrieveActivity
+import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.IDoFaceVerifyCallback
 import com.twx.marryfriend.net.callback.IDoPhoneLoginCallback
 import com.twx.marryfriend.net.callback.IGetVerifyCodeCallback
@@ -398,11 +399,11 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 phoneLoginBean.data.close_time_low,
                 phoneLoginBean.data.close_time_high)
 
+
             SpUtil.saveUserInfo(phoneLoginBean)
 
-            val intent = Intent(this, GetInfoActivity::class.java)
-            startActivity(intent)
-            this.finish()
+            startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type))
+
         } else {
             Log.i("guo", "errormsg : ${phoneLoginBean.msg}")
 
@@ -431,6 +432,15 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 
     override fun onGetVerifyCodeError() {
         ToastUtils.showShort("验证码发送失败，请重试")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getVerifyCodePresent.unregisterCallback(this)
+        doPhoneLoginPresent.unregisterCallback(this)
+        doFaceVerifyPresent.unregisterCallback(this)
+
     }
 
 }

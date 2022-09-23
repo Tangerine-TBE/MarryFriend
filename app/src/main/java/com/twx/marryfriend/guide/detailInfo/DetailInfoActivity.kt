@@ -1435,7 +1435,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 }
 
-                if (s.length == 1000) {
+                if (s.length == 100) {
                     ToastUtils.showShort("已达到输入文字最大数量")
                     KeyboardUtils.hideSoftInput(this@DetailInfoActivity)
                 }
@@ -1470,7 +1470,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }
 
 
-                if (s.length == 1000) {
+                if (s.length == 100) {
                     ToastUtils.showShort("已达到输入文字最大数量")
                     KeyboardUtils.hideSoftInput(this@DetailInfoActivity)
                 }
@@ -1506,9 +1506,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }
 
 
-
-
-                if (s.length == 1000) {
+                if (s.length == 100) {
                     ToastUtils.showShort("已达到输入文字最大数量")
                     KeyboardUtils.hideSoftInput(this@DetailInfoActivity)
                 }
@@ -2277,7 +2275,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     }
 
     override fun onDoUploadAvatarError() {
-        Log.i("guo","error")
+        Log.i("guo", "error")
         ll_guide_detail_loading.visibility = View.GONE
     }
 
@@ -3104,7 +3102,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 .permission(Permission.CAMERA)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent = Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        val intent =
+                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
                         startActivity(intent)
                     }
 
@@ -3176,6 +3175,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }.start()
 
             } else {
+
+                ll_guide_detail_loading.visibility = View.GONE
+
                 if (faceDetectBean.error_msg != null) {
                     ToastUtils.showShort(faceDetectBean.error_msg)
                 } else {
@@ -4379,6 +4381,35 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
 
 // ------------------- 实名认证界面  -----------------
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+
+        getIndustryPresent.unregisterCallback(this)
+
+        getJobPresent.unregisterCallback(this)
+
+        doFaceDetectPresent.unregisterCallback(this)
+
+        doIdentityVerifyPresent.unregisterCallback(this)
+
+        updateBaseInfoPresent.unregisterCallback(this)
+
+        updateMoreInfoPresent.unregisterCallback(this)
+
+        updateDemandInfoPresent.unregisterCallback(this)
+
+        doUploadAvatarPresent.unregisterCallback(this)
+
+        uploadPhotoPresent.unregisterCallback(this)
+
+        doTextVerifyPresent.unregisterCallback(this)
+
+        doDeletePhotoPresent.unregisterCallback(this)
+
+    }
 
 
 }

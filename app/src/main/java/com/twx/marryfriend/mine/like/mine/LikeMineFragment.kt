@@ -161,7 +161,8 @@ class LikeMineFragment : Fragment(), IGetWhoLikeMeCallback, RecentLikeAdapter.On
                     }
 
                     mLastTime.clear()
-                    mLastTime.add(SPStaticUtils.getString(Constant.LAST_LIKE_ME_TIME_REQUEST, "1970-01-01 00:00:00"))
+                    mLastTime.add(SPStaticUtils.getString(Constant.LAST_LIKE_ME_TIME_REQUEST,
+                        "1970-01-01 00:00:00"))
 
                     adapter.notifyDataSetChanged()
 
@@ -194,6 +195,13 @@ class LikeMineFragment : Fragment(), IGetWhoLikeMeCallback, RecentLikeAdapter.On
                 mList[position].user_id.toInt()
             )
         }, 0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getWhoLikeMePresent.unregisterCallback(this)
+
     }
 
 }

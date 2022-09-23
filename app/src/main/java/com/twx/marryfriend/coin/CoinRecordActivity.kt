@@ -80,7 +80,6 @@ class CoinRecordActivity : MainBaseViewActivity(), IGetCoinRecordCallback {
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         getCoinRecordPresent.getCoinRecord(map, page)
 
-
     }
 
     override fun onLoading() {
@@ -123,6 +122,13 @@ class CoinRecordActivity : MainBaseViewActivity(), IGetCoinRecordCallback {
             sfl_coin_record_refresh.finishRefresh(false)
             sfl_coin_record_refresh.finishLoadMore(false)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getCoinRecordPresent.unregisterCallback(this)
+
     }
 
 }

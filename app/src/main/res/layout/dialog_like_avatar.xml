@@ -44,7 +44,7 @@
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="22dp"
         android:gravity="center"
-        android:text="你还没有头像，无法点赞与评论他人动态，快去上传吧"
+        android:text="你还没有头像，无法点赞、评论他人动态与发布动态，快去上传吧"
         android:textColor="#101010"
         android:textSize="17sp" />
 

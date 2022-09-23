@@ -819,4 +819,16 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getOtherTrendsListPresent.unregisterCallback(this)
+        doLikeClickPresent.unregisterCallback(this)
+        doLikeCancelPresent.unregisterCallback(this)
+
+        doPlusFocusPresent.unregisterCallback(this)
+        doCancelFocusPresent.unregisterCallback(this)
+
+    }
+
 }

@@ -17,6 +17,7 @@ import com.twx.marryfriend.set.adapter.FeedbackAdapter
 import com.twx.marryfriend.set.adapter.SetAdapter
 import com.twx.marryfriend.set.adapter.SetDataAdapter
 import com.twx.marryfriend.set.adapter.SetSwitchAdapter
+import com.twx.marryfriend.set.black.BlackListActivity
 import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.message.MessageActivity
 import com.twx.marryfriend.set.safe.SafeActivity
@@ -168,6 +169,7 @@ class SetActivity : MainBaseViewActivity() {
                     }
                     1 -> {
                         ToastUtils.showShort("黑名单")
+                        startActivity(Intent(this@SetActivity, BlackListActivity::class.java))
                     }
                     2 -> {
                         ToastUtils.showShort("好评")

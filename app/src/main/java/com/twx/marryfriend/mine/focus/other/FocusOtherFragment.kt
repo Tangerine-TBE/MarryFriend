@@ -248,4 +248,12 @@ class FocusOtherFragment : Fragment(), IGetMeFocusWhoCallback,
 
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getMeFocusWhoPresent.unregisterCallback(this)
+
+    }
+
 }

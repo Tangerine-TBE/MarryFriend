@@ -176,4 +176,11 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getMeLikeWhoPresent.unregisterCallback(this)
+
+    }
+
 }

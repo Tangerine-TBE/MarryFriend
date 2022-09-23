@@ -62,6 +62,7 @@ import com.twx.marryfriend.bean.dynamic.TotalCountBean;
 import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
+import com.twx.marryfriend.bean.set.DeleteBlackListBean;
 import com.twx.marryfriend.bean.vip.AliPayBean;
 import com.twx.marryfriend.bean.vip.BlackListBean;
 import com.twx.marryfriend.bean.vip.CoinPriceBean;
@@ -69,6 +70,7 @@ import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 import com.twx.marryfriend.constant.Contents;
@@ -972,6 +974,19 @@ public class UserData {
     }
 
 
+    // 修改友盟token
+    public void doUpdateToken(Map<String, String> map, Callback<UpdateTokenBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPDATE_TOKEN + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPDATE_TOKEN, currentTimeMillis, random, checkCode, map);
+        mApi.doUpdateToken(map1).enqueue(callback);
+    }
+
+
     // 屏蔽列表
     public void getBlackList(Map<String, String> map, Integer page, Callback<BlackListBean> callback) {
         // 获取随机数
@@ -982,6 +997,19 @@ public class UserData {
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_BLACK_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_BLACK_LIST, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getBlackList(map1).enqueue(callback);
+    }
+
+
+    // 删除屏蔽会话
+    public void doDeleteBlackList(Map<String, String> map, Callback<DeleteBlackListBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DELETE_BLACK_LIST + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DELETE_BLACK_LIST, currentTimeMillis, random, checkCode, map);
+        mApi.doDeleteBlackList(map1).enqueue(callback);
     }
 
 

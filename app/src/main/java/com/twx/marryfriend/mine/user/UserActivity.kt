@@ -171,6 +171,22 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
         if (fiveInfoBean != null) {
             if (fiveInfoBean.code == 200) {
 
+
+                // 自我介绍、语音介绍、心目中的ta
+
+
+                SPStaticUtils.put(Constant.ME_INTRODUCE, fiveInfoBean.data.base.introduce_self)
+
+                SPStaticUtils.put(Constant.ME_TA, fiveInfoBean.data.base.ta_in_my_mind)
+
+                SPStaticUtils.put(Constant.ME_VOICE_LONG, fiveInfoBean.data.zhaohu.voice_long)
+
+                SPStaticUtils.put(Constant.ME_VOICE, fiveInfoBean.data.zhaohu.voice_url)
+
+                SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+
+
+
                 SPStaticUtils.put(Constant.ME_NAME, fiveInfoBean.data.base.nick)
 
                 SPStaticUtils.put(Constant.ME_SEX, fiveInfoBean.data.base.user_sex)
@@ -487,6 +503,15 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     }
 
     override fun onGetPhotoListError() {
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getPhotoListPresent.unregisterCallback(this)
+        doGetDemandAddressPresent.unregisterCallback(this)
+        getFiveInfoPresent.unregisterCallback(this)
 
     }
 

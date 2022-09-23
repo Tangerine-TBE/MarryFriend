@@ -18,6 +18,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.bean.vip.VipGifEnum
@@ -776,6 +777,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                     val mIdList: MutableList<Int> = arrayListOf()
 
+                    val mUserIdList: MutableList<String> = arrayListOf()
+
                     if (mode == "first") {
                         mTrendList.clear()
                         mDiyList.clear()
@@ -784,6 +787,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                     for (i in 0.until(trendSaloonBean.data.list.size)) {
                         mTrendList.add(trendSaloonBean.data.list[i])
                         mIdList.add(trendSaloonBean.data.list[i].id)
+                        mUserIdList.add(trendSaloonBean.data.list[i].user_id.toString())
 
                         val focus = trendSaloonBean.data.list[i].focus_uid != null
 
@@ -797,6 +801,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                                 trendSaloonBean.data.list[i].like_count))
 
                     }
+
+                    ImHelper.updateFriendInfo(mUserIdList)
+
 
                     max = Collections.max(mIdList)
                     min = Collections.min(mIdList)
@@ -887,6 +894,17 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         }
         intent.putExtra("mode", mode)
         startActivityForResult(intent, 0)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getTrendSaloonPresent.unregisterCallback(this)
+        doLikeClickPresent.unregisterCallback(this)
+        doLikeCancelPresent.unregisterCallback(this)
+        doPlusFocusPresent.unregisterCallback(this)
+        getTotalCountPresent.unregisterCallback(this)
+
     }
 
 }

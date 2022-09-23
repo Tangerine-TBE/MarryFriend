@@ -62,6 +62,7 @@ import com.twx.marryfriend.bean.dynamic.TotalCountBean;
 import com.twx.marryfriend.bean.dynamic.TrendFocusBean;
 import com.twx.marryfriend.bean.dynamic.TrendSaloonBean;
 import com.twx.marryfriend.bean.dynamic.UploadTrendBean;
+import com.twx.marryfriend.bean.set.DeleteBlackListBean;
 import com.twx.marryfriend.bean.vip.AliPayBean;
 import com.twx.marryfriend.bean.vip.BlackListBean;
 import com.twx.marryfriend.bean.vip.BlackListData;
@@ -70,6 +71,7 @@ import com.twx.marryfriend.bean.vip.CoinRecordBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
 
@@ -378,10 +380,20 @@ public interface Api {
     @POST("/marryfriend/MemberCharge/uploadComplaint")
     Call<ReportOtherBean> doReportOther(@QueryMap Map<String, Object> params);
 
+    // 修改友盟token
+    @POST("/marryfriend/MemberCharge/updateToken")
+    Call<UpdateTokenBean> doUpdateToken(@QueryMap Map<String, Object> params);
 
     // 屏蔽列表
     @POST("/marryfriend/TrendsNotice/blockSessionList")
     Call<BlackListBean> getBlackList(@QueryMap Map<String, Object> params);
+
+
+    // 删除屏蔽会话
+    @POST("/marryfriend/TrendsNotice/deleteBlockSession")
+    Call<DeleteBlackListBean> doDeleteBlackList(@QueryMap Map<String, Object> params);
+
+
 
 
     // 高德地图-地点检索

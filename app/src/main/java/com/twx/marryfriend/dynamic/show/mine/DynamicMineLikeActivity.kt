@@ -143,4 +143,12 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getLikeListPresent.unregisterCallback(this)
+
+    }
+
+
 }

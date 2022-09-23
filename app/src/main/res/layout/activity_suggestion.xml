@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,140 +8,212 @@
     android:orientation="vertical"
     tools:context=".set.feedback.SuggestionActivity">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp">
-
-        <ImageView
-            android:id="@+id/iv_suggestion_finish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="16dp"
-            android:layout_marginStart="13dp"
-            android:src="@drawable/ic_back_black" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="意见反馈"
-            android:textColor="#101010"
-            android:textSize="17sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="14dp"
-            android:background="@drawable/shape_bg_commit_non"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
-            android:text="提交"
-            android:textColor="@color/white"
-            android:textSize="15sp" />
-
-    </RelativeLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F5F5">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="44dp">
+
+            <ImageView
+                android:id="@+id/iv_suggestion_finish"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:layout_marginStart="13dp"
+                android:src="@drawable/ic_back_black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="意见反馈"
+                android:textColor="#101010"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:id="@+id/iv_suggestion_commit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="14dp"
+                android:src="@mipmap/icon_report_commit_non" />
+
+        </RelativeLayout>
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="14dp"
-                    android:layout_marginTop="24dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="问题描述"
-                        android:textColor="#404040"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="0/30"
-                        android:textColor="#9A9A9A"
-                        android:textSize="13sp" />
-
-                </RelativeLayout>
-
-                <EditText
-                    android:id="@+id/et_feedback_feedback"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_margin="14dp"
-                    android:background="@null"
-                    android:gravity="top"
-                    android:hint="请填写10个字以上的问题描述，以便我们提供更好的服务"
-                    android:textColor="#141414"
-                    android:textColorHint="#717171"
-                    android:textSize="15sp" />
-
-
-            </LinearLayout>
+            android:background="#F5F5F5">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
+                android:layout_height="match_parent"
+
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="14dp"
-                    android:layout_marginTop="24dp">
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <RelativeLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="上传图片"
-                        android:textColor="#404040"
+                        android:layout_marginHorizontal="14dp"
+                        android:layout_marginTop="24dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="问题描述"
+                            android:textColor="#404040"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/tv_suggestion_text_sum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="0/300"
+                            android:textColor="#9A9A9A"
+                            android:textSize="13sp" />
+
+                    </RelativeLayout>
+
+                    <EditText
+                        android:id="@+id/et_suggestion_feedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_margin="14dp"
+                        android:background="@null"
+                        android:gravity="top"
+                        android:hint="请填写10个字以上的问题描述，以便我们提供更好的服务"
+                        android:maxLines="300"
+                        android:textColor="#141414"
+                        android:textColorHint="#717171"
                         android:textSize="15sp" />
 
-                    <TextView
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:text="0/9张"
-                        android:textColor="#9A9A9A"
-                        android:textSize="13sp" />
+                        android:layout_marginHorizontal="14dp"
+                        android:layout_marginTop="24dp">
 
-                </RelativeLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="联系方式"
+                            android:textColor="#404040"
+                            android:textSize="15sp" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
+                    </RelativeLayout>
+
+                    <EditText
+                        android:id="@+id/et_suggestion_contact"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="14dp"
+                        android:background="@drawable/shape_bg_contact"
+                        android:gravity="top"
+                        android:hint="填写您的QQ号，方便与您联系"
+                        android:maxLines="20"
+                        android:paddingHorizontal="15dp"
+                        android:paddingVertical="14dp"
+                        android:textColor="#141414"
+                        android:textColorHint="#717171"
+                        android:textSize="15sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:src="@mipmap/icon_pic_add" />
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="14dp"
+                        android:layout_marginTop="24dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="上传图片"
+                            android:textColor="#404040"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/tv_suggestion_photo_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:text="0/3张"
+                            android:textColor="#9A9A9A"
+                            android:textSize="13sp" />
+
+                    </RelativeLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_suggestion_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_marginVertical="16dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-    </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_suggestion_load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/shape_bg_dialog"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="正在加载中..."
+            android:textColor="#0F0F0F"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</RelativeLayout>
