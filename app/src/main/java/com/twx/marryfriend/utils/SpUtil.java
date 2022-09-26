@@ -33,6 +33,44 @@ public class SpUtil {
         } else {
             SPStaticUtils.put(Constant.USER_VIP_LEVEL, 0);
         }
+
+
+        if (loginBean.getData().getVerify_status() == 1) {
+            SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true);
+        }
+
+        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true);
+        SPStaticUtils.put(Constant.ME_HOBBY, loginBean.getData().getDaily_hobbies());
+        SPStaticUtils.put(Constant.ME_GREET, loginBean.getData().getZhaohuyu_content());
+        SPStaticUtils.put(Constant.ME_INTRODUCE, loginBean.getData().getIntroduce_self());
+
+        SPStaticUtils.put(Constant.ME_VOICE, loginBean.getData().getVoice_url());
+
+        SPStaticUtils.put(Constant.ME_HAVE_CHILD, loginBean.getData().getChild_had());
+
+        SPStaticUtils.put(Constant.ME_WANT_CHILD, loginBean.getData().getWant_child());
+
+        SPStaticUtils.put(Constant.ME_HOUSE, loginBean.getData().getBuy_house());
+
+        SPStaticUtils.put(Constant.ME_CAR, loginBean.getData().getBuy_car());
+
+        SPStaticUtils.put(Constant.ME_INTRODUCE, loginBean.getData().getIntroduce_self());
+
+
+//        "headface_count"         : [里面是个大数组，每行记录],
+//        "photos_count"           : [里面是个大数组，每行记录],
+
+        //爱好
+
+
+//                "hometown_province_num"  :0,
+//                "hometown_city_num"      :0,
+
+//                "is_smoking"             :0,
+//                "industry_num"           :0,
+//                "occupation_num"         :0,
+
+
     }
 
     public static void saveUserInfo(AutoLoginBean autoLoginBean) {

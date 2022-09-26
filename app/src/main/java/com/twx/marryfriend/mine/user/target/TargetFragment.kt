@@ -47,9 +47,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
     private var mHeightMinList: MutableList<Int> = arrayListOf()
     private var mHeightMaxList: MutableList<Int> = arrayListOf()
 
-    private var mIncomeList: MutableList<String> = arrayListOf()
-
-    private var mBodyList: MutableList<String> = arrayListOf()
 
     // 城市数据
     private lateinit var cityDate: CityBean
@@ -142,33 +139,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
             mHeightMaxList.add(140 + i)
         }
 
-        mIncomeList.add("不限")
-        mIncomeList.add("5000元")
-        mIncomeList.add("8000元")
-        mIncomeList.add("12000元")
-        mIncomeList.add("16000元")
-        mIncomeList.add("20000元")
-        mIncomeList.add("35000元")
-        mIncomeList.add("50000元")
-        mIncomeList.add("70000元")
 
-        // 先判断性别
-        if (SPStaticUtils.getInt(Constant.ME_SEX, 2) == 2) {
-            mBodyList.add("保密")
-            mBodyList.add("一般")
-            mBodyList.add("瘦长")
-            mBodyList.add("运动员型")
-            mBodyList.add("比较魁梧")
-            mBodyList.add("壮实")
-        } else {
-            mBodyList.add("保密")
-            mBodyList.add("一般")
-            mBodyList.add("瘦长")
-            mBodyList.add("苗条")
-            mBodyList.add("高大美丽")
-            mBodyList.add("丰满")
-            mBodyList.add("富线条美")
-        }
 
         getJobCityFirstList()
         getJobCitySecondList(0)
@@ -253,8 +224,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
         updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
     }
-
-
 
     // 修改择偶省市要求列表
     private fun uploadDemandAddress() {
@@ -738,7 +707,9 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
     }
 
     // 获取所有数据更新视图
-    private fun updateDateUI() {
+    fun updateDateUI() {
+
+        Log.i("guo", "other")
 
         var age = ""
         var height = ""
@@ -777,17 +748,26 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
             else ->
                 when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)) {
                     0 -> {
-                        "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 7)]}以下"
+                        "${
+                            DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MAX,
+                                7)]
+                        }以下"
                     }
                     else ->
-                        if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8) ==
-                            SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 8)
+                        if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8) == SPStaticUtils.getInt(
+                                Constant.TA_INCOME_MAX,
+                                8)
                         ) {
-                            "${mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8)]}以上"
+                            "${
+                                DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
+                                    8)]
+                            }以上"
                         } else {
                             "${
-                                mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8)]
-                            }~" + mIncomeList[SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 8)]
+                                DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
+                                    8)]
+                            }~" + DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MAX,
+                                8)]
                         }
                 }
 
@@ -846,7 +826,15 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
         body = when (SPStaticUtils.getInt(Constant.TA_BODY, 10)) {
             10 -> "未填写"
-            else -> mBodyList[SPStaticUtils.getInt(Constant.TA_BODY, 10)]
+            else ->
+
+                // 先判断性别
+                if (SPStaticUtils.getInt(Constant.ME_SEX, 2) == 2) {
+                    DataProvider.TargetBodyMaleData[SPStaticUtils.getInt(Constant.TA_BODY, 10)]
+                } else {
+                    DataProvider.TargetBodyFemaleData[SPStaticUtils.getInt(Constant.TA_BODY, 10)]
+                }
+
         }
 
         workPlace = when (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")) {
@@ -854,7 +842,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
             else -> SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
                 .substring(1, SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").length)
         }
-
 
         val z = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
         val listZ = z.split(",")
@@ -965,7 +952,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
         if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") != "") {
 
-            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "").split(",") as MutableList<String>
+            val x: MutableList<String> = SPStaticUtils.getString(Constant.TA_WORK_PLACE, "")
+                .split(",") as MutableList<String>
             x.removeAt(0)
 
             for (i in 0.until(x.size)) {
@@ -1021,7 +1009,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
 
     }
-
 
     // 需要上传的择偶条件信息
     private fun getDemandInfo(): String {
@@ -1536,8 +1523,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
             val wheelTwo = findViewById<WheelPicker>(R.id.wp_user_target_income_container_two)
             val confirm = findViewById<TextView>(R.id.tv_user_target_income_confirm)
 
-            wheelOne.data = mIncomeList
-            wheelTwo.data = mIncomeList
+            wheelOne.data = DataProvider.TargetIncomeData
+            wheelTwo.data = DataProvider.TargetIncomeData
 
             mIncomeMin = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
             mIncomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
@@ -2433,7 +2420,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
             val wheel = findViewById<WheelPicker>(R.id.wp_user_target_body_container)
             val confirm = findViewById<TextView>(R.id.tv_user_target_body_confirm)
 
-            wheel.data = mBodyList
+            // 先判断性别
+            wheel.data = if (SPStaticUtils.getInt(Constant.ME_SEX, 2) == 2) {
+                DataProvider.TargetBodyMaleData
+            } else {
+                DataProvider.TargetBodyFemaleData
+            }
 
             mBody = SPStaticUtils.getInt(Constant.TA_BODY, 0)
 
@@ -2546,10 +2538,13 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
                 } else {
                     if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") != "") {
-                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
+                        jobAddressInfoList.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
+                            ""))
 
-                        provinceInfo.add(SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, ""))
-                        provinceCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE, 0))
+                        provinceInfo.add(SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME,
+                            ""))
+                        provinceCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE,
+                            0))
                         cityInfo.add(SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, ""))
                         cityCodeInfo.add(SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0))
 

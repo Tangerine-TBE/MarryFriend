@@ -563,7 +563,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             startActivity(context?.let { it1 ->
                 VipActivity.getVipIntent(it1,
                     0,
-                    VipGifEnum.Highlight)
+                    VipGifEnum.Message)
             })
         }
 
@@ -612,7 +612,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_share.setOnClickListener {
-            startActivity(context?.let { it1 -> ReportReasonActivity.getIntent(it1, "13", "8") })
         }
 
 

@@ -29,6 +29,7 @@ import com.twx.marryfriend.net.callback.IGetVerifyCodeCallback
 import com.twx.marryfriend.net.impl.doFaceVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doPhoneLoginPresentImpl
 import com.twx.marryfriend.net.impl.getVerifyCodePresentImpl
+import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import java.io.BufferedInputStream
@@ -400,7 +401,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 phoneLoginBean.data.close_time_high)
 
 
-            SpUtil.saveUserInfo(phoneLoginBean)
+            SpLoginUtil.saveUserInfo(phoneLoginBean)
 
             startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type))
 

@@ -1,5 +1,6 @@
 package com.twx.marryfriend.set.black
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
@@ -117,7 +118,6 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
     override fun onDoDeleteBlackListSuccess(deleteBlackListBean: DeleteBlackListBean?) {
         if (deleteBlackListBean != null) {
             if (deleteBlackListBean.code == 200) {
-                ToastUtils.showShort("移出黑名单成功")
 
                 mList.removeAt(deletePosition)
                 adapter.notifyDataSetChanged()

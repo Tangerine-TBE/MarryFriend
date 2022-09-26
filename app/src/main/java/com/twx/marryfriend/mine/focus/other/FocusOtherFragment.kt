@@ -20,6 +20,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.CancelFocusBean
 import com.twx.marryfriend.bean.mine.MeFocusWhoBean
 import com.twx.marryfriend.bean.mine.MeFocusWhoList
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
@@ -28,6 +29,7 @@ import com.twx.marryfriend.net.callback.dynamic.IDoCancelFocusCallback
 import com.twx.marryfriend.net.callback.mine.IGetMeFocusWhoCallback
 import com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl
 import com.twx.marryfriend.net.impl.mine.getMeFocusWhoPresentImpl
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_focus_other.*
 import java.util.*
 
@@ -169,14 +171,25 @@ class FocusOtherFragment : Fragment(), IGetMeFocusWhoCallback,
     }
 
     override fun onChatClick(v: View?, position: Int) {
-        val identity = mList[position].identity_status == 1
-        startActivity(context?.let {
-            ChatActivity.getIntent(
-                it,
-                mList[position].guest_uid.toString(),
-                identity
-            )
-        })
+
+        if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+
+            startActivity(context?.let { VipActivity.getVipIntent(it, 0, VipGifEnum.Message) })
+
+        } else {
+
+            val identity = mList[position].identity_status == 1
+            startActivity(context?.let {
+                ChatActivity.getIntent(
+                    it,
+                    mList[position].guest_uid.toString(),
+                    identity
+                )
+            })
+
+        }
+
+
     }
 
 

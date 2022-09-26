@@ -48,7 +48,8 @@
             android:id="@+id/rl_safe_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,7 +111,8 @@
         <RelativeLayout
             android:id="@+id/rl_safe_public"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="wrap_content"

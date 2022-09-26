@@ -94,9 +94,9 @@ object UserInfo {
      * 2：女
      */
     fun getOriginalUserSex():Int{
-        if(BuildConfig.DEBUG){
-            return 1//3,4,6,11,16//
-        }
+//        if(BuildConfig.DEBUG){
+//            return 1//3,4,6,11,16//
+//        }
         return SPStaticUtils.getInt(Constant.ME_SEX, 2)
     }
 

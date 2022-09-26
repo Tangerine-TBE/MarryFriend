@@ -574,7 +574,8 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:paddingVertical="16dp">
+                            android:paddingVertical="16dp"
+                            android:visibility="invisible">
 
                             <ImageView
                                 android:layout_width="41dp"

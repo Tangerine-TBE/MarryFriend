@@ -89,6 +89,37 @@ object DataProvider {
         "70k以上",
     )
 
+    val TargetIncomeData = arrayListOf(
+        "不限",
+        "5000元",
+        "8000元",
+        "12000元",
+        "16000元",
+        "20000元",
+        "35000元",
+        "50000元",
+        "70000元",
+    )
+
+    val TargetBodyMaleData = arrayListOf(
+        "保密",
+        "一般",
+        "瘦长",
+        "运动员型",
+        "比较魁梧",
+        "壮实",
+    )
+
+    val TargetBodyFemaleData = arrayListOf(
+        "保密",
+        "一般",
+        "瘦长",
+        "苗条",
+        "高大美丽",
+        "丰满",
+        "富线条美",
+    )
+
     val NormalBannerData = arrayListOf(
         R.mipmap.gif_vip_1,
         R.mipmap.gif_vip_2,
@@ -155,7 +186,6 @@ object DataProvider {
         ItemBean("消息通知", R.drawable.ic_set_message),
         ItemBean("帮助反馈", R.drawable.ic_set_feedback),
         ItemBean("账户与安全", R.drawable.ic_set_safe),
-        ItemBean("恢复购买", R.drawable.ic_set_buy),
     )
 
     val ThirdSetData = arrayListOf(
@@ -254,4 +284,6 @@ object DataProvider {
         "合肥",
         "青岛",
     )
+
+
 }

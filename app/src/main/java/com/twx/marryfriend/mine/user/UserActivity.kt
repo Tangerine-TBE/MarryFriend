@@ -205,15 +205,18 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
                 if (fiveInfoBean.data.base.work_province_str != "") {
 
                     if (fiveInfoBean.data.base.work_city_str != "") {
-                        SPStaticUtils.put(Constant.ME_WORK, "${fiveInfoBean.data.base.work_province_str}-${fiveInfoBean.data.base.work_city_str}")
+                        SPStaticUtils.put(Constant.ME_WORK,
+                            "${fiveInfoBean.data.base.work_province_str}-${fiveInfoBean.data.base.work_city_str}")
                     } else {
-                        SPStaticUtils.put(Constant.ME_WORK, "${fiveInfoBean.data.base.work_province_str}")
+                        SPStaticUtils.put(Constant.ME_WORK,
+                            "${fiveInfoBean.data.base.work_province_str}")
                     }
 
                 } else {
 
                     if (fiveInfoBean.data.base.work_city_str != "") {
-                        SPStaticUtils.put(Constant.ME_WORK, "${fiveInfoBean.data.base.work_city_str}")
+                        SPStaticUtils.put(Constant.ME_WORK,
+                            "${fiveInfoBean.data.base.work_city_str}")
                     } else {
                         SPStaticUtils.put(Constant.ME_WORK, "")
                     }
@@ -244,6 +247,70 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
                 SPStaticUtils.put(Constant.ME_BODY, fiveInfoBean.data.more.figure_nan.toInt())
 
 
+                // 择偶条件
+
+                SPStaticUtils.put(Constant.TA_AGE_MIN, fiveInfoBean.data.demand.age_min)
+                SPStaticUtils.put(Constant.TA_AGE_MAX, fiveInfoBean.data.demand.age_max)
+
+                SPStaticUtils.put(Constant.TA_HEIGHT_MIN, fiveInfoBean.data.demand.min_high)
+                SPStaticUtils.put(Constant.TA_HEIGHT_MAX, fiveInfoBean.data.demand.max_high)
+
+
+                val salary = fiveInfoBean.data.demand.salary_range
+
+                val x = salary.replace("[", "")
+                val y = x.replace("]", "")
+
+                val salaryList = y.split(",")
+
+                when (salaryList.size) {
+                    0 -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX, 9)
+                    }
+                    1 -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MIN, salaryList[0].toInt())
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX, salaryList[0].toInt())
+                    }
+                    else -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MIN, salaryList[0].toInt())
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX,
+                            salaryList[salaryList.size - 1].toInt())
+
+                    }
+                }
+
+
+                val edu1 = fiveInfoBean.data.demand.education.replace("[", "")
+                val edu2 = edu1.replace("]", "")
+
+                SPStaticUtils.put(Constant.TA_EDU, edu2)
+
+                val marry1 = fiveInfoBean.data.demand.marry_status.replace("[", "")
+                val marry2 = marry1.replace("]", "")
+
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, marry2)
+
+                if (fiveInfoBean.data.demand.figure_nan == 0) {
+                    SPStaticUtils.put(Constant.TA_BODY, fiveInfoBean.data.demand.figure_nv)
+                } else {
+                    SPStaticUtils.put(Constant.TA_BODY, fiveInfoBean.data.demand.figure_nan)
+                }
+
+
+                SPStaticUtils.put(Constant.TA_HAVE_CHILD, fiveInfoBean.data.demand.child_had)
+
+                SPStaticUtils.put(Constant.TA_WANT_CHILD, fiveInfoBean.data.demand.want_child)
+
+                SPStaticUtils.put(Constant.TA_SMOKE, fiveInfoBean.data.demand.is_smoking)
+
+                SPStaticUtils.put(Constant.TA_DRINK, fiveInfoBean.data.demand.drink_wine)
+
+                SPStaticUtils.put(Constant.TA_HAVE_PHOTO, fiveInfoBean.data.demand.is_headface)
+
+                SPStaticUtils.put(Constant.TA_MARRY, fiveInfoBean.data.demand.marry_time)
+
+                dateFragment.updateDateUI()
+
             }
         }
     }
@@ -273,6 +340,7 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
                     workCityCode += ",${demandAddressBean.data[i].work_city_code}"
 
                 }
+
                 SPStaticUtils.put(Constant.TA_WORK_PLACE, workPlace)
                 SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_NAME, workProvinceName)
                 SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE, workProvinceCode)

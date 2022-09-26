@@ -1,8 +1,11 @@
 package com.twx.marryfriend.main
 
+import android.app.AlertDialog
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -36,8 +39,8 @@ import com.twx.marryfriend.mine.view.RecentViewActivity
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
-import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
+import com.twx.marryfriend.utils.NotificationUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -48,7 +51,6 @@ import com.umeng.message.entity.UMessage
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import org.android.agoo.huawei.HuaWeiRegister
-import org.android.agoo.mezu.MeizuRegister
 import org.android.agoo.oppo.OppoRegister
 import org.android.agoo.vivo.VivoRegister
 import org.android.agoo.xiaomi.MiPushRegistar
@@ -76,16 +78,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         initEmojiCompat()
         ImHelper.init()
         initRecommendFragment()
-//        Thread {
-//            PushHelper.init(applicationContext)
-////            Bugly.init(applicationContext, "2128c50665", true);
-//        }.start()
-
         initPush(this)
-
-
-
-
 
         PushAgent.getInstance(this).onAppStart()
 
@@ -108,31 +101,26 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun initLoadData() {
         super.initLoadData()
-//
-//        val task: TimerTask = object : TimerTask() {
-//            override fun run() {
-//
-//                Log.i("guo",
-//                    "main_device_token : ${SPStaticUtils.getString(Constant.DEVICE_TOKEN, "")}")
-//
-//                val token = SPStaticUtils.getString(Constant.DEVICE_TOKEN, "")
-//
-//                if (token != "") {
-//                    updateToken(token)
-//                } else {
-//                    ToastUtils.showShort("获取友盟推送token失败")
-//                }
-//
-//            }
-//        }
-//        val timer = Timer()
-//        //10秒后执行
-//        timer.schedule(task, 3 * 1000)
+
+        Log.i("guo", "iamge: ${SPStaticUtils.getString(Constant.ME_AVATAR)}")
 
     }
 
     override fun initPresent() {
         super.initPresent()
+
+        // 判断通知权限是否打开
+
+        Log.i("guo", "notification : ${NotificationUtil.isNotifyEnabled(this)}")
+
+
+        if (!NotificationUtil.isNotifyEnabled(this)) {
+
+            startActivity(NotificationUtil.getNotifyIntent(this))
+
+
+        }
+
     }
 
     override fun initEvent() {
@@ -351,6 +339,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
                 //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
                 SPStaticUtils.put(Constant.DEVICE_TOKEN, deviceToken)
+
+                Log.i("guo", "token ： ${deviceToken}")
+
+
                 // 上传token
                 updateToken(deviceToken)
             }
@@ -358,6 +350,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             override fun onFailure(errCode: String, errDesc: String) {
                 Log.e("guo", "注册失败 code:$errCode, desc:$errDesc")
             }
+
         })
         if (UMUtils.isMainProgress(context)) {
             registerDeviceChannel(context)
@@ -408,7 +401,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
                 override fun dealWithCustomAction(context: Context, uMessage: UMessage) {
                     super.dealWithCustomAction(context, uMessage)
-                    Log.i("guo", uMessage.custom)
+                    Log.i("guo", "custom: ${uMessage.custom}")
                     when (uMessage.custom) {
                         "shenhe_tongzhi" -> {
                             Log.i("guo", "审核通知，跳小秘书")
@@ -489,6 +482,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
                 OppoRegister.register(context,
                     "ddfbd322e5f84b9f9518011417970964",
                     "0dd23bca2294417ea0f49d822dc8df29");
+
             }
 
             "HUAWEI" -> {
