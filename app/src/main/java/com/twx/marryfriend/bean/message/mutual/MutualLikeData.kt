@@ -1,5 +1,7 @@
 package com.twx.marryfriend.bean.message.mutual
 
+import com.twx.marryfriend.bean.Sex
+
 data class MutualLikeData(
     var age: Int? = null,
     var birthday: String? = null,
@@ -23,4 +25,8 @@ data class MutualLikeData(
     var ageText=age?.let {
         "${it}岁"
     }?:""
+
+    fun getSex(): Sex {
+        return Sex.toSex(user_sex)
+    }
 }

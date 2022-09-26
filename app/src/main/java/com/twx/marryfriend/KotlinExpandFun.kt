@@ -7,6 +7,7 @@ import android.util.DisplayMetrics
 import android.util.TypedValue
 import androidx.core.content.FileProvider
 import com.twx.marryfriend.dialog.UploadHeadDialog
+import com.twx.marryfriend.recommend.widget.RecommendGuideView
 import com.xyzz.myutils.show.wLog
 import java.io.File
 import java.text.SimpleDateFormat
@@ -79,6 +80,9 @@ fun String.textTimeToTimeInMillis():Long?{
 }
 
 fun UploadHeadDialog.showUploadHeadDialog():Boolean{
+    if (RecommendGuideView.isShowGuide()){
+        return false
+    }
     return if (!UserInfo.isHaveHeadImage()){
         this.show()
         true

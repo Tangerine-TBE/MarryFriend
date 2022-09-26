@@ -17,11 +17,6 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 object UserInfo {
-    val userInfo=MutableLiveData<Data>()
-    class Data(val userId:String){
-        var isVip=false
-        var headImage:String?=null
-    }
 
     fun updateUserInfo(){
         val url="${Contents.USER_URL}/marryfriend/LoginRegister/getFive"
@@ -44,19 +39,14 @@ object UserInfo {
     fun getUserId():String?{
         val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
 
-        val userId=if(BuildConfig.DEBUG&&
+        if(BuildConfig.DEBUG&&
             (phone=="15270318482"||phone=="17370452215")){//3是男的
             if (Build.MANUFACTURER.contains("xiaomi",true)){
                 return "3"
             }
             return "2"//3,4,6,11,16//
-        }else{
-            SPStaticUtils.getString(Constant.USER_ID, null)
         }
-        if (userId!=null){
-            userInfo.value=Data(userId)
-        }
-        return userId
+        return SPStaticUtils.getString(Constant.USER_ID, null)
     }
 
     fun getImgHead():String{
@@ -95,7 +85,7 @@ object UserInfo {
      */
     fun getOriginalUserSex():Int{
 //        if(BuildConfig.DEBUG){
-//            return 1//3,4,6,11,16//
+//            return 1
 //        }
         return SPStaticUtils.getInt(Constant.ME_SEX, 2)
     }

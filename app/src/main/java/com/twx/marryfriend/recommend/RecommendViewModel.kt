@@ -26,17 +26,6 @@ import kotlin.coroutines.suspendCoroutine
 class RecommendViewModel():ViewModel() {
     private var preDisLike=0
     val haveMoreRecommend=MutableLiveData<Boolean>()
-    private var surplusRecommend=3
-        set(value) {
-            if (value>0){
-                if (haveMoreRecommend.value!=true){
-                    haveMoreRecommend.value=true
-                }
-            }else{
-                haveMoreRecommend.value=false
-            }
-            field=value
-        }
     private var countDownTimer:CountDownTimer?=null
     val countDownTimerLiveData=MutableLiveData<String>()
     private val numberFormat by lazy {

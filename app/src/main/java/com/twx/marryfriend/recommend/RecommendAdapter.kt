@@ -100,6 +100,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         holder.getView<View>(R.id.homeLike).alpha=0f
         holder.getView<View>(R.id.homeDislike).alpha=0f
         val item=listData[position]
+        holder.setImage(R.id.sexIcon,item.getUserSex().sexIcon)
         holder.setText(R.id.userId,"用户ID:${item.getId()}")
         holder.getView<View>(R.id.report).setOnClickListener {
             reportAction?.invoke(item)

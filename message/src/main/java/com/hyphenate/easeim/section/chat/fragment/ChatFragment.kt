@@ -125,7 +125,8 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
             com.hyphenate.easeui.R.id.extend_item_video
         )
 
-        //添加扩展槽
+/*        //添加扩展槽
+        //视频
         if (chatType == EaseConstant.CHATTYPE_SINGLE) {
             //inputMenu.registerExtendMenuItem(R.string.attach_voice_call, R.drawable.em_chat_voice_call_selector, EaseChatInputMenu.ITEM_VOICE_CALL, this);
             chatExtendMenu.registerMenuItem(
@@ -142,7 +143,7 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
             )
             //目前普通模式也支持设置主播和观众人数，都建议使用普通模式
             //inputMenu.registerExtendMenuItem(R.string.title_live, R.drawable.em_chat_video_call_selector, EaseChatInputMenu.ITEM_LIVE, this);
-        }
+        }*/
         chatExtendMenu.registerMenuItem(
             com.hyphenate.easeui.R.string.attach_location,
             com.hyphenate.easeui.R.drawable.ease_chat_location_selector,

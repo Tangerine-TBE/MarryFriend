@@ -42,27 +42,23 @@ class LoveAdapter : RecyclerView.Adapter<BaseViewHolder>() {
         val item = listData[position]
 //        holder.setImage(R.id.itemLoveImg,item.image_url,!UserInfo.isVip())
         holder.getView<ImageView>(R.id.itemLoveImg).also {
-            if (!item.image_url.isNullOrEmpty()) {
-                val glide = Glide.with(it)
-                    .load(item.image_url)
-                    .placeholder(Sex.toSex(item.user_sex).smallHead)
-                    .error(Sex.toSex(item.user_sex).smallHead)
-                if (UserInfo.isVip()) {
-                    glide.into(it)
-                } else {
-                    glide.transform(object : CenterCrop() {
-                        override fun transform(
-                            pool: BitmapPool,
-                            toTransform: Bitmap,
-                            outWidth: Int,
-                            outHeight: Int,
-                        ): Bitmap {
-                            return toTransform.rsBlur(it.context, 20)
-                        }
-                    }).into(it)
-                }
+            val glide = Glide.with(it)
+                .load(item.image_url)
+                .placeholder(Sex.toSex(item.user_sex).smallHead)
+                .error(Sex.toSex(item.user_sex).smallHead)
+            if (UserInfo.isVip()) {
+                glide.into(it)
             } else {
-                iLog("photoPath为空")
+                glide.transform(object : CenterCrop() {
+                    override fun transform(
+                        pool: BitmapPool,
+                        toTransform: Bitmap,
+                        outWidth: Int,
+                        outHeight: Int,
+                    ): Bitmap {
+                        return toTransform.rsBlur(it.context, 20)
+                    }
+                }).into(it)
             }
         }
         holder.setText(R.id.itemLoveOnLineTime,

@@ -14,7 +14,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="44dp"
         android:gravity="center_vertical"
-        android:text="--人喜欢我"
+        android:text="0人喜欢我"
         android:textColor="#FF101010"
         android:textSize="17sp"
         android:textStyle="bold" />

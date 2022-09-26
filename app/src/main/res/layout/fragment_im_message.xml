@@ -24,6 +24,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/mutualLikeView"
         android:paddingBottom="15dp"
+        android:visibility="gone"
+        tools:visibility="visible"
         android:background="#FFFFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

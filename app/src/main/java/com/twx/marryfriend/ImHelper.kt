@@ -13,6 +13,7 @@ import com.message.ImUserInfoService
 import com.message.chat.CustomMessage
 import com.message.custom.IImEventListener
 import com.message.custom.ImCustomEventListenerManager
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.message.ConversationViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.twx.marryfriend.vip.VipActivity
@@ -87,7 +88,7 @@ object ImHelper {
                         WebViewActivity.actionStart(view.context,"http://test.aisou.club/userManual/fraud.html")
                     }
                     CustomMessage.CustomEvent.openSuperVip -> {
-                        view.context.startActivity(IntentManager.getSuperVipIntent(view.context))
+                        view.context.startActivity(IntentManager.getSuperVipIntent(view.context, sVipGifEnum = SVipGifEnum.TopMessage))
                     }
                     CustomMessage.CustomEvent.upload_head -> {
                         view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))
