@@ -1,11 +1,10 @@
 package com.twx.marryfriend
 
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.hyphenate.easeim.section.base.WebViewActivity
 import com.message.ImLoginHelper
 import com.message.ImMessageManager
@@ -16,7 +15,6 @@ import com.message.custom.ImCustomEventListenerManager
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.message.ConversationViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
-import com.twx.marryfriend.vip.VipActivity
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
@@ -26,6 +24,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 object ImHelper {
+    val observableNewMessage by lazy {
+        LiveDataBus.get().with("im_user_info_update",Boolean::class.java)
+    }
     private val messageViewModel by lazy {
         ConversationViewModel()
     }
@@ -114,18 +115,20 @@ object ImHelper {
     fun updateFriendInfo(ids:List<String>){
         ids.filter {
             ImUserInfoService.getUserNickName(it)==null
-        }.also {
-            iLog("已准备好获取用户资料,${it}")
+        }.also { list ->
+            iLog("已准备好获取用户资料,${list}")
             GlobalScope.launch {
-                iLog("开始获取用户资料,${it}")
-                val conversations=messageViewModel.getConversationsInfo(it)
+                iLog("开始获取用户资料,${list}")
+                val conversations=messageViewModel.getConversationsInfo(list)
                 val result= conversations.map {
                     ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
                         ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
                 }
-                result.also {
-                    iLog("获取用户资料成功,${it.map { it.userId }}")
-                    ImUserInfoService.setUserInfo(*it.toTypedArray())
+                result.also { resultList ->
+                    iLog("获取用户资料成功,${resultList.map { it.userId }}")
+                    ImUserInfoService.setUserInfo(*resultList.toTypedArray())
+//                    val fff= resultList.mapNotNull { it.userId.toIntOrNull() }.toIntArray()
+                    observableNewMessage.postValue(true)
                 }
             }
         }

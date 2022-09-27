@@ -37,15 +37,15 @@ object UserInfo {
 
 
     fun getUserId():String?{
-        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
+//        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
 
-        if(BuildConfig.DEBUG&&
-            (phone=="15270318482"||phone=="17370452215")){//3是男的
-            if (Build.MANUFACTURER.contains("xiaomi",true)){
-                return "3"
-            }
-            return "2"//3,4,6,11,16//
-        }
+//        if(BuildConfig.DEBUG&&
+//            (phone=="15270318482"||phone=="17370452215")){//3是男的
+//            if (Build.MANUFACTURER.contains("xiaomi",true)){
+//                return "15"
+//            }
+//            return "2"//3,4,6,11,16//
+//        }
         return SPStaticUtils.getString(Constant.USER_ID, null)
     }
 
@@ -63,16 +63,10 @@ object UserInfo {
     }
 
     fun isVip():Boolean{
-        if (BuildConfig.DEBUG){
-
-        }
         return getUserVipLevel()>0
     }
 
     fun isSuperVip():Boolean{
-        if (BuildConfig.DEBUG){
-
-        }
         return getUserVipLevel()>1
     }
     fun getHeadPortrait():String{

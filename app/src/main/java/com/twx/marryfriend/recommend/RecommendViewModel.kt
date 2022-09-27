@@ -181,7 +181,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun like(
         guest_uid: Int,
         mutualLikeAction: (() -> Unit)? = null
-    )=suspendCoroutine<String>{ coroutine->
+    )=suspendCoroutine<Unit>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -197,9 +197,9 @@ class RecommendViewModel():ViewModel() {
                         mutualLikeAction?.invoke()
                     }
                     iLog("返回的状态code:${code},2为相互喜欢")
-                    coroutine.resume("喜欢成功")
-                }else if(jsonObject.getString("code")=="444"){
-                    coroutine.resume(jsonObject.getString("msg"))
+                    coroutine.resume(Unit)
+                }else if(jsonObject.getInt("code")==444){
+                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
                 }else{
                     coroutine.resumeWithException(Exception(response))
                 }
@@ -211,7 +211,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun otherLike(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<String>{coroutine->
+    suspend fun otherLike(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -226,11 +226,11 @@ class RecommendViewModel():ViewModel() {
                         mutualLikeAction?.invoke()
                     }
                     iLog("返回的状态code:${code},2为相互喜欢")
-                    coroutine.resume("喜欢成功")
-                }else if(jsonObject.getString("code")=="444"){
-                    coroutine.resume(jsonObject.getString("msg"))
+                    coroutine.resume(Unit)
+                }else if(jsonObject.getInt("code")==444){
+                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
                 }else if(jsonObject.getInt("code")==484){
-                    coroutine.resume(jsonObject.getString("msg"))
+                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
                 }else{
                     coroutine.resumeWithException(Exception(response))
                 }

@@ -528,7 +528,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.show()
         viewLifecycleOwner.lifecycleScope.launch (){
             try {
-                val str=recommendViewModel.like(item.getId()) {
+                recommendViewModel.like(item.getId()) {
                     showView(ViewType.mutual)
                     Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
                 }

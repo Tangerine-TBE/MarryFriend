@@ -180,6 +180,11 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             }
             //同性不能喜欢
             if(item.getUserSex()==UserInfo.getUserSex()){
+                if (BuildConfig.DEBUG){
+                    toast("同性不能喜欢")
+                }
+                care2.visibility=View.GONE
+                care.visibility=View.GONE
                 dislike2.visibility=View.GONE
                 dislike.visibility=View.GONE
                 sendFlowers.visibility=View.GONE
@@ -615,14 +620,14 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         loadingDialog.show()
         lifecycleScope.launch (){
             try {
-                toast(recommendViewModel.otherLike(userId?:return@launch toast("id 为空")){
+                recommendViewModel.otherLike(userId?:return@launch toast("id 为空")){
                     if (friendViewSwitcher.currentView!=mutualLike){
                         friendViewSwitcher.showNext()
                         Glide.with(taHead).load(item.getHeadImg())
                             .placeholder(item.getUserSex().smallHead)
                             .placeholder(item.getUserSex().smallHead).into(taHead)
                     }
-                })
+                }
                 care.isSelected=true
                 care2.isSelected=true
             }catch (e:Exception){
