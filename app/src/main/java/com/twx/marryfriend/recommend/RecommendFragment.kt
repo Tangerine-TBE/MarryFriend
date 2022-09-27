@@ -571,16 +571,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun openVip(){
-        if (UserInfo.isSuperVip()){
-            toast("今天暂无推荐")
-            return
-        }else{
-            if (UserInfo.isVip()){
-                startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
-            }else{
-                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
-            }
-        }
+        startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
     }
 
     enum class ViewType{
@@ -600,7 +591,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 notContent.visibility=View.GONE
             }
             ViewType.notContent -> {
-                if(UserInfo.isSuperVip()){
+                if(UserInfo.isVip()){
                     moreContent.text="查看更多动态"
                     moreContent.setOnClickListener {
                         iLog("查看更多动态")

@@ -15,6 +15,7 @@ import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.WhoSeeMeBean
 import com.twx.marryfriend.bean.mine.WhoSeeMeList
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
@@ -157,7 +158,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
-            startActivity(context?.let { VipActivity.getVipIntent(it) })
+            startActivity(context?.let { VipActivity.getVipIntent(it,0,VipGifEnum.SeeMe) })
         } else {
             startActivity(context?.let {
                 FriendInfoActivity.getIntent(it,
@@ -174,7 +175,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 
-            startActivity(context?.let { VipActivity.getVipIntent(it) })
+            startActivity(context?.let { VipActivity.getVipIntent(it,0,VipGifEnum.Message) })
 
         } else {
 

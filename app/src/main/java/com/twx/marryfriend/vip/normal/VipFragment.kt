@@ -116,8 +116,6 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
     private fun initData() {
 
-        if (item > 5) item = 0
-
         banner_normal_container.currentItem = item
 
         mVipPriceList.add("258")

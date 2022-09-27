@@ -44,6 +44,7 @@ import com.twx.marryfriend.net.impl.doAutoLoginPresentImpl
 import com.twx.marryfriend.net.impl.getAccessTokenPresentImpl
 import com.twx.marryfriend.net.impl.getBanPresentImpl
 import com.twx.marryfriend.set.web.SetWebActivity
+import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.UnicodeUtils
 import java.util.*
@@ -244,7 +245,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 SpUtil.storeVipInfo(autoLoginBean.data.close_time_low,
                     autoLoginBean.data.close_time_high)
 
-                SpUtil.saveUserInfo(autoLoginBean)
+                SpLoginUtil.saveUserInfo(autoLoginBean)
 
                 startActivity(GetInfoActivity.getIntent(this, autoLoginBean.data.kind_type))
 

@@ -6,11 +6,6 @@ package com.twx.marryfriend.bean.set
  */
 data class DeleteBlackListBean(
     val code: Int,
-    val data: List<DeleteBlackListData>,
+    val data: Any,
     val msg: String,
-)
-
-data class DeleteBlackListData(
-    val image_url: String,
-    val nick: String,
 )

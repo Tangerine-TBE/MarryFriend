@@ -15,6 +15,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.DiscussList
 import com.twx.marryfriend.bean.mine.WhoFocusMeBean
 import com.twx.marryfriend.bean.mine.WhoFocusMeList
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
@@ -158,7 +159,7 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
                     mList[position].host_uid)
             })
         } else {
-            startActivity(context?.let { VipActivity.getSVipIntent(it) })
+            startActivity(context?.let { VipActivity.getSVipIntent(it,0,SVipGifEnum.FocusMe) })
         }
 
     }
