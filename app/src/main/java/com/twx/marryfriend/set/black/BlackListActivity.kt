@@ -15,6 +15,7 @@ import com.twx.marryfriend.bean.vip.BlackListData
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.mine.IDoDeleteBlackListCallback
 import com.twx.marryfriend.net.callback.mine.IGetBlackListCallback
 import com.twx.marryfriend.net.impl.mine.doDeleteBlackListPresentImpl
@@ -180,9 +181,8 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
     override fun onItemChatClick(v: View?, position: Int) {
 
         startActivity(
-            ChatActivity.getIntent(this,
-                mList[position].guest_uid.toString(),
-                true
+            ImChatActivity.getIntent(this,
+                mList[position].guest_uid.toString()
             )
         )
     }

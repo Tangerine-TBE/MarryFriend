@@ -32,6 +32,7 @@ import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.luck.picture.lib.animators.AnimationType
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -46,7 +47,6 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
-import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.mine.FourTotalBean
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
@@ -55,7 +55,8 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.mine.MyDynamicActivity
-import com.twx.marryfriend.main.MainActivity
+import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
@@ -70,7 +71,6 @@ import com.twx.marryfriend.net.callback.mine.IGetFourTotalCallback
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.net.impl.mine.getFourTotalPresentImpl
 import com.twx.marryfriend.set.SetActivity
-import com.twx.marryfriend.set.report.ReportReasonActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
@@ -654,7 +654,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
 
             startActivity(IntentUtils.getShareTextIntent("http://www.aijiaou.com/jiaou/mobile.html"))
-
 
         }
 

@@ -33,6 +33,7 @@ import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
@@ -584,10 +585,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                     } else {
 
                         startActivity(context?.let {
-                            ChatActivity.getIntent(
+                            ImChatActivity.getIntent(
                                 it,
-                                mTrendList[position].user_id,
-                                identity
+                                mTrendList[position].user_id
                             )
                         })
                     }

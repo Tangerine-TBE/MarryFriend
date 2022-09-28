@@ -14,21 +14,26 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.DeviceUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
+import com.hyphenate.easeim.common.livedatas.LiveDataBus
+import com.hyphenate.easeim.common.model.ChatInfoBean
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupAnimation
+import com.lxj.xpopup.impl.FullScreenPopupView
+import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
+import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.likeme.LoveFragment
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
@@ -38,7 +43,9 @@ import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.recommend.RecommendFragment
+import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
+import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -46,6 +53,7 @@ import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
+import com.xyzz.myutils.show.iLog
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import org.android.agoo.huawei.HuaWeiRegister
@@ -110,10 +118,34 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         Log.i("guo", "notification : ${NotificationUtil.isNotifyEnabled(this)}")
 
 
-        if (!NotificationUtil.isNotifyEnabled(this)) {
 
-            startActivity(NotificationUtil.getNotifyIntent(this))
+        if (SPStaticUtils.getBoolean(Constant.NOTICE_PERMISSION_TIP, true)) {
+            if (!NotificationUtil.isNotifyEnabled(this)) {
 
+                SPStaticUtils.put(Constant.NOTICE_PERMISSION_TIP, false)
+                XPopup.Builder(this)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(NotificationDialog(this))
+                    .show()
+
+            }
+        } else if (SPStaticUtils.getBoolean(Constant.BACKGROUND_PERMISSION_TIP, true)) {
+
+            if (!BackgroundPopUtils.isVivoBgStartPermissionAllowed(this)) {
+
+                SPStaticUtils.put(Constant.BACKGROUND_PERMISSION_TIP, false)
+                XPopup.Builder(this)
+                    .dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true)
+                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(PopDialog(this))
+                    .show()
+
+            }
 
         }
 
@@ -121,6 +153,12 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun initEvent() {
         super.initEvent()
+        LiveDataBus.get().with("huanXin_push", ChatInfoBean::class.java).observeForever {
+            Log.i("guo", "LiveDataBus 接收信息");
+            startActivity(ImChatActivity.getIntent(this, it.targetId))
+        }
+
+//        LiveDataBus.get().with("huanXin_push", ChatInfoBean::class.java).removeObserver()
 
         rb_main_recommend.setOnClickListener {
             initRecommendFragment()
@@ -529,6 +567,58 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         super.onDestroy()
 
         doUpdateTokenPresent.unregisterCallback(this)
+
+    }
+
+
+    // 消息通知
+    inner class NotificationDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_photo_notification
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<ImageView>(R.id.iv_dialog_notice_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_notice_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_notice_confirm).setOnClickListener {
+                startActivity(NotificationUtil.getNotifyIntent(context))
+                dismiss()
+            }
+
+        }
+
+    }
+
+
+    // 消息通知
+    inner class PopDialog(context: Context) : FullScreenPopupView(context) {
+
+        override fun getImplLayoutId(): Int = R.layout.dialog_photo_pop
+
+        override fun onCreate() {
+            super.onCreate()
+
+            findViewById<ImageView>(R.id.iv_dialog_pop_close).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_pop_cancel).setOnClickListener {
+                dismiss()
+            }
+
+            findViewById<TextView>(R.id.tv_dialog_pop_confirm).setOnClickListener {
+                PermissionUtils.launchAppDetailsSettings()
+                dismiss()
+            }
+
+        }
 
     }
 

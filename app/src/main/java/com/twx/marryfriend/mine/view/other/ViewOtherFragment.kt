@@ -19,6 +19,7 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.mine.IGetMeSeeWhoCallback
 import com.twx.marryfriend.net.impl.mine.getMeSeeWhoPresentImpl
 import com.twx.marryfriend.vip.VipActivity
@@ -161,10 +162,9 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
 
             val identity = mList[position].identity_status == 1
             startActivity(context?.let {
-                ChatActivity.getIntent(
+                ImChatActivity.getIntent(
                     it,
-                    mList[position].guest_uid.toString(),
-                    identity
+                    mList[position].guest_uid.toString()
                 )
             })
 

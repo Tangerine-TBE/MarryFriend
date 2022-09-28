@@ -25,6 +25,7 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.dynamic.IDoCancelFocusCallback
 import com.twx.marryfriend.net.callback.mine.IGetMeFocusWhoCallback
 import com.twx.marryfriend.net.impl.dynamic.doCancelFocusPresentImpl
@@ -180,10 +181,9 @@ class FocusOtherFragment : Fragment(), IGetMeFocusWhoCallback,
 
             val identity = mList[position].identity_status == 1
             startActivity(context?.let {
-                ChatActivity.getIntent(
+                ImChatActivity.getIntent(
                     it,
-                    mList[position].guest_uid.toString(),
-                    identity
+                    mList[position].guest_uid.toString()
                 )
             })
 

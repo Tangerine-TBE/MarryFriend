@@ -28,6 +28,7 @@ import com.twx.marryfriend.dynamic.show.mine.DynamicMineLikeActivity
 import com.twx.marryfriend.dynamic.show.mine.adapter.CommentOneAdapter
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
 import com.twx.marryfriend.set.report.ReportReasonActivity
@@ -276,10 +277,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                 // 关注了，需要跳转到聊天界面
                 ToastUtils.showShort("聊天")
                 val identity = info.identity_status == 1
-                startActivity(ChatActivity.getIntent(
+                startActivity(ImChatActivity.getIntent(
                     this,
-                    info.user_id,
-                    identity
+                    info.user_id
                 ))
 
             } else {

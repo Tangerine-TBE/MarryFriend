@@ -2530,6 +2530,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     // 需要上传的基础信息
     private fun updateAvatar(photoUrl: String, type: String, name: String) {
 
+        Log.i("guo","id :${SPStaticUtils.getString(Constant.USER_ID, "13")}")
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         map[Contents.IMAGE_URL] = photoUrl
