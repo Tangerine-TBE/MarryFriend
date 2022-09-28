@@ -574,8 +574,7 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:paddingVertical="16dp"
-                            android:visibility="invisible">
+                            android:paddingVertical="16dp">
 
                             <ImageView
                                 android:layout_width="41dp"
@@ -611,8 +610,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="15dp"
-                    android:gravity="center"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center">
 
                     <TextView
                         android:id="@+id/tv_mine_uid"
@@ -629,7 +628,6 @@
                         android:src="@mipmap/icon_uid_copy" />
 
                 </LinearLayout>
-
 
             </LinearLayout>
 

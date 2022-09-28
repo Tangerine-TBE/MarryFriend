@@ -598,9 +598,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             val intent = Intent(context, SetActivity::class.java)
             startActivity(intent)
 
-            // 动态添加数据点
-//            val activity = activity as MainActivity
-//            activity.addDynamicFragment()
 
         }
 
@@ -612,8 +609,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_share.setOnClickListener {
+            // 动态添加数据点
+            val activity = activity as MainActivity
+            activity.addDynamicFragment()
         }
-
 
         ll_mine_uid.setOnClickListener {
             ToastUtils.showShort("已复制您的用户ID")
