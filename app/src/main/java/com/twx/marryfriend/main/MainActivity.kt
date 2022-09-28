@@ -35,7 +35,6 @@ import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.likeme.LoveFragment
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
-import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.like.RecentLikeActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
