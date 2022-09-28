@@ -46,6 +46,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.mine.FourTotalBean
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
@@ -610,8 +611,51 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         ll_mine_set_share.setOnClickListener {
             // 动态添加数据点
-            val activity = activity as MainActivity
-            activity.addDynamicFragment()
+//
+//            val x = TrendSaloonList(37,
+//                1,
+//                "1990-1-15",
+//                "2022-09-27 21:02:57",
+//                1,
+//                4,
+//                "http://adrmf.gz.bcebos.com/v1/user64/head.png",
+//                190,
+//                4,
+//                "",
+//                "计算机/互联网",
+//                "",
+//                "",
+//                1,
+//                "通过胡",
+//                "数据开发与管理",
+//                "",
+//                "发布一个小视频",
+//                2,
+//                "64",
+//                1,
+//                "",
+//                "http://adrmf.gz.bcebos.com/v1/user64/1664283774959.mp4",
+//                "",
+//                "",
+//                0,
+//                1,
+//                null,
+//                "null",
+//                64,
+//                0,
+//                "2022-08-31 22:23:24",
+//                0,
+//                "2022-08-31 22:23:24",
+//                0)
+//
+//
+//            val activity = activity as MainActivity
+//            activity.addDynamicFragment(x)
+
+
+            startActivity(IntentUtils.getShareTextIntent("http://www.aijiaou.com/jiaou/mobile.html"))
+
+
         }
 
         ll_mine_uid.setOnClickListener {

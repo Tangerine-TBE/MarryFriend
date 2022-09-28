@@ -62,6 +62,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     private lateinit var mContext: Context
 
+    private var datemode = ""
+
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
 
@@ -98,9 +100,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         return inflater.inflate(R.layout.fragment_dynamic_recommend, container, false)
     }
 
-    fun newInstance(context: Context): DynamicRecommendFragment {
+    fun newInstance(context: Context, mode: String): DynamicRecommendFragment {
         val fragment = DynamicRecommendFragment()
         fragment.mContext = context
+        fragment.datemode = mode
         return fragment
     }
 
@@ -113,6 +116,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     private fun initView() {
+
+
+        Log.i("guo", "mode :$datemode")
 
         getTrendSaloonPresent = getTrendSaloonPresentImpl.getsInstance()
         getTrendSaloonPresent.registerCallback(this)
@@ -179,7 +185,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
             rl_dynamic_tips.visibility = View.GONE
 
-            rv_dynamic_recommend_container.setPadding(0,0,0,ConvertUtils.dp2px(50F))
+            rv_dynamic_recommend_container.setPadding(0, 0, 0, ConvertUtils.dp2px(50F))
 
             for (i in 0.until(mDiyList.size)) {
                 mDiyList[i].anim = false
@@ -604,6 +610,27 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         getTotalCountPresent.getTotalCount(map)
     }
 
+    // 动态添加一条信息
+    fun addDynamicInfo(trendSaloonList: TrendSaloonList) {
+        
+        val focus = trendSaloonList.focus_uid != null
+
+        val like = trendSaloonList.guest_uid != null
+
+        val diy = LikeBean(
+            trendSaloonList.user_id.toInt(),
+            focus,
+            like,
+            trendSaloonList.like_count)
+
+        mTrendList.add(0, trendSaloonList)
+        mDiyList.add(0, diy)
+
+        adapter.notifyDataSetChanged()
+
+    }
+
+
     // 获取动态列表
     private fun getTrendSaloon(mode: String, max: Int, min: Int) {
         val map: MutableMap<String, String> = TreeMap()
@@ -679,7 +706,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 if (totalCountBean.data.discuss.toInt() + totalCountBean.data.like != 0) {
                     rl_dynamic_tips.visibility = View.VISIBLE
 
-                    rv_dynamic_recommend_container.setPadding(0,0,0,ConvertUtils.dp2px(110F))
+                    rv_dynamic_recommend_container.setPadding(0, 0, 0, ConvertUtils.dp2px(110F))
 
                     tv_dynamic_tips_count.text =
                         "${totalCountBean.data.discuss.toInt() + totalCountBean.data.like}条新消息"
@@ -788,6 +815,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         if (trendSaloonBean != null) {
             if (trendSaloonBean.code == 200) {
                 if (trendSaloonBean.data.list.isNotEmpty()) {
+
+                    Log.i("guo", "dynamicInfo : ${trendSaloonBean.data.list[0]}")
 
                     ll_dynamic_recommend_empty.visibility = View.GONE
 

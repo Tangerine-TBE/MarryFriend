@@ -23,6 +23,7 @@ import com.message.ImMessageManager
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
@@ -156,7 +157,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     }
 
 
-    fun addDynamicFragment() {
+    // 动态列表界面添加动态数据
+    fun addDynamicFragment(trendSaloonList: TrendSaloonList) {
+
+        rb_main_dynamic.isChecked = true
 
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (dynamic == null) {
@@ -168,7 +172,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         transaction.show(dynamic!!)
         transaction.commit()
 
-        dynamic!!.addData()
+        dynamic!!.addData(trendSaloonList)
 
     }
 
