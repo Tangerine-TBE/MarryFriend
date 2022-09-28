@@ -83,11 +83,15 @@
     <!-- Oppo推送配置 end -->
 
     <!-- Mi推送配置 start -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <permission
         android:name="${applicationId}.permission.MIPUSH_RECEIVE"
         android:protectionLevel="signature" />
     <uses-permission android:name="${applicationId}.permission.MIPUSH_RECEIVE" />
     <!-- Mi推送配置 end -->
+
+
 
 <!--    android:name=".DemoApplication"-->
     <application
@@ -157,6 +161,7 @@
             </intent-filter>
         </service>
         <!-- huawei push end -->
+
 
         <!-- VIVO推送配置 start -->
         <!--Vivo Push SDK的版本信息-->

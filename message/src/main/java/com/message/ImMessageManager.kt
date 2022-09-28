@@ -1,6 +1,7 @@
 package com.message
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -35,31 +36,45 @@ object ImMessageManager {
         object : EMMessageListener {
             override fun onMessageReceived(messages: MutableList<EMMessage>?) {
                 //收到消息
+
+                Log.i("guo","收到消息1111")
+
                 iLog(messages?.firstOrNull()?.from,"收到消息,收到")
                 newMessageLiveData.postValue(messages?.mapNotNull { Message.toMyMessage(it) })
             }
 
             override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
                 //收到透传消息
+
+                Log.i("guo","收到透传消息")
+
                 iLog(messages?.firstOrNull()?.from,"收到消息,cmd")
             }
 
             override fun onMessageRead(messages: MutableList<EMMessage>?) {
                 //收到已读回执
+
+                Log.i("guo","收到已读回执")
                 iLog("收到消息,已读"+messages?.firstOrNull()?.from+"发给"+messages?.firstOrNull()?.to)
                 messageRead.value=messages
             }
 
             override fun onMessageDelivered(messages: MutableList<EMMessage>?) {
                 //收到已送达回执
+
+                Log.i("guo","收到已送达回执")
                 iLog(messages?.firstOrNull()?.from,"收到消息,已送达")
                 messageDelivered.value=messages
             }
 
             override fun onMessageRecalled(messages: MutableList<EMMessage>?) {
                 //消息状态变动
+
+                Log.i("guo","消息状态变动")
                 iLog(messages?.firstOrNull()?.from,"收到消息,状态")
             }
+
+
 
         }
     }

@@ -20,6 +20,7 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.mine.IGetWhoSeeMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
 import com.twx.marryfriend.vip.VipActivity
@@ -158,7 +159,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
-            startActivity(context?.let { VipActivity.getVipIntent(it,0,VipGifEnum.SeeMe) })
+            startActivity(context?.let { VipActivity.getVipIntent(it, 0, VipGifEnum.SeeMe) })
         } else {
             startActivity(context?.let {
                 FriendInfoActivity.getIntent(
@@ -177,16 +178,15 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 
-            startActivity(context?.let { VipActivity.getVipIntent(it,0,VipGifEnum.Message) })
+            startActivity(context?.let { VipActivity.getVipIntent(it, 0, VipGifEnum.Message) })
 
         } else {
 
             val identity = mList[position].identity_status == 1
             startActivity(context?.let {
-                ChatActivity.getIntent(
+                ImChatActivity.getIntent(
                     it,
-                    mList[position].host_uid.toString(),
-                    identity
+                    mList[position].host_uid.toString()
                 )
             })
 

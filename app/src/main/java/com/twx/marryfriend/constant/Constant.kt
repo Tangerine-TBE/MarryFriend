@@ -12,6 +12,12 @@ object Constant {
     // 版本
     const val VERSION = "version"
 
+    // 通知权限提示
+    const val NOTICE_PERMISSION_TIP = "notice_permisssion_tip"
+
+    // 后台弹出界面权限提示
+    const val BACKGROUND_PERMISSION_TIP = "background_permisssion_tip"
+
 
     // 用户id
     const val USER_ID = "user_id"

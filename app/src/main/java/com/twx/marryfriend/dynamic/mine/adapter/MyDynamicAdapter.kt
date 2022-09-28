@@ -569,10 +569,18 @@ class MyDynamicAdapter(private val mList: MutableList<MyTrendsList>) :
 
         holder.time.text = TimeUtil.getCommonTime(mList[position].create_time)
 
-        if (mList[position].audit_status == 1) {
-            holder.audit.visibility = View.GONE
-        } else {
-            holder.audit.visibility = View.VISIBLE
+        when (mList[position].audit_status) {
+            0 -> {
+                holder.audit.visibility = View.VISIBLE
+                holder.audit.text = "审核中..."
+            }
+            1 -> {
+                holder.audit.visibility = View.GONE
+            }
+            2 -> {
+                holder.audit.visibility = View.VISIBLE
+                holder.audit.text = "已拒绝"
+            }
         }
 
         holder.tvLike.text = mList[position].like_count.toString()

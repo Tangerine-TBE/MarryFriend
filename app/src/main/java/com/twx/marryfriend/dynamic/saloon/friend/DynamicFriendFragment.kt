@@ -30,6 +30,7 @@ import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
 import com.twx.marryfriend.net.impl.dynamic.*
@@ -190,10 +191,9 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 } else {
 
                     startActivity(context?.let {
-                        ChatActivity.getIntent(
+                        ImChatActivity.getIntent(
                             it,
-                            mFocusTrendList[position].user_id,
-                            identity
+                            mFocusTrendList[position].user_id
                         )
                     })
                 }
