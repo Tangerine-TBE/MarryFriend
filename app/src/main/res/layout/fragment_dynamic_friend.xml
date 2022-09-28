@@ -15,10 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.twx.marryfriend.view.SmartRecyclerview
             android:id="@+id/rv_dynamic_focus_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="50dp"
             android:layout_marginTop="8dp" />
 
         <com.scwang.smart.refresh.footer.ClassicsFooter

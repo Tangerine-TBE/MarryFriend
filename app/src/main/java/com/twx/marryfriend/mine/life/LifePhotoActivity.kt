@@ -772,14 +772,19 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                 XXPermissions.with(this@LifePhotoActivity)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                    .permission(Permission.CAMERA)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
                             permissions: MutableList<String>?,
                             all: Boolean,
                         ) {
 
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
-                            startActivityForResult(intent, 3)
+                            if (all) {
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
+                                startActivityForResult(intent, 3)
+                            } else {
+                                ToastUtils.showShort("请授予应用所需相关权限")
+                            }
 
                         }
 

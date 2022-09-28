@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.ConvertUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.lxj.xpopup.XPopup
@@ -137,7 +139,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         srl_dynamic_recommend_refresh.setRefreshHeader(ClassicsHeader(requireContext()));
         srl_dynamic_recommend_refresh.setRefreshFooter(ClassicsFooter(requireContext()));
-
+//数据不满一页时，禁止上滑（不设置，数据不满一页上滑，不能自动完全回弹，第一个item会被覆盖。）
+        srl_dynamic_recommend_refresh.setEnableLoadMoreWhenContentNotFull(false);
     }
 
     private fun initData() {
@@ -175,6 +178,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         rl_dynamic_tips.setOnClickListener {
 
             rl_dynamic_tips.visibility = View.GONE
+
+            rv_dynamic_recommend_container.setPadding(0,0,0,ConvertUtils.dp2px(50F))
 
             for (i in 0.until(mDiyList.size)) {
                 mDiyList[i].anim = false
@@ -636,6 +641,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         doPlusFocusPresent.doPlusFocusOther(map)
     }
 
+    // 添加一条数据
+    fun addDynamicData() {
+        Log.i("guo", "success_add")
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -665,6 +676,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                 if (totalCountBean.data.discuss.toInt() + totalCountBean.data.like != 0) {
                     rl_dynamic_tips.visibility = View.VISIBLE
+
+                    rv_dynamic_recommend_container.setPadding(0,0,0,ConvertUtils.dp2px(110F))
+
                     tv_dynamic_tips_count.text =
                         "${totalCountBean.data.discuss.toInt() + totalCountBean.data.like}条新消息"
 

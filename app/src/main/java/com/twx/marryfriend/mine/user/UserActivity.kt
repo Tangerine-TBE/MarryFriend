@@ -309,7 +309,17 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
                 SPStaticUtils.put(Constant.TA_MARRY, fiveInfoBean.data.demand.marry_time)
 
+                // 更新UI数据
                 dateFragment.updateDateUI()
+
+                // 更新生活照
+                dateFragment.updateLife()
+
+                // 更新录音文件
+                dateFragment.updateVoice()
+
+                // 更新心目中的他、自我介绍
+                dateFragment.updateTextInfo()
 
             }
         }

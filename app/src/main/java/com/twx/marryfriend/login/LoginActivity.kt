@@ -12,7 +12,6 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.blankj.utilcode.util.*
-import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.FaceVerifyBean

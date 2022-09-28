@@ -2,17 +2,14 @@ package com.twx.marryfriend.set.logoff
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.*
-import com.aigestudio.wheelpicker.WheelPicker
-import com.blankj.utilcode.util.ConvertUtils
+import com.blankj.utilcode.util.ActivityUtils
+import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.just.agentweb.AgentWeb
 import com.lxj.xpopup.XPopup
@@ -20,11 +17,15 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.set.web.SetWebActivity
+import com.twx.marryfriend.utils.SpUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_logoff.*
 import kotlinx.android.synthetic.main.activity_safe.*
 import kotlinx.android.synthetic.main.activity_set_web.*
+import java.util.*
 
 class LogoffActivity : MainBaseViewActivity() {
 
@@ -43,7 +44,8 @@ class LogoffActivity : MainBaseViewActivity() {
 
         mAgentWeb = AgentWeb.with(this) //传入Activity
             .setAgentWebParent(rl_logoff_container,
-                RelativeLayout.LayoutParams(-1, -1)) //传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams
+                RelativeLayout.LayoutParams(-1,
+                    -1)) //传入AgentWeb 的父控件 ，如果父控件为 RelativeLayout ， 那么第二参数需要传入 RelativeLayout.LayoutParams
             .useDefaultIndicator() // 使用默认进度条
             .createAgentWeb() //
             .ready()
@@ -79,6 +81,12 @@ class LogoffActivity : MainBaseViewActivity() {
                 .asCustom(LogoffDialog(this))
                 .show()
         }
+
+        tv_logoff_complete.setOnClickListener {
+            startActivity(Intent(this, BeginActivity::class.java))
+            ActivityUtils.finishAllActivities()
+        }
+
     }
 
     // 验证码倒计时
@@ -141,11 +149,26 @@ class LogoffActivity : MainBaseViewActivity() {
 
             confirm.setOnClickListener {
                 if (isAgree) {
-                    ToastUtils.showShort("注销")
+
+                    SpUtil.deleteUserInfo()
+                    ll_logoff_loading.visibility = View.VISIBLE
+
+
+                    val task: TimerTask = object : TimerTask() {
+                        override fun run() {
+                            ThreadUtils.runOnUiThread {
+                                ll_logoff_loading.visibility = View.GONE
+                                ll_logoff_complete.visibility = View.VISIBLE
+                            }
+                        }
+                    }
+                    val timer = Timer()
+                    timer.schedule(task, 1000)
+
+
                     dismiss()
                 } else {
-                    ToastUtils.showShort("请同意《注销佳偶婚恋交友》")
-                    dismiss()
+                    ToastUtils.showShort("请同意注销协议")
                 }
             }
 
@@ -165,7 +188,9 @@ class LogoffActivity : MainBaseViewActivity() {
 
         override fun onClick(widget: View) {
             //点击事件
-            ToastUtils.showShort(R.string.logoff_agreement)
+            startActivity(SetWebActivity.getIntent(this@LogoffActivity,
+                "注销通知",
+                DataProvider.WebUrlData[6].url))
         }
     }
 

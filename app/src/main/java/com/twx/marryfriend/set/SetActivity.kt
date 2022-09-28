@@ -3,6 +3,7 @@ package com.twx.marryfriend.set
 import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.ActivityUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.hyphenate.easeim.section.login.activity.LoginActivity
@@ -10,6 +11,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.set.SetDataBean
 import com.twx.marryfriend.bean.set.SetSwitchBean
+import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.search.SearchParamActivity
@@ -225,11 +227,12 @@ class SetActivity : MainBaseViewActivity() {
 
 
         tv_set_logout.setOnClickListener {
+
             SpUtil.deleteUserInfo()
 
-            // 有问题，需要修改
-            startActivity(Intent(this, LoginActivity::class.java))
-            this.finish()
+            startActivity(Intent(this, BeginActivity::class.java))
+            ActivityUtils.finishAllActivities()
+
         }
 
     }

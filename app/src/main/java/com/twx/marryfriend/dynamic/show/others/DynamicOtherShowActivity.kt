@@ -130,6 +130,12 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     private var isBackFresh = false
 
+    // 此条动态点赞数量
+    private var likeSum = 0
+
+    // 点赞头像列表
+    private var likeAvatar: MutableList<String> = arrayListOf()
+
     var emojiList: MutableList<String> = arrayListOf()
     private lateinit var emojiAdapter: EmojiDetailAdapter
 
@@ -413,7 +419,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         iv_dynamic_other_show_like.setOnClickListener {
 
-            Log.i("guo", "userId : $userId")
 
             if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(
                     Constant.ME_AVATAR_AUDIT,
@@ -422,20 +427,22 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
                 if (userId != SPStaticUtils.getString(Constant.USER_ID, "13").toInt()) {
 
+
                     if (!isLike) {
                         // 点赞
                         isLike = true
 
                         doLikeClick(trendId,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"),
-                            userId)
+                            userId,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
 
                     } else {
                         // 取消赞
                         isLike = false
 
                         doLikeCancelClick(trendId,
-                            SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
+                            userId,
+                            SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
 
                     adapter.notifyDataSetChanged()
@@ -721,7 +728,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     // 动态点赞
-    private fun doLikeClick(trendId: Int, hostUid: String, guestUid: Int) {
+    private fun doLikeClick(trendId: Int, hostUid: Int, guestUid: String) {
 
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
@@ -731,7 +738,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     // 取消点赞
-    private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: Int) {
+    private fun doLikeCancelClick(trendId: Int, hostUid: Int, guestUid: String) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
@@ -837,29 +844,200 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
+        if (likeClickBean != null) {
+            if (likeClickBean.code == 200) {
 
-        if (info.like_count == null) {
-            tv_dynamic_other_show_like.text = 1.toString()
-        } else {
-            tv_dynamic_other_show_like.text = (info.like_count!! + 1).toString()
+                likeSum++
+
+
+                ll_dynamic_other_show_like.visibility = View.VISIBLE
+                rl_dynamic_other_show_like.visibility = View.VISIBLE
+
+                tv_dynamic_other_show_like.text = likeSum.toString()
+
+                if (likeSum == 1) {
+                    iv_dynamic_other_show_like1.visibility = View.VISIBLE
+                    Glide.with(applicationContext)
+                        .load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                        .error(R.drawable.ic_mine_male_default)
+                        .placeholder(R.drawable.ic_mine_male_default)
+                        .into(iv_dynamic_other_show_like1)
+
+                    iv_dynamic_other_show_like2.visibility = View.GONE
+
+                    iv_dynamic_other_show_like3.visibility = View.GONE
+                }
+
+//                if (likeAvatar.size < 3) {
+//                    likeAvatar.add(SPStaticUtils.getString(Constant.ME_AVATAR))
+//                }
+
+//                when (likeAvatar.size) {
+//                    0 -> {
+//                        ll_dynamic_other_show_like.visibility = View.GONE
+//                    }
+//                    1 -> {
+//
+//                        iv_dynamic_other_show_like1.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[0])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like1)
+//
+//                        iv_dynamic_other_show_like2.visibility = View.GONE
+//
+//                        iv_dynamic_other_show_like3.visibility = View.GONE
+//                    }
+//                    2 -> {
+//
+//                        iv_dynamic_other_show_like1.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[0])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like1)
+//
+//                        iv_dynamic_other_show_like2.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[1])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like2)
+//
+//                        iv_dynamic_other_show_like3.visibility = View.GONE
+//                    }
+//                    3 -> {
+//
+//                        iv_dynamic_other_show_like1.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[0])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like1)
+//
+//                        iv_dynamic_other_show_like2.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[1])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like2)
+//
+//                        iv_dynamic_other_show_like3.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[2])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like3)
+//                    }
+//                }
+
+                iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like)
+
+            } else {
+                ToastUtils.showShort(likeClickBean.msg)
+            }
         }
-        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like)
 
     }
 
     override fun onDoLikeClickError() {
+        ToastUtils.showShort("点赞失败，请稍后再试")
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
-        if (info.like_count == null) {
-            tv_dynamic_other_show_like.text = 0.toString()
-        } else {
-            tv_dynamic_other_show_like.text = (info.like_count!!).toString()
+        if (likeCancelBean != null) {
+            if (likeCancelBean.code == 200) {
+
+                likeSum--
+
+                if (likeSum == 0) {
+                    ll_dynamic_other_show_like.visibility = View.GONE
+                    rl_dynamic_other_show_like.visibility = View.GONE
+
+                    tv_dynamic_other_show_like.text = likeSum.toString()
+                } else {
+                    ll_dynamic_other_show_like.visibility = View.VISIBLE
+                    rl_dynamic_other_show_like.visibility = View.VISIBLE
+
+                    tv_dynamic_other_show_like.text = likeSum.toString()
+                }
+
+//                if (likeAvatar.contains(SPStaticUtils.getString(Constant.ME_AVATAR))){
+//                    likeAvatar.remove(SPStaticUtils.getString(Constant.ME_AVATAR))
+//                }
+//
+//                when (likeAvatar.size) {
+//                    0 -> {
+//                        ll_dynamic_other_show_like.visibility = View.GONE
+//                    }
+//                    1 -> {
+//
+//                        iv_dynamic_other_show_like1.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[0])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like1)
+//
+//                        iv_dynamic_other_show_like2.visibility = View.GONE
+//
+//                        iv_dynamic_other_show_like3.visibility = View.GONE
+//                    }
+//                    2 -> {
+//
+//                        iv_dynamic_other_show_like1.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[0])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like1)
+//
+//                        iv_dynamic_other_show_like2.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[1])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like2)
+//
+//                        iv_dynamic_other_show_like3.visibility = View.GONE
+//                    }
+//                    3 -> {
+//
+//                        iv_dynamic_other_show_like1.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[0])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like1)
+//
+//                        iv_dynamic_other_show_like2.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[1])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like2)
+//
+//                        iv_dynamic_other_show_like3.visibility = View.VISIBLE
+//                        Glide.with(applicationContext)
+//                            .load(likeAvatar[2])
+//                            .error(R.drawable.ic_mine_male_default)
+//                            .placeholder(R.drawable.ic_mine_male_default)
+//                            .into(iv_dynamic_other_show_like3)
+//                    }
+//                }
+
+
+                iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_base_like)
+            } else {
+                ToastUtils.showShort(likeCancelBean.msg)
+            }
         }
-        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_base_like)
+
     }
 
     override fun onLikeCancelError() {
+        ToastUtils.showShort("取消点赞失败，请稍后再试")
     }
 
     override fun onGetCommentTwoSuccess(commentTwoBean: CommentTwoBean) {
@@ -1171,8 +1349,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                     tv_dynamic_other_show_time.text = TimeUtil.getCommonTime(info.create_time)
 
                     if (info.guest_uid != null) {
+                        isLike = true
                         iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom_check)
                     } else {
+                        isLike = false
                         iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom)
                     }
 
@@ -1189,12 +1369,20 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                         tv_dynamic_other_show_comment.text = info.discuss_count.toString()
                     }
 
-                    if (info.like_count == null) {
+                    if (info.like_count == null || info.like_count == 0) {
+
+                        likeSum = 0
+
                         rl_dynamic_other_show_like.visibility = View.GONE
-                        tv_dynamic_other_show_like.text = 0.toString()
+
+                        tv_dynamic_other_show_like.text = likeSum.toString()
                     } else {
+
+                        likeSum = info.like_count!!
+
                         rl_dynamic_other_show_like.visibility = View.VISIBLE
-                        tv_dynamic_other_show_like.text = info.like_count.toString()
+
+                        tv_dynamic_other_show_like.text = likeSum.toString()
                     }
 
                     if (info.text_content != "") {
@@ -1580,6 +1768,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                             ll_dynamic_other_show_like.visibility = View.GONE
                         }
                         1 -> {
+
+                            likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
+
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
                             Glide.with(applicationContext)
                                 .load(image[0].image_url)
@@ -1592,6 +1783,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                             iv_dynamic_other_show_like3.visibility = View.GONE
                         }
                         2 -> {
+
+                            likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
+                            likeAvatar.add(checkTrendBean.data.imgs[1].image_url)
+
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
                             Glide.with(applicationContext)
                                 .load(image[0].image_url)
@@ -1606,6 +1801,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
                             iv_dynamic_other_show_like3.visibility = View.GONE
                         }
                         3 -> {
+
+                            likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
+                            likeAvatar.add(checkTrendBean.data.imgs[1].image_url)
+                            likeAvatar.add(checkTrendBean.data.imgs[2].image_url)
+
                             iv_dynamic_other_show_like1.visibility = View.VISIBLE
                             Glide.with(applicationContext)
                                 .load(image[0].image_url)
@@ -1634,7 +1834,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onDoCheckTrendError() {
     }
-
 
     override fun onItemClick(v: View?, positionOne: Int) {
 

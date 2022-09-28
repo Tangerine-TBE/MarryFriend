@@ -418,7 +418,6 @@
 
                 </RelativeLayout>
 
-
                 <RelativeLayout
                     android:id="@+id/rl_dynamic_other_show_like"
                     android:layout_width="match_parent"
@@ -455,7 +454,6 @@
                             app:riv_oval="true" />
 
                     </FrameLayout>
-
 
                     <TextView
                         android:id="@+id/tv_dynamic_other_show_wait"

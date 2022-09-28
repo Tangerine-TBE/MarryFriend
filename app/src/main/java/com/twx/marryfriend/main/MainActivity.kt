@@ -150,6 +150,23 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     }
 
 
+    fun addDynamicFragment() {
+
+        val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        if (dynamic == null) {
+            dynamic = DynamicFragment().newInstance(this)
+            transaction.add(R.id.fl_main_container, dynamic!!)
+        }
+        currentFragment = dynamic
+        hideFragment(transaction)
+        transaction.show(dynamic!!)
+        transaction.commit()
+
+        dynamic!!.addData()
+
+    }
+
+
     private fun updateToken(token: String) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
@@ -505,6 +522,14 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
         }
 
+
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        doUpdateTokenPresent.unregisterCallback(this)
 
     }
 

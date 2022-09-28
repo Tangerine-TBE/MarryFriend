@@ -8,20 +8,39 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
+import com.twx.marryfriend.bean.GreetInfoBean
+import com.twx.marryfriend.bean.UpdateGreetInfoBean
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.net.callback.IDoUpdateGreetInfoCallback
+import com.twx.marryfriend.net.callback.IGetGreetInfoCallback
+import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
+import com.twx.marryfriend.net.impl.getGreetInfoPresentImpl
 import kotlinx.android.synthetic.main.activity_greet_info.*
 import java.io.File
+import java.util.*
 
-class GreetInfoActivity : MainBaseViewActivity() {
+class GreetInfoActivity : MainBaseViewActivity(), IGetGreetInfoCallback,
+    IDoUpdateGreetInfoCallback {
 
     private var greetInfo = ""
+
+    private lateinit var getGreetInfoPresent: getGreetInfoPresentImpl
+    private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_greet_info
 
     override fun initView() {
         super.initView()
+
+        getGreetInfoPresent = getGreetInfoPresentImpl.getsInstance()
+        getGreetInfoPresent.registerCallback(this)
+
+        doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
+        doUpdateGreetPresent.registerCallback(this)
 
         greetInfo = SPStaticUtils.getString(Constant.ME_GREET, "")
 
@@ -40,6 +59,9 @@ class GreetInfoActivity : MainBaseViewActivity() {
 
     override fun initLoadData() {
         super.initLoadData()
+
+        getGreetInfo()
+
     }
 
     override fun initPresent() {
@@ -73,15 +95,32 @@ class GreetInfoActivity : MainBaseViewActivity() {
 
         tv_greet_info_delete.setOnClickListener {
 
-            greetInfo = ""
-
-            SPStaticUtils.put(Constant.ME_GREET, "")
-
-            rl_greet_info_empty.visibility = View.VISIBLE
-            ll_greet_info_container.visibility = View.GONE
+            deleteGreetInfo()
 
         }
 
+    }
+
+
+    // 获取招呼语信息
+    private fun getGreetInfo() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        getGreetInfoPresent.getGreetInfo(map)
+    }
+
+
+    // 删除招呼语信息
+    private fun deleteGreetInfo() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        map[Contents.GREET_UPDATE] = getGreetInfo("")
+        doUpdateGreetPresent.doUpdateGreetInfo(map)
+    }
+
+    // 获取招呼语信息
+    private fun getGreetInfo(greet: String): String {
+        return " {\"zhaohuyu_content\":   \"$greet\"}"
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -111,6 +150,67 @@ class GreetInfoActivity : MainBaseViewActivity() {
             finish()
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onLoading() {
+
+    }
+
+    override fun onError() {
+
+    }
+
+    override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
+        if (updateGreetInfoBean != null) {
+            if (updateGreetInfoBean.code == 200) {
+
+                greetInfo = ""
+
+                SPStaticUtils.put(Constant.ME_GREET, "")
+
+                rl_greet_info_empty.visibility = View.VISIBLE
+                ll_greet_info_container.visibility = View.GONE
+
+            } else {
+                ToastUtils.showShort("删除失败，请稍后再试")
+            }
+        }
+    }
+
+    override fun onDoUpdateGreetInfoError() {
+        ToastUtils.showShort("删除失败，请稍后再试")
+    }
+
+    override fun onGetGreetInfoSuccess(greetInfoBean: GreetInfoBean?) {
+        if (greetInfoBean != null) {
+            if (greetInfoBean.code == 200) {
+
+                SPStaticUtils.put(Constant.ME_GREET, greetInfoBean.data.zhaohuyu_content)
+
+                if (greetInfoBean.data.zhaohuyu_content != "") {
+                    rl_greet_info_empty.visibility = View.GONE
+                    ll_greet_info_container.visibility = View.VISIBLE
+
+                    tv_greet_info_container.text = greetInfoBean.data.zhaohuyu_content
+
+                } else {
+                    rl_greet_info_empty.visibility = View.VISIBLE
+                    ll_greet_info_container.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    override fun onGetGreetInfoCodeError() {
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        getGreetInfoPresent.unregisterCallback(this)
+        doUpdateGreetPresent.unregisterCallback(this)
+
     }
 
 }

@@ -54,6 +54,10 @@ object Contents {
     // 增加择偶省市要求列表
     const val GET_DEMAND_ADDRESS = "LoginRegister/demandShengshiList"
 
+
+    // 获取 招呼语信息
+    const val GET_GREET_INFO = "LoginRegister/getZhaohuyu"
+
     // 五个一起获取
     const val GET_FIVE_INFO = "LoginRegister/getFive"
 
@@ -208,6 +212,12 @@ object Contents {
 
     // 修改友盟token
     const val DO_UPDATE_TOKEN = "MemberCharge/updateToken"
+
+    // 修改友盟推送设置
+    const val DO_UPDATE_PUSH_SET = "MemberCharge/umengPushSet"
+
+    // 获取友盟推送状态
+    const val GET_PUSH_SET = "MemberCharge/getPushStatus"
 
     // 屏蔽列表
     const val GET_BLACK_LIST = "TrendsNotice/blockSessionList"
@@ -390,6 +400,19 @@ object Contents {
 
 
     const val UMENG_TOKEN = "token" // 友盟token
+
+
+    // ------------------------------------ 推送 ------------------------------------
+
+    const val SHENHE_TONGZHI = "shenhe_tongzhi" // 审核通知，跳小秘书
+    const val TA_GANG_XIHUAN_NI = "ta_gang_xihuan_ni" // 它刚喜欢你 通知
+    const val PINGLUN_DONGTAI = "pinglun_dongtai" // 评论动态
+    const val DIANZAN_DONGTAI = "dianzan_dongtai" // 点赞动态
+    const val KANLE_NIDE_ZILIAO = "kanle_nide_ziliao" // 看了你的资料
+    const val NIXIHUANDE_SHANGXIAN = "nixihuande_shangxian" // 你喜欢的人 上线了
+    const val XIANGHU_XIHUAN_SHANGXIAN = "xianghu_xihuan_shangxian" // 相互喜欢的 上线了
+    const val DIANJI_XIANGHU_XIHUAN = "dianji_xianghu_xihuan" // 点击相互喜欢 通知
+    const val SHOUDAO_LIWU_TONGZHI = "shoudao_liwu_tongzhi" // 收到礼物通知
 
 
     // ------------------------------------ 外部的api ------------------------------------

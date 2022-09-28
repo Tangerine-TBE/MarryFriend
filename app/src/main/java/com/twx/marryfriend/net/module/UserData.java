@@ -10,6 +10,7 @@ import com.twx.marryfriend.bean.DemandAddressBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.FiveInfoBean;
+import com.twx.marryfriend.bean.GreetInfoBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
@@ -67,9 +68,11 @@ import com.twx.marryfriend.bean.vip.AliPayBean;
 import com.twx.marryfriend.bean.vip.BlackListBean;
 import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
+import com.twx.marryfriend.bean.vip.GetPushSetBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdatePushSetBean;
 import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
@@ -81,8 +84,11 @@ import com.twx.marryfriend.net.utils.SortMapUtil;
 
 import java.util.Map;
 
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
+import retrofit2.http.POST;
+import retrofit2.http.QueryMap;
 
 public class UserData {
 
@@ -242,7 +248,19 @@ public class UserData {
     }
 
 
-    // 增加择偶省市要求列表
+    // 获取 招呼语信息
+    public void getGreetInfo(Map<String, String> map, Callback<GreetInfoBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_GREET_INFO + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_GREET_INFO, currentTimeMillis, random, checkCode, map);
+        mApi.getGreetInfo(map1).enqueue(callback);
+    }
+
+    // 五个一起获取
     public void getFiveInfo(Map<String, String> map, Callback<FiveInfoBean> callback) {
         // 获取随机数
         int random = 523146;
@@ -986,6 +1004,31 @@ public class UserData {
         mApi.doUpdateToken(map1).enqueue(callback);
     }
 
+
+    // 修改友盟推送设置
+    public void doUpdatePushSet(Map<String, String> map, Callback<UpdatePushSetBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPDATE_PUSH_SET + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPDATE_PUSH_SET, currentTimeMillis, random, checkCode, map);
+        mApi.doUpdatePushSet(map1).enqueue(callback);
+    }
+
+
+    // 获取友盟推送状态
+    public void getPushSet(Map<String, String> map, Callback<GetPushSetBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByValue(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_PUSH_SET + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_PUSH_SET, currentTimeMillis, random, checkCode, map);
+        mApi.getPushSet(map1).enqueue(callback);
+    }
 
     // 屏蔽列表
     public void getBlackList(Map<String, String> map, Integer page, Callback<BlackListBean> callback) {
