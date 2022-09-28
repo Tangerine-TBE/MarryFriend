@@ -60,7 +60,7 @@ object ImLoginHelper {
             this.error=error
         },{code,msg->
             Handler(Looper.getMainLooper()).post {
-                mFragmentViewModel.login(mUserName, mUserName.toMd5(), false)
+                mFragmentViewModel.login(mUserName, "${mUserName}~!@#\$%^&*()_+".toMd5(), false)
                 this.success=success
                 this.error=error
             }
