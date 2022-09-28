@@ -54,7 +54,8 @@ object ImLoginHelper {
     fun login(mUserName:String,success:(EaseUser?)->Unit,error:(Int,String)->Unit){
         currentUserId=mUserName
         logout({
-            mFragmentViewModel.login(mUserName, mUserName.toMd5(), false)
+            //md5(id+~!@#$%^&*()_+)
+            mFragmentViewModel.login(mUserName, "${mUserName}~!@#\$%^&*()_+".toMd5(), false)
             this.success=success
             this.error=error
         },{code,msg->

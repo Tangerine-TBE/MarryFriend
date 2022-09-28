@@ -115,14 +115,15 @@ class ImConversationFragment: ConversationListFragment() {
                 val list=mutualLike.list?: emptyList()
 
                 val listView= listOf(mutualLikeView1,mutualLikeView2,mutualLikeView3,mutualLikeView4,mutualLikeView5)
+                val imageViewList= listOf(mutualLikeHead1,mutualLikeHead2,mutualLikeHead3,mutualLikeHead4,mutualLikeHead5)
                 for (i in 0 until 5){
                     if (list.size>i){
                         listView[i].visibility=View.VISIBLE
-                        Glide.with(mutualLikeHead1)
+                        Glide.with(imageViewList[i])
                             .load(list[i])
                             .error(list[i].getSex().smallHead)
                             .placeholder(list[i].getSex().smallHead)
-                            .into(mutualLikeHead1)
+                            .into(imageViewList[i])
                     }else{
                         listView[i].visibility=View.GONE
                     }

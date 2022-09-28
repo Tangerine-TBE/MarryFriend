@@ -67,7 +67,7 @@ object UserInfo {
     }
 
     fun isSuperVip():Boolean{
-        return getUserVipLevel()>1
+        return true
     }
     fun getHeadPortrait():String{
         return SPStaticUtils.getString(

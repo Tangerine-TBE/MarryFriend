@@ -33,7 +33,7 @@ class ImChatActivity: ChatActivity() {
             intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE)
 
             val ext= ImUserInfoService.getExt(conversationId)
-            intent.putExtra(IS_REAL_NAME_KEY,isRealName?:ext?.isRealName)
+            intent.putExtra(IS_REAL_NAME_KEY,/*isRealName?:ext?.isRealName*/true)
             return intent
         }
         fun getConversationId(intent: Intent?):String?{
