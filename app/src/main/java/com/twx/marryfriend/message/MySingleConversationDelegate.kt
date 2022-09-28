@@ -7,20 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.google.gson.Gson
 import com.hyphenate.chat.EMConversation
 import com.hyphenate.chat.EMCustomMessageBody
 import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeui.EaseIM
 import com.hyphenate.easeui.adapter.EaseAdapterDelegate
 import com.hyphenate.easeui.adapter.EaseBaseRecyclerViewAdapter
-import com.hyphenate.easeui.domain.EaseUser
 import com.hyphenate.easeui.modules.conversation.model.EaseConversationInfo
 import com.hyphenate.easeui.utils.EaseCommonUtils
 import com.hyphenate.easeui.utils.EaseDateUtils
 import com.hyphenate.easeui.utils.EaseSmileUtils
 import com.message.ImUserInfoService
-import com.message.chat.CustomMessage
+import com.message.chat.CustomEvent
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.getUserExt
@@ -41,6 +39,22 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         super.onBindViewHolder(holder, position, bean)
         val item = bean?.info as? EMConversation?:return
         holder?:return
+        if (item.conversationId()==ImConversationFragment.MY_HELPER_ID){
+            holder.apply {
+                messageHead.setImageResource(R.mipmap.ic_launcher)
+                messageUserNickname.text="小秘书"
+                conversationLastMsg.text="我是你的小秘书"
+
+                isMessageRealName.visibility=View.GONE
+                msgLock.visibility=View.GONE
+                vipIdentification.visibility=View.GONE
+                vipIdentification2.visibility=View.GONE
+                messageCount.visibility=View.GONE
+                messageMutualLikeIcon.visibility=View.GONE
+            }
+            return
+        }
+
         if (bean.isTop) {
             holder.itemView.setBackgroundResource(com.hyphenate.easeui.R.drawable.ease_conversation_top_bg)
         } else {
@@ -49,15 +63,15 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         val username = item.conversationId()
         val defaultAvatar=UserInfo.getReversedDefHeadImage()
 
-        holder.avatar.setImageResource(defaultAvatar)
-        holder.name.text = username
+        holder.messageHead.setImageResource(defaultAvatar)
+        holder.messageUserNickname.text = username
 
         EaseIM.getInstance().conversationInfoProvider?.getDefaultTypeAvatar(item.type.name)?.also {
             //设置头像
             Glide.with(holder.mContext)
                 .load(it)
                 .error(defaultAvatar)
-                .into(holder.avatar)
+                .into(holder.messageHead)
         }
 
         // add judgement for conversation type
@@ -78,14 +92,14 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             }
 
             if (!TextUtils.isEmpty(user.nickname)) {
-                holder.name.text = user.nickname
+                holder.messageUserNickname.text = user.nickname
             }
             if (!TextUtils.isEmpty(user.avatar)) {
-                val drawable = holder.avatar.drawable
+                val drawable = holder.messageHead.drawable
                 Glide.with(holder.mContext)
                     .load(user.avatar)
                     .error(drawable)
-                    .into(holder.avatar)
+                    .into(holder.messageHead)
             }
             (ext?:ImUserInfoService.Ext()).also {
                 if (it?.isMutualLike!=true&&it?.isFlower!=true){
@@ -132,33 +146,33 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             val lastMessage = item.lastMessage
             val text=if (lastMessage.type== EMMessage.Type.CUSTOM){
                 val body=lastMessage.body as EMCustomMessageBody
-                CustomMessage.CustomEvent.getTip(body.event()).let {
+                CustomEvent.getTip(body.event()).let {
                     if (it==null){
                         EaseCommonUtils.getMessageDigest(lastMessage, holder.mContext)
                     }else{
-                        holder.mMsgState.visibility = View.GONE
+                        holder.msg_state.visibility = View.GONE
                         it
                     }
                 }
             }else{
                 val t=EaseCommonUtils.getMessageDigest(lastMessage, holder.mContext)
                 if (lastMessage.direct() == EMMessage.Direct.SEND && lastMessage.status() == EMMessage.Status.FAIL) {
-                    holder.mMsgState.setVisibility(View.VISIBLE)
+                    holder.msg_state.setVisibility(View.VISIBLE)
                 } else {
-                    holder.mMsgState.visibility = View.GONE
+                    holder.msg_state.visibility = View.GONE
                 }
                 t
             }
-            holder.message.text = EaseSmileUtils.getSmiledText(holder.mContext, text)
-            holder.time.text = EaseDateUtils.getTimestampString(holder.mContext,Date(lastMessage.msgTime))
+            holder.conversationLastMsg.text = EaseSmileUtils.getSmiledText(holder.mContext, text)
+            holder.messageTimeText.text = EaseDateUtils.getTimestampString(holder.mContext,Date(lastMessage.msgTime))
         }
     }
 
     private fun showUnreadNum(holder:ViewHolder, unreadMsgCount: Int) {
         if (unreadMsgCount > 0) {
-            holder.mUnreadMsgNumber.setText(handleBigNum(unreadMsgCount))
+            holder.messageCount.setText(handleBigNum(unreadMsgCount))
         } else {
-            holder.mUnreadMsgNumber.visibility = View.GONE
+            holder.messageCount.visibility = View.GONE
         }
     }
 
@@ -174,32 +188,32 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         val mContext by lazy {
             itemView.context
         }
-        val name by lazy {
+        val messageUserNickname by lazy {
             with(itemView){
                 this.messageUserNickname
             }
         }
-        val avatar by lazy {
+        val messageHead by lazy {
             with(itemView){
                 this.messageHead
             }
         }
-        val message by lazy {
+        val conversationLastMsg by lazy {
             with(itemView){
                 this.conversationLastMsg
             }
         }
-        val time by lazy {
+        val messageTimeText by lazy {
             with(itemView){
                 this.messageTimeText
             }
         }
-        val mUnreadMsgNumber by lazy {
+        val messageCount by lazy {
             with(itemView){
                 this.messageCount
             }
         }
-        val mMsgState by lazy {
+        val msg_state by lazy {
             with(itemView){
                 this.msg_state
             }

@@ -7,11 +7,11 @@ import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.hyphenate.easeim.section.base.WebViewActivity
 import com.hyphenate.easeui.utils.EaseUserUtils
-import com.message.ImInit
 import com.message.ImLoginHelper
 import com.message.ImMessageManager
 import com.message.ImUserInfoService
-import com.message.chat.CustomMessage
+import com.message.ImUserManager
+import com.message.chat.CustomEvent
 import com.message.custom.IImEventListener
 import com.message.custom.ImCustomEventListenerManager
 import com.twx.marryfriend.bean.Sex
@@ -20,6 +20,7 @@ import com.twx.marryfriend.message.ConversationViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.toast
 import com.xyzz.myutils.show.wLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -50,6 +51,7 @@ object ImHelper {
     }
 
     private fun getCache():List<ConversationsItemModel>?{
+        iLog("通过缓存获取环信用户信息")
         val str=SPUtil.instance.getString(IM_USER_INFO_K,null)?:return null
         val type = object : TypeToken<List<ConversationsItemModel>>() {}.type
         return gson.fromJson<List<ConversationsItemModel>?>(str, type).also {
@@ -61,11 +63,18 @@ object ImHelper {
         val userId=UserInfo.getUserId()
         ImUserInfoService.setUserInfo(ImUserInfoService.ImUserInfo(userId?:return,UserInfo.getNickname(),UserInfo.getImgHead()))
         GlobalScope.launch {
+            iLog("首次启动设置环信用户信息")
             val conversations=try {
                 val s=messageViewModel.getAllConversations()
-                SPUtil.instance.putString(IM_USER_INFO_K,gson.toJson(s))
-                cacheValue=s
-                s
+                iLog("通过接口获取环信用户信息,${s}")
+                if (!s.isNullOrEmpty()){
+                    iLog("环信用户信息存入缓存")
+                    SPUtil.instance.putString(IM_USER_INFO_K,gson.toJson(s))
+                    cacheValue=s
+                    s
+                }else{
+                    getCache()
+                }
             }catch (e:Exception){
                 wLog(e.stackTraceToString())
                 getCache()
@@ -83,19 +92,74 @@ object ImHelper {
             }
         }
         ImCustomEventListenerManager.addListener(object :IImEventListener{
-            override fun click(view: View, event: CustomMessage.CustomEvent, emMessage: EMMessage) {
+            override fun click(view: View, event: CustomEvent, emMessage: EMMessage) {
                 when(event){
-                    CustomMessage.CustomEvent.flower -> {
+                    CustomEvent.flower -> {
 
                     }
-                    CustomMessage.CustomEvent.security -> {
+                    CustomEvent.security -> {
                         WebViewActivity.actionStart(view.context,"http://test.aisou.club/userManual/fraud.html")
                     }
-                    CustomMessage.CustomEvent.openSuperVip -> {
+                    CustomEvent.openSuperVip -> {
                         view.context.startActivity(IntentManager.getSuperVipIntent(view.context, sVipGifEnum = SVipGifEnum.TopMessage))
                     }
-                    CustomMessage.CustomEvent.upload_head -> {
+                    CustomEvent.upload_head -> {
                         view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))
+                    }
+                    CustomEvent.dazhaohu_str -> {
+                        view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
+                    }
+                    CustomEvent.putong_xihuan -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.touxiang_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.touxiang_fail -> {
+                        view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))
+                    }
+                    CustomEvent.yuying_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.yuying_fail -> {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            view.context.startActivity(IntentManager.getUpFillInVoiceIntent(view.context))
+                        }
+                    }
+                    CustomEvent.shiming_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.shiming_fail -> {
+                        view.context.startActivity(IntentManager.getUpRealNameIntent(view.context))
+                    }
+                    CustomEvent.xiangce_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.xiangce_fail -> {
+                        view.context.toast(event.title)
+//                        view.context.startActivity(IntentManager.getUpRealNameIntent(view.context))
+                    }
+                    CustomEvent.shenghuo_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.shenghuo_fail -> {
+                        view.context.startActivity(IntentManager.getUpLifeIntent(view.context))
+                    }
+                    CustomEvent.dongtai_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.dongtai_fail -> {
+                        view.context.startActivity(IntentManager.getDynamicIntent(view.context))
+                    }
+                    CustomEvent.jubao_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.jubao_fail -> {//举报
+                        view.context.toast(event.title)
+//                        view.context.startActivity(IntentManager.getReportIntent(view.context))
+                    }
+                    CustomEvent.HELPER_VIP_EXPIRE -> {
+                        view.context.startActivity(IntentManager.getVipIntent(view.context))
                     }
                 }
             }
@@ -143,10 +207,9 @@ object ImHelper {
             EaseUserUtils.setManDefHead(Sex.male.smallHead)
             EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
             EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
-            ImInit.imLoginState.postValue(true)
+            ImUserManager.connectionListener()
         },{code,message->
             iLog("登录失败,code=${code},message=${message}")
-            ImInit.imLoginState.postValue(false)
         })
     }
 }

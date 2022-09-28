@@ -18,13 +18,11 @@ import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.DeviceUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
-import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
-import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
@@ -40,7 +38,6 @@ import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.NotificationUtil
-import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -48,7 +45,6 @@ import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
-import com.xyzz.myutils.show.iLog
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import org.android.agoo.huawei.HuaWeiRegister
@@ -95,13 +91,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             }
             messageNumNew.visibility = View.VISIBLE
             messageNumNew.text = ImMessageManager.getAllUnreadMessage().toString()
-        }
-
-        ImInit.imLoginState.observe(this){
-            if (it==false){
-                SpUtil.deleteUserInfo()
-                startActivity(Intent(this, BeginActivity::class.java))
-            }
         }
     }
 

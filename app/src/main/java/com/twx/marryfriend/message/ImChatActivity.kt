@@ -41,7 +41,8 @@ class ImChatActivity: ChatActivity() {
         }
     }
     private val isRealName by lazy {
-        ImHelper.getUserInfo(conversationId?:return@lazy false)?.isRealName?:false
+//        ImHelper.getUserInfo(conversationId?:return@lazy false)?.isRealName?:false
+        true
     }
     private val friendRealName by lazy {
         findViewById<View>(com.hyphenate.easeim.R.id.friendRealName)

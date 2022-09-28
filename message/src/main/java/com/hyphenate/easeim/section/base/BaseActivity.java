@@ -3,7 +3,6 @@ package com.hyphenate.easeim.section.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -41,7 +40,6 @@ import com.hyphenate.easeim.common.livedatas.LiveDataBus;
 import com.hyphenate.easeim.common.net.Resource;
 import com.hyphenate.easeim.common.utils.ToastUtils;
 import com.hyphenate.easeim.common.widget.EaseProgressDialog;
-import com.hyphenate.easeim.section.login.activity.LoginActivity;
 import com.hyphenate.easeui.model.EaseEvent;
 import com.hyphenate.easeui.utils.StatusBarCompat;
 import com.hyphenate.util.EMLog;
@@ -86,7 +84,8 @@ public class BaseActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         finishOtherActivities();
-                        startActivity(new Intent(mContext, LoginActivity.class));
+//                        startActivity(new Intent(mContext, LoginActivity.class));
+//                        ImInit.INSTANCE.getImLoginState().setValue(false);
                         finish();
                     }
 
@@ -105,7 +104,7 @@ public class BaseActivity extends AppCompatActivity {
                     || TextUtils.equals(accountEvent, DemoConstant.ACCOUNT_REMOVED)
                     || TextUtils.equals(accountEvent, DemoConstant.ACCOUNT_FORBIDDEN)) {
                 DemoHelper.getInstance().logout(false, null);
-                showExceptionDialog(accountEvent);
+//                showExceptionDialog(accountEvent);
             }
         });
     }
@@ -121,7 +120,7 @@ public class BaseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finishOtherActivities();
-                        ImInit.INSTANCE.getImLoginState().setValue(false);
+//                        ImInit.INSTANCE.getImLoginState().setValue(false);
 //                        startActivity(new Intent(mContext, LoginActivity.class));
                         finish();
                     }

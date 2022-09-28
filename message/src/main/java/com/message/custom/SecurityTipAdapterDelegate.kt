@@ -9,14 +9,13 @@ import com.hyphenate.easeui.delegate.EaseMessageAdapterDelegate
 import com.hyphenate.easeui.interfaces.MessageListItemClickListener
 import com.hyphenate.easeui.viewholder.EaseChatRowViewHolder
 import com.hyphenate.easeui.widget.chatrow.EaseChatRow
-import com.message.chat.CustomMessage
-import com.xyzz.myutils.show.toast
+import com.message.chat.CustomEvent
 
 class SecurityTipAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRowViewHolder>(){
     override fun isForViewType(item: EMMessage?, position: Int): Boolean {
 //        item?.getBooleanAttribute()
         return item?.type == EMMessage.Type.CUSTOM &&
-                (item.body as? EMCustomMessageBody)?.event()== CustomMessage.CustomEvent.security.code
+                (item.body as? EMCustomMessageBody)?.event()== CustomEvent.security.code
     }
 
     override fun getEaseChatRow(parent: ViewGroup?, isSender: Boolean): EaseChatRow {
@@ -31,7 +30,7 @@ class SecurityTipAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChat
 
             override fun onSetUpView() {
                 setOnClickListener {
-                    ImCustomEventListenerManager.click(it,CustomMessage.CustomEvent.security,message)
+                    ImCustomEventListenerManager.click(it, CustomEvent.security,message)
                 }
             }
         }

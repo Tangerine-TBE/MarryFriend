@@ -1,17 +1,12 @@
 package com.message
 
-import android.app.ActivityManager
 import android.app.Application
-import android.content.Context
-import android.content.Context.ACTIVITY_SERVICE
-import android.os.Process
 import com.hyphenate.EMCallBack
 import com.hyphenate.EMConnectionListener
 import com.hyphenate.EMError
 import com.hyphenate.chat.BuildConfig
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
-import com.hyphenate.easeim.HxInit
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.toMd5
@@ -21,13 +16,7 @@ import com.xyzz.myutils.toMd5
 //https://docs-im.easemob.com/ccim/android/easeimkit
 object ImUserManager {
     fun init(application: Application){
-        val pid = Process.myPid()
-        val processAppName = application.getAppName(pid)
 
-        if (processAppName == null ||processAppName!=application.packageName) {
-            return
-        }
-        HxInit.initIm(application)
         return
         val options = EMOptions()
 // 默认添加好友时，是不需要验证的，改成需要验证
@@ -48,6 +37,7 @@ object ImUserManager {
     private val connectionListener by lazy {
         object : EMConnectionListener{
             override fun onConnected() {
+//                ImInit.imLoginState.postValue(true)
                 iLog("用户连接")
             }
 
@@ -56,9 +46,11 @@ object ImUserManager {
                 when (errorCode) {
                     EMError.USER_REMOVED -> {
                         iLog("账号被后台删除")
+                        ImInit.imLoginState.postValue(false)
                     }
                     EMError.USER_LOGIN_ANOTHER_DEVICE -> {
                         iLog("异地登录")
+                        ImInit.imLoginState.postValue(false)
                         logout({
 
                         },{code, message ->
@@ -66,18 +58,26 @@ object ImUserManager {
                         })
                     }
                     EMError.SERVER_SERVICE_RESTRICTED -> {
-
+                        ImInit.imLoginState.postValue(false)
                     }
                     EMError.USER_KICKED_BY_CHANGE_PASSWORD -> {
 
                     }
                     EMError.USER_KICKED_BY_OTHER_DEVICE -> {
-
+                        ImInit.imLoginState.postValue(false)
                     }
                 }
             }
 
         }
+    }
+
+    /**
+     * 开始监听用户连接状态
+     */
+    fun connectionListener(){
+        EMClient.getInstance().removeConnectionListener(connectionListener)
+        EMClient.getInstance().addConnectionListener(connectionListener)
     }
 
     fun createOrLogin(username: String,pwd: String=username.toMd5()){
@@ -175,38 +175,9 @@ object ImUserManager {
         })
     }
 
-    /**
-     * 开始监听用户连接状态
-     */
-    fun connectionListener(){
-        EMClient.getInstance().removeConnectionListener(connectionListener)
-        EMClient.getInstance().addConnectionListener(connectionListener)
-    }
-
     private fun onLoginSuccess(){
         EMClient.getInstance().groupManager().loadAllGroups()
         EMClient.getInstance().chatManager().loadAllConversations()
         ImMessageManager.startMessageListener()
-    }
-
-    private fun Context.getAppName(pID: Int): String? {
-        var processName: String? = null
-        val am = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        val l: List<*> = am.runningAppProcesses
-        val i = l.iterator()
-        val pm = this.packageManager
-        while (i.hasNext()) {
-            val info: ActivityManager.RunningAppProcessInfo =
-                i.next() as ActivityManager.RunningAppProcessInfo
-            try {
-                if (info.pid === pID) {
-                    processName = info.processName
-                    return processName
-                }
-            } catch (e: Exception) {
-                // Log.d("Process", "Error>> :"+ e.toString());
-            }
-        }
-        return processName
     }
 }

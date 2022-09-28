@@ -25,10 +25,14 @@ import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_im_message.*
 import kotlinx.coroutines.launch
 
 class ImConversationFragment: ConversationListFragment() {
+    companion object{
+        const val MY_HELPER_ID="小秘书"//小秘书id
+    }
     private val viewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)
     }
@@ -79,6 +83,11 @@ class ImConversationFragment: ConversationListFragment() {
             }
         })
     override fun toChatActivity(item: EMConversation) {
+        if (item.conversationId()==MY_HELPER_ID){
+            startActivity(MyHelperActivity.getIntent(requireContext()))
+            return
+        }
+
         val imUserInfo=EaseIM.getInstance().userProvider.getUser(item.conversationId())
         val ext=imUserInfo.getUserExt()
         if (UserInfo.isVip()||ext?.isSuperVip==true||ext?.isMutualLike==true){
@@ -89,7 +98,7 @@ class ImConversationFragment: ConversationListFragment() {
                 isRealName = isRealName
             ))
         }else{
-            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.Inbox))
+            startActivity(IntentManager.getVipIntent(requireContext(), pId=item.conversationId(),vipGif = VipGifEnum.Inbox))
         }
     }
 
