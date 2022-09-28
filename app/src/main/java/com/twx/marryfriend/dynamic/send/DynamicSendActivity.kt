@@ -53,6 +53,7 @@ import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.send.adapter.OnNineGridViewListener
 import com.twx.marryfriend.dynamic.send.adapter.PhotoPublishAdapter
+import com.twx.marryfriend.dynamic.send.dialog.VideoWaterMarkDialog
 import com.twx.marryfriend.dynamic.send.dialog.VideoZipDialog
 import com.twx.marryfriend.dynamic.send.location.LocationActivity
 import com.twx.marryfriend.dynamic.send.utils.ItemTouchHelperCallback
@@ -138,6 +139,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
     private lateinit var mVideoZipDialog: VideoZipDialog
 
+    private lateinit var mVideoWaterMarkDialog: VideoWaterMarkDialog
+
     override fun getLayoutView(): Int = R.layout.activity_dynamic_send
 
     override fun initView() {
@@ -150,6 +153,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         doUploadTrendPresent.registerCallback(this)
 
         mVideoZipDialog = VideoZipDialog()
+        mVideoWaterMarkDialog = VideoWaterMarkDialog()
 
         mAdapter = PhotoPublishAdapter(this)
         mAdapter.setMaxPic(9)
@@ -393,30 +397,52 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
 
-                        val mLocationClient = LocationClient(this@DynamicSendActivity)
+                        if (SPStaticUtils.getString("dynamic_send_city", "") != "" &&
+                            SPStaticUtils.getString("dynamic_send_location", "") != ""
+                        ) {
 
-                        mLocationClient.registerLocationListener(object :
-                            BDAbstractLocationListener() {
-                            override fun onReceiveLocation(location: BDLocation) {
-                                if (x) {
-                                    val city = location.city
-                                    val locations = "${location.longitude},${location.latitude}"
+                            val locations = SPStaticUtils.getString("dynamic_send_location", "")
+                            val city = SPStaticUtils.getString("dynamic_send_city", "")
 
-                                    val intent = Intent(this@DynamicSendActivity,
-                                        LocationActivity::class.java)
-                                    intent.putExtra("location", locations)
-                                    intent.putExtra("city", city)
+                            val intent =
+                                Intent(this@DynamicSendActivity, LocationActivity::class.java)
+                            intent.putExtra("location", locations)
+                            intent.putExtra("city", city)
 
-                                    startActivityForResult(intent, 0)
-                                    x = false
+                            startActivityForResult(intent, 0)
+
+                        } else {
+
+                            val mLocationClient = LocationClient(this@DynamicSendActivity)
+
+                            mLocationClient.registerLocationListener(object :
+                                BDAbstractLocationListener() {
+                                override fun onReceiveLocation(location: BDLocation) {
+                                    if (x) {
+                                        val city = location.city
+                                        val locations = "${location.longitude},${location.latitude}"
+
+                                        SPStaticUtils.put("dynamic_send_city", locations)
+                                        SPStaticUtils.put("dynamic_send_location", locations)
+
+                                        val intent = Intent(this@DynamicSendActivity,
+                                            LocationActivity::class.java)
+                                        intent.putExtra("location", locations)
+                                        intent.putExtra("city", city)
+
+                                        startActivityForResult(intent, 0)
+                                        x = false
+                                    }
                                 }
-                            }
-                        })
-                        val option = LocationClientOption()
-                        option.setIsNeedAddress(true);
-                        option.setNeedNewVersionRgc(true);
-                        mLocationClient.locOption = option;
-                        mLocationClient.start()
+                            })
+                            val option = LocationClientOption()
+                            option.setIsNeedAddress(true);
+                            option.setNeedNewVersionRgc(true);
+                            mLocationClient.locOption = option;
+                            mLocationClient.start()
+
+                        }
+
 
                     }
 
@@ -543,26 +569,31 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                         all: Boolean,
                     ) {
 
-                        mTempPhotoPath = Environment.getExternalStorageDirectory()
-                            .toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
+                        if (all) {
+                            mTempPhotoPath = Environment.getExternalStorageDirectory()
+                                .toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
 
-                        val tempPhotoFile: File = File(mTempPhotoPath)
-                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                        // 如果在Android7.0以上,使用FileProvider获取Uri
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                            val authority =
-                                this@DynamicSendActivity.packageName.toString() + ".fileProvider"
-                            val contentUri: Uri =
-                                DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
-                                    authority,
-                                    tempPhotoFile)
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                            val tempPhotoFile: File = File(mTempPhotoPath)
+                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                            // 如果在Android7.0以上,使用FileProvider获取Uri
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                val authority =
+                                    this@DynamicSendActivity.packageName.toString() + ".fileProvider"
+                                val contentUri: Uri =
+                                    DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
+                                        authority,
+                                        tempPhotoFile)
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                            } else {
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                    Uri.fromFile(tempPhotoFile))
+                            }
+                            startActivityForResult(intent, 2)
                         } else {
-                            intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                Uri.fromFile(tempPhotoFile))
+                            ToastUtils.showShort("请授予应用相关权限")
                         }
-                        startActivityForResult(intent, 2)
+
                     }
 
                     override fun onDenied(
@@ -601,7 +632,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
 
                     // 此时需要验证是否上传头像
-                    if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""){
+                    if (SPStaticUtils.getString(Constant.ME_AVATAR,
+                            "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
+                    ) {
 
                         if (System.currentTimeMillis() - lastClickTime >= delayTime) {
                             lastClickTime = System.currentTimeMillis();
@@ -646,8 +679,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                                         16f,
                                                         Color.WHITE)
                                                         ?.let {
-                                                            BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(
-                                                                file), it)
+                                                            BitmapUtil.createWaterMarkBitmap(
+                                                                ImageUtils.getBitmap(
+                                                                    file),
+                                                                it)
                                                         }
 
                                                 val mPhotoPath =
@@ -659,13 +694,16 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                                     BitmapUtil.saveBitmap(bitmap, mPhotoPath)
                                                 }
 
-                                                val putObjectFromFileResponse = client.putObject("user${
-                                                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                                                }", "${name}.jpg", File(mPhotoPath))
+                                                val putObjectFromFileResponse =
+                                                    client.putObject("user${
+                                                        SPStaticUtils.getString(Constant.USER_ID,
+                                                            "default")
+                                                    }", "${name}.jpg", File(mPhotoPath))
 
 
                                                 xlist.add(client.generatePresignedUrl("user${
-                                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                                    SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default")
                                                 }", "${name}.jpg", -1).toString())
 
                                                 Log.i("guo", " $i : ${xlist}")
@@ -692,105 +730,24 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                     2 -> {
 
-                                        Log.i("guo",
-                                            "time : ${VideoUtil.getLocalVideoDuration(mDataList[0])}")
+                                        val mWatermarkPath =
+                                            this.externalCacheDir.toString() + File.separator + "watermark.png"
 
-                                        if (VideoUtil.getLocalVideoDuration(mDataList[0]) > 120) {
-                                            ToastUtils.showShort("视频时长大于120秒")
+                                        FileUtils.delete(mWatermarkPath)
+
+                                        val bitmap = ImageUtils.getBitmap(R.mipmap.watermark)
+
+                                        if (bitmap != null) {
+                                            BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
                                         }
 
-                                        var size = 0F
+                                        val targetWaterMarkPath =
+                                            externalCacheDir.toString() + File.separator + "water" + FileUtils.getFileNameNoExtension(
+                                                mDataList[0]) + ".mp4"
 
-                                        if (FileUtils.getSize(mDataList[0]).contains("MB")) {
-                                            size = FileUtils.getSize(mDataList[0]).replace("MB", "")
-                                                .toFloat()
-                                        } else if (FileUtils.getSize(mDataList[0]).contains("KB")) {
-                                            size = FileUtils.getSize(mDataList[0]).replace("KB", "")
-                                                .toFloat()
-                                            if (size < 1000) {
-                                                size = 1F
-                                            } else {
-                                                size /= 1000
-                                            }
-                                        }
-
-                                        Log.i("guo",
-                                            "size : ${FileUtils.getSize(mDataList[0])} change to $size")
-
-
-                                        if (size <= 10F) {
-
-                                            // 正常符合流程的视频，直接上传
-
-                                            // 视频动态 ，上传视频
-
-                                            ll_send_loading.visibility = View.VISIBLE
-
-                                            val xlist: MutableList<String> = arrayListOf()
-
-                                            Thread {
-                                                val name = TimeUtils.getNowMills()
-
-                                                val file = File(mDataList[0])
-                                                val putObjectFromFileResponse =
-                                                    client.putObject("user${
-                                                        SPStaticUtils.getString(Constant.USER_ID,
-                                                            "default")
-                                                    }", "${name}.mp4", file)
-
-                                                val mLifeFirstUrl =
-                                                    client.generatePresignedUrl("user${
-                                                        SPStaticUtils.getString(Constant.USER_ID,
-                                                            "default")
-                                                    }", "${name}.mp4", -1).toString()
-
-                                                xlist.add(mLifeFirstUrl)
-
-
-                                                val x = xlist.toString().replace("[", "")
-
-                                                videoUrl = x.replace("]", "")
-
-
-                                                if (content != "") {
-
-                                                    Log.i("guo", "文字 ----视频 ")
-
-                                                    doTextVerify(content)
-                                                } else {
-                                                    Log.i("guo", "上传 ----视频 ")
-                                                    uploadTrend()
-                                                }
-
-                                            }.start()
-
-
-                                        } else {
-
-                                            ToastUtils.showShort("视频过大或者过长，需要压缩")
-
-
-                                            val width = VideoUtil.getLocalVideoWidth(mDataList[0])
-                                            val height = VideoUtil.getLocalVideoHeight(mDataList[0])
-
-
-                                            Log.i("guo", "width : $width")
-                                            Log.i("guo", "Height : $height")
-
-
-                                            val vga =
-                                                "${(width * 0.8).toInt()}*${(height * 0.8).toInt()}"
-
-                                            Log.i("guo", vga)
-
-                                            val targetPath =
-                                                externalCacheDir.toString() + File.separator + FileUtils.getFileNameNoExtension(
-                                                    mDataList[0]) + ".mp4"
-
-
-                                            doZipVideo(mDataList[0], vga, targetPath)
-
-                                        }
+                                        addVideoWaterMark(mDataList[0],
+                                            mWatermarkPath,
+                                            targetWaterMarkPath)
 
 
                                     }
@@ -816,7 +773,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             ToastUtils.showShort("点击太频繁了，请稍后再评论")
                         }
 
-                    }else{
+                    } else {
                         XPopup.Builder(this)
                             .dismissOnTouchOutside(false)
                             .dismissOnBackPressed(false)
@@ -949,6 +906,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                 override fun onComplete() {
                     super.onComplete()
+
+                    Log.i("guo", "complete")
+
+                    Log.i("guo", "targetPath :$targetPath")
+
                     mVideoZipDialog.setContent(0)
                     mVideoZipDialog.dismissAllowingStateLoss()
 
@@ -1006,6 +968,146 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     }
 
 
+    // 视频添加水印
+    private fun addVideoWaterMark(
+        path: String,
+        picPath: String,
+        targetPath: String,
+    ) {
+        RxFFmpegInvoke.getInstance()
+            .runCommandRxJava(addWaterMark(path, picPath, targetPath))
+            .subscribe(object : RxFFmpegSubscriber() {
+                override fun onError(message: String?) {
+                    mVideoWaterMarkDialog.setContent(0)
+                    mVideoWaterMarkDialog.dismissAllowingStateLoss()
+                }
+
+                override fun onFinish() {}
+
+                override fun onProgress(progress: Int, progressTime: Long) {
+                    mVideoWaterMarkDialog.setContent(progress)
+                }
+
+                override fun onCancel() {
+                    mVideoWaterMarkDialog.setContent(0)
+                }
+
+                override fun onStart() {
+                    super.onStart()
+                    mVideoWaterMarkDialog.show(supportFragmentManager, "Dialog")
+                }
+
+                override fun onComplete() {
+                    super.onComplete()
+                    mVideoWaterMarkDialog.setContent(0)
+                    mVideoWaterMarkDialog.dismissAllowingStateLoss()
+
+                    Log.i("guo", "targetPath : $targetPath")
+
+
+                    ThreadUtils.runOnUiThread {
+
+                        Log.i("guo", "time : ${VideoUtil.getLocalVideoDuration(targetPath)}")
+
+                        if (VideoUtil.getLocalVideoDuration(targetPath) > 120) {
+                            ToastUtils.showShort("视频时长大于120秒")
+                        }
+
+                        var size = 0F
+
+                        if (FileUtils.getSize(targetPath).contains("MB")) {
+                            size = FileUtils.getSize(targetPath).replace("MB", "")
+                                .toFloat()
+                        } else if (FileUtils.getSize(targetPath).contains("KB")) {
+                            size = FileUtils.getSize(targetPath).replace("KB", "")
+                                .toFloat()
+                            if (size < 1000) {
+                                size = 1F
+                            } else {
+                                size /= 1000
+                            }
+                        }
+
+                        Log.i("guo", "size : ${FileUtils.getSize(targetPath)} change to $size")
+
+                        if (size <= 10F) {
+
+                            // 正常符合流程的视频，直接上传
+
+                            // 视频动态 ，上传视频
+
+                            ll_send_loading.visibility = View.VISIBLE
+
+                            val xlist: MutableList<String> = arrayListOf()
+
+                            Thread {
+                                val name = TimeUtils.getNowMills()
+
+                                val file = File(targetPath)
+                                val putObjectFromFileResponse =
+                                    client.putObject("user${
+                                        SPStaticUtils.getString(Constant.USER_ID,
+                                            "default")
+                                    }", "${name}.mp4", file)
+
+                                val mLifeFirstUrl =
+                                    client.generatePresignedUrl("user${
+                                        SPStaticUtils.getString(Constant.USER_ID,
+                                            "default")
+                                    }", "${name}.mp4", -1).toString()
+
+                                xlist.add(mLifeFirstUrl)
+
+
+                                val x = xlist.toString().replace("[", "")
+
+                                videoUrl = x.replace("]", "")
+
+
+                                if (content != "") {
+
+                                    Log.i("guo", "文字 ----视频 ")
+
+                                    doTextVerify(content)
+                                } else {
+                                    Log.i("guo", "上传 ----视频 ")
+                                    uploadTrend()
+                                }
+
+                            }.start()
+
+
+                        } else {
+
+                            ToastUtils.showShort("视频过大或者过长，需要压缩")
+
+
+                            val width = VideoUtil.getLocalVideoWidth(targetPath)
+                            val height = VideoUtil.getLocalVideoHeight(targetPath)
+
+
+                            Log.i("guo", "width : $width")
+                            Log.i("guo", "Height : $height")
+
+
+                            val vga = "${(width * 0.8).toInt()}*${(height * 0.8).toInt()}"
+
+                            Log.i("guo", vga)
+
+                            val targetZipPath =
+                                externalCacheDir.toString() + File.separator + "Zip" + FileUtils.getFileNameNoExtension(
+                                    targetPath) + ".mp4"
+
+                            doZipVideo(targetPath, vga, targetZipPath)
+
+                        }
+
+                    }
+
+                }
+            })
+    }
+
     //  调整分辨率压缩视频
     //  ffmpeg -i Desktop/1.mov -s vga Desktop/1.mp4
     private fun zipVideo(
@@ -1018,6 +1120,33 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         cmdList.append(VideoPath)
         cmdList.append("-s")
         cmdList.append(vga)
+        cmdList.append(targetFile)
+        return cmdList.build()
+    }
+
+    // 视频添加图片水印
+    // ffmpeg -y -i videoPath.mp4 -i musicPath.png -filter_complex [0:v]scale=iw:ih[outv0];[1:0]scale=0.0:0.0[outv1];[outv0][outv1]overlay=0:0 -preset superfast targetFile.mp4
+    //      scale：水印大小，水印长度＊水印的高度；
+    //      overlay：水印的位置，距离屏幕左侧的距离＊距离屏幕上侧的距离；mainW主视频宽度， mainH主视频高度，overlayW水印宽度，overlayH水印高度
+    //      左上角overlay参数为 overlay=0:0
+    //      右上角为 overlay= main_w-overlay_w:0
+    //      右下角为 overlay= main_w-overlay_w:main_h-overlay_h
+    //      左下角为 overlay=0: main_h-overlay_h
+    private fun addWaterMark(
+        videoPath: String,
+        picPath: String,
+        targetFile: String,
+    ): Array<String?> {
+        val cmdList = RxFFmpegCommandList()
+        cmdList.append("-y")
+        cmdList.append("-i")
+        cmdList.append(videoPath)
+        cmdList.append("-i")
+        cmdList.append(picPath)
+        cmdList.append("-filter_complex")
+        cmdList.append("[0:v]scale=iw:ih[outv0];[1:0]scale=0.0:0.0[outv1];[outv0][outv1]overlay= main_w-overlay_w:main_h-overlay_h")
+        cmdList.append("-preset")
+        cmdList.append("superfast")
         cmdList.append(targetFile)
         return cmdList.build()
     }
@@ -1312,26 +1441,30 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             all: Boolean,
                         ) {
 
-                            mTempPhotoPath = Environment.getExternalStorageDirectory()
-                                .toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
+                            if (all) {
+                                mTempPhotoPath = Environment.getExternalStorageDirectory()
+                                    .toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
 
-                            val tempPhotoFile: File = File(mTempPhotoPath)
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            // 如果在Android7.0以上,使用FileProvider获取Uri
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                val authority =
-                                    this@DynamicSendActivity.packageName.toString() + ".fileProvider"
-                                val contentUri: Uri =
-                                    DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
-                                        authority,
-                                        tempPhotoFile)
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                val tempPhotoFile: File = File(mTempPhotoPath)
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority =
+                                        this@DynamicSendActivity.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri =
+                                        DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
+                                            authority,
+                                            tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+                                startActivityForResult(intent, 2)
                             } else {
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(tempPhotoFile))
+                                ToastUtils.showShort("请授予应用相关权限")
                             }
-                            startActivityForResult(intent, 2)
                         }
 
                         override fun onDenied(
@@ -1361,26 +1494,29 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             all: Boolean,
                         ) {
 
-                            mTempPhotoPath = Environment.getExternalStorageDirectory()
-                                .toString() + File.separator + "${TimeUtils.getNowMills()}.mp4"
+                            if (all) {
+                                mTempPhotoPath = Environment.getExternalStorageDirectory()
+                                    .toString() + File.separator + "${TimeUtils.getNowMills()}.mp4"
 
-                            val tempPhotoFile: File = File(mTempPhotoPath)
-                            val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
-                            // 如果在Android7.0以上,使用FileProvider获取Uri
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                val authority =
-                                    this@DynamicSendActivity.packageName.toString() + ".fileProvider"
-                                val contentUri: Uri =
-                                    DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
-                                        authority,
-                                        tempPhotoFile)
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
-                            } else {
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(tempPhotoFile))
+                                val tempPhotoFile: File = File(mTempPhotoPath)
+                                val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority =
+                                        this@DynamicSendActivity.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri =
+                                        DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
+                                            authority,
+                                            tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+                                startActivityForResult(intent, 1)
                             }
-                            startActivityForResult(intent, 1)
+
                         }
 
                         override fun onDenied(
@@ -1476,6 +1612,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         super.onDestroy()
         doTextVerifyPresent.unregisterCallback(this)
         doUploadTrendPresent.unregisterCallback(this)
+
+        SPStaticUtils.put("dynamic_send_city", "")
+        SPStaticUtils.put("dynamic_send_location", "")
+
     }
 
 }

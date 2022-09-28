@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
@@ -63,8 +64,6 @@ class MessageAdapter(private val mList: MutableList<MessageSwitchBean>) :
         } else {
             holder.subtitle.visibility = View.GONE
         }
-
-        holder.switch.isChecked = mList[position].switch
 
     }
 

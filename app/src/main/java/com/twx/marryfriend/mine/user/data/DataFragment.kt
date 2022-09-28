@@ -317,21 +317,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         }
 
-        if (SPStaticUtils.getString(Constant.ME_INTRODUCE, "") != "") {
-            iv_user_data_introduce.visibility = View.GONE
-            tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
-        }
+        updateTextInfo()
 
-        if (SPStaticUtils.getString(Constant.ME_TA, "") != "") {
-            iv_user_data_ideal.visibility = View.GONE
-            tv_user_data_ideal.text = SPStaticUtils.getString(Constant.ME_TA, "")
-        }
-
-        Log.i("guo -------- income", SPStaticUtils.getString(Constant.ME_BIRTH, ""))
-        Log.i("guo -------- income", SPStaticUtils.getInt(Constant.ME_INCOME, 0).toString())
-        Log.i("guo -------- edu", SPStaticUtils.getInt(Constant.ME_EDU, 0).toString())
-        Log.i("guo -------- marry", SPStaticUtils.getInt(Constant.ME_MARRY_STATE, 0).toString())
-        Log.i("guo -------- love", SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0).toString())
 
         updateLife()
 
@@ -394,32 +381,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mBodyList.add("富线条美")
         }
 
-        if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "") != "") {
-            rl_user_data_voice_non.visibility = View.GONE
-            rl_user_data_voice.visibility = View.VISIBLE
-
-            val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
-            var formatTime = if (time.div(1000) / 60 >= 10) {
-                if (time.div(1000) % 60 >= 10) {
-                    "${time.div(1000) / 60} : ${time.div(1000) % 60}"
-                } else {
-                    "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
-                }
-            } else {
-                if (time.div(1000) % 60 >= 10) {
-                    "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
-                } else {
-                    "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
-                }
-            }
-
-            tv_user_data_voice.text = formatTime
-
-        } else {
-            rl_user_data_voice_non.visibility = View.VISIBLE
-            rl_user_data_voice.visibility = View.GONE
-        }
-
+        updateVoice()
 
 //        val banBean: BanBean =
 //            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
@@ -437,6 +399,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
 
     }
+
 
     private fun initPresent() {
 
@@ -1670,6 +1633,50 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private fun stopVoice() {
         PlayAudio.stop()
+    }
+
+    // 更新心目中的他、自我介绍
+    fun updateTextInfo() {
+
+        if (SPStaticUtils.getString(Constant.ME_INTRODUCE, "") != "") {
+            iv_user_data_introduce.visibility = View.GONE
+            tv_user_data_introduce.text = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
+        }
+
+        if (SPStaticUtils.getString(Constant.ME_TA, "") != "") {
+            iv_user_data_ideal.visibility = View.GONE
+            tv_user_data_ideal.text = SPStaticUtils.getString(Constant.ME_TA, "")
+        }
+
+    }
+
+    // 更新录音文件视图
+    fun updateVoice() {
+        if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "") != "") {
+            rl_user_data_voice_non.visibility = View.GONE
+            rl_user_data_voice.visibility = View.VISIBLE
+
+            val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
+            var formatTime = if (time.div(1000) / 60 >= 10) {
+                if (time.div(1000) % 60 >= 10) {
+                    "${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                } else {
+                    "${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                }
+            } else {
+                if (time.div(1000) % 60 >= 10) {
+                    "0${time.div(1000) / 60} : ${time.div(1000) % 60}"
+                } else {
+                    "0${time.div(1000) / 60} : 0${time.div(1000) % 60}"
+                }
+            }
+
+            tv_user_data_voice.text = formatTime
+
+        } else {
+            rl_user_data_voice_non.visibility = View.VISIBLE
+            rl_user_data_voice.visibility = View.GONE
+        }
     }
 
     // 获取、更新生活照

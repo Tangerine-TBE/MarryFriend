@@ -172,7 +172,7 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
             DynamicOtherShowActivity.getIntent(
                 it,
                 mList[position].id,
-                SPStaticUtils.getString(Constant.USER_ID, "13").toInt())
+                mList[position].user_id.toInt())
         })
     }
 

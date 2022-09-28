@@ -360,8 +360,7 @@ object Constant {
     const val LIKE_ALL_ONLINE_TIP = "like_all_online_tip"  // 和你相互喜欢的Ta上线了
 
     const val LIKE_ALL_TIP = "like_all_tip"                // 互相喜欢(相互喜欢配对成功后提醒)
-    const val MESSAGE_TIP = "message_tip"                  // 聊天消息
-    const val GREET_TIP = "greet_tip"                      // 打招呼(收到超级喜欢、超级消息提醒)
+    const val GET_GIFT = "get_gift"                  // 收到礼物
 
 
     // 外部SDK常量

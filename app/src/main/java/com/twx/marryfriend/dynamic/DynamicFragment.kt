@@ -23,6 +23,8 @@ import kotlinx.android.synthetic.main.fragment_dynamic.*
 
 class DynamicFragment : Fragment() {
 
+    private var needAddDate = false
+    private lateinit var dynamicDate: TrendSaloonList
 
     private lateinit var mContext: Context
 
@@ -47,9 +49,16 @@ class DynamicFragment : Fragment() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {//fragment可见
-            Log.i("guo", "动态界面刷新")
 
             recommendFragment.getTotalCount()
+
+            if (needAddDate) {
+                Log.i("guo", "更新动态列表数据")
+                recommendFragment.addDynamicInfo(dynamicDate)
+                needAddDate = false
+            } else {
+                Log.i("guo", "不要更新动态列表数据")
+            }
 
         }
     }
@@ -64,7 +73,7 @@ class DynamicFragment : Fragment() {
 
         if (isAdded) {
             context?.apply {
-                recommendFragment = DynamicRecommendFragment().newInstance(this)
+                recommendFragment = DynamicRecommendFragment().newInstance(this, "")
                 dynamicFragment = DynamicFriendFragment().newInstance(this)
             }
 
@@ -132,7 +141,9 @@ class DynamicFragment : Fragment() {
 
     }
 
-    fun addData(trendData : TrendSaloonList){
-        Log.i("guo","1111")
+    fun addData(trendSaloonList: TrendSaloonList) {
+        needAddDate = true
+        dynamicDate = trendSaloonList
     }
+
 }

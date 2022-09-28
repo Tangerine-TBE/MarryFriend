@@ -24,12 +24,6 @@ import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-import com.twx.marryfriend.net.callback.dynamic.IDoLikeCancelCallback
-import com.twx.marryfriend.net.callback.dynamic.IDoLikeClickCallback
-import com.twx.marryfriend.net.callback.dynamic.IGetTrendFocusCallback
-import com.twx.marryfriend.net.impl.dynamic.doLikeCancelPresentImpl
-import com.twx.marryfriend.net.impl.dynamic.doLikeClickPresentImpl
-import com.twx.marryfriend.net.impl.dynamic.getTrendFocusPresentImpl
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
 import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
@@ -37,13 +31,15 @@ import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
+import com.twx.marryfriend.net.callback.dynamic.*
+import com.twx.marryfriend.net.impl.dynamic.*
 import com.twx.marryfriend.utils.AnimalUtils
 import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
 import java.util.*
 
-class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCallback,
-    IDoLikeCancelCallback, SaloonFocusAdapter.OnItemClickListener {
+class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeClickCallback,
+    IDoFocusLikeCancelCallback, SaloonFocusAdapter.OnItemClickListener {
 
     // 数据加载模式
     private var mode = "first"
@@ -57,21 +53,21 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
     private lateinit var mContext: Context
 
     // 大图展示时进入时应该展示点击的那张图片
-    private var imageIndex = 0
+    private var mFocusImageIndex = 0
 
     // 点赞时选择的position
-    private var mLikePosition: Int = 0
+    private var mFocusLikePosition: Int = 0
 
     // 关注与点赞数据
     private var mFocusDiyList: MutableList<LikeBean> = arrayListOf()
 
     private var mFocusTrendList: MutableList<TrendFocusList> = arrayListOf()
 
-    private lateinit var adapter: SaloonFocusAdapter
+    private lateinit var mFocusAdapter: SaloonFocusAdapter
 
     private lateinit var getTrendFocusPresent: getTrendFocusPresentImpl
-    private lateinit var doLikeClickPresent: doLikeClickPresentImpl
-    private lateinit var doLikeCancelPresent: doLikeCancelPresentImpl
+    private lateinit var doFocusLikeClickPresent: doFocusLikeClickPresentImpl
+    private lateinit var doFocusLikeCancelPresent: doFocusLikeCancelPresentImpl
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,17 +95,17 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         getTrendFocusPresent = getTrendFocusPresentImpl.getsInstance()
         getTrendFocusPresent.registerCallback(this)
 
-        doLikeClickPresent = doLikeClickPresentImpl.getsInstance()
-        doLikeClickPresent.registerCallback(this)
+        doFocusLikeClickPresent = doFocusLikeClickPresentImpl.getsInstance()
+        doFocusLikeClickPresent.registerCallback(this)
 
-        doLikeCancelPresent = doLikeCancelPresentImpl.getsInstance()
-        doLikeCancelPresent.registerCallback(this)
+        doFocusLikeCancelPresent = doFocusLikeCancelPresentImpl.getsInstance()
+        doFocusLikeCancelPresent.registerCallback(this)
 
 
-        adapter = SaloonFocusAdapter(mFocusTrendList, mFocusDiyList)
-        adapter.setOnItemClickListener(this)
+        mFocusAdapter = SaloonFocusAdapter(mFocusTrendList, mFocusDiyList)
+        mFocusAdapter.setOnItemClickListener(this)
 
-        rv_dynamic_focus_container.adapter = adapter
+        rv_dynamic_focus_container.adapter = mFocusAdapter
         rv_dynamic_focus_container.layoutManager = LinearLayoutManager(context)
 
         srl_dynamic_focus_refresh.setRefreshHeader(ClassicsHeader(requireContext()));
@@ -143,13 +139,13 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             srl_dynamic_focus_refresh.finishLoadMore(2000/*,false*/);//传入false表示刷新失败
         }
 
-        adapter.setOnVideoClickListener(object : SaloonFocusAdapter.OnVideoClickListener {
+        mFocusAdapter.setOnVideoClickListener(object : SaloonFocusAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
                 startActivity(VideoPreviewActivity.getIntent(mContext,
                     mFocusTrendList[position].video_url,
@@ -157,14 +153,14 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             }
         })
 
-        adapter.setOnAvatarClickListener(object : SaloonFocusAdapter.OnAvatarClickListener {
+        mFocusAdapter.setOnAvatarClickListener(object : SaloonFocusAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
                 ToastUtils.showShort("头像,进入资料详情界面")
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
                 startActivity(FriendInfoActivity.getIntent(
                     requireContext(),
@@ -174,13 +170,13 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             }
         })
 
-        adapter.setOnFocusClickListener(object : SaloonFocusAdapter.OnFocusClickListener {
+        mFocusAdapter.setOnFocusClickListener(object : SaloonFocusAdapter.OnFocusClickListener {
             override fun onFocusClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
                 val identity = mFocusTrendList[position].identity_status == 1
 
@@ -204,19 +200,19 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             }
         })
 
-        adapter.setOnLikeClickListener(object : SaloonFocusAdapter.OnLikeClickListener {
+        mFocusAdapter.setOnLikeClickListener(object : SaloonFocusAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
                 ToastUtils.showShort("点赞，给该用户点赞")
             }
         })
 
-        adapter.setOnCommentClickListener(object : SaloonFocusAdapter.OnCommentClickListener {
+        mFocusAdapter.setOnCommentClickListener(object : SaloonFocusAdapter.OnCommentClickListener {
             override fun onCommentClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
                 val intent = Intent(context, DynamicOtherShowActivity::class.java)
                 intent.putExtra("trendId", mFocusTrendList[position].id)
@@ -226,15 +222,15 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
             }
         })
 
-        adapter.setOnOneClickListener(object : SaloonFocusAdapter.OnOneClickListener {
+        mFocusAdapter.setOnOneClickListener(object : SaloonFocusAdapter.OnOneClickListener {
             override fun onOneClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 0
+                mFocusImageIndex = 0
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -247,20 +243,20 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
-        adapter.setOnTwoClickListener(object : SaloonFocusAdapter.OnTwoClickListener {
+        mFocusAdapter.setOnTwoClickListener(object : SaloonFocusAdapter.OnTwoClickListener {
             override fun onTwoClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 1
+                mFocusImageIndex = 1
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -273,20 +269,20 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
-        adapter.setOnThreeClickListener(object : SaloonFocusAdapter.OnThreeClickListener {
+        mFocusAdapter.setOnThreeClickListener(object : SaloonFocusAdapter.OnThreeClickListener {
             override fun onThreeClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 2
+                mFocusImageIndex = 2
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -299,20 +295,20 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
-        adapter.setOnFourClickListener(object : SaloonFocusAdapter.OnFourClickListener {
+        mFocusAdapter.setOnFourClickListener(object : SaloonFocusAdapter.OnFourClickListener {
             override fun onFourClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 3
+                mFocusImageIndex = 3
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -325,20 +321,20 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
-        adapter.setOnFiveClickListener(object : SaloonFocusAdapter.OnFiveClickListener {
+        mFocusAdapter.setOnFiveClickListener(object : SaloonFocusAdapter.OnFiveClickListener {
             override fun onFiveClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 4
+                mFocusImageIndex = 4
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -351,21 +347,21 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
 
-        adapter.setOnSixClickListener(object : SaloonFocusAdapter.OnSixClickListener {
+        mFocusAdapter.setOnSixClickListener(object : SaloonFocusAdapter.OnSixClickListener {
             override fun onSixClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 5
+                mFocusImageIndex = 5
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -378,20 +374,20 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
-        adapter.setOnSevenClickListener(object : SaloonFocusAdapter.OnSevenClickListener {
+        mFocusAdapter.setOnSevenClickListener(object : SaloonFocusAdapter.OnSevenClickListener {
             override fun onSevenClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 6
+                mFocusImageIndex = 6
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -404,20 +400,20 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
             }
         })
 
-        adapter.setOnEightClickListener(object : SaloonFocusAdapter.OnEightClickListener {
+        mFocusAdapter.setOnEightClickListener(object : SaloonFocusAdapter.OnEightClickListener {
             override fun onEightClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 7
+                mFocusImageIndex = 7
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -430,21 +426,21 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
 
             }
         })
 
-        adapter.setOnNineClickListener(object : SaloonFocusAdapter.OnNineClickListener {
+        mFocusAdapter.setOnNineClickListener(object : SaloonFocusAdapter.OnNineClickListener {
             override fun onNineClick(v: View?, position: Int) {
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
-                adapter.notifyDataSetChanged()
+                mFocusAdapter.notifyDataSetChanged()
 
-                imageIndex = 8
+                mFocusImageIndex = 8
 
                 val images: MutableList<String> =
                     mFocusTrendList[position].image_url.split(",") as MutableList<String>
@@ -457,13 +453,13 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 startActivity(context?.let {
                     ImagePreviewActivity.getIntent(it,
                         images,
-                        imageIndex)
+                        mFocusImageIndex)
                 })
 
             }
         })
 
-        adapter.setOnLikeClickListener(object : SaloonFocusAdapter.OnLikeClickListener {
+        mFocusAdapter.setOnLikeClickListener(object : SaloonFocusAdapter.OnLikeClickListener {
             override fun onLikeClick(v: View?, position: Int) {
 
                 // 点赞， 此时需要验证是否上传头像
@@ -471,7 +467,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                         "") != "" || SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
                 ) {
 
-                    mLikePosition = position
+                    mFocusLikePosition = position
 
                     if (!mFocusDiyList[position].like) {
                         // 点赞
@@ -491,7 +487,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
                     } else {
                         // 取消赞
-                        doLikeCancelClick(mFocusTrendList[position].id, mFocusTrendList[position].user_id,
+                        doLikeCancelClick(mFocusTrendList[position].id,
+                            mFocusTrendList[position].user_id,
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
 
@@ -526,7 +523,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
-        doLikeClickPresent.doLikeClick(map)
+        doFocusLikeClickPresent.doFocusLikeClick(map)
     }
 
     // 取消点赞
@@ -535,7 +532,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = hostUid.toString()
         map[Contents.GUEST_UID] = guestUid.toString()
-        doLikeCancelPresent.doLikeCancel(map)
+        doFocusLikeCancelPresent.doFocusLikeCancel(map)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -560,38 +557,37 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
     }
 
-    override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
+    override fun onDoFocusLikeClickSuccess(likeClickBean: LikeClickBean?) {
         // 点赞
         if (likeClickBean != null) {
             if (likeClickBean.code == 200) {
-                mFocusDiyList[mLikePosition].like = true
-                mFocusDiyList[mLikePosition].likeCount++
-                adapter.notifyDataSetChanged()
+                mFocusDiyList[mFocusLikePosition].like = true
+                mFocusDiyList[mFocusLikePosition].likeCount++
+                mFocusAdapter.notifyDataSetChanged()
             } else {
                 ToastUtils.showShort(likeClickBean.msg)
             }
         }
     }
 
-    override fun onDoLikeClickError() {
+    override fun onDoFocusLikeClickError() {
 
     }
 
-    override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
+    override fun onDoFocusLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
         // 取消赞
         if (likeCancelBean != null) {
             if (likeCancelBean.code == 200) {
-                mFocusDiyList[mLikePosition].like = false
-                mFocusDiyList[mLikePosition].likeCount--
-                adapter.notifyDataSetChanged()
+                mFocusDiyList[mFocusLikePosition].like = false
+                mFocusDiyList[mFocusLikePosition].likeCount--
+                mFocusAdapter.notifyDataSetChanged()
             } else {
                 ToastUtils.showShort(likeCancelBean.msg)
             }
         }
-
     }
 
-    override fun onLikeCancelError() {
+    override fun onFocusLikeCancelError() {
 
     }
 
@@ -634,7 +630,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                     max = Collections.max(mIdList)
                     min = Collections.min(mIdList)
 
-                    adapter.notifyDataSetChanged()
+                    mFocusAdapter.notifyDataSetChanged()
 
                 } else {
 
@@ -646,7 +642,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
 
                     }
 
-                    adapter.notifyDataSetChanged()
+                    mFocusAdapter.notifyDataSetChanged()
 
                 }
             } else {
@@ -667,7 +663,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         for (i in 0.until(mFocusDiyList.size)) {
             mFocusDiyList[i].anim = false
         }
-        adapter.notifyDataSetChanged()
+        mFocusAdapter.notifyDataSetChanged()
 
         val intent = Intent(context, DynamicOtherShowActivity::class.java)
         intent.putExtra("trendId", mFocusTrendList[position].id)
@@ -681,7 +677,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         for (i in 0.until(mFocusDiyList.size)) {
             mFocusDiyList[i].anim = false
         }
-        adapter.notifyDataSetChanged()
+        mFocusAdapter.notifyDataSetChanged()
 
         val intent = Intent(context, DynamicOtherShowActivity::class.java)
         intent.putExtra("trendId", mFocusTrendList[position].id)
@@ -719,8 +715,8 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
         super.onDestroy()
 
         getTrendFocusPresent.unregisterCallback(this)
-        doLikeClickPresent.unregisterCallback(this)
-        doLikeCancelPresent.unregisterCallback(this)
+        doFocusLikeClickPresent.unregisterCallback(this)
+        doFocusLikeCancelPresent.unregisterCallback(this)
 
     }
 

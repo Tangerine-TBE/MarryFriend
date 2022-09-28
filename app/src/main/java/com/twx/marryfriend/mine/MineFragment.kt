@@ -46,6 +46,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.*
+import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.mine.FourTotalBean
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
@@ -598,9 +599,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             val intent = Intent(context, SetActivity::class.java)
             startActivity(intent)
 
-            // 动态添加数据点
-//            val activity = activity as MainActivity
-//            activity.addDynamicFragment()
 
         }
 
@@ -612,8 +610,53 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         }
 
         ll_mine_set_share.setOnClickListener {
-        }
+            // 动态添加数据点
+//
+//            val x = TrendSaloonList(37,
+//                1,
+//                "1990-1-15",
+//                "2022-09-27 21:02:57",
+//                1,
+//                4,
+//                "http://adrmf.gz.bcebos.com/v1/user64/head.png",
+//                190,
+//                4,
+//                "",
+//                "计算机/互联网",
+//                "",
+//                "",
+//                1,
+//                "通过胡",
+//                "数据开发与管理",
+//                "",
+//                "发布一个小视频",
+//                2,
+//                "64",
+//                1,
+//                "",
+//                "http://adrmf.gz.bcebos.com/v1/user64/1664283774959.mp4",
+//                "",
+//                "",
+//                0,
+//                1,
+//                null,
+//                "null",
+//                64,
+//                0,
+//                "2022-08-31 22:23:24",
+//                0,
+//                "2022-08-31 22:23:24",
+//                0)
+//
+//
+//            val activity = activity as MainActivity
+//            activity.addDynamicFragment(x)
 
+
+            startActivity(IntentUtils.getShareTextIntent("http://www.aijiaou.com/jiaou/mobile.html"))
+
+
+        }
 
         ll_mine_uid.setOnClickListener {
             ToastUtils.showShort("已复制您的用户ID")
@@ -1632,20 +1675,28 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                             permissions: MutableList<String>?,
                             all: Boolean,
                         ) {
-                            val tempPhotoFile: File = File(mTempPhotoPath)
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            // 如果在Android7.0以上,使用FileProvider获取Uri
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                val authority = context.packageName.toString() + ".fileProvider"
-                                val contentUri: Uri =
-                                    FileProvider.getUriForFile(context, authority, tempPhotoFile)
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+
+                            if (all) {
+                                val tempPhotoFile: File = File(mTempPhotoPath)
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority = context.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri =
+                                        FileProvider.getUriForFile(context,
+                                            authority,
+                                            tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+                                startActivityForResult(intent, 2)
                             } else {
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(tempPhotoFile))
+                                ToastUtils.showShort("请授予应用相关权限")
                             }
-                            startActivityForResult(intent, 2)
+
                         }
 
                         override fun onDenied(

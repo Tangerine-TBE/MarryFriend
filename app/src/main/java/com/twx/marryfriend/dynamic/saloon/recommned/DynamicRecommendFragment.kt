@@ -4,6 +4,7 @@ import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.ConvertUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.lxj.xpopup.XPopup
@@ -60,6 +62,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     private lateinit var mContext: Context
 
+    private var datemode = ""
+
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
 
@@ -96,9 +100,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         return inflater.inflate(R.layout.fragment_dynamic_recommend, container, false)
     }
 
-    fun newInstance(context: Context): DynamicRecommendFragment {
+    fun newInstance(context: Context, mode: String): DynamicRecommendFragment {
         val fragment = DynamicRecommendFragment()
         fragment.mContext = context
+        fragment.datemode = mode
         return fragment
     }
 
@@ -111,6 +116,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     private fun initView() {
+
+
+        Log.i("guo", "mode :$datemode")
 
         getTrendSaloonPresent = getTrendSaloonPresentImpl.getsInstance()
         getTrendSaloonPresent.registerCallback(this)
@@ -137,7 +145,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         srl_dynamic_recommend_refresh.setRefreshHeader(ClassicsHeader(requireContext()));
         srl_dynamic_recommend_refresh.setRefreshFooter(ClassicsFooter(requireContext()));
-
+//数据不满一页时，禁止上滑（不设置，数据不满一页上滑，不能自动完全回弹，第一个item会被覆盖。）
+        srl_dynamic_recommend_refresh.setEnableLoadMoreWhenContentNotFull(false);
     }
 
     private fun initData() {
@@ -175,6 +184,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         rl_dynamic_tips.setOnClickListener {
 
             rl_dynamic_tips.visibility = View.GONE
+
+            rv_dynamic_recommend_container.setPadding(0, 0, 0, ConvertUtils.dp2px(50F))
 
             for (i in 0.until(mDiyList.size)) {
                 mDiyList[i].anim = false
@@ -599,6 +610,27 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         getTotalCountPresent.getTotalCount(map)
     }
 
+    // 动态添加一条信息
+    fun addDynamicInfo(trendSaloonList: TrendSaloonList) {
+        
+        val focus = trendSaloonList.focus_uid != null
+
+        val like = trendSaloonList.guest_uid != null
+
+        val diy = LikeBean(
+            trendSaloonList.user_id.toInt(),
+            focus,
+            like,
+            trendSaloonList.like_count)
+
+        mTrendList.add(0, trendSaloonList)
+        mDiyList.add(0, diy)
+
+        adapter.notifyDataSetChanged()
+
+    }
+
+
     // 获取动态列表
     private fun getTrendSaloon(mode: String, max: Int, min: Int) {
         val map: MutableMap<String, String> = TreeMap()
@@ -638,6 +670,12 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         doPlusFocusPresent.doPlusFocusOther(map)
     }
 
+    // 添加一条数据
+    fun addDynamicData() {
+        Log.i("guo", "success_add")
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -667,6 +705,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                 if (totalCountBean.data.discuss.toInt() + totalCountBean.data.like != 0) {
                     rl_dynamic_tips.visibility = View.VISIBLE
+
+                    rv_dynamic_recommend_container.setPadding(0, 0, 0, ConvertUtils.dp2px(110F))
+
                     tv_dynamic_tips_count.text =
                         "${totalCountBean.data.discuss.toInt() + totalCountBean.data.like}条新消息"
 
@@ -774,6 +815,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
         if (trendSaloonBean != null) {
             if (trendSaloonBean.code == 200) {
                 if (trendSaloonBean.data.list.isNotEmpty()) {
+
+                    Log.i("guo", "dynamicInfo : ${trendSaloonBean.data.list[0]}")
 
                     ll_dynamic_recommend_empty.visibility = View.GONE
 

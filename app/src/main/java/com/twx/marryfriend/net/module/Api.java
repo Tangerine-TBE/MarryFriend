@@ -10,6 +10,7 @@ import com.twx.marryfriend.bean.DemandAddressBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.bean.FiveInfoBean;
+import com.twx.marryfriend.bean.GreetInfoBean;
 import com.twx.marryfriend.bean.IdentityVerifyBean;
 import com.twx.marryfriend.bean.IndustryBean;
 import com.twx.marryfriend.bean.JobBean;
@@ -68,9 +69,11 @@ import com.twx.marryfriend.bean.vip.BlackListBean;
 import com.twx.marryfriend.bean.vip.BlackListData;
 import com.twx.marryfriend.bean.vip.CoinPriceBean;
 import com.twx.marryfriend.bean.vip.CoinRecordBean;
+import com.twx.marryfriend.bean.vip.GetPushSetBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdatePushSetBean;
 import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
 import com.twx.marryfriend.bean.vip.VipPriceBean;
@@ -126,6 +129,9 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/demandShengshiList")
     Call<DemandAddressBean> getDemandAddress(@QueryMap Map<String, Object> params);
 
+    // 获取 招呼语信息
+    @POST("/marryfriend/LoginRegister/getZhaohuyu")
+    Call<GreetInfoBean> getGreetInfo(@QueryMap Map<String, Object> params);
 
     // 五个一起获取
     @POST("/marryfriend/LoginRegister/getFive")
@@ -384,6 +390,15 @@ public interface Api {
     @POST("/marryfriend/MemberCharge/updateToken")
     Call<UpdateTokenBean> doUpdateToken(@QueryMap Map<String, Object> params);
 
+    // 修改友盟推送设置
+    @POST("/marryfriend/MemberCharge/umengPushSet")
+    Call<UpdatePushSetBean> doUpdatePushSet(@QueryMap Map<String, Object> params);
+
+    // 获取友盟推送状态
+    @POST("/marryfriend/MemberCharge/getPushStatus")
+    Call<GetPushSetBean> getPushSet(@QueryMap Map<String, Object> params);
+
+
     // 屏蔽列表
     @POST("/marryfriend/TrendsNotice/blockSessionList")
     Call<BlackListBean> getBlackList(@QueryMap Map<String, Object> params);
@@ -392,8 +407,6 @@ public interface Api {
     // 删除屏蔽会话
     @POST("/marryfriend/TrendsNotice/deleteBlockSession")
     Call<DeleteBlackListBean> doDeleteBlackList(@QueryMap Map<String, Object> params);
-
-
 
 
     // 高德地图-地点检索
