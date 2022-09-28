@@ -106,8 +106,13 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
                     try {
                         recommendViewModel.superLike(it.guest_uid){
                             coinInsufficientDialog.show(it.image_url)
+                        }.also {
+                            if (it.code==200){
+                                toast("送花成功")
+                            }else{
+                                toast(it.msg)
+                            }
                         }
-                        toast("送花成功")
                     }catch (e:Exception){
                         toast(e.message)
                     }

@@ -269,12 +269,8 @@ class RecommendViewModel():ViewModel() {
                     }catch (e:Exception){
                         response
                     }
-                    try {
-                        if (code==444){
-                            coinInsufficient?.invoke()
-                        }
-                    }catch (e:Exception){
-                        wLog(e.stackTraceToString())
+                    if (code==444){
+                        coinInsufficient?.invoke()
                     }
                     coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,tip))
                 }

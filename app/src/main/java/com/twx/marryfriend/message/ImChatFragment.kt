@@ -174,8 +174,13 @@ class ImChatFragment: ChatFragment() {
             try {
                 recommendViewModel.superLike(conversationId?.toIntOrNull()?:return@launch){
                     coinInsufficientDialog.show()
+                }.also {
+                    if (it.code==200){
+                        super.onClickSendFlower()
+                    }else{
+                        toast(it.msg)
+                    }
                 }
-                super.onClickSendFlower()
             }catch (e:Exception){
                 toast(e.message)
             }
