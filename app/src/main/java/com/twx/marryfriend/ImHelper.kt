@@ -6,12 +6,15 @@ import com.google.gson.reflect.TypeToken
 import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.hyphenate.easeim.section.base.WebViewActivity
+import com.hyphenate.easeui.utils.EaseUserUtils
+import com.message.ImInit
 import com.message.ImLoginHelper
 import com.message.ImMessageManager
 import com.message.ImUserInfoService
 import com.message.chat.CustomMessage
 import com.message.custom.IImEventListener
 import com.message.custom.ImCustomEventListenerManager
+import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.message.ConversationViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
@@ -137,8 +140,13 @@ object ImHelper {
     private fun login(userId:String){
         imUiHelper.login(userId,{easeUser->
             iLog("登录成功，开始刷新会话列表")
+            EaseUserUtils.setManDefHead(Sex.male.smallHead)
+            EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
+            EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
+            ImInit.imLoginState.postValue(true)
         },{code,message->
             iLog("登录失败,code=${code},message=${message}")
+            ImInit.imLoginState.postValue(false)
         })
     }
 }

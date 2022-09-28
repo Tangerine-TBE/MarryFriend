@@ -43,7 +43,10 @@ class ItemMutualLikeView @JvmOverloads constructor(context: Context, attributeSe
             ))
         }
         this.setOnClickListener {
-            it.context.startActivity(FriendInfoActivity.getIntent(it.context,mutualLikeData.user_id?:return@setOnClickListener))
+            it.context.startActivity(FriendInfoActivity.getIntent(
+                it.context,
+                mutualLikeData.user_id?:return@setOnClickListener
+            ))
         }
 //        removeAllViews()
 //        addView(itemView.root)

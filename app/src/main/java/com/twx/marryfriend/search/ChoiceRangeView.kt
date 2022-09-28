@@ -75,6 +75,12 @@ class ChoiceRangeView @JvmOverloads constructor(context: Context, attrs:Attribut
         invalidate()
     }
 
+    fun setProgress(startProgress:Float,endProgress:Float){
+        startPoint=(width - bitmapHeight)*startProgress
+        endPoint=(width - bitmapHeight)*endProgress
+        invalidate()
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val mode=MeasureSpec.getMode(heightMeasureSpec)
         val size=MeasureSpec.getSize(heightMeasureSpec)

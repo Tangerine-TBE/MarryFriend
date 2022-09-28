@@ -120,7 +120,7 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
             loadData()
         }
         likeAdapter.itemAction={
-            startActivity(FriendInfoActivity.getIntent(requireContext(),it.guest_uid))
+            startActivity(FriendInfoActivity.getIntent(requireContext(), it.guest_uid))
         }
     }
 }

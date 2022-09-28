@@ -45,6 +45,7 @@ import com.hyphenate.easeim.section.login.activity.LoginActivity;
 import com.hyphenate.easeui.model.EaseEvent;
 import com.hyphenate.easeui.utils.StatusBarCompat;
 import com.hyphenate.util.EMLog;
+import com.message.ImInit;
 
 import java.util.List;
 
@@ -120,7 +121,8 @@ public class BaseActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finishOtherActivities();
-                        startActivity(new Intent(mContext, LoginActivity.class));
+                        ImInit.INSTANCE.getImLoginState().setValue(false);
+//                        startActivity(new Intent(mContext, LoginActivity.class));
                         finish();
                     }
                 })

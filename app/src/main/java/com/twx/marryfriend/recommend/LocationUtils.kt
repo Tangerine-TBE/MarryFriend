@@ -95,10 +95,12 @@ object LocationUtils {
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     fun startLocation() {
+        iLog("开始定位")
         val mLocationClient = LocationClient(context)
         mLocationClient.registerLocationListener(object :
             BDAbstractLocationListener() {
             override fun onReceiveLocation(location: BDLocation) {
+                iLog(location.addrStr,"定位到了")
                 if (location.addrStr == null) {
                     locationLiveData.value = null
                     return

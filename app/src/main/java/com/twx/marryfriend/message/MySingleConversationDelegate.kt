@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.hyphenate.chat.EMConversation
+import com.hyphenate.chat.EMCustomMessageBody
 import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeui.EaseIM
 import com.hyphenate.easeui.adapter.EaseAdapterDelegate
@@ -19,6 +20,7 @@ import com.hyphenate.easeui.utils.EaseCommonUtils
 import com.hyphenate.easeui.utils.EaseDateUtils
 import com.hyphenate.easeui.utils.EaseSmileUtils
 import com.message.ImUserInfoService
+import com.message.chat.CustomMessage
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.getUserExt
@@ -50,16 +52,12 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         holder.avatar.setImageResource(defaultAvatar)
         holder.name.text = username
 
-        val infoProvider = EaseIM.getInstance().conversationInfoProvider
-        if (infoProvider != null) {
-            val avatarResource = infoProvider.getDefaultTypeAvatar(item.type.name)
-            if (avatarResource != null) {
-                //设置头像
-                Glide.with(holder.mContext)
-                    .load(avatarResource)
-                    .error(defaultAvatar)
-                    .into(holder.avatar)
-            }
+        EaseIM.getInstance().conversationInfoProvider?.getDefaultTypeAvatar(item.type.name)?.also {
+            //设置头像
+            Glide.with(holder.mContext)
+                .load(it)
+                .error(defaultAvatar)
+                .into(holder.avatar)
         }
 
         // add judgement for conversation type
@@ -132,13 +130,27 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
 
         if (item.allMsgCount != 0) {
             val lastMessage = item.lastMessage
-            holder.message.text = EaseSmileUtils.getSmiledText(holder.mContext, EaseCommonUtils.getMessageDigest(lastMessage, holder.mContext))
-            holder.time.text = EaseDateUtils.getTimestampString(holder.mContext,Date(lastMessage.msgTime))
-            if (lastMessage.direct() == EMMessage.Direct.SEND && lastMessage.status() == EMMessage.Status.FAIL) {
-                holder.mMsgState.setVisibility(View.VISIBLE)
-            } else {
-                holder.mMsgState.setVisibility(View.GONE)
+            val text=if (lastMessage.type== EMMessage.Type.CUSTOM){
+                val body=lastMessage.body as EMCustomMessageBody
+                CustomMessage.CustomEvent.getTip(body.event()).let {
+                    if (it==null){
+                        EaseCommonUtils.getMessageDigest(lastMessage, holder.mContext)
+                    }else{
+                        holder.mMsgState.visibility = View.GONE
+                        it
+                    }
+                }
+            }else{
+                val t=EaseCommonUtils.getMessageDigest(lastMessage, holder.mContext)
+                if (lastMessage.direct() == EMMessage.Direct.SEND && lastMessage.status() == EMMessage.Status.FAIL) {
+                    holder.mMsgState.setVisibility(View.VISIBLE)
+                } else {
+                    holder.mMsgState.visibility = View.GONE
+                }
+                t
             }
+            holder.message.text = EaseSmileUtils.getSmiledText(holder.mContext, text)
+            holder.time.text = EaseDateUtils.getTimestampString(holder.mContext,Date(lastMessage.msgTime))
         }
     }
 

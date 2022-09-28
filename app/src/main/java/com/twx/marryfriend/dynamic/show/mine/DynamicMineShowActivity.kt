@@ -208,8 +208,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         }
 
         riv_dynamic_mine_show_avatar.setOnClickListener {
-            startActivity(FriendInfoActivity.getIntent(this,
-                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
+            startActivity(FriendInfoActivity.getIntent(
+                this,
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+            ))
         }
 
         fl_dynamic_mine_show_video.setOnClickListener {
@@ -1210,8 +1212,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
         ToastUtils.showShort("点击父评论头像 ： $positionOne ")
 
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].list.one_level_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].list.one_level_uid
+        ))
 
     }
 
@@ -1249,8 +1253,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onItemChildAvatarClick(v: View?, positionOne: Int) {
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/000")
 
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].list.two_last_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].list.two_last_uid
+        ))
 
     }
 
@@ -1286,8 +1292,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].twoList[two].two_last_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].twoList[two].two_last_uid
+        ))
     }
 
     override fun onChildReplyClick(positionOne: Int, two: Int) {
@@ -1314,8 +1322,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
         ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].twoList[two].two_first_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].twoList[two].two_first_uid
+        ))
     }
 
     override fun onLocalChildClick(positionOne: Int, two: Int) {

@@ -91,6 +91,19 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         return e
     }
 
+    fun remove(recommendBean: RecommendBean){
+        if (recommendBean==currentPlayVoiceItem){
+            stopVoice()
+        }
+        val index=listData.indexOf(recommendBean)
+        notifyItemRemoved(index)
+        notifyItemChanged(index)
+    }
+
+    fun getTopItem():RecommendBean{
+        return listData.first()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val itemView=LayoutInflater.from(parent.context).inflate(R.layout.item_recommend,parent,false)
         return BaseViewHolder(itemView)

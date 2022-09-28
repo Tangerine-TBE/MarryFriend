@@ -209,8 +209,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
                 adapter.notifyDataSetChanged()
 
-                startActivity(FriendInfoActivity.getIntent(requireContext(),
-                    mTrendList[position].user_id.toInt()))
+                startActivity(FriendInfoActivity.getIntent(
+                    requireContext(),
+                    mTrendList[position].user_id.toInt()
+                ))
 
             }
         })

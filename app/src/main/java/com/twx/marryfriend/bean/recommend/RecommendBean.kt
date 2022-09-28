@@ -54,7 +54,7 @@ data class RecommendBean(
                     list.add(it)
                 }
             }
-            Sex.female -> {
+            Sex.woman -> {
                 getFigure_nan(demand?.figure_nan?.toIntOrNull())?.also {
                     list.add(it)
                 }

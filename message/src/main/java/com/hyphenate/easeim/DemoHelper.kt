@@ -164,6 +164,7 @@ class DemoHelper private constructor() {
     private fun registerConversationType() {
         Log.i("myLog", "注册对话类型")
         EaseMessageTypeSetManager.getInstance()
+
             .addMessageType(FlowerAdapterDelegate::class.java)//送花
             .addMessageType(SecurityTipAdapterDelegate::class.java)//安全提示
             .addMessageType(UploadHeadAdapterDelegate::class.java)//提示传头像

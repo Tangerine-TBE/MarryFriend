@@ -13,15 +13,19 @@ fun Any.toast(context: Context?, text: String){
     toast?.show()
 }
 fun Fragment.toast(text: String?){
+    iLog("toast 为空")
+    text?:return
     context?:return
     toast?.cancel()
-    toast = Toast.makeText(context, text?:"null", Toast.LENGTH_SHORT)
+    toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
     toast?.show()
 }
 
 fun Context.toast(text: String?){
+    iLog("toast 为空")
+    text?:return
     toast?.cancel()
-    toast = Toast.makeText(this, text?:"null", Toast.LENGTH_SHORT)
+    toast = Toast.makeText(this, text, Toast.LENGTH_SHORT)
     toast?.show()
 }
 

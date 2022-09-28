@@ -21,7 +21,6 @@ import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.recommend.RecommendBean
-import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
@@ -96,27 +95,22 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         cardSwipeView.adapter=recommendAdapter
         val cardCallback = SlideCardCallback()
         touchHelper = ItemTouchHelper(cardCallback)
-        cardCallback.removeItemAction={
-            if (recommendViewModel.haveMoreRecommend.value==false){
+        cardCallback.removeItemAction={ direction ->
+            if (uploadHeadDialog.showUploadHeadDialog()){
                 recommendAdapter.notifyDataSetChanged()
-                openVip()
             }else{
-                if (uploadHeadDialog.showUploadHeadDialog()){
-                    recommendAdapter.notifyDataSetChanged()
-                }else{
-                    val e=recommendAdapter.removeAt(0)
-                    if (it==ItemTouchHelper.LEFT){
-                        guideActionCompleteHandler(HomeCardAction.leftSlide)
-                        iLog("不喜欢")
-                        disLike(e)
-                    }else if (it==ItemTouchHelper.RIGHT){
-                        guideActionCompleteHandler(HomeCardAction.rightSlide)
-                        iLog("喜欢")
-                        like(e)
-                    }
-                    if (recommendAdapter.getData().isEmpty()){
-                        showView(ViewType.notContent)
-                    }
+                val e=recommendAdapter.getTopItem()
+                if (direction==ItemTouchHelper.LEFT){
+                    guideActionCompleteHandler(HomeCardAction.leftSlide)
+                    iLog("不喜欢")
+                    disLike(e)
+                }else if (direction==ItemTouchHelper.RIGHT){
+                    guideActionCompleteHandler(HomeCardAction.rightSlide)
+                    iLog("喜欢")
+                    like(e)
+                }
+                if (recommendAdapter.getData().isEmpty()){
+                    showView(ViewType.notContent)
                 }
             }
         }
@@ -155,9 +149,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
         Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
-        recommendViewModel.haveMoreRecommend.observe(viewLifecycleOwner) {
-
-        }
     }
 
     private fun showFillInOrOneClickHello(){
@@ -329,9 +320,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }
         recommendAdapter.likeAction={item,view->
-            if (recommendViewModel.haveMoreRecommend.value==false){
-                openVip()
-            }else if(uploadHeadDialog.showUploadHeadDialog()){
+            if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
                 view
@@ -372,9 +361,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }
         recommendAdapter.disLikeAction={item,view->
-            if (recommendViewModel.haveMoreRecommend.value==false){
-                openVip()
-            }else if(uploadHeadDialog.showUploadHeadDialog()){
+            if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
                 view
@@ -500,17 +487,20 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             iLog("引导期间")
             return
         }
-        if (BuildConfig.DEBUG){
-            return
-        }
-        viewLifecycleOwner.lifecycleScope.launch (){
+        lifecycleScope.launch {
             loadingDialog.show()
-            try {
-                recommendViewModel.disLike(item.getId())
-            }catch (e:Exception){
-                toast(e.message)
-            }
+            val t=recommendViewModel.disLike(item.getId())
             loadingDialog.dismiss()
+
+            if (t.code==200){
+                recommendAdapter.remove(item)
+            }else{
+                if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
+                    openVip()
+                }
+                recommendAdapter.notifyDataSetChanged()
+                toast(t.msg)
+            }
         }
     }
 
@@ -522,31 +512,30 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             iLog("引导期间")
             return
         }
-        if (BuildConfig.DEBUG){
-            return
-        }
-        loadingDialog.show()
-        viewLifecycleOwner.lifecycleScope.launch (){
-            try {
-                recommendViewModel.like(item.getId()) {
-                    showView(ViewType.mutual)
-                    Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
-                }
-//                ImMessageManager.sendTextMsg(item.getId().toString(), UserInfo.getGreetText())
-//                toast(str)
-            }catch (e:Exception){
-                e.message?.also {
-                    toast(it)
-                }
+        lifecycleScope.launch {
+            loadingDialog.show()
+            val t=recommendViewModel.like(item.getId()) {
+                showView(ViewType.mutual)
+                Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
             }
             loadingDialog.dismiss()
+
+            if (t.code==200){
+                recommendAdapter.remove(item)
+            }else{
+                if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
+                    openVip()
+                }
+                recommendAdapter.notifyDataSetChanged()
+                toast(t.msg)
+            }
         }
     }
 
     /**
      * 超级喜欢、送花
      */
-    private fun superLike(item: RecommendBean,success:()->Unit){
+    private fun superLike(item: RecommendBean,success: () -> Unit){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
             success.invoke()
@@ -555,15 +544,15 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         SendFlowerDialog.sendFlowerTip(requireContext()){
             viewLifecycleOwner.lifecycleScope.launch (){
                 loadingDialog.show()
-                try {
-                    recommendViewModel.superLike(item.getId()) {
-                        coinInsufficientDialog.show(item.getHeadImg())
+                recommendViewModel.superLike(item.getId()) {
+                    coinInsufficientDialog.show(item.getHeadImg())
+                }.also {
+                    if (it.code==200){
+                        ImMessageManager.sendFlower(item.getId().toString())
+                        success.invoke()
+                    }else{
+                        toast(it.msg)
                     }
-                    ImMessageManager.sendFlower(item.getId().toString())
-                    success.invoke()
-                    toast("送花成功")
-                }catch (e:Exception){
-                    toast(e.message)
                 }
                 loadingDialog.dismiss()
             }

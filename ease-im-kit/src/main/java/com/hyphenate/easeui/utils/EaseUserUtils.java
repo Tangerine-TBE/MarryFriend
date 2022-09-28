@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.hyphenate.chat.EMClient;
 import com.hyphenate.easeui.EaseIM;
 import com.hyphenate.easeui.R;
 import com.hyphenate.easeui.domain.EaseAvatarOptions;
@@ -51,29 +52,75 @@ public class EaseUserUtils {
         if(avatarOptions.getAvatarRadius() != 0)
             imageView.setRadius(avatarOptions.getAvatarRadius());
     }
-    
+
+    private static int manDefHead=R.drawable.ease_default_avatar;
+    private static int womanDefHead=R.drawable.ease_default_avatar;
+    private static int sex=1;
+
+    public static int getSex() {
+        return sex;
+    }
+
+    public static void setSex(int sex) {
+        EaseUserUtils.sex = sex;
+    }
+
+    public static int getManDefHead() {
+        return manDefHead;
+    }
+
+    public static void setManDefHead(int manDefHead) {
+        EaseUserUtils.manDefHead = manDefHead;
+    }
+
+    public static int getWomanDefHead() {
+        return womanDefHead;
+    }
+
+    public static void setWomanDefHead(int womanDefHead) {
+        EaseUserUtils.womanDefHead = womanDefHead;
+    }
+
     /**
      * set user avatar
      * @param username
      */
     public static void setUserAvatar(Context context, String username, ImageView imageView){
     	EaseUser user = getUserInfo(username);
+        int defHead;
+        if (EMClient.getInstance().getCurrentUser().equals(username)){
+            if (sex==1){
+                defHead=manDefHead;
+            }else {
+                defHead=womanDefHead;
+            }
+        }else {
+            if (sex!=1){
+                defHead=manDefHead;
+            }else {
+                defHead=womanDefHead;
+            }
+        }
         if(user != null && user.getAvatar() != null){
             try {
                 int avatarResId = Integer.parseInt(user.getAvatar());
-                Glide.with(context).load(avatarResId).into(imageView);
+                Glide.with(context).load(avatarResId)
+                        .error(defHead)
+                        .placeholder(defHead)
+                        .into(imageView);
             } catch (Exception e) {
                 //use default avatar
-                Glide.with(context).load(user.getAvatar())
-                        .apply(RequestOptions.placeholderOf(R.drawable.ease_default_avatar)
+                Glide.with(context)
+                        .load(user.getAvatar())
+                        .apply(RequestOptions.placeholderOf(defHead)
                                 .diskCacheStrategy(DiskCacheStrategy.ALL))
                         .into(imageView);
             }
         }else{
-            EaseChatItemStyleHelper.getInstance().getAvatarDefaultSrc();
-            Glide.with(context).load(EaseChatItemStyleHelper.getInstance().getAvatarDefaultSrc())
-                    .error(R.drawable.ease_default_avatar)
-                    .placeholder(R.drawable.ease_default_avatar)
+            Glide.with(context)
+                    .load(defHead)
+                    .error(defHead)
+                    .placeholder(defHead)
                     .into(imageView);
         }
     }

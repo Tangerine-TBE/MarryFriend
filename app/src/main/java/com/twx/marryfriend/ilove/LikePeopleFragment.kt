@@ -85,18 +85,19 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
         closeTip.setOnClickListener {
             closeView.visibility=View.GONE
         }
-        likeAdapter.sendFlowerAction={
+        likeAdapter.sendFlowerAction={item->
             if (!uploadHeadDialog.showUploadHeadDialog()){
                 lifecycleScope.launch {
                     loadingDialog.show()
-                    try {
-                        recommendViewModel.superLike(it.guest_uid){
-                            coinInsufficientDialog.show(it.image_url)
+                    recommendViewModel.superLike(item.guest_uid){
+                        coinInsufficientDialog.show(item.image_url)
+                    }.also {
+                        if (it.code==200){
+                            likeViewModel.onSuperLikeChange(item)
+                            toast("送花成功")
+                        }else{
+                            toast(it.msg)
                         }
-                        likeViewModel.onSuperLikeChange(it)
-                        toast("送花成功")
-                    }catch (e:Exception){
-                        toast(e.message)
                     }
                     loadingDialog.dismiss()
                     loadData()
@@ -104,7 +105,7 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
             }
         }
         likeAdapter.itemAction={
-            startActivity(FriendInfoActivity.getIntent(requireContext(),it.guest_uid))
+            startActivity(FriendInfoActivity.getIntent(requireContext(), it.guest_uid))
         }
     }
 }

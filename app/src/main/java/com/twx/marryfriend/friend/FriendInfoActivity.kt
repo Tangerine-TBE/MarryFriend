@@ -23,6 +23,7 @@ import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
@@ -30,6 +31,7 @@ import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
+import com.twx.marryfriend.recommend.RecommendCall
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
@@ -43,16 +45,12 @@ import kotlinx.coroutines.launch
 class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     companion object{
         private const val USER_ID_KEY="user_id_k"
-        private const val IS_SHOW_LIKE="is_show_like"
-        private const val IS_SHOW_DIS_LIKE="is_show_dis_like"
-        fun getIntent(context: Context,userId:Int?,isShowLike:Boolean=false,isShowDisLike:Boolean=false):Intent?{
+        fun getIntent(context: Context, userId: Int?):Intent?{
             if (userId==null){
                 toast(context,"id 不能为空")
                 return null
             }
             val intent=Intent(context,FriendInfoActivity::class.java)
-            intent.putExtra(IS_SHOW_LIKE,isShowLike)
-            intent.putExtra(IS_SHOW_DIS_LIKE, isShowDisLike)
             intent.putExtra(USER_ID_KEY,userId)
             return intent
         }
@@ -64,12 +62,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         }else{
             null
         }
-    }
-    private val isShowLike by lazy {
-        intent?.getBooleanExtra(IS_SHOW_LIKE,false)?:false
-    }
-    private val isShowDisLike by lazy {
-        intent?.getBooleanExtra(IS_SHOW_DIS_LIKE,false)?:false
     }
     private val friendInfoViewModel by lazy {
         ViewModelProvider(this).get(FriendInfoViewModel::class.java)
@@ -141,20 +133,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         Glide.with(myHead).load(UserInfo.getHeadPortrait())
             .placeholder(UserInfo.getUserSex().smallHead)
             .error(UserInfo.getUserSex().smallHead).into(myHead)
-        if (isShowLike){
-            care2.visibility=View.VISIBLE
-            care.visibility=View.VISIBLE
-        }else{
-            care2.visibility=View.GONE
-            care.visibility=View.GONE
-        }
-        if (isShowDisLike){
-            dislike2.visibility=View.VISIBLE
-            dislike.visibility=View.VISIBLE
-        }else{
-            dislike2.visibility=View.GONE
-            dislike.visibility=View.GONE
-        }
     }
 
     override fun onResume() {
@@ -189,6 +167,12 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 dislike.visibility=View.GONE
                 sendFlowers.visibility=View.GONE
                 sendFlowers2.visibility=View.GONE
+            }
+            if (item.isILikeTa()){
+                care2.visibility=View.GONE
+                care.visibility=View.GONE
+                dislike2.visibility=View.GONE
+                dislike.visibility=View.GONE
             }
             sexIcon.setImageResource(item.getUserSex().sexIcon)
             userItem=item
@@ -603,11 +587,15 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     private fun disLike(item: RecommendBean){
         lifecycleScope.launch (){
             loadingDialog.show()
-            try {
-                recommendViewModel.disLike(userId?:return@launch toast("id 为空"))
-            }catch (e:Exception){
-                eLog(e.stackTraceToString())
-                toast(e.message)
+            recommendViewModel.disLike(userId?:return@launch toast("id 为空")).also {
+                if (it.code==200){
+
+                }else{
+                    if (it.code== RecommendCall.RECOMMEND_NOT_HAVE){
+                        startActivity(IntentManager.getVipIntent(this@FriendInfoActivity, vipGif = VipGifEnum.MoreView))
+                    }
+                    toast(it.msg)
+                }
             }
             loadingDialog.dismiss()
         }
@@ -619,19 +607,23 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
     private fun like(item: RecommendBean) {
         loadingDialog.show()
         lifecycleScope.launch (){
-            try {
-                recommendViewModel.otherLike(userId?:return@launch toast("id 为空")){
-                    if (friendViewSwitcher.currentView!=mutualLike){
-                        friendViewSwitcher.showNext()
-                        Glide.with(taHead).load(item.getHeadImg())
-                            .placeholder(item.getUserSex().smallHead)
-                            .placeholder(item.getUserSex().smallHead).into(taHead)
-                    }
+            recommendViewModel.otherLike(userId?:return@launch toast("id 为空")){
+                if (friendViewSwitcher.currentView!=mutualLike){
+                    friendViewSwitcher.showNext()
+                    Glide.with(taHead).load(item.getHeadImg())
+                        .placeholder(item.getUserSex().smallHead)
+                        .placeholder(item.getUserSex().smallHead).into(taHead)
                 }
-                care.isSelected=true
-                care2.isSelected=true
-            }catch (e:Exception){
-                toast(e.message)
+            }.also {t->
+                if (t.code==200){
+                    care.isSelected=true
+                    care2.isSelected=true
+                }else{
+                    if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
+                        startActivity(IntentManager.getVipIntent(this@FriendInfoActivity, vipGif = VipGifEnum.MoreView))
+                    }
+                    toast(t.msg)
+                }
             }
             loadingDialog.dismiss()
         }
@@ -646,13 +638,14 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
         SendFlowerDialog.sendFlowerTip(this){
             lifecycleScope.launch (){
                 loadingDialog.show()
-                try {
-                    recommendViewModel.superLike(userId?:return@launch toast("id 为空")){
-                        coinInsufficientDialog.show()
+                recommendViewModel.superLike(userId?:return@launch toast("id 为空")){
+                    coinInsufficientDialog.show()
+                }.also {
+                    if (it.code==200){
+                        toast("送花成功")
+                    }else{
+                        toast(it.msg)
                     }
-                    toast("送花成功")
-                }catch (e:Exception){
-                    toast(e.message)
                 }
                 loadingDialog.dismiss()
             }

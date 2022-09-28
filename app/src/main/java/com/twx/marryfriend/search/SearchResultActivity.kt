@@ -9,9 +9,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.kingja.loadsir.core.LoadSir
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.message.ChatActivity
+import com.twx.marryfriend.message.ImChatActivity
+import com.twx.marryfriend.recommend.RecommendCall
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -84,28 +88,30 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
     private fun initListener(){
         searchResultAdapter.chatAction={
             val userid=it.user_id
-            if (userid!=null){
-                startActivity(ChatActivity.getIntent(
-                    this,
-                    userid.toString(),
-                    it.isRealName()
-                ))
+            if(UserInfo.isVip()){
+                startActivity(ImChatActivity.getIntent(this,userid.toString(),it.isRealName()))
+            }else{
+                startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Inbox))
             }
         }
         searchResultAdapter.likeAction={item,view->
             lifecycleScope.launch {
-                try {
-                    val isMutualLike=recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空"))
-                    view.isSelected=true
-                    item.like()
-                    toast("喜欢成功")
-                }catch (e:Exception){
-                    toast(e.message?:"喜欢失败")
+                recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空")).also {t->
+                    if (t.code==200){
+                        view.isSelected=true
+                        item.like()
+                        toast("喜欢成功")
+                    }else{
+                        if (t.code== RecommendCall.RECOMMEND_NOT_HAVE){
+                            startActivity(IntentManager.getVipIntent(this@SearchResultActivity, vipGif = VipGifEnum.MoreView))
+                        }
+                        toast(t.msg)
+                    }
                 }
             }
         }
         searchResultAdapter.itemAction={
-            startActivity(FriendInfoActivity.getIntent(this,it.user_id))
+            startActivity(FriendInfoActivity.getIntent(this, it.user_id))
         }
         searchResultRefreshLayout.setOnLoadMoreListener {
             lifecycleScope.launch {

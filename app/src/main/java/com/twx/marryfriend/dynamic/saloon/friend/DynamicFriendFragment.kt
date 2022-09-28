@@ -3,9 +3,7 @@ package com.twx.marryfriend.dynamic.saloon.friend
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.blankj.utilcode.util.ResourceUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.lxj.xpopup.XPopup
@@ -43,7 +40,6 @@ import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.utils.AnimalUtils
 import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.fragment_dynamic_friend.*
-import java.io.Serializable
 import java.util.*
 
 class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCallback,
@@ -170,8 +166,10 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoLikeClickCa
                 }
                 adapter.notifyDataSetChanged()
 
-                startActivity(FriendInfoActivity.getIntent(requireContext(),
-                    mFocusTrendList[position].user_id.toInt()))
+                startActivity(FriendInfoActivity.getIntent(
+                    requireContext(),
+                    mFocusTrendList[position].user_id.toInt()
+                ))
 
             }
         })

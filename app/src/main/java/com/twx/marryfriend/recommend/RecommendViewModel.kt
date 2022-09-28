@@ -25,7 +25,6 @@ import kotlin.coroutines.suspendCoroutine
 
 class RecommendViewModel():ViewModel() {
     private var preDisLike=0
-    val haveMoreRecommend=MutableLiveData<Boolean>()
     private var countDownTimer:CountDownTimer?=null
     val countDownTimerLiveData=MutableLiveData<String>()
     private val numberFormat by lazy {
@@ -154,7 +153,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun disLike(guest_uid: Int)=suspendCoroutine<Unit>{ coroutine->
+    suspend fun disLike(guest_uid: Int)=suspendCoroutine<RecommendCall>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -164,24 +163,26 @@ class RecommendViewModel():ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
-                if (jsonObject.getInt("code")==200) {
+                val code=jsonObject.getInt("code")
+                if (code==432){
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_NOT_HAVE,jsonObject.getString("msg")))
+                }else if (code==200) {
                     preDisLike=guest_uid
-                    coroutine.resume(Unit)
+                    coroutine.resume(RecommendCall())
                 }else{
-                    coroutine.resumeWithException(Exception(response))
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,jsonObject.getString("msg")))
                 }
             }catch (e:Exception){
-                coroutine.resumeWithException(Exception("转换失败:${response}"))
+                coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,"转换失败,${response}"))
             }
         },{
-            coroutine.resumeWithException(Exception(it))
+            coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,it))
         })
     }
 
     suspend fun like(
         guest_uid: Int,
-        mutualLikeAction: (() -> Unit)? = null
-    )=suspendCoroutine<Unit>{ coroutine->
+        mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -191,27 +192,32 @@ class RecommendViewModel():ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
-                if (jsonObject.getInt("code")==200) {
-                    val code=jsonObject.getJSONArray("data").getInt(0)
-                    if (code==2){
+                val code=jsonObject.getInt("code")
+                if (code==432){
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_NOT_HAVE,jsonObject.getString("msg")))
+                }else if (jsonObject.getInt("code")==200) {
+                    val mCode=jsonObject.getJSONArray("data").getInt(0)
+                    if (mCode==2){
                         mutualLikeAction?.invoke()
                     }
-                    iLog("返回的状态code:${code},2为相互喜欢")
-                    coroutine.resume(Unit)
+                    iLog("返回的状态code:${mCode},2为相互喜欢")
+                    coroutine.resume(RecommendCall())
                 }else if(jsonObject.getInt("code")==444){
-                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,jsonObject.getString("msg")))
                 }else{
-                    coroutine.resumeWithException(Exception(response))
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,response))
                 }
             }catch (e:Exception){
-                coroutine.resumeWithException(Exception("转换失败:${response}"))
+                coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,response))
             }
         },{
-            coroutine.resumeWithException(Exception(it))
+            coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,it))
         })
     }
 
-    suspend fun otherLike(guest_uid: Int,mutualLikeAction:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
+    suspend fun otherLike(
+        guest_uid: Int,
+        mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -220,29 +226,30 @@ class RecommendViewModel():ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
-                if (jsonObject.getInt("code")==200) {
-                    val code=jsonObject.getJSONArray("data").getInt(0)
-                    if (code==2){
+                val code=jsonObject.getInt("code")
+                if (code==432){
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_NOT_HAVE,jsonObject.getString("msg")))
+                }else if (jsonObject.getInt("code")==200) {
+                    val mCode=jsonObject.getJSONArray("data").getInt(0)
+                    if (mCode==2){
                         mutualLikeAction?.invoke()
                     }
-                    iLog("返回的状态code:${code},2为相互喜欢")
-                    coroutine.resume(Unit)
+                    iLog("返回的状态code:${mCode},2为相互喜欢")
+                    coroutine.resume(RecommendCall())
                 }else if(jsonObject.getInt("code")==444){
-                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
-                }else if(jsonObject.getInt("code")==484){
-                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,jsonObject.getString("msg")))
                 }else{
-                    coroutine.resumeWithException(Exception(response))
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,response))
                 }
             }catch (e:Exception){
-                coroutine.resumeWithException(Exception("转换失败:${response}"))
+                coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,response))
             }
         },{
-            coroutine.resumeWithException(Exception(it))
+            coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,it))
         })
     }
 
-    suspend fun superLike(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<Unit>{coroutine->
+    suspend fun superLike(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<RecommendCall>{coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusChaojiXihuanOther"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -251,8 +258,11 @@ class RecommendViewModel():ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
-                if (jsonObject.getInt("code")==200) {
-                    coroutine.resume(Unit)
+                val code=jsonObject.getInt("code")
+                if (code==432){
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_NOT_HAVE,jsonObject.getString("msg")))
+                }else if (code==200) {
+                    coroutine.resume(RecommendCall())
                 }else{
                     val tip=try {
                         jsonObject.getString("msg")
@@ -260,19 +270,19 @@ class RecommendViewModel():ViewModel() {
                         response
                     }
                     try {
-                        if (jsonObject.getInt("code")==444){
+                        if (code==444){
                             coinInsufficient?.invoke()
                         }
                     }catch (e:Exception){
                         wLog(e.stackTraceToString())
                     }
-                    coroutine.resumeWithException(Exception(tip))
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,tip))
                 }
             }catch (e:Exception){
-                coroutine.resumeWithException(Exception("转换失败:${response}"))
+                coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,response))
             }
         },{
-            coroutine.resumeWithException(Exception(it))
+            coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,it))
         })
     }
 

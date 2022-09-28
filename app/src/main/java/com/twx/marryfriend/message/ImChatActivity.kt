@@ -3,11 +3,9 @@ package com.twx.marryfriend.message
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.hyphenate.chat.EMClient
 import com.hyphenate.easeim.DemoHelper
 import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.section.chat.activity.ChatActivity
@@ -15,14 +13,8 @@ import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.constants.EaseConstant
 import com.message.ImUserInfoService
 import com.twx.marryfriend.ImHelper
-import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
-import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.dialog.ChatSettingDialog
-import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.vip.VipActivity
-import com.xyzz.myutils.createDialog
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.launch
 
@@ -52,10 +44,10 @@ class ImChatActivity: ChatActivity() {
         ImHelper.getUserInfo(conversationId?:return@lazy false)?.isRealName?:false
     }
     private val friendRealName by lazy {
-        findViewById<View>(R.id.friendRealName)
+        findViewById<View>(com.hyphenate.easeim.R.id.friendRealName)
     }
     private val chatSetting by lazy {
-        findViewById<View>(R.id.chatSetting)
+        findViewById<View>(com.hyphenate.easeim.R.id.chatSetting)
     }
     private val imChatViewModel by lazy {
         ViewModelProvider(this).get(ImChatViewModel::class.java)
