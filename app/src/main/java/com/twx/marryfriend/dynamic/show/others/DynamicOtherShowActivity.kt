@@ -1841,8 +1841,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
     override fun onItemAvatarClick(v: View?, positionOne: Int) {
         // 父评论点击头像
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].list.one_level_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].list.one_level_uid
+        ))
     }
 
     override fun onItemContentClick(v: View?, positionOne: Int) {
@@ -1886,8 +1888,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     }
 
     override fun onItemChildAvatarClick(v: View?, positionOne: Int) {
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].list.two_last_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].list.two_last_uid
+        ))
     }
 
     override fun onItemChildContentClick(v: View?, positionOne: Int) {
@@ -1931,8 +1935,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun onChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].twoList[two].two_last_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].twoList[two].two_last_uid
+        ))
     }
 
     override fun onChildReplyClick(positionOne: Int, two: Int) {
@@ -1971,8 +1977,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
         ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].twoList[two].two_first_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].twoList[two].two_first_uid
+        ))
     }
 
     override fun onLocalChildClick(positionOne: Int, two: Int) {
@@ -1983,8 +1991,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun onLocalChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].twoLocalList[two].two_last_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].twoLocalList[two].two_last_uid
+        ))
     }
 
     override fun onLocalChildReplyClick(positionOne: Int, two: Int) {
@@ -2024,8 +2034,10 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
     override fun onLocalChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
         ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(this,
-            mCommentOneList[positionOne].twoLocalList[two].two_first_uid))
+        startActivity(FriendInfoActivity.getIntent(
+            this,
+            mCommentOneList[positionOne].twoLocalList[two].two_first_uid
+        ))
     }
 
     override fun onItemLongClick(v: View?, positionOne: Int) {

@@ -2,7 +2,6 @@ package com.twx.marryfriend.mine.focus.mine
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,19 +11,15 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
-import com.twx.marryfriend.bean.mine.DiscussList
 import com.twx.marryfriend.bean.mine.WhoFocusMeBean
 import com.twx.marryfriend.bean.mine.WhoFocusMeList
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.mine.comment.RecentCommentAdapter
-import com.twx.marryfriend.mine.comment.mine.CommentMineFragment
 import com.twx.marryfriend.net.callback.mine.IGetWhoFocusMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoFocusMePresentImpl
 import com.twx.marryfriend.vip.VipActivity
-import kotlinx.android.synthetic.main.fragment_comment_mine.*
 import kotlinx.android.synthetic.main.fragment_focus_mine.*
 import java.util.*
 
@@ -155,8 +150,10 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 2) {
             startActivity(context?.let {
-                FriendInfoActivity.getIntent(it,
-                    mList[position].host_uid)
+                FriendInfoActivity.getIntent(
+                    it,
+                    mList[position].host_uid
+                )
             })
         } else {
             startActivity(context?.let { VipActivity.getSVipIntent(it,0,SVipGifEnum.FocusMe) })

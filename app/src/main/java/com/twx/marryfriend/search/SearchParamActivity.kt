@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.City
 import com.twx.marryfriend.bean.Province
@@ -15,6 +16,7 @@ import com.twx.marryfriend.enumeration.*
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.coroutines.launch
 
 class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
     private val searchViewModel by lazy {
@@ -209,10 +211,8 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
         }
     }
 
-    private val cityData by lazy {
-        getCityData()?.data?.map {
-            Pair(it, it.child)
-        }
+    private var cityData =getCityData()?.data?.map {
+        Pair(it, it.child)
     }
     //工作地区
     private var currentWorkplaceList:List<Pair<Province, City>>?=null
@@ -323,6 +323,25 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
         initListener()
     }
 
+    private fun exeNeedCityData(action:()->Unit){
+        if (cityData!=null){
+            action.invoke()
+            return
+        }
+        lifecycleScope.launch {
+            loadingDialog.show()
+            try {
+                cityData= getCityDataTryFromNet().data.map {
+                    Pair(it, it.child)
+                }
+            }catch (e:Exception){
+                toast(e.message)
+            }
+            loadingDialog.dismiss()
+            action.invoke()
+        }
+    }
+
     private fun initListener(){
         ageReset.setOnClickListener {
             ageRange=null
@@ -353,6 +372,9 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
                     it
                 }
             }
+        }
+        ageSetValue.post {
+            ageSetValue.setProgress(0f,(35f-SearchViewModel.MIN_AGE)/(SearchViewModel.MAX_AGE-SearchViewModel.MIN_AGE))
         }
         heightSetValue.rangeCall={first,last->
             heightRange= IntRange(SearchViewModel.MIN_HEIGHT+(first*(SearchViewModel.MAX_HEIGHT-SearchViewModel.MIN_HEIGHT)+0.5f).toInt(),
@@ -401,8 +423,13 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             if (isInterceptSeniorFun()){
                 return@setOnClickListener
             }
-            occupationDialog?:return@setOnClickListener toast("获取城市数据失败")
-            workPlaceDialog?.show()
+            exeNeedCityData {
+                if (workPlaceDialog!=null){
+                    workPlaceDialog?.show()
+                }else{
+                    toast("获取城市数据失败")
+                }
+            }
         }
         occupation.setOnClickListener {
             if (isInterceptSeniorFun()){
@@ -415,8 +442,13 @@ class SearchParamActivity:AppCompatActivity(R.layout.activity_search) {
             if (isInterceptSeniorFun()){
                 return@setOnClickListener
             }
-            nativePlaceDialog?:return@setOnClickListener toast("获取城市数据失败")
-            nativePlaceDialog?.show()
+            exeNeedCityData {
+                if (nativePlaceDialog!=null){
+                    nativePlaceDialog?.show()
+                }else{
+                    toast("获取城市数据失败")
+                }
+            }
         }
         housing.setOnClickListener {
             if (isInterceptSeniorFun()){

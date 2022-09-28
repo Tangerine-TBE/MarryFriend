@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.Glide
 import com.message.ImMessageManager
-import com.message.chat.SendFlowerMessage
 import com.message.chat.VoiceMessage
 import com.twx.marryfriend.BR
 import com.twx.marryfriend.R
@@ -44,7 +43,10 @@ class ChatVoiceItemView @JvmOverloads constructor(context: Context, attributeSet
 
     private fun initListener(){
         findViewById<View>(R.id.userHead).setOnClickListener {
-            context.startActivity(FriendInfoActivity.getIntent(context,chatItemModel?.data?.from?.toIntOrNull()?:return@setOnClickListener))
+            context.startActivity(FriendInfoActivity.getIntent(
+                context,
+                chatItemModel?.data?.from?.toIntOrNull()?:return@setOnClickListener
+            ))
         }
         findViewById<View>(R.id.playVoice).setOnClickListener {
             val uri=chatItemModel?.data?.uri

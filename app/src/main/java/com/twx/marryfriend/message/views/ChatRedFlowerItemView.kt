@@ -40,7 +40,10 @@ class ChatRedFlowerItemView @JvmOverloads constructor(context: Context, attribut
 
     private fun initListener(){
         findViewById<View>(R.id.userHead).setOnClickListener {
-            context.startActivity(FriendInfoActivity.getIntent(context,chatItemModel?.data?.from?.toIntOrNull()?:return@setOnClickListener))
+            context.startActivity(FriendInfoActivity.getIntent(
+                context,
+                chatItemModel?.data?.from?.toIntOrNull()?:return@setOnClickListener
+            ))
         }
     }
 

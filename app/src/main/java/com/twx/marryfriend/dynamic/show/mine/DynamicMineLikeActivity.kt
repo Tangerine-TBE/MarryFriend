@@ -14,7 +14,6 @@ import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.net.callback.dynamic.IGetLikeListCallback
 import com.twx.marryfriend.net.impl.dynamic.getLikeListPresentImpl
 import kotlinx.android.synthetic.main.activity_dynamic_mine_like.*
-import kotlinx.android.synthetic.main.activity_my_dynamic.*
 import java.util.*
 
 class DynamicMineLikeActivity : MainBaseViewActivity(),
@@ -94,8 +93,10 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
 
         adapter.setOnItemClickListener(object : DynamicMineLikeAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                startActivity(FriendInfoActivity.getIntent(this@DynamicMineLikeActivity,
-                    mLikeList[position].guest_uid))
+                startActivity(FriendInfoActivity.getIntent(
+                    this@DynamicMineLikeActivity,
+                    mLikeList[position].guest_uid
+                ))
             }
         })
 

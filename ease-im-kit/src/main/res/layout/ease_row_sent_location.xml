@@ -60,15 +60,9 @@
                 android:textColor="#ff999999" />
 
             <RelativeLayout
+                android:background="@mipmap/ic_map_message_bg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginTop="26dp"
-                    android:src="@drawable/ease_chat_location"
-                    android:layout_centerInParent="true"/>
 
             </RelativeLayout>
 

@@ -161,8 +161,10 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
             startActivity(context?.let { VipActivity.getVipIntent(it,0,VipGifEnum.SeeMe) })
         } else {
             startActivity(context?.let {
-                FriendInfoActivity.getIntent(it,
-                    mList[position].host_uid)
+                FriendInfoActivity.getIntent(
+                    it,
+                    mList[position].host_uid
+                )
             })
         }
 

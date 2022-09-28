@@ -4,17 +4,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.bumptech.glide.Glide
 import com.message.chat.ImageMessage
-import com.message.chat.TxtMessage
 import com.twx.marryfriend.BR
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.databinding.*
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.model.ChatItemModel
 
@@ -44,7 +41,10 @@ class ChatImageMsgItemView @JvmOverloads constructor(context: Context, attribute
 
     private fun initListener(){
         findViewById<View>(R.id.userHead).setOnClickListener {
-            context.startActivity(FriendInfoActivity.getIntent(context,chatItemModel?.data?.from?.toIntOrNull()?:return@setOnClickListener))
+            context.startActivity(FriendInfoActivity.getIntent(
+                context,
+                chatItemModel?.data?.from?.toIntOrNull()?:return@setOnClickListener
+            ))
         }
     }
 

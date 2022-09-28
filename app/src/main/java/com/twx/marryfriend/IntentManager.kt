@@ -29,11 +29,11 @@ import kotlin.coroutines.suspendCoroutine
 
 object IntentManager {
     fun getSuperVipIntent(context: Context,pId:String?=null,sVipGifEnum: SVipGifEnum?=null):Intent{
-        return VipActivity.getSVipIntent(context)
+        return VipActivity.getSVipIntent(context,id=pId?.toIntOrNull()?:0,SVip=sVipGifEnum)
     }
 
     fun getVipIntent(context: Context,pId:String?=null,vipGif: VipGifEnum?=null):Intent{
-        return VipActivity.getVipIntent(context)
+        return VipActivity.getVipIntent(context,id=pId?.toIntOrNull()?:0,vip=vipGif)
     }
 
     fun getReportIntent(context: Context,id:Int):Intent?{

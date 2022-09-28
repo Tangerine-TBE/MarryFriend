@@ -54,7 +54,10 @@ class ChatSettingDialog(context: Context,private val conversationId:String): Dia
             dismiss()
         }
         seeTaInfo.setOnClickListener {
-            context.startActivity(FriendInfoActivity.getIntent(context,conversationId.toIntOrNull()?:return@setOnClickListener))
+            context.startActivity(FriendInfoActivity.getIntent(
+                context,
+                conversationId.toIntOrNull()?:return@setOnClickListener
+            ))
             dismiss()
         }
         if (conversationInfo.isTop){

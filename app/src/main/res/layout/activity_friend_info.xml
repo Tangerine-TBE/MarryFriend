@@ -852,8 +852,6 @@
                         android:layout_height="58dp"/>
                     <ImageView
                         android:id="@+id/dislike2"
-                        android:visibility="gone"
-                        tools:visibility="gone"
                         android:layout_marginTop="24dp"
                         android:src="@mipmap/ic_item_dislike"
                         android:layout_width="58dp"

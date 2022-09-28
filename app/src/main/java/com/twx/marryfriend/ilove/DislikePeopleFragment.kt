@@ -100,7 +100,7 @@ class DislikePeopleFragment:Fragment(R.layout.fragment_dis_like_people) {
             }
         }
         dislikeAdapter.itemAction={
-            startActivity(FriendInfoActivity.getIntent(requireContext(),it.guest_uid))
+            startActivity(FriendInfoActivity.getIntent(requireContext(), it.guest_uid))
         }
     }
 }

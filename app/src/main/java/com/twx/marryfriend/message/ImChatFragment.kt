@@ -174,16 +174,32 @@ class ImChatFragment: ChatFragment() {
             try {
                 recommendViewModel.superLike(conversationId?.toIntOrNull()?:return@launch){
                     coinInsufficientDialog.show()
+                }.also {
+                    if (it.code==200){
+                        super.onClickSendFlower()
+                    }else{
+                        toast(it.msg)
+                    }
                 }
-                super.onClickSendFlower()
             }catch (e:Exception){
                 toast(e.message)
             }
         }
     }
 
+    override fun onChatExtendMenuItemClick(view: View, itemId: Int) {
+        if (itemId==com.hyphenate.easeui.R.id.extend_item_location){
+            if (ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
+                toast("发送位置需要位置权限")
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION),123)
+                return
+            }
+        }
+        super.onChatExtendMenuItemClick(view, itemId)
+    }
+
     override fun onUserAvatarClick(username: String) {
-        startActivity(FriendInfoActivity.getIntent(requireContext(),username.toIntOrNull()?:return))
+        startActivity(FriendInfoActivity.getIntent(requireContext(), username.toIntOrNull()?:return))
     }
 
     override fun getAvatarDefaultSrc(): Drawable? {

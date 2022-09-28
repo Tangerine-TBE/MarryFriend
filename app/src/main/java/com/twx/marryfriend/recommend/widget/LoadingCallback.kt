@@ -22,7 +22,11 @@ class LoadingCallback: Callback() {
         super.onViewCreate(context, view)
         val scx=6f
         view?.apply {
-            Glide.with(userHeadImage).load(UserInfo.getHeadPortrait()).into(userHeadImage)
+            Glide.with(userHeadImage)
+                .load(UserInfo.getHeadPortrait())
+                .placeholder(UserInfo.getUserSex().smallHead)
+                .error(UserInfo.getUserSex().smallHead)
+                .into(userHeadImage)
             valueAnimator?.addUpdateListener {
                 view1.scaleX=view1.scaleX.let {sx->
                     (sx+0.02f)%scx

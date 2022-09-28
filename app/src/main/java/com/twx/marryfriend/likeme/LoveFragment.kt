@@ -106,10 +106,10 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
             if (!UserInfo.isVip()) {
                 startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.LoveMe))
             } else {
-                startActivity(FriendInfoActivity.getIntent(requireContext(),
-                    it.host_uid,
-                    true,
-                    true))
+                startActivity(FriendInfoActivity.getIntent(
+                    requireContext(),
+                    it.host_uid
+                ))
             }
         }
         if (UserInfo.isVip()) {
