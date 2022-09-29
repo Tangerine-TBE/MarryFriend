@@ -1,7 +1,6 @@
 package com.message
 
 import android.net.Uri
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.hyphenate.EMConversationListener
 import com.hyphenate.EMMessageListener
@@ -18,23 +17,18 @@ import com.xyzz.myutils.show.iLog
 //http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
 
-    val newMessageLiveData=MutableLiveData<List<Message<out EMMessageBody>>?>()//收到新消息
+    val newMessageLiveData=MutableLiveData<List<EMMessage>?>()//收到新消息
     private val fromConversationRead=MutableLiveData<String>()
     private val messageRead=MutableLiveData<List<EMMessage>>()
 
     private val messageDelivered=MutableLiveData< MutableList<EMMessage>?>()
-
-    fun observeNewMessage(owner: LifecycleOwner,observer: Observer<List<Message<out EMMessageBody>>?>){
-        newMessageLiveData.value=null
-        newMessageLiveData.observe(owner,observer)
-    }
 
     private val msgListener by lazy {
         object : EMMessageListener {
             override fun onMessageReceived(messages: MutableList<EMMessage>?) {
                 //收到消息
                 iLog(messages?.firstOrNull()?.from,"收到消息,收到")
-                newMessageLiveData.postValue(messages?.mapNotNull { Message.toMyMessage(it) })
+                newMessageLiveData.postValue(messages)
             }
 
             override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
@@ -121,7 +115,7 @@ object ImMessageManager {
         return conversationsBeanList
     }
 
-    fun getHistoryMessage(toChatUsername: String, pageSize: Int, msgId: String? = null):List<Message<out EMMessageBody>>{
+    fun getHistoryMessage(toChatUsername: String, pageSize: Int, msgId: String? = null):List<EMMessage>{
         val resultList=ArrayList<EMMessage>()
         try {
             val conversation = EMClient.getInstance().chatManager().getConversation(toChatUsername)?:return emptyList()
@@ -192,7 +186,7 @@ object ImMessageManager {
         EMClient.getInstance().chatManager().updateMessage(msg)
     }
 
-    fun sendTextMsg(username: String,content:String):Message<out EMMessageBody>?{
+    fun sendTextMsg(username: String,content:String):EMMessage?{
         iLog("发送\"${content}\"给${username}")
         //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
         val message = EMMessage.createTxtSendMessage(content, username)
@@ -206,19 +200,19 @@ object ImMessageManager {
         return message
     }
 
-    fun sendImageMsg(username: String,uri: Uri):Message<out EMMessageBody>?{
+    fun sendImageMsg(username: String,uri: Uri):EMMessage?{
         val message=EMMessage.createImageSendMessage(uri,true,username)
         EMClient.getInstance().chatManager().sendMessage(message)
         return message
     }
 
-    fun sendImageMsg(username: String,file: String):Message<out EMMessageBody>?{
+    fun sendImageMsg(username: String,file: String):EMMessage?{
         val message=EMMessage.createImageSendMessage(file,true,username)
         EMClient.getInstance().chatManager().sendMessage(message)
         return message
     }
 
-    fun sendVoiceMsg(username: String,voiceUri:Uri,length:Int):Message<out EMMessageBody>?{
+    fun sendVoiceMsg(username: String,voiceUri:Uri,length:Int):EMMessage?{
         //voiceUri 为语音文件本地资源标志符，length 为录音时间(秒)
         val message = EMMessage.createVoiceSendMessage(voiceUri, length, username)
 //如果是群聊，设置 chattype，默认是单聊
@@ -227,7 +221,7 @@ object ImMessageManager {
         return message
     }
 
-    fun sendFlower(username: String):Message<out EMMessageBody>?{
+    fun sendFlower(username: String):EMMessage?{
         val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
 // event为需要传递的自定义消息事件，比如礼物消息，可以设置event = "gift"
         val customBody = EMCustomMessageBody(CustomEvent.flower.code)
@@ -242,7 +236,7 @@ object ImMessageManager {
         return customMessage
     }
 
-    fun getCustomMessage(username: String, type:CustomMessage.CustomEvent):EMMessage?{
+    fun getCustomMessage(username: String, type: CustomEvent):EMMessage?{
         val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
         val customBody = EMCustomMessageBody(type.code)
         customMessage.addBody(customBody)

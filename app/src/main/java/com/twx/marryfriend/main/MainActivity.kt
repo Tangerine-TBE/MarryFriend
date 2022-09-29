@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
@@ -20,14 +22,12 @@ import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
-import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
-import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
@@ -35,6 +35,7 @@ import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.likeme.LoveFragment
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
+import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.like.RecentLikeActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
@@ -44,7 +45,6 @@ import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
-import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -52,7 +52,6 @@ import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
-import com.xyzz.myutils.show.iLog
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import org.android.agoo.huawei.HuaWeiRegister
