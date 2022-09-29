@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 class ImConversationFragment: ConversationListFragment() {
     companion object{
         const val MY_HELPER_ID="小秘书"//小秘书id
+        const val LINE_SERVICE="1"
     }
     private val viewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)

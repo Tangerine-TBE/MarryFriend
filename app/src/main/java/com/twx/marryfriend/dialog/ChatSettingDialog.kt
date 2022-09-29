@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
+import android.widget.TextView
 import com.hyphenate.chat.EMClient
 import com.hyphenate.easeui.modules.conversation.model.EaseConversationInfo
 import com.hyphenate.easeui.utils.EaseCommonUtils
@@ -14,6 +15,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.dialog_chat_setting.*
 
 class ChatSettingDialog(context: Context,private val conversationId:String): Dialog(context) {
@@ -71,10 +73,12 @@ class ChatSettingDialog(context: Context,private val conversationId:String): Dia
                     setTop.text="置顶"
                     conversationInfo.isTop=false
                     emConversation.extField=""
+                    toast(context,"取消置顶成功")
                 }else{
                     setTop.text="取消置顶"
                     conversationInfo.isTop=true
                     emConversation.extField=System.currentTimeMillis().toString()
+                    toast(context,"置顶成功")
                 }
             }else{
                 context.startActivity(IntentManager.getSuperVipIntent(context, sVipGifEnum = SVipGifEnum.TopMessage))
@@ -85,6 +89,10 @@ class ChatSettingDialog(context: Context,private val conversationId:String): Dia
             dismiss()
             context.startActivity(IntentManager.getReportIntent(context,conversationId?.toIntOrNull()?:return@setOnClickListener))
         }
+    }
+
+    fun getBlockFriendText():TextView{
+        return blockFriends
     }
 
     fun setBlockFriendsListener(action:()->Unit){
