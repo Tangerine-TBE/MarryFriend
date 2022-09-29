@@ -444,10 +444,19 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 iv_life_photo_pic_one_icon.visibility = View.GONE
             }
 
-            if (mLifeFirstState == "0") {
-                tv_life_photo_pic_one_audit.visibility = View.VISIBLE
-            } else {
-                tv_life_photo_pic_one_audit.visibility = View.GONE
+
+            when (mLifeFirstState) {
+                "0" -> {
+                    tv_life_photo_pic_one_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_one_audit.text = "审核中..."
+                }
+                "1" -> {
+                    tv_life_photo_pic_one_audit.visibility = View.GONE
+                }
+                "2" -> {
+                    tv_life_photo_pic_one_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_one_audit.text = "审核拒绝"
+                }
             }
 
         }
@@ -465,10 +474,18 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 iv_life_photo_pic_two_icon.visibility = View.GONE
             }
 
-            if (mLifeSecondState == "0") {
-                tv_life_photo_pic_two_audit.visibility = View.VISIBLE
-            } else {
-                tv_life_photo_pic_two_audit.visibility = View.GONE
+            when (mLifeSecondState) {
+                "0" -> {
+                    tv_life_photo_pic_two_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_two_audit.text = "审核中..."
+                }
+                "1" -> {
+                    tv_life_photo_pic_two_audit.visibility = View.GONE
+                }
+                "2" -> {
+                    tv_life_photo_pic_two_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_two_audit.text = "审核拒绝"
+                }
             }
 
         }
@@ -486,10 +503,18 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 iv_life_photo_pic_three_icon.visibility = View.GONE
             }
 
-            if (mLifeThirdState == "0") {
-                tv_life_photo_pic_three_audit.visibility = View.VISIBLE
-            } else {
-                tv_life_photo_pic_three_audit.visibility = View.GONE
+            when (mLifeThirdState) {
+                "0" -> {
+                    tv_life_photo_pic_three_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_three_audit.text = "审核中..."
+                }
+                "1" -> {
+                    tv_life_photo_pic_three_audit.visibility = View.GONE
+                }
+                "2" -> {
+                    tv_life_photo_pic_three_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_three_audit.text = "审核拒绝"
+                }
             }
 
         }
@@ -507,11 +532,20 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 iv_life_photo_pic_four_icon.visibility = View.GONE
             }
 
-            if (mLifeFourState == "0") {
-                tv_life_photo_pic_four_audit.visibility = View.VISIBLE
-            } else {
-                tv_life_photo_pic_four_audit.visibility = View.GONE
+            when (mLifeFourState) {
+                "0" -> {
+                    tv_life_photo_pic_four_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_four_audit.text = "审核中..."
+                }
+                "1" -> {
+                    tv_life_photo_pic_four_audit.visibility = View.GONE
+                }
+                "2" -> {
+                    tv_life_photo_pic_four_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_four_audit.text = "审核拒绝"
+                }
             }
+
 
         }
 
@@ -529,10 +563,19 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 iv_life_photo_pic_five_icon.visibility = View.GONE
             }
 
-            if (mLifeFiveState == "0") {
-                tv_life_photo_pic_five_audit.visibility = View.VISIBLE
-            } else {
-                tv_life_photo_pic_five_audit.visibility = View.GONE
+            when (mLifeFiveState) {
+                "0" -> {
+                    tv_life_photo_pic_five_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_five_audit.text = "审核中..."
+                }
+                "1" -> {
+                    tv_life_photo_pic_five_audit.visibility = View.GONE
+                }
+                "2" -> {
+                    tv_life_photo_pic_five_audit.visibility = View.VISIBLE
+                    tv_life_photo_pic_five_audit.text = "审核拒绝"
+                }
+
             }
 
         }
@@ -599,6 +642,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                         mLifeFirstState = "0"
                         tv_life_photo_pic_one_audit.visibility = View.VISIBLE
+                        tv_life_photo_pic_one_audit.text = "审核中..."
 
                         nsv_life_photo_default.visibility = View.GONE
                         nsv_life_photo_pic.visibility = View.VISIBLE
@@ -633,6 +677,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                         mLifeSecondState = "0"
                         tv_life_photo_pic_two_audit.visibility = View.VISIBLE
+                        tv_life_photo_pic_two_audit.text = "审核中..."
 
                         rl_life_photo_pic_two.visibility = View.VISIBLE
 
@@ -662,6 +707,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                         mLifeThirdState = "0"
                         tv_life_photo_pic_three_audit.visibility = View.VISIBLE
+                        tv_life_photo_pic_three_audit.text = "审核中..."
 
                         rl_life_photo_pic_three.visibility = View.VISIBLE
 
@@ -691,6 +737,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                         mLifeFourState = "0"
                         tv_life_photo_pic_four_audit.visibility = View.VISIBLE
+                        tv_life_photo_pic_four_audit.text = "审核中..."
 
                         rl_life_photo_pic_four.visibility = View.VISIBLE
 
@@ -720,6 +767,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                         mLifeFiveState = "0"
                         tv_life_photo_pic_five_audit.visibility = View.VISIBLE
+                        tv_life_photo_pic_five_audit.text = "审核中..."
 
                         rl_life_photo_pic_five.visibility = View.VISIBLE
                         rl_life_photo_pic_more.visibility = View.GONE

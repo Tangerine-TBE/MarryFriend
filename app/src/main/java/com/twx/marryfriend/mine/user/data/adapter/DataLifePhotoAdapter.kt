@@ -43,7 +43,8 @@ class DataLifePhotoAdapter(private val mList: MutableList<DataLifeBean>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_detail_data_life, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.layout_detail_data_life, parent, false)
         mContext = parent.context
         view.setOnClickListener(this)
         return ViewHolder(view)
@@ -58,10 +59,18 @@ class DataLifePhotoAdapter(private val mList: MutableList<DataLifeBean>) :
             .placeholder(R.drawable.ic_data_life_default)
             .into(holder.iv)
 
-        if (mList[position].ImageState == "0") {
-            holder.tv.visibility = View.VISIBLE
-        } else {
-            holder.tv.visibility = View.GONE
+        when (mList[position].ImageState) {
+            "0" -> {
+                holder.tv.visibility = View.VISIBLE
+                holder.tv.text = "审核中..."
+            }
+            "1" -> {
+                holder.tv.visibility = View.GONE
+            }
+            "2" -> {
+                holder.tv.visibility = View.VISIBLE
+                holder.tv.text = "审核拒绝"
+            }
         }
 
     }
