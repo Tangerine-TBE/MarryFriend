@@ -2,14 +2,14 @@ package com.message.custom
 
 import android.view.View
 import com.hyphenate.chat.EMMessage
-import com.message.chat.CustomMessage
+import com.message.chat.CustomEvent
 
 object ImCustomEventListenerManager {
     private val listener by lazy {
         ArrayList<IImEventListener>()
     }
 
-    fun click(view: View,event: CustomMessage.CustomEvent,emMessage: EMMessage){
+    fun click(view: View, event: CustomEvent, emMessage: EMMessage){
         listener.forEach {
             it.click(view, event,emMessage)
         }

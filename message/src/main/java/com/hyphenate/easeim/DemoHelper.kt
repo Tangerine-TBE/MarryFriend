@@ -56,10 +56,7 @@ import com.hyphenate.push.EMPushType
 import com.hyphenate.push.PushListener
 import com.hyphenate.util.EMLog
 import com.message.ImUserInfoService
-import com.message.custom.FlowerAdapterDelegate
-import com.message.custom.OpenVipAdapterDelegate
-import com.message.custom.SecurityTipAdapterDelegate
-import com.message.custom.UploadHeadAdapterDelegate
+import com.message.custom.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -164,7 +161,7 @@ class DemoHelper private constructor() {
     private fun registerConversationType() {
         Log.i("myLog", "注册对话类型")
         EaseMessageTypeSetManager.getInstance()
-
+            .addMessageType(MyHelperAdapterDelegate::class.java)//小助手
             .addMessageType(FlowerAdapterDelegate::class.java)//送花
             .addMessageType(SecurityTipAdapterDelegate::class.java)//安全提示
             .addMessageType(UploadHeadAdapterDelegate::class.java)//提示传头像

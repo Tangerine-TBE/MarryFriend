@@ -16,12 +16,8 @@ import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.toMd5
 
 object ImLoginHelper {
-
     private val mFragmentViewModel by lazy {
         LoginFragmentViewModel(ImInit.application)
-    }
-    private val splashViewModel: SplashViewModel by lazy {
-        SplashViewModel(ImInit.application)
     }
     private var success:((EaseUser?)->Unit)?=null
     private var error:((Int,String)->Unit)?=null

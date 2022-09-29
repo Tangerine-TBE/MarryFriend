@@ -45,8 +45,6 @@ import com.hyphenate.easeui.constants.EaseConstant
 import com.hyphenate.easeui.domain.EaseUser
 import com.hyphenate.easeui.model.EaseEvent
 import com.hyphenate.easeui.modules.chat.EaseChatFragment
-import com.hyphenate.easeui.modules.chat.EaseInputMenuStyle
-import com.hyphenate.easeui.modules.chat.interfaces.IChatPrimaryMenu
 import com.hyphenate.easeui.modules.chat.interfaces.OnRecallMessageResultListener
 import com.hyphenate.easeui.modules.menu.EasePopupWindowHelper
 import com.hyphenate.easeui.modules.menu.MenuItemBean
@@ -367,7 +365,7 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
     }
 
     protected open fun onClickSendFlower(){
-        val msg=ImMessageManager.sendFlower(conversationId)?.emMessage
+        val msg=ImMessageManager.sendFlower(conversationId)
         sendMessage(msg)
     }
 

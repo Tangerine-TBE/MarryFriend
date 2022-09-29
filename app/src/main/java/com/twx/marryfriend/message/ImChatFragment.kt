@@ -14,7 +14,7 @@ import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.modules.chat.EaseChatPrimaryMenu
 import com.hyphenate.easeui.modules.chat.interfaces.EaseChatPrimaryMenuListener
 import com.message.ImMessageManager
-import com.message.chat.CustomMessage
+import com.message.chat.CustomEvent
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
@@ -58,7 +58,7 @@ class ImChatFragment: ChatFragment() {
         isSendHead=isUploadHeadMsg(conversationId?:return)
         val msgs= ImMessageManager.getHistoryMessage(conversationId?:return,10)
         if (msgs.isEmpty()){//发送安全提示
-            ImMessageManager.getCustomMessage(conversationId?:return, CustomMessage.CustomEvent.security)?.also {
+            ImMessageManager.getCustomMessage(conversationId?:return, CustomEvent.security)?.also {
 //                ImMessageManager.insertMessage(it)
                 sendMessage(it)
             }
@@ -139,9 +139,9 @@ class ImChatFragment: ChatFragment() {
             lifecycleScope.launch {
                 while (!UserInfo.isSuperVip()&&!isSendSuperVip){
                     val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launch,10).take(3)
-                    if (ms.firstOrNull()?.emMessage?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
+                    if (ms.firstOrNull()?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
                         ImMessageManager.getCustomMessage(conversationId?:return@launch,
-                            CustomMessage.CustomEvent.openSuperVip)?.also {
+                            CustomEvent.openSuperVip)?.also {
                             ImMessageManager.insertMessage(it)
                         }
                         isSendSuperVip=true
@@ -155,9 +155,9 @@ class ImChatFragment: ChatFragment() {
             lifecycleScope.launch {
                 while (!UserInfo.isHaveHeadImage()&&!isSendHead){
                     val ms= ImMessageManager.getHistoryMessage(conversationId?:return@launch,10).take(3)
-                    if (ms.firstOrNull()?.emMessage?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
+                    if (ms.firstOrNull()?.type!= EMMessage.Type.CUSTOM&&ms.all { it.from== UserInfo.getUserId() }){
                         ImMessageManager.getCustomMessage(conversationId?:return@launch,
-                            CustomMessage.CustomEvent.upload_head)?.also {
+                            CustomEvent.upload_head)?.also {
                             ImMessageManager.insertMessage(it)
                         }
                         isSendHead=true

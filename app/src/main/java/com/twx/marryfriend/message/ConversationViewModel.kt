@@ -24,7 +24,7 @@ class ConversationViewModel:ViewModel() {
         Gson()
     }
 
-    suspend fun getAllConversations()=suspendCoroutine<List<ConversationsItemModel>>{ continuation->
+    suspend fun getAllConversations()=suspendCoroutine<List<ConversationsItemModel>?>{ continuation->
         viewModelScope.launch {
             val allConversation= ImMessageManager.getAllConversations().sortedBy {
                 -it.lastTime
@@ -56,7 +56,7 @@ class ConversationViewModel:ViewModel() {
                         }
                 }
             }.also { list ->
-                continuation.resume(list?: emptyList())
+                continuation.resume(list)
             }
         }
     }
@@ -98,7 +98,7 @@ class ConversationViewModel:ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/TrendsNotice/huanxinChatList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "uid_array" to gson.toJson(userArray)
+            "uid_array" to gson.toJson(userArray.filter { it.toIntOrNull()!=null })
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {

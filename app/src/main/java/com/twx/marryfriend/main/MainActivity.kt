@@ -22,14 +22,12 @@ import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
-import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
-import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
@@ -47,7 +45,6 @@ import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
-import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -102,17 +99,12 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             messageNumNew.visibility = View.VISIBLE
             messageNumNew.text = ImMessageManager.getAllUnreadMessage().toString()
         }
-
-        ImInit.imLoginState.observe(this) {
-            if (it == false) {
-                SpUtil.deleteUserInfo()
-                startActivity(Intent(this, BeginActivity::class.java))
-            }
-        }
     }
 
     override fun initLoadData() {
         super.initLoadData()
+
+        Log.i("guo", "iamge: ${SPStaticUtils.getString(Constant.ME_AVATAR)}")
 
     }
 
@@ -122,9 +114,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         // 判断通知权限是否打开
 
         Log.i("guo", "notification : ${NotificationUtil.isNotifyEnabled(this)}")
-
-        // 判断后台弹出界面权限是否打开
-        Log.i("guo", "pop : ${BackgroundPopUtils.isVivoBgStartPermissionAllowed(this)}")
 
 
 
@@ -363,7 +352,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     override fun onError() {
 
     }
-
 
     override fun onDoUpdateTokenSuccess(updateTokenBean: UpdateTokenBean?) {
         if (updateTokenBean != null) {

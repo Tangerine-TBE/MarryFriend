@@ -10,6 +10,7 @@ import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dynamic.other.OtherDynamicActivity
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
+import com.twx.marryfriend.dynamic.send.DynamicSendActivity
 import com.twx.marryfriend.guide.jumpInfo.JumpActivity
 import com.twx.marryfriend.mine.focus.RecentFocusActivity
 import com.twx.marryfriend.mine.greet.GreetInfoActivity
@@ -36,6 +37,9 @@ object IntentManager {
         return VipActivity.getVipIntent(context,id=pId?.toIntOrNull()?:0,vip=vipGif)
     }
 
+    /**
+     * 举报
+     */
     fun getReportIntent(context: Context,id:Int):Intent?{
         return ReportReasonActivity.getIntent(context,UserInfo.getUserId().toString(),id.toString())
     }
@@ -74,11 +78,16 @@ object IntentManager {
     }
 
     /**
-     *
+     *生活照
      */
     fun getUpLifeIntent(context: Context):Intent?{
         val intent=Intent(context, LifePhotoActivity::class.java)
         intent.putExtra("activity", "data")
+        return intent
+    }
+
+    fun getDynamicIntent(context: Context):Intent?{
+        val intent=Intent(context, DynamicSendActivity::class.java)
         return intent
     }
 
@@ -98,6 +107,10 @@ object IntentManager {
         intent.putExtra("activity", "data")
         return null
     }
+
+    /**
+     * 招呼语
+     */
     fun getUpFillInGreetIntent(context: Context):Intent{
         val intent=Intent(context, GreetInfoActivity::class.java)
         return intent

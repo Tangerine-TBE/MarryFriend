@@ -1,9 +1,12 @@
 package com.twx.marryfriend
 
 import android.app.Application
+import android.content.Intent
 import com.kingja.loadsir.core.LoadSir
 import com.message.ImInit
 import com.message.ImUserManager
+import com.twx.marryfriend.begin.BeginActivity
+import com.twx.marryfriend.utils.SpUtil
 import com.xyzz.myutils.MyUtils
 
 
@@ -27,5 +30,14 @@ class AppApplication:Application() {
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
             .commit()
        ImInit.init(this)
+
+        ImInit.imLoginState.observeForever {
+            if (it==false){
+                SpUtil.deleteUserInfo()
+                startActivity(Intent(this, BeginActivity::class.java).also {
+                    it.flags=Intent.FLAG_ACTIVITY_NEW_TASK
+                })
+            }
+        }
     }
 }
