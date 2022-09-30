@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.easeim.R
 import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.modules.chat.EaseChatPrimaryMenu
 import com.hyphenate.easeui.modules.chat.interfaces.EaseChatPrimaryMenuListener
@@ -51,16 +52,18 @@ class ImChatFragment: ChatFragment() {
     private val coinInsufficientDialog by lazy {
         ReChargeCoinDialog(requireActivity())
     }
+    private val isMyHelper by lazy {
+        conversationId==ImConversationFragment.MY_HELPER_ID
+    }
 
     override fun initView() {
         super.initView()
         isSendSuperVip= isSendOpenVipMsg(conversationId?:return)
         isSendHead=isUploadHeadMsg(conversationId?:return)
         val msgs= ImMessageManager.getHistoryMessage(conversationId?:return,10)
-        if (msgs.isEmpty()){//发送安全提示
+        if (!isMyHelper&&msgs.all { it.from!=UserInfo.getUserId() }){//发送安全提示
             ImMessageManager.getCustomMessage(conversationId?:return, CustomEvent.security)?.also {
-//                ImMessageManager.insertMessage(it)
-                sendMessage(it)
+                ImMessageManager.insertMessage(it)
             }
             isSendSecurity=true
         }else{
@@ -135,6 +138,9 @@ class ImChatFragment: ChatFragment() {
     private var isSendSuperVip= false
     private var isSendHead=false
     private fun polling(){
+        if (isMyHelper){
+            return
+        }
         if (!UserInfo.isSuperVip()&&!isSendSuperVip){
             lifecycleScope.launch {
                 while (!UserInfo.isSuperVip()&&!isSendSuperVip){
@@ -204,5 +210,17 @@ class ImChatFragment: ChatFragment() {
 
     override fun getAvatarDefaultSrc(): Drawable? {
         return ContextCompat.getDrawable(requireContext(), UserInfo.getReversedDefHeadImage())
+    }
+
+    override fun resetChatExtendMenu() {
+        super.resetChatExtendMenu()
+        val chatExtendMenu = chatLayout.chatInputMenu.chatExtendMenu
+        if (conversationId!=ImConversationFragment.MY_HELPER_ID){
+            chatExtendMenu.registerMenuItem(
+                R.string.send_flower,
+                R.mipmap.ic_item_send_flowers,
+                R.id.extend_item_send_flower
+            )
+        }
     }
 }

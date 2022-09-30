@@ -13,6 +13,7 @@ import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.coroutines.resume
@@ -125,7 +126,6 @@ class ConversationViewModel:ViewModel() {
                 }else{
                     coroutine.resume(gson.fromJson(jsonObject.getJSONObject("data").toString(), MutualLikeBean::class.java))
                 }
-                iLog(response)
             }catch (e:Exception){
                 wLog(e.stackTraceToString())
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

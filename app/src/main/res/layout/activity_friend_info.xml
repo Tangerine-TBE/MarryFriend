@@ -46,7 +46,7 @@
                     <!--           大图-->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/briefIntroduction"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.twx.marryfriend.recommend.widget.RecommendImage
@@ -282,7 +282,7 @@
                     <!--                我心中的TA-->
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/expectedTA"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

@@ -38,6 +38,7 @@ import com.xyzz.myutils.show.wLog
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_recommend_not_content.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend){
@@ -245,6 +246,45 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
     }
 
+    private fun moveView(view: View,isLike:Boolean,action:()->Unit){
+        val f=if (isLike)
+            1
+        else
+            -1
+        view
+            .animate()
+            ?.alpha(0f)
+            ?.rotation(f*10f)
+            ?.translationX(f*view.width /2f)
+            ?.setDuration(500)
+            ?.setListener(object : Animator.AnimatorListener{
+                override fun onAnimationStart(animation: Animator?) {
+
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    action.invoke()
+                    lifecycleScope.launch {
+                        delay(500)
+                        view.apply {
+                            this.alpha = 1f
+                            this.rotation = 0f
+                            this.translationX = 0f
+                        }
+                    }
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+
+                }
+
+            })
+            ?.start()
+    }
     private fun initListener(){
         recommendSetting.setOnClickListener {
             startActivity(Intent(requireContext(),ILikeActivity::class.java))
@@ -280,42 +320,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendAdapter.superLikeAction={item,view->
             if(!uploadHeadDialog.showUploadHeadDialog()){
                 superLike(item){
-                    view
-                        .animate()
-                        ?.alpha(0f)
-                        ?.rotation(10f)
-                        ?.translationX(view.width /2f)
-                        ?.setDuration(500)
-                        ?.setListener(object : Animator.AnimatorListener{
-                            override fun onAnimationStart(animation: Animator?) {
-
-                            }
-
-                            override fun onAnimationEnd(animation: Animator?) {
-                                iLog("超级喜欢")
-                                guideView.guideComplete(HomeCardAction.clickFlower)
-                                view.apply {
-                                    this.alpha=1f
-                                    this.rotation=0f
-                                    this.translationX=0f
-                                }
-
-                                recommendAdapter.removeAt(0)
-                                if (recommendAdapter.getData().isEmpty()){
-                                    showView(ViewType.notContent)
-                                }
-                            }
-
-                            override fun onAnimationCancel(animation: Animator?) {
-
-                            }
-
-                            override fun onAnimationRepeat(animation: Animator?) {
-
-                            }
-
-                        })
-                        ?.start()
+                    moveView(view,true) {
+                        iLog("超级喜欢")
+                        guideView.guideComplete(HomeCardAction.clickFlower)
+                    }
                 }
             }
         }
@@ -323,82 +331,20 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
-                view
-                    .animate()
-                    ?.alpha(0f)
-                    ?.rotation(10f)
-                    ?.translationX(view.width /2f)
-                    ?.setDuration(500)
-                    ?.setListener(object : Animator.AnimatorListener{
-                        override fun onAnimationStart(animation: Animator?) {
-
-                        }
-
-                        override fun onAnimationEnd(animation: Animator?) {
-                            view.apply {
-                                this.alpha=1f
-                                this.rotation=0f
-                                this.translationX=0f
-                            }
-                            recommendAdapter.removeAt(0)
-                            iLog("喜欢")
-                            like(item)
-                            if (recommendAdapter.getData().isEmpty()){
-                                showView(ViewType.notContent)
-                            }
-                        }
-
-                        override fun onAnimationCancel(animation: Animator?) {
-
-                        }
-
-                        override fun onAnimationRepeat(animation: Animator?) {
-
-                        }
-
-                    })
-                    ?.start()
+                moveView(view,true) {
+                    iLog("喜欢")
+                    like(item)
+                }
             }
         }
         recommendAdapter.disLikeAction={item,view->
             if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
-                view
-                    .animate()
-                    ?.alpha(0f)
-                    ?.rotation(-10f)
-                    ?.translationX(view.width /-2f)
-                    ?.setDuration(500)
-                    ?.setListener(object : Animator.AnimatorListener{
-                        override fun onAnimationStart(animation: Animator?) {
-
-                        }
-
-                        override fun onAnimationEnd(animation: Animator?) {
-                            view.apply {
-                                this.alpha=1f
-                                this.rotation=0f
-                                this.translationX=0f
-                            }
-                            recommendAdapter.removeAt(0)
-                            iLog("不喜欢")
-                            disLike(item)
-                            if (recommendAdapter.getData().isEmpty()){
-                                showView(ViewType.notContent)
-                            }
-                        }
-
-                        override fun onAnimationCancel(animation: Animator?) {
-
-                        }
-
-                        override fun onAnimationRepeat(animation: Animator?) {
-
-                        }
-
-                    })
-                    ?.start()
+                moveView(view,false) {
+                    iLog("不喜欢")
+                    disLike(item)
+                }
             }
         }
         recommendAdapter.reportAction={
@@ -494,6 +440,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
             if (t.code==200){
                 recommendAdapter.remove(item)
+                if (recommendAdapter.getData().isEmpty()){
+                    showView(ViewType.notContent)
+                }
             }else{
                 if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
                     openVip()
@@ -522,6 +471,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
             if (t.code==200){
                 recommendAdapter.remove(item)
+                if (recommendAdapter.getData().isEmpty()){
+                    showView(ViewType.notContent)
+                }
             }else{
                 if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
                     openVip()
@@ -549,6 +501,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 }.also {
                     if (it.code==200){
                         ImMessageManager.sendFlower(item.getId().toString())
+                        recommendAdapter.removeAt(0)
+                        if (recommendAdapter.getData().isEmpty()){
+                            showView(ViewType.notContent)
+                        }
                         success.invoke()
                     }else{
                         toast(it.msg)

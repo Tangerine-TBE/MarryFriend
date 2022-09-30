@@ -25,7 +25,6 @@ import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
-import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_im_message.*
 import kotlinx.coroutines.launch
 
@@ -130,7 +129,7 @@ class ImConversationFragment: ConversationListFragment() {
                     if (list.size>i){
                         listView[i].visibility=View.VISIBLE
                         Glide.with(imageViewList[i])
-                            .load(list[i])
+                            .load(list[i].image_url)
                             .error(list[i].getSex().smallHead)
                             .placeholder(list[i].getSex().smallHead)
                             .into(imageViewList[i])

@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloBean
@@ -11,6 +12,7 @@ import com.twx.marryfriend.bean.one_hello.OneClickHelloItemBean
 import com.twx.marryfriend.bean.recommend.LastDynamicBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
+import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
@@ -80,10 +82,17 @@ class RecommendViewModel():ViewModel() {
          */
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-                val data=JSONObject(response).getJSONObject("data")
                 val idList=ArrayList<Int>()
-                data.keys().forEach {
-                    idList.add(it.toInt())
+//                val data=JSONObject(response).getJSONObject("data")
+//                data.keys().forEach {
+//                    idList.add(it.toInt())
+//                }
+                if (BuildConfig.DEBUG){
+                    JSONObject(response).getJSONArray("data").also {
+                        for (i in 0 until it.length()){
+                            idList.add(it.getInt(i))
+                        }
+                    }
                 }
                 coroutine.resume(idList)
             }catch (e:Exception){

@@ -17,6 +17,8 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.gson.Gson
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
@@ -82,12 +84,12 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
     }
 
     fun removeAt(index:Int): RecommendBean {
+        iLog("删除下标${index}")
         val e=listData.removeAt(index)
         if (e==currentPlayVoiceItem){
             stopVoice()
         }
         notifyItemRemoved(index)
-        notifyItemChanged(0)
         return e
     }
 
@@ -96,8 +98,11 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
             stopVoice()
         }
         val index=listData.indexOf(recommendBean)
+        if (index==-1){
+            return
+        }
+        listData.remove(recommendBean)
         notifyItemRemoved(index)
-        notifyItemChanged(index)
     }
 
     fun getTopItem():RecommendBean{

@@ -9,15 +9,6 @@
         android:background="#FFFFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ImageView
-            android:id="@+id/helperSetting"
-            android:layout_gravity="end"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:layout_marginEnd="15dp"
-            android:src="@mipmap/ic_chat_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"/>
     </com.xyzz.myutils.action.ActionBar>
     <com.hyphenate.easeui.modules.chat.EaseChatLayout
         android:id="@+id/layout_chat"
@@ -26,6 +17,7 @@
         android:layout_weight="1"/>
     <androidx.appcompat.widget.LinearLayoutCompat
         android:orientation="horizontal"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:background="#FFFFFFFF"
         android:layout_height="54dp">

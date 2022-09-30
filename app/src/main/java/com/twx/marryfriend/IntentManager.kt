@@ -105,7 +105,7 @@ object IntentManager {
     fun getUpFillInHobbyIntent(context: Context):Intent?{
         val intent=Intent(context, HobbyToolActivity::class.java)
         intent.putExtra("activity", "data")
-        return null
+        return intent
     }
 
     /**

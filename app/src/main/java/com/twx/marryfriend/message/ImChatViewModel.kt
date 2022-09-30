@@ -1,6 +1,7 @@
 package com.twx.marryfriend.message
 
 import androidx.lifecycle.ViewModel
+import com.google.gson.Gson
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
@@ -11,6 +12,10 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class ImChatViewModel:ViewModel() {
+    class BlockState{
+        var woPingBiTa=false
+        var woGuanZhuTa=false
+    }
 
     suspend fun addBlockList(guest_uid:String)=suspendCoroutine<Unit>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/TrendsNotice/plusBlockSession"
@@ -27,7 +32,6 @@ class ImChatViewModel:ViewModel() {
                 }else{
                     coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
                 }
-                iLog(response)
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
@@ -48,6 +52,30 @@ class ImChatViewModel:ViewModel() {
                 val code=jsonObject.getInt("code")
                 if (code==200){
                     coroutine.resume(Unit)
+                }else{
+                    coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
+                }
+                iLog(response)
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
+
+    suspend fun getBlockState(guest_uid:String)=suspendCoroutine<BlockState>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/TrendsNotice/ourRelationship"
+        val map= mapOf(
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "guest_uid" to guest_uid.toString()
+        )
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val jsonObject=JSONObject(response)
+                val code=jsonObject.getInt("code")
+                if (code==200){
+                    coroutine.resume(Gson().fromJson(jsonObject.getJSONObject("data").toString(),BlockState::class.java))
                 }else{
                     coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
                 }

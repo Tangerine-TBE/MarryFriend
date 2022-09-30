@@ -104,7 +104,11 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
         return ContextCompat.getDrawable(requireContext(), R.drawable.ease_default_avatar)
     }
 
-    private fun resetChatExtendMenu() {
+    /**
+     * 发送附件
+     * 送花、发照片、发视频
+     */
+    protected open fun resetChatExtendMenu() {
         val chatExtendMenu = chatLayout.chatInputMenu.chatExtendMenu
         chatExtendMenu.clear()
         chatExtendMenu.registerMenuItem(
@@ -151,11 +155,6 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
             com.hyphenate.easeui.R.string.attach_file,
             com.hyphenate.easeui.R.drawable.em_chat_file_selector,
             com.hyphenate.easeui.R.id.extend_item_file
-        )
-        chatExtendMenu.registerMenuItem(
-            R.string.send_flower,
-            R.mipmap.ic_item_send_flowers,
-            R.id.extend_item_send_flower
         )
         //名片扩展
 //        chatExtendMenu.registerMenuItem(

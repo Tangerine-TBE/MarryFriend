@@ -32,8 +32,16 @@ object ImMessageManager {
             }
 
             override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
-                //收到透传消息
-                iLog(messages?.firstOrNull()?.from,"收到消息,cmd")
+                messages?.forEach {
+                    iLog("收到来自${it.from}的cmd消息，ext:${it.ext()}")
+                    val ext=it.ext()
+                    // 将消息插入到指定会话中。
+                    it.body=EMTextMessageBody(ext["str"].toString())
+
+                    val conversation = EMClient.getInstance().chatManager().getConversation(it.conversationId())
+                    conversation?.insertMessage(it)?:EMClient.getInstance().chatManager().saveMessage(it)
+                }
+
             }
 
             override fun onMessageRead(messages: MutableList<EMMessage>?) {
@@ -246,14 +254,12 @@ object ImMessageManager {
     }
 
     fun insertMessage(message: EMMessage){
-        message.msgTime=System.currentTimeMillis()+50000
         // 将消息插入到指定会话中。
         val conversation = EMClient.getInstance().chatManager().getConversation(message.to)
-        conversation.insertMessage(message)
         // 直接插入消息。
         message.isDelivered=true
         message.setStatus(EMMessage.Status.SUCCESS)
-        EMClient.getInstance().chatManager().saveMessage(message)
+        conversation?.insertMessage(message)?:EMClient.getInstance().chatManager().saveMessage(message)
     }
 
     fun startMessageListener(){

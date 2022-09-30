@@ -16,6 +16,9 @@ import com.message.chat.CustomEvent
 import com.message.chat.HELPER_STYLE_1
 
 class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRowViewHolder>(){
+    companion object{
+        var sexAction:(()->Int)?=null
+    }
 
     override fun isForViewType(item: EMMessage?, position: Int): Boolean {
         if (item?.type != EMMessage.Type.CUSTOM){
@@ -39,8 +42,14 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
             val helperTipIcon by lazy {
                 findViewById<ImageView>(R.id.helperTipIcon)
             }
+            val helperTipIconForeground by lazy {
+                findViewById<ImageView>(R.id.helperTipIconForeground)
+            }
             val helperTipText by lazy {
                 findViewById<TextView>(R.id.helperTipText)
+            }
+            val divisionLine by lazy {
+                findViewById<View>(R.id.divisionLine)
             }
             val gotoHandel by lazy {
                 findViewById<TextView>(R.id.gotoHandel)
@@ -75,7 +84,13 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                         ImCustomEventListenerManager.click(it,type,message)
                     }
                 }
+                helperTipIconForeground.setImageBitmap(null)
                 helperTipText.text=msg
+                val defHad=if (sexAction?.invoke()==1){
+                    R.mipmap.ic_my_helper_head_man_def
+                }else{
+                    R.mipmap.ic_my_helper_head_woman_def
+                }
                 when(type){
                     CustomEvent.dazhaohu_str->{//填写打招呼
                         helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
@@ -83,110 +98,110 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                     }
                     CustomEvent.putong_xihuan -> {//普通喜欢
                         helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)//
-                        gotoHandel.text="马上填写"
+                        goneLine()
                     }
                     CustomEvent.touxiang_pass->{//头像通过
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        gotoHandel.text="重新上传"
+                        goneLine()
                     }
                     CustomEvent.touxiang_fail -> {//头像失败
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="您好,XXX,您的头像需要修改,更好的资料才能遇到更好的人,请您认证填写资料哦"
-                        gotoHandel.text="马上填写"
+                        Glide.with(helperTipIconForeground)
+                            .load(R.mipmap.ic_my_helper_fail)
+                            .into(helperTipIconForeground)
+                        gotoHandel.text="马上上传"
                     }
                     CustomEvent.yuying_pass -> {//语音通过
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="您好,您的语音已经通过了我们的人工审核,祝愿你在这里早日找到合适的对象"
-                        gotoHandel.text="马上填写"
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_voice_def)
+                        goneLine()
                     }
                     CustomEvent.yuying_fail -> {//语音失败
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="您好,XXX,您的语音需要修改,更好的资料才能遇见更好的人,请您认证填写资料哦"
-                        gotoHandel.text="马上填写"
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_voice_def)
+                        Glide.with(helperTipIconForeground)
+                            .load(R.mipmap.ic_my_helper_fail)
+                            .into(helperTipIconForeground)
+                        gotoHandel.text="重新上传"
                     }
                     CustomEvent.shiming_pass -> {//实名通过
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="您好,您的实名认证已经通过了我们的人工审核,祝愿你在这里早日找到合适的对象"
-                        gotoHandel.text="马上填写"
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_realname_pass)
+                        goneLine()
                     }
                     CustomEvent.shiming_fail -> {//实名失败
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="您好,您的实名认证不通过,需要修改,更好的资料才能遇见更好的人,请您认真填写资料哦"
-                        gotoHandel.text="马上填写"
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_realname_fail)
+                        gotoHandel.text="立即实名"
                     }
                     CustomEvent.xiangce_pass->{//相册通过
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="您的相册已经通过了我们的人工审核,祝愿你在这里早日找到合适的对象"
-                        gotoHandel.text="重新上传"
+                        goneLine()
                     }
                     CustomEvent.xiangce_fail -> {
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="相册失败"
-                        gotoHandel.text="马上填写"
+                        helperTipIconForeground.setImageResource(R.mipmap.ic_my_helper_fail)
+                        gotoHandel.text="重新上传"
                     }
                     CustomEvent.shenghuo_pass -> {//生活照通过
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="您的生活照已经通过了我们的人工审核,祝愿你在这里早日找到合适的对象"
-                        gotoHandel.text="马上填写"
+                        goneLine()
                     }
                     CustomEvent.shenghuo_fail -> {
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="生活失败"
-                        gotoHandel.text="马上填写"
+                        helperTipIconForeground.setImageResource(R.mipmap.ic_my_helper_fail)
+                        gotoHandel.text="重新上传"
                     }
                     CustomEvent.dongtai_pass -> {//动态通过
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="您的动态已经通过了我们的人工审核,祝愿你在这里早日找到合适的对象"
-                        gotoHandel.text="马上填写"
+                        goneLine()
                     }
                     CustomEvent.dongtai_fail -> {
                         Glide.with(helperTipIcon).load(img)
-                            .placeholder(R.mipmap.ic_fill_in_say_hello)
-                            .error(R.mipmap.ic_fill_in_say_hello)
+                            .placeholder(defHad)
+                            .error(defHad)
                             .into(helperTipIcon)
-                        helperTipText.text="您上传的动态没有通过审核,请重新上传"
-                        gotoHandel.text="马上填写"
+                        helperTipIconForeground.setImageResource(R.mipmap.ic_my_helper_fail)
+                        gotoHandel.text="重新发布"
                     }
                     CustomEvent.jubao_pass -> {//举报通过
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="您好,您的举报已经通过,用户XX已经被 封禁/3天/30天/永久/封禁"
-                        gotoHandel.text="马上填写"
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_report)
+                        goneLine()
                     }
                     CustomEvent.jubao_fail -> {
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="举报失败"
-                        gotoHandel.text="马上填写"
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_report)
+                        goneLine()
                     }
                     CustomEvent.HELPER_VIP_EXPIRE->{
                         helperTipIcon.setImageResource(R.mipmap.ic_vip_expire)
-                        helperTipText.text="您的会员即将到期，立即续费，继续享有尊贵会员！"
                         gotoHandel.text="立即续费"
                     }
                     else->{
 
                     }
                 }
+            }
+
+            private fun goneLine(){
+                divisionLine.visibility=View.GONE
+                gotoHandel.visibility=View.GONE
             }
         }
     }

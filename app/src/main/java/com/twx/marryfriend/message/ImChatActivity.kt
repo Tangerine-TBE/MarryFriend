@@ -19,7 +19,8 @@ import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.launch
 
 //R.drawable.ease_default_avatar
-class ImChatActivity: ChatActivity() {
+//R.layout.demo_activity_chat
+open class ImChatActivity: ChatActivity() {
     companion object{
         private const val IS_REAL_NAME_KEY="head_image_key"
 
@@ -47,23 +48,26 @@ class ImChatActivity: ChatActivity() {
     private val friendRealName by lazy {
         findViewById<View>(com.hyphenate.easeim.R.id.friendRealName)
     }
-    private val chatSetting by lazy {
+    protected val chatSetting by lazy {
         findViewById<View>(com.hyphenate.easeim.R.id.chatSetting)
     }
     private val imChatViewModel by lazy {
         ViewModelProvider(this).get(ImChatViewModel::class.java)
     }
+    private var isBlock=false
     private val chatSettingDialog by lazy {
-        ChatSettingDialog(this,conversationId?:return@lazy null)
-            .also {
-                val blockText=it.getBlockFriendText()
-                var isBlock=false
-                if (isBlock){
-                    blockText.text="取消屏蔽"
-                }else{
-                    blockText.text="屏蔽"
+        val cid=conversationId
+        ChatSettingDialog(this,cid?:return@lazy null)
+            .also { chatSettingDialog1 ->
+                val blockText=chatSettingDialog1.getBlockFriendText()
+                chatSettingDialog1.setOnShowListener {
+                    if (isBlock){
+                        blockText.text="取消屏蔽"
+                    }else{
+                        blockText.text="屏蔽"
+                    }
                 }
-                it.setBlockFriendsListener {
+                chatSettingDialog1.setBlockFriendsListener {
                     lifecycleScope.launch{
                         if(isBlock){
                             try {
@@ -87,13 +91,8 @@ class ImChatActivity: ChatActivity() {
             }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
-
-    override fun getChatFragment(): ChatFragment {
-        return ImChatFragment()
+    private val chatFragment by lazy {
+        ImChatFragment()
             .also {
                 val bundle = Bundle()
                 bundle.putString(EaseConstant.EXTRA_CONVERSATION_ID, conversationId)
@@ -102,6 +101,22 @@ class ImChatActivity: ChatActivity() {
                 bundle.putBoolean(EaseConstant.EXTRA_IS_ROAM, DemoHelper.instance.model.isMsgRoaming)
                 it.arguments = bundle
             }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            isBlock=
+                try {
+                    imChatViewModel.getBlockState(conversationId?:return@launch).woPingBiTa
+                }catch (e:Exception){
+                    false
+                }
+        }
+    }
+
+    override fun getChatFragment(): ChatFragment {
+        return chatFragment
     }
 
     override fun initListener(){

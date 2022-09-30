@@ -14,6 +14,7 @@ import com.message.ImUserManager
 import com.message.chat.CustomEvent
 import com.message.custom.IImEventListener
 import com.message.custom.ImCustomEventListenerManager
+import com.message.custom.MyHelperAdapterDelegate
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.message.ConversationViewModel
@@ -59,6 +60,9 @@ object ImHelper {
         }
     }
 
+    /**
+     * 我们用户登录后环信消息相关的初始化
+     */
     fun init(){
         val userId=UserInfo.getUserId()
         ImUserInfoService.setUserInfo(ImUserInfoService.ImUserInfo(userId?:return,UserInfo.getNickname(),UserInfo.getImgHead()))
@@ -204,6 +208,9 @@ object ImHelper {
     private fun login(userId:String){
         imUiHelper.login(userId,{easeUser->
             iLog("登录成功，开始刷新会话列表")
+            MyHelperAdapterDelegate.sexAction={
+                UserInfo.getOriginalUserSex()
+            }
             EaseUserUtils.setManDefHead(Sex.male.smallHead)
             EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
             EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
