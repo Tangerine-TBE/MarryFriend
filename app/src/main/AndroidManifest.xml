@@ -25,10 +25,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- 适配Android R包可见性 开始 -->
-
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-
 
     <queries package="${applicationId}">
         <intent>
@@ -55,6 +53,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
+
+
         <activity
             android:name=".set.black.BlackListActivity"
             android:exported="false" />
@@ -89,17 +89,7 @@
             android:name=".push.xiaomi.MfrMessageActivity"
             android:exported="true"
             android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="${applicationId}"
-                    android:path="/thirdpush"
-                    android:scheme="agoo" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".tools.introduce.IntroduceToolActivity"
@@ -196,13 +186,16 @@
             android:exported="true" />
         <activity
             android:name=".begin.BeginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/AppStartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".main.MainActivity"
             android:exported="true"
@@ -256,7 +249,7 @@
         <activity android:name=".mutual.MutualLikeActivity" />
         <activity android:name=".mutual.MutualLikeDialogActivity" />
         <activity android:name=".message.ImChatActivity" />
-        <activity android:name=".message.MyHelperActivity"/>
+        <activity android:name=".message.MyHelperActivity" />
         <activity
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -291,18 +284,16 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
-
-        <!-- 华为应用推送的AppID -->
+            android:process=":remote" /> <!-- 华为应用推送的AppID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="appid=106852163" />
-
-        <!-- 荣耀应用推送的AppID -->
-        <!--        <meta-data-->
-        <!--            android:name="com.hihonor.push.app_id"-->
-        <!--            android:value="xxx" />-->
-
+        <meta-data
+            android:name="push_kit_auto_init_enabled"
+            android:value="true" /> <!-- 荣耀应用推送的AppID -->
+        <!-- <meta-data -->
+        <!-- android:name="com.hihonor.push.app_id" -->
+        <!-- android:value="xxx" /> -->
         <!-- vivo应用推送的AppID -->
         <meta-data
             android:name="com.vivo.push.api_key"
@@ -310,7 +301,6 @@
         <meta-data
             android:name="com.vivo.push.app_id"
             android:value="105580857" />
-
     </application>
 
 </manifest>

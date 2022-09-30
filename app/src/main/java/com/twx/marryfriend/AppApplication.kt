@@ -5,12 +5,13 @@ import android.content.Intent
 import com.kingja.loadsir.core.LoadSir
 import com.message.ImInit
 import com.message.ImUserManager
+import com.twx.marryfriend.base.BaseApplication
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.utils.SpUtil
 import com.xyzz.myutils.MyUtils
 
 
-class AppApplication:Application() {
+class AppApplication: BaseApplication() {
     companion object{
         lateinit var application :Application
             private set
