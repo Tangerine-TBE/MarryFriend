@@ -94,13 +94,27 @@ public class EaseConversationPresenterImpl extends EaseConversationPresenter {
             }
             sortByTimestamp(topSortList);
             sortByTimestamp(sortList);
-            sortList.addAll(0, topSortList);
+            if (iSortList!=null){
+                sortList=iSortList.sort(topSortList,sortList);
+            }else {
+                sortList.addAll(0, topSortList);
+            }
         }
+        List<EaseConversationInfo> finalSortList = sortList;
         runOnUI(() -> {
             if(!isDestroy()) {
-                mView.sortConversationListSuccess(sortList);
+                mView.sortConversationListSuccess(finalSortList);
             }
         });
+    }
+    public interface ISortList{
+        List<EaseConversationInfo> sort(List<EaseConversationInfo> topSortList,List<EaseConversationInfo> sortList);
+    }
+
+    private ISortList iSortList;
+
+    public void setiSortList(ISortList iSortList) {
+        this.iSortList = iSortList;
     }
 
     /**

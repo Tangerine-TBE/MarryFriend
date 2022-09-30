@@ -22,12 +22,14 @@ import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
+import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
+import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
@@ -45,6 +47,7 @@ import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
+import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.message.PushAgent
 import com.umeng.message.UmengMessageHandler
@@ -67,6 +70,14 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
     private var currentFragment: Fragment? = null
+    private val imLoginStateObserver= androidx.lifecycle.Observer<Boolean> { aBoolean ->
+        if (aBoolean==false){
+            SpUtil.deleteUserInfo()
+            startActivity(Intent(this, BeginActivity::class.java).also {
+                it.flags=Intent.FLAG_ACTIVITY_NEW_TASK
+            })
+        }
+    }
 
     private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
 
@@ -98,6 +109,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             messageNumNew.visibility = View.VISIBLE
             messageNumNew.text = ImMessageManager.getAllUnreadMessage().toString()
         }
+        ImInit.imLoginState.observeForever(imLoginStateObserver)
     }
 
     override fun initLoadData() {
@@ -568,7 +580,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         super.onDestroy()
 
         doUpdateTokenPresent.unregisterCallback(this)
-
+        ImInit.imLoginState.removeObserver(imLoginStateObserver)
     }
 
 

@@ -25,6 +25,7 @@ class LifecycleCallbacks private constructor(): Application.ActivityLifecycleCal
     val frontBackstageLiveData by lazy {
         MutableLiveData<Boolean>()
     }
+    private val runActivity=ArrayList<Activity>()
     private var activityFrontCount=0
     private val appFrontBackstage by lazy { ArrayList<AppFrontBackstage>() }
 
@@ -37,6 +38,7 @@ class LifecycleCallbacks private constructor(): Application.ActivityLifecycleCal
     }
 
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {
+        runActivity.add(p0)
     }
 
     override fun onActivityStarted(p0: Activity) {
@@ -70,7 +72,9 @@ class LifecycleCallbacks private constructor(): Application.ActivityLifecycleCal
 
     override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
-    override fun onActivityDestroyed(p0: Activity) {}
+    override fun onActivityDestroyed(p0: Activity) {
+        runActivity.remove(p0)
+    }
 
     interface AppFrontBackstage{
         fun appEnterForeground(activity: Activity)

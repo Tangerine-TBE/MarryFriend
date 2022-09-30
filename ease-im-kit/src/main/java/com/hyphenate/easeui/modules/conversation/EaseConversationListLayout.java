@@ -559,6 +559,14 @@ public class EaseConversationListLayout extends EaseBaseLayout implements IConve
         presenter.sortData(listAdapter.getData());
     }
 
+    public void setCustomSort(EaseConversationPresenterImpl.ISortList iSortList){
+        if (presenter instanceof EaseConversationPresenterImpl){
+            ((EaseConversationPresenterImpl) presenter).setiSortList(iSortList);
+        }else {
+            Log.w("myLog","presenter 不是EaseConversationPresenterImpl,排序");
+        }
+    }
+
     @Override
     public void refreshList(int position) {
         if(conversationChangeListener != null) {

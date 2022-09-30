@@ -75,7 +75,8 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                 vipIdentification2.visibility=View.GONE
                 messageCount.visibility=View.GONE
                 messageMutualLikeIcon.visibility=View.GONE
-                holder.notVipShowView.visibility=View.GONE
+                notVipShowView.visibility=View.GONE
+                superVipHead.visibility=View.GONE
             }
             return
         }

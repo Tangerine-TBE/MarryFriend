@@ -87,11 +87,9 @@ class RecommendViewModel():ViewModel() {
 //                data.keys().forEach {
 //                    idList.add(it.toInt())
 //                }
-                if (BuildConfig.DEBUG){
-                    JSONObject(response).getJSONArray("data").also {
-                        for (i in 0 until it.length()){
-                            idList.add(it.getInt(i))
-                        }
+                JSONObject(response).getJSONArray("data").also {
+                    for (i in 0 until it.length()){
+                        idList.add(it.getInt(i))
                     }
                 }
                 coroutine.resume(idList)
@@ -192,6 +190,10 @@ class RecommendViewModel():ViewModel() {
     suspend fun like(
         guest_uid: Int,
         mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
+//        if (BuildConfig.DEBUG){
+//            coroutine.resume(RecommendCall())
+//            return@suspendCoroutine
+//        }
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
