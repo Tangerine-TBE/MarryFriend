@@ -653,7 +653,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 //            activity.addDynamicFragment(x)
 
 
-            startActivity(IntentUtils.getShareTextIntent("http://www.aijiaou.com/jiaou/mobile.html"))
+            startActivity(IntentUtils.getShareTextIntent("http://www.aijiaou.com/mobile.html"))
 
         }
 

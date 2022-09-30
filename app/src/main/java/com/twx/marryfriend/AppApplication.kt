@@ -11,15 +11,15 @@ import com.twx.marryfriend.utils.SpUtil
 import com.xyzz.myutils.MyUtils
 
 
-class AppApplication: BaseApplication() {
-    companion object{
-        lateinit var application :Application
+class AppApplication : BaseApplication() {
+    companion object {
+        lateinit var application: Application
             private set
     }
 
     override fun onCreate() {
         super.onCreate()
-        application=this
+        application = this
         MyUtils.init(this)
 
         LoadSir.beginBuilder()

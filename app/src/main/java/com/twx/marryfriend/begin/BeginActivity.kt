@@ -86,42 +86,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
     override fun initLoadData() {
         super.initLoadData()
 
-
-        getToken()
-
     }
 
-    private fun getToken() {
-        // 创建一个新线程
-        object : Thread() {
-            override fun run() {
-                try {
-                    // 从agconnect-services.json文件中读取APP_ID
-                    val appId = "106852163"
-
-                    Log.i("guo", "appid :$appId")
-
-                    // 输入token标识"HCM"
-                    val tokenScope = "HCM"
-                    val token =
-                        HmsInstanceId.getInstance(this@BeginActivity).getToken(appId, tokenScope)
-                    Log.i("guo", "get token:$token")
-
-                    // 判断token是否为空
-                    if (!TextUtils.isEmpty(token)) {
-                        sendRegTokenToServer(token)
-                    }
-
-                } catch (e: ApiException) {
-                    Log.e("guo", "get token failed, $e")
-                }
-            }
-        }.start()
-    }
-
-    private fun sendRegTokenToServer(token: String?) {
-        Log.i("guo", "sending token to server. token:$token")
-    }
 
     override fun initPresent() {
         super.initPresent()
@@ -138,6 +104,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             // 跳过登录界面
             val intent = Intent(this, GetInfoActivity::class.java)
             startActivity(intent)
+            this.finish()
 
         }
     }
@@ -164,10 +131,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 try {
                     tokenRet = TokenRet.fromJson(s)
                     if (ResultCode.CODE_START_AUTHPAGE_SUCCESS == tokenRet.code) {
-                        Log.i("guo", "唤起授权页成功：$s")
                     }
                     if (ResultCode.CODE_SUCCESS == tokenRet.code) {
-                        Log.i("guo", "获取token成功：$s")
                         getResultWithToken(tokenRet.token)
                         mPhoneNumberAuthHelper.setAuthListener(null)
                     }
@@ -222,8 +187,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
     fun getResultWithToken(token: String?) {
         ExecutorManager.run(Runnable {
-
-            Log.i("guo", "开始注册")
 
             val map: MutableMap<String, String> = TreeMap()
             val unique = Settings.System.getString(
@@ -288,7 +251,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 SpLoginUtil.saveUserInfo(autoLoginBean)
 
                 startActivity(GetInfoActivity.getIntent(this, autoLoginBean.data.kind_type))
-
+                this.finish()
 
             } else {
                 ToastUtils.showShort(autoLoginBean.msg)
@@ -341,6 +304,9 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 if (agreePermission) {
                     val intent = Intent(this@BeginActivity, LoginActivity::class.java)
                     startActivity(intent)
+
+                    this@BeginActivity.finish()
+
                 } else {
                     ToastUtils.showShort("您还未同意隐私政策与用户协议")
                 }

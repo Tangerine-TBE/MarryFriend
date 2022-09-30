@@ -3,8 +3,8 @@ package com.twx.marryfriend.main
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
+import android.text.TextUtils
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -16,7 +16,11 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import com.blankj.utilcode.util.*
+import com.blankj.utilcode.util.PermissionUtils
+import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
+import com.huawei.hms.aaid.HmsInstanceId
+import com.huawei.hms.common.ApiException
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
@@ -37,6 +41,7 @@ import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.likeme.LoveFragment
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
+import com.twx.marryfriend.message.MyHelperActivity
 import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.like.RecentLikeActivity
@@ -44,11 +49,14 @@ import com.twx.marryfriend.mine.view.RecentViewActivity
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
+import com.twx.marryfriend.push.help.PushConstants
+import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
+import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
 import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
@@ -92,9 +100,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         initEmojiCompat()
         ImUserInfoHelper.init()
         initRecommendFragment()
-        initPush(this)
 
-        PushAgent.getInstance(this).onAppStart()
+        initPush(applicationContext)
+
 
         if (ImMessageManager.getAllUnreadMessage() > 0) {
             messageNumNew.visibility = View.VISIBLE
@@ -115,6 +123,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     override fun initLoadData() {
         super.initLoadData()
 
+        getToken()
 
     }
 
@@ -211,6 +220,34 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     }
 
+    private fun getToken() {
+        // 创建一个新线程
+        object : Thread() {
+            override fun run() {
+                try {
+                    // 从agconnect-services.json文件中读取APP_ID
+                    val appId = "106852163"
+
+                    // 输入token标识"HCM"
+                    val tokenScope = "HCM"
+                    val token =
+                        HmsInstanceId.getInstance(this@MainActivity).getToken(appId, tokenScope)
+
+                    // 判断token是否为空
+                    if (!TextUtils.isEmpty(token)) {
+                        Log.e("guo", "get token success, $token")
+                        sendRegTokenToServer(token)
+                    }
+
+                } catch (e: ApiException) {
+                    Log.e("guo", "get token failed, $e")
+                }
+            }
+        }.start()
+    }
+
+    private fun sendRegTokenToServer(token: String?) {
+    }
 
     private fun updateToken(token: String) {
         val map: MutableMap<String, String> = TreeMap()
@@ -218,7 +255,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         map[Contents.UMENG_TOKEN] = token
         doUpdateTokenPresent.doUpdateToken(map)
     }
-
 
     private fun initRecommendFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -347,14 +383,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         return super.dispatchTouchEvent(ev)
     }
 
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            AppUtils.exitApp()
-        }
-        return super.onKeyDown(keyCode, event)
-    }
-
     override fun onLoading() {
 
     }
@@ -385,19 +413,17 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
      * 参数五：Push推送业务的secret，填写Umeng Message Secret对应信息
      * */
     fun initPush(context: Context) {
+        UMConfigure.init(context, PushConstants.APP_KEY, PushConstants.CHANNEL,
+            UMConfigure.DEVICE_TYPE_PHONE, PushConstants.MESSAGE_SECRET)
 
-        UMConfigure.init(context,
-            "62e74fde1f47e265d4e8aa28",
-            "_360",
-            UMConfigure.DEVICE_TYPE_PHONE,
-            "5e603f6a1afa1a199b2bfb7cded74761")
+        //获取推送实例
+        val pushAgent = PushAgent.getInstance(context)
+
+        //修改为您app/src/main/AndroidManifest.xml中package值
+        pushAgent.resourcePackageName = "com.twx.marryfriend"
 
         //推送设置
         pushSetting(context)
-
-        val pushAgent = PushAgent.getInstance(context)
-
-        pushAgent.resourcePackageName = "com.twx.marryfriend"
 
         //注册推送服务，每次调用register方法都会回调该接口
         pushAgent.register(object : UPushRegisterCallback {
@@ -408,7 +434,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
                 Log.i("guo", "token ： ${deviceToken}")
 
-
                 // 上传token
                 updateToken(deviceToken)
             }
@@ -418,9 +443,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             }
 
         })
-//        if (UMUtils.isMainProgress(context)) {
-//            registerDeviceChannel(context)
-//        }
+        if (UMUtils.isMainProgress(context)) {
+            registerDeviceChannel(context)
+        }
     }
 
 
@@ -471,7 +496,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
                     when (uMessage.custom) {
                         "shenhe_tongzhi" -> {
                             Log.i("guo", "审核通知，跳小秘书")
-                            ToastUtils.showShort("跳转至小秘书")
+                            startActivity(MyHelperActivity.getIntent(this@MainActivity))
                         }
                         "ta_gang_xihuan_ni" -> {
                             Log.i("guo", "它刚喜欢你 通知")
@@ -519,65 +544,17 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
      * 注册设备推送通道（小米、华为等设备的推送）
      */
     private fun registerDeviceChannel(context: Context) {
-
-
-        Log.i("guo", "设备厂商 :${DeviceUtils.getManufacturer()}")
-
-
-        when (DeviceUtils.getManufacturer()) {
-
-            "Xiaomi" -> {
-                Log.i("guo", "XIAOMI推送")
-
-//                小米推送：填写您在小米后台APP对应的xiaomi id和key
-                MiPushRegistar.register(context, "2882303761520176390", "5612017666390")
-
-            }
-
-
-            "vivo" -> {
-                Log.i("guo", "VIVO推送")
-
-//                vivo推送：注意vivo推送的初始化参数在AndroidManifest.xml中配置
-                VivoRegister.register(context);
-            }
-
-            "OPPO" -> {
-                Log.i("guo", "OPPO推送")
-
-//                OPPO推送：填写您在OPPO后台APP对应的app key和secret
-                OppoRegister.register(context,
-                    "ddfbd322e5f84b9f9518011417970964",
-                    "0dd23bca2294417ea0f49d822dc8df29");
-
-            }
-
-            "HUAWEI" -> {
-                Log.i("guo", "华为推送")
-
-//                华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
-                HuaWeiRegister.register(context.applicationContext)
-            }
-
-            "HONOR" -> {
-                Log.i("guo", "荣耀推送")
-
-                //荣耀推送：注意荣耀推送的初始化参数在AndroidManifest.xml中配置
-//                HonorRegister.register(context);
-            }
-
-
-//            MeizuRegister.register(context, "149579", "41e4f6a38cb24c9aa9a83d2041be6555");
-
-
-        }
-
-
+        MiPushRegistar.register(context, PushConstants.MI_ID, PushConstants.MI_KEY)
+        VivoRegister.register(context)
+        OppoRegister.register(context, PushConstants.OPPO_KEY, PushConstants.OPPO_SECRET)
+        HuaWeiRegister.register(context.applicationContext)
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
+
+        Log.i("guo", "main-destory")
 
         doUpdateTokenPresent.unregisterCallback(this)
         ImInit.imLoginState.removeObserver(imLoginStateObserver)
@@ -631,5 +608,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
         }
     }
+
 
 }

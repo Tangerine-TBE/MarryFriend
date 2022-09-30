@@ -146,8 +146,9 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
         tv_login_reset.setOnClickListener {
             ToastUtils.showShort("此处需要找回手机号")
 
-            val intent = Intent(this, RetrieveActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, RetrieveActivity::class.java)
+//            startActivity(intent)
+
 
 //            val map: MutableMap<String, String> = TreeMap()
 //            map["access_token"] =
@@ -403,6 +404,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
             SpLoginUtil.saveUserInfo(phoneLoginBean)
 
             startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type))
+            this.finish()
 
         } else {
             Log.i("guo", "errormsg : ${phoneLoginBean.msg}")

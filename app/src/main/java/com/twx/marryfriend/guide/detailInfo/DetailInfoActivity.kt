@@ -646,6 +646,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
 
             startActivity(Intent(this, MainActivity::class.java))
+            this.finish()
         }
 
         tv_guide_detail_previous.setOnClickListener {
@@ -3105,6 +3106,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         val intent =
                             Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
                         startActivity(intent)
+                        this@DetailInfoActivity.finish()
                     }
 
                     override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
