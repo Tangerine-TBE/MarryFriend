@@ -9,13 +9,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
-import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.WhoSeeMeBean
 import com.twx.marryfriend.bean.mine.WhoSeeMeList
@@ -23,7 +22,6 @@ import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.mine.IGetWhoSeeMeCallback
 import com.twx.marryfriend.net.impl.mine.getWhoSeeMePresentImpl
@@ -159,7 +157,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
                 }
 
-                ImHelper.updateFriendInfo(idList)
+                ImUserInfoHelper.updateFriendInfo(idList)
 
                 adapter.notifyDataSetChanged()
             }

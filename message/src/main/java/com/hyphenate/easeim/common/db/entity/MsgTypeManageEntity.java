@@ -6,7 +6,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.common.db.DemoDbHelper;
 import com.hyphenate.easeim.common.db.dao.InviteMessageDao;
 
@@ -46,7 +46,7 @@ public class MsgTypeManageEntity implements Serializable {
     @Ignore
     public Object getLastMsg() {
         if(TextUtils.equals(type, msgType.NOTIFICATION.name())) {
-            InviteMessageDao inviteMessageDao = DemoDbHelper.getInstance(HxInit.getApplication()).getInviteMessageDao();
+            InviteMessageDao inviteMessageDao = DemoDbHelper.getInstance(ImDemoInit.getApplication()).getInviteMessageDao();
             return inviteMessageDao == null ? null : inviteMessageDao.lastInviteMessage();
         }
         return null;
@@ -54,7 +54,7 @@ public class MsgTypeManageEntity implements Serializable {
 
     public int getUnReadCount() {
         if(TextUtils.equals(type, msgType.NOTIFICATION.name())) {
-            InviteMessageDao inviteMessageDao = DemoDbHelper.getInstance(HxInit.getApplication()).getInviteMessageDao();
+            InviteMessageDao inviteMessageDao = DemoDbHelper.getInstance(ImDemoInit.getApplication()).getInviteMessageDao();
             return inviteMessageDao == null ? 0 : inviteMessageDao.queryUnreadCount();
         }
         return 0;

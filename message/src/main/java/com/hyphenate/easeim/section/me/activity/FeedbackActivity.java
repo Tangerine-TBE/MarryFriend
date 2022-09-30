@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.R;
 import com.hyphenate.easeim.common.widget.ArrowItemView;
 import com.hyphenate.easeim.section.base.BaseInitActivity;
@@ -34,7 +34,7 @@ public class FeedbackActivity extends BaseInitActivity implements View.OnClickLi
     private EditText etContent;
     private ArrowItemView itemEmail;
     private ArrowItemView itemQq;
-    private static final String[] questions = {HxInit.getApplication().getApplicationContext().getString(R.string.em_feedback_question_bug), HxInit.getApplication().getApplicationContext().getString(R.string.optimization_suggestions), HxInit.getApplication().getApplicationContext().getString(R.string.other)};
+    private static final String[] questions = {ImDemoInit.getApplication().getApplicationContext().getString(R.string.em_feedback_question_bug), ImDemoInit.getApplication().getApplicationContext().getString(R.string.optimization_suggestions), ImDemoInit.getApplication().getApplicationContext().getString(R.string.other)};
     private AlertDialog dialog;
     private int selectedPosition;
 

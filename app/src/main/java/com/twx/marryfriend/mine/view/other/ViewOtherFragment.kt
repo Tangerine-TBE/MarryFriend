@@ -11,7 +11,7 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
-import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.MeSeeWhoBean
 import com.twx.marryfriend.bean.mine.MeSeeWhoList
@@ -19,7 +19,6 @@ import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.net.callback.mine.IGetMeSeeWhoCallback
 import com.twx.marryfriend.net.impl.mine.getMeSeeWhoPresentImpl
@@ -137,7 +136,7 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
                     idList.add(meSeeWhoBean.data.list[i].host_uid.toString())
                 }
 
-                ImHelper.updateFriendInfo(idList)
+                ImUserInfoHelper.updateFriendInfo(idList)
 
                 adapter.notifyDataSetChanged()
             }

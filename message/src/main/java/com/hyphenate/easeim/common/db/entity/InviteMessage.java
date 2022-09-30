@@ -2,7 +2,7 @@ package com.hyphenate.easeim.common.db.entity;
 
 import androidx.room.Entity;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.common.db.DemoDbHelper;
 import com.hyphenate.easeim.common.db.dao.MsgTypeManageDao;
 
@@ -118,7 +118,7 @@ public class InviteMessage implements Serializable {
         //保存相应类型的MsgTypeManageEntity
         MsgTypeManageEntity entity = new MsgTypeManageEntity();
         entity.setType(type.name());
-        MsgTypeManageDao msgTypeManageDao = DemoDbHelper.getInstance(HxInit.getApplication()).getMsgTypeManageDao();
+        MsgTypeManageDao msgTypeManageDao = DemoDbHelper.getInstance(ImDemoInit.getApplication()).getMsgTypeManageDao();
         if(msgTypeManageDao != null) {
             msgTypeManageDao.insert(entity);
         }

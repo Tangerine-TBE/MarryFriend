@@ -20,7 +20,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
-import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.bean.vip.VipGifEnum
@@ -32,7 +32,6 @@ import com.twx.marryfriend.dynamic.saloon.adapter.SaloonAdapter
 import com.twx.marryfriend.dynamic.saloon.tip.TipsActivity
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
@@ -847,7 +846,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                     }
 
-                    ImHelper.updateFriendInfo(mUserIdList)
+                    ImUserInfoHelper.updateFriendInfo(mUserIdList)
 
 
                     max = Collections.max(mIdList)

@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMOptions;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.DemoHelper;
 import com.hyphenate.easeim.R;
 import com.hyphenate.easeim.common.manager.OptionsHelper;
@@ -38,7 +38,7 @@ public class DeveloperSetActivity extends BaseInitActivity implements EaseTitleB
     private DemoModel settingsModel;
     private EMOptions options;
 
-    private String sortType[] = new String[]{HxInit.getApplication().getApplicationContext().getString(R.string.in_order_of_reception), HxInit.getApplication().getApplicationContext().getString(R.string.by_server_time)};
+    private String sortType[] = new String[]{ImDemoInit.getApplication().getApplicationContext().getString(R.string.in_order_of_reception), ImDemoInit.getApplication().getApplicationContext().getString(R.string.by_server_time)};
     private long preTimestamp;
     private int clickTimes;
 

@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.hyphenate.chat.EMChatRoom;
 import com.hyphenate.chat.EMClient;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.common.db.DemoDbHelper;
 import com.hyphenate.easeim.common.db.dao.AppKeyDao;
 import com.hyphenate.easeim.common.db.dao.EmUserDao;
@@ -169,7 +169,7 @@ public class DemoModel {
      * @return
      */
     public DemoDbHelper getDbHelper() {
-        return DemoDbHelper.getInstance(HxInit.getApplication());
+        return DemoDbHelper.getInstance(ImDemoInit.getApplication());
     }
 
     /**
@@ -765,7 +765,7 @@ public class DemoModel {
      * @return
      */
     public boolean isFirstInstall() {
-        SharedPreferences preferences = HxInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
+        SharedPreferences preferences = ImDemoInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
         return preferences.getBoolean("is_first_install", true);
     }
 
@@ -774,7 +774,7 @@ public class DemoModel {
      * 并将会话列表是否来自服务器置为true
      */
     public void makeNotFirstInstall() {
-        SharedPreferences preferences = HxInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
+        SharedPreferences preferences = ImDemoInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
         preferences.edit().putBoolean("is_first_install", false).apply();
         preferences.edit().putBoolean("is_conversation_come_from_server", true).apply();
     }
@@ -784,7 +784,7 @@ public class DemoModel {
      * @return
      */
     public boolean isConComeFromServer() {
-        SharedPreferences preferences = HxInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
+        SharedPreferences preferences = ImDemoInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
         return preferences.getBoolean("is_conversation_come_from_server", false);
     }
 
@@ -792,7 +792,7 @@ public class DemoModel {
      * 将会话列表从服务器取数据的状态置为false，即后面应该采用本地数据库数据。
      */
     public void modifyConComeFromStatus() {
-        SharedPreferences preferences = HxInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
+        SharedPreferences preferences = ImDemoInit.getApplication().getSharedPreferences("first_install", Context.MODE_PRIVATE);
         preferences.edit().putBoolean("is_conversation_come_from_server", false).apply();
     }
 

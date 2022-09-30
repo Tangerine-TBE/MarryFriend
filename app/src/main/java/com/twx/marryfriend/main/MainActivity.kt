@@ -23,7 +23,7 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.message.ImMessageManager
-import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
@@ -79,7 +79,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         doUpdateTokenPresent.registerCallback(this)
 
         initEmojiCompat()
-        ImHelper.init()
+        ImUserInfoHelper.init()
         initRecommendFragment()
         initPush(this)
 

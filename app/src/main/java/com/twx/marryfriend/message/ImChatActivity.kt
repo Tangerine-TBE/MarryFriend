@@ -12,8 +12,6 @@ import com.hyphenate.easeim.section.chat.activity.ChatActivity
 import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.constants.EaseConstant
 import com.message.ImUserInfoService
-import com.twx.marryfriend.ImHelper
-import com.twx.marryfriend.R
 import com.twx.marryfriend.dialog.ChatSettingDialog
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.launch

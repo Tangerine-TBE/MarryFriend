@@ -26,7 +26,7 @@ import com.hyphenate.chat.EMMucSharedFile;
 import com.hyphenate.chat.EMTextMessageBody;
 import com.hyphenate.chat.EMUserInfo;
 import com.hyphenate.chat.adapter.EMAChatRoomManagerListener;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.DemoHelper;
 import com.hyphenate.easeim.MainActivity;
 import com.hyphenate.easeim.R;
@@ -83,7 +83,7 @@ public class ChatPresenter extends EaseChatPresenter {
     Queue<String> msgQueue = new ConcurrentLinkedQueue<>();
 
     private ChatPresenter() {
-        appContext = HxInit.getApplication();
+        appContext = ImDemoInit.getApplication();
         initHandler(appContext.getMainLooper());
         messageChangeLiveData = LiveDataBus.get();
         connectionListener = new ChatConnectionListener();
@@ -198,7 +198,7 @@ public class ChatPresenter extends EaseChatPresenter {
                 return;
             }
             // in background, do not refresh UI, notify it in notification bar
-            if(!HxInit.getLifecycleCallbacks().isFront()){
+            if(!ImDemoInit.getLifecycleCallbacks().isFront()){
                 getNotifier().notify(message);
             }
             //notify new message
@@ -213,7 +213,7 @@ public class ChatPresenter extends EaseChatPresenter {
      * @return
      */
     private synchronized boolean isAppLaunchMain() {
-        List<Activity> activities = HxInit.getLifecycleCallbacks().getActivityList();
+        List<Activity> activities = ImDemoInit.getLifecycleCallbacks().getActivityList();
         if(activities != null && !activities.isEmpty()) {
             for(int i = activities.size() - 1; i >= 0 ; i--) {
                 if(activities.get(i) instanceof MainActivity) {
@@ -234,7 +234,7 @@ public class ChatPresenter extends EaseChatPresenter {
     @Override
     public void onMessageRead(List<EMMessage> messages) {
         super.onMessageRead(messages);
-        if(!(HxInit.getLifecycleCallbacks().current() instanceof ChatActivity)) {
+        if(!(ImDemoInit.getLifecycleCallbacks().current() instanceof ChatActivity)) {
             EaseEvent event = EaseEvent.create(DemoConstant.MESSAGE_CHANGE_RECALL, EaseEvent.TYPE.MESSAGE);
             messageChangeLiveData.with(DemoConstant.MESSAGE_CHANGE_CHANGE).postValue(event);
         }
@@ -320,7 +320,7 @@ public class ChatPresenter extends EaseChatPresenter {
                 new EMContactManagerRepository().getContactList(new ResultCallBack<List<EaseUser>>() {
                     @Override
                     public void onSuccess(List<EaseUser> value) {
-                        EmUserDao userDao = DemoDbHelper.getInstance(HxInit.getApplication()).getUserDao();
+                        EmUserDao userDao = DemoDbHelper.getInstance(ImDemoInit.getApplication()).getUserDao();
                         if(userDao != null) {
                             userDao.clearUsers();
                             userDao.insert(EmUserEntity.parseList(value));
@@ -816,7 +816,7 @@ public class ChatPresenter extends EaseChatPresenter {
         @Override
         public void onContactEvent(int event, String target, String ext) {
             EMLog.i(TAG, "onContactEvent event"+event);
-            DemoDbHelper dbHelper = DemoDbHelper.getInstance(HxInit.getApplication());
+            DemoDbHelper dbHelper = DemoDbHelper.getInstance(ImDemoInit.getApplication());
             String message = null;
             switch (event) {
                 case CONTACT_REMOVE: //好友已经在其他机子上被移除

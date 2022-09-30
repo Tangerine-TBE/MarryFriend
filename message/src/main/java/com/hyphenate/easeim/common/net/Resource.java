@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.common.enums.Status;
 
 public class Resource<T> {
@@ -55,7 +55,7 @@ public class Resource<T> {
             return message;
         }
         if(messageId > 0) {
-            return HxInit.getApplication().getString(messageId);
+            return ImDemoInit.getApplication().getString(messageId);
         }
         return "";
     }

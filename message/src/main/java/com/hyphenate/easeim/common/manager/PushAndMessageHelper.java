@@ -9,7 +9,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMImageMessageBody;
 import com.hyphenate.chat.EMMessage;
 import com.hyphenate.chat.EMTextMessageBody;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.DemoHelper;
 import com.hyphenate.easeim.R;
 import com.hyphenate.easeim.common.constant.DemoConstant;
@@ -61,7 +61,7 @@ public class PushAndMessageHelper {
                     sendImageMessage(toChatUsername, uri);
                 }else {
                     LiveDataBus.get().with(DemoConstant.MESSAGE_FORWARD)
-                            .postValue(new EaseEvent(HxInit.getApplication().getApplicationContext().getString(R.string.no_image_resource), EaseEvent.TYPE.MESSAGE));
+                            .postValue(new EaseEvent(ImDemoInit.getApplication().getApplicationContext().getString(R.string.no_image_resource), EaseEvent.TYPE.MESSAGE));
                 }
                 break;
             default:
@@ -74,7 +74,7 @@ public class PushAndMessageHelper {
             return null;
         }
         Uri localUri = body.getLocalUri();
-        Context context = HxInit.getApplication().getApplicationContext();
+        Context context = ImDemoInit.getApplication().getApplicationContext();
         if(EaseFileUtils.isFileExistByUri(context, localUri)) {
             return localUri;
         }
@@ -97,7 +97,7 @@ public class PushAndMessageHelper {
         }
         String messge;
         messge = "";
-        Context context = HxInit.getApplication();
+        Context context = ImDemoInit.getApplication();
         StringBuilder builder = new StringBuilder(context.getString(status.getMsgContent()));
         switch (status) {
             case BEINVITEED:
@@ -174,7 +174,7 @@ public class PushAndMessageHelper {
             return "";
         }
         String messge;
-        Context context = HxInit.getApplication();
+        Context context = ImDemoInit.getApplication();
         StringBuilder builder = new StringBuilder(context.getString(status.getMsgContent()));
         switch (status) {
             case BEINVITEED:
@@ -241,7 +241,7 @@ public class PushAndMessageHelper {
             return "";
         }
         String messge;
-        Context context = HxInit.getApplication();
+        Context context = ImDemoInit.getApplication();
         StringBuilder builder = new StringBuilder(context.getString(status.getMsgContent()));
         switch (status) {
             case BEINVITEED:
@@ -345,7 +345,7 @@ public class PushAndMessageHelper {
             @Override
             public void onSuccess() {
                 LiveDataBus.get().with(DemoConstant.MESSAGE_FORWARD)
-                        .postValue(new EaseEvent(HxInit.getApplication().getString(R.string.has_been_send), EaseEvent.TYPE.MESSAGE));
+                        .postValue(new EaseEvent(ImDemoInit.getApplication().getString(R.string.has_been_send), EaseEvent.TYPE.MESSAGE));
             }
 
             @Override

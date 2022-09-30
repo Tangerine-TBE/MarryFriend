@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.common.db.DemoDbHelper;
 import com.hyphenate.easeim.common.db.entity.MsgTypeManageEntity;
 import com.hyphenate.easeim.common.livedatas.SingleSourceLiveData;
@@ -86,7 +86,7 @@ public class ConversationListViewModel extends AndroidViewModel {
      */
     public void deleteSystemMsg(MsgTypeManageEntity msg) {
         try {
-            DemoDbHelper dbHelper = DemoDbHelper.getInstance(HxInit.getApplication());
+            DemoDbHelper dbHelper = DemoDbHelper.getInstance(ImDemoInit.getApplication());
             if(dbHelper.getInviteMessageDao() != null) {
                 dbHelper.getInviteMessageDao().delete("type", msg.getType());
             }

@@ -11,7 +11,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMContactManager;
 import com.hyphenate.chat.EMGroupManager;
 import com.hyphenate.chat.EMPushManager;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.DemoHelper;
 import com.hyphenate.easeim.common.db.DemoDbHelper;
 import com.hyphenate.easeim.common.db.dao.EmUserDao;
@@ -100,7 +100,7 @@ public class BaseEMRepository {
      * init room
      */
     public void initDb() {
-        DemoDbHelper.getInstance(HxInit.getApplication()).initDb(getCurrentUser());
+        DemoDbHelper.getInstance(ImDemoInit.getApplication()).initDb(getCurrentUser());
     }
 
     /**
@@ -108,7 +108,7 @@ public class BaseEMRepository {
      * @return
      */
     public EmUserDao getUserDao() {
-        return DemoDbHelper.getInstance(HxInit.getApplication()).getUserDao();
+        return DemoDbHelper.getInstance(ImDemoInit.getApplication()).getUserDao();
     }
 
     /**
@@ -116,7 +116,7 @@ public class BaseEMRepository {
      * @return
      */
     public MsgTypeManageDao getMsgTypeManageDao() {
-        return DemoDbHelper.getInstance(HxInit.getApplication()).getMsgTypeManageDao();
+        return DemoDbHelper.getInstance(ImDemoInit.getApplication()).getMsgTypeManageDao();
     }
 
     /**
@@ -124,7 +124,7 @@ public class BaseEMRepository {
      * @return
      */
     public InviteMessageDao getInviteMessageDao() {
-        return DemoDbHelper.getInstance(HxInit.getApplication()).getInviteMessageDao();
+        return DemoDbHelper.getInstance(ImDemoInit.getApplication()).getInviteMessageDao();
     }
 
     /**
@@ -144,7 +144,7 @@ public class BaseEMRepository {
     }
 
     public Context getContext() {
-        return HxInit.getApplication().getApplicationContext();
+        return ImDemoInit.getApplication().getApplicationContext();
     }
 
 }

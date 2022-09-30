@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.hyphenate.EMCallBack;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.DemoHelper;
 import com.hyphenate.easeim.R;
 import com.hyphenate.easeim.common.constant.DemoConstant;
@@ -43,7 +43,6 @@ import com.hyphenate.easeim.common.widget.EaseProgressDialog;
 import com.hyphenate.easeui.model.EaseEvent;
 import com.hyphenate.easeui.utils.StatusBarCompat;
 import com.hyphenate.util.EMLog;
-import com.message.ImInit;
 
 import java.util.List;
 
@@ -145,7 +144,7 @@ public class BaseActivity extends AppCompatActivity {
      * 结束除了当前Activity外的其他Activity
      */
     protected void finishOtherActivities() {
-        UserActivityLifecycleCallbacks lifecycleCallbacks = HxInit.getLifecycleCallbacks();
+        UserActivityLifecycleCallbacks lifecycleCallbacks = ImDemoInit.getLifecycleCallbacks();
         if(lifecycleCallbacks == null) {
             finish();
             return;

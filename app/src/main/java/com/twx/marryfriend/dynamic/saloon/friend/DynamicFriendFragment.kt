@@ -18,7 +18,7 @@ import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
-import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.dynamic.*
 import com.twx.marryfriend.bean.vip.VipGifEnum
@@ -29,7 +29,6 @@ import com.twx.marryfriend.dynamic.preview.video.VideoPreviewActivity
 import com.twx.marryfriend.dynamic.saloon.adapter.SaloonFocusAdapter
 import com.twx.marryfriend.dynamic.show.others.DynamicOtherShowActivity
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.twx.marryfriend.message.ChatActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.mine.user.UserActivity
 import com.twx.marryfriend.net.callback.dynamic.*
@@ -625,7 +624,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
 
                     }
 
-                    ImHelper.updateFriendInfo(mFocusUserIdList)
+                    ImUserInfoHelper.updateFriendInfo(mFocusUserIdList)
 
                     max = Collections.max(mIdList)
                     min = Collections.min(mIdList)

@@ -8,7 +8,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.R;
 import com.hyphenate.easeim.common.interfaceOrImplement.OnResourceParseCallback;
 import com.hyphenate.easeim.common.manager.PushAndMessageHelper;
@@ -125,7 +125,7 @@ public class ForwardMessageActivity extends BaseInitActivity implements OnRefres
     }
 
     private void finishChatActivity() {
-        HxInit.getLifecycleCallbacks().finishTarget(ChatActivity.class);
+        ImDemoInit.getLifecycleCallbacks().finishTarget(ChatActivity.class);
     }
 
     @Override

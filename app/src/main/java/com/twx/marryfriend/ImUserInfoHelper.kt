@@ -28,7 +28,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object ImHelper {
+object ImUserInfoHelper {
     val observableNewMessage by lazy {
         LiveDataBus.get().with("im_user_info_update",Boolean::class.java)
     }

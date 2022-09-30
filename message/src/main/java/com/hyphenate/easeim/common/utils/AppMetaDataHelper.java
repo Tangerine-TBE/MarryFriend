@@ -5,7 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 
 public class AppMetaDataHelper {
     private static AppMetaDataHelper instance;
@@ -22,7 +22,7 @@ public class AppMetaDataHelper {
     }
 
     private void getMetaBundle() {
-        Context context = HxInit.getApplication().getApplicationContext();
+        Context context = ImDemoInit.getApplication().getApplicationContext();
         try {
             ApplicationInfo info = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
             if(info != null) {

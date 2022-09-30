@@ -22,7 +22,7 @@ import com.hyphenate.chat.EMMessage
 import com.hyphenate.easecallkit.EaseCallKit
 import com.hyphenate.easecallkit.base.EaseCallType
 import com.hyphenate.easeim.DemoHelper
-import com.hyphenate.easeim.HxInit.application
+import com.hyphenate.easeim.ImDemoInit.application
 import com.hyphenate.easeim.R
 import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.common.livedatas.LiveDataBus

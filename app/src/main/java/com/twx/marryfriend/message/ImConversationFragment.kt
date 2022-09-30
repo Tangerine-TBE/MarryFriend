@@ -49,7 +49,7 @@ class ImConversationFragment: ConversationListFragment() {
 
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
 
-        ImHelper.observableNewMessage.observe(this){
+        ImUserInfoHelper.observableNewMessage.observe(this){
             iLog("开始刷新会话，${it}")
             if (it==true){
                 conversationListLayout.refreshList()

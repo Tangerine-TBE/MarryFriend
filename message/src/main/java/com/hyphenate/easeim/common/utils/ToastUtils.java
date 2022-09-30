@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.StringRes;
 
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.R;
 import com.hyphenate.easeui.manager.EaseThreadManager;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
@@ -202,7 +202,7 @@ public class ToastUtils {
         if(TextUtils.isEmpty(message)) {
             return;
         }
-        showToast(HxInit.getApplication(), title, message, type, duration, Gravity.CENTER);
+        showToast(ImDemoInit.getApplication(), title, message, type, duration, Gravity.CENTER);
     }
 
     /**
@@ -213,7 +213,7 @@ public class ToastUtils {
      * @param duration
      */
     public static void showCenterToast(@StringRes int title, @StringRes int message, int type, int duration) {
-        showToast(HxInit.getApplication(), title, message, type, duration, Gravity.CENTER);
+        showToast(ImDemoInit.getApplication(), title, message, type, duration, Gravity.CENTER);
     }
 
     /**
@@ -227,7 +227,7 @@ public class ToastUtils {
         if(TextUtils.isEmpty(message)) {
             return;
         }
-        showToast(HxInit.getApplication(), title, message, type, duration, Gravity.BOTTOM);
+        showToast(ImDemoInit.getApplication(), title, message, type, duration, Gravity.BOTTOM);
     }
 
     /**
@@ -238,7 +238,7 @@ public class ToastUtils {
      * @param duration
      */
     public static void showBottomToast(@StringRes int title, @StringRes int message, int type, int duration) {
-        showToast(HxInit.getApplication(), title, message, type, duration, Gravity.BOTTOM);
+        showToast(ImDemoInit.getApplication(), title, message, type, duration, Gravity.BOTTOM);
     }
 
     /**

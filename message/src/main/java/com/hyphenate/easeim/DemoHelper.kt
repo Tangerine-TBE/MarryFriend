@@ -21,8 +21,8 @@ import com.hyphenate.easecallkit.EaseCallKit
 import com.hyphenate.easecallkit.EaseCallKit.EaseCallError
 import com.hyphenate.easecallkit.base.*
 import com.hyphenate.easecallkit.event.CallCancelEvent
-import com.hyphenate.easeim.HxInit.application
-import com.hyphenate.easeim.HxInit.lifecycleCallbacks
+import com.hyphenate.easeim.ImDemoInit.application
+import com.hyphenate.easeim.ImDemoInit.lifecycleCallbacks
 import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.common.db.DemoDbHelper
 import com.hyphenate.easeim.common.livedatas.LiveDataBus

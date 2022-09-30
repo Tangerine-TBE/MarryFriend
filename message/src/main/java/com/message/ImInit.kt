@@ -4,7 +4,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.os.Process
-import com.hyphenate.easeim.HxInit
+import com.hyphenate.easeim.ImDemoInit
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 
 object ImInit {
@@ -20,7 +20,7 @@ object ImInit {
         if (processAppName == null ||processAppName!=application.packageName) {
             return
         }
-        HxInit.initIm(application)
+        ImDemoInit.initIm(application)
     }
 
     private fun Context.getAppName(pID: Int): String? {

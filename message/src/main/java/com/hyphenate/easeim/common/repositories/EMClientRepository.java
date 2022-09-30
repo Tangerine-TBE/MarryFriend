@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.chat.EMGroup;
-import com.hyphenate.easeim.HxInit;
+import com.hyphenate.easeim.ImDemoInit;
 import com.hyphenate.easeim.DemoHelper;
 import com.hyphenate.easeim.common.constant.DemoConstant;
 import com.hyphenate.easeim.common.db.DemoDbHelper;
@@ -83,7 +83,7 @@ public class EMClientRepository extends BaseEMRepository{
             protected void createCall(@NonNull ResultCallBack<LiveData<String>> callBack) {
                 //注册之前先判断SDK是否已经初始化，如果没有先进行SDK的初始化
                 if(!DemoHelper.getInstance().isSDKInit()) {
-                    DemoHelper.getInstance().init(HxInit.getApplication());
+                    DemoHelper.getInstance().init(ImDemoInit.getApplication());
                     DemoHelper.getInstance().getModel().setCurrentUserName(userName);
                 }
                 runOnIOThread(() -> {
@@ -112,7 +112,7 @@ public class EMClientRepository extends BaseEMRepository{
 
             @Override
             protected void createCall(@NonNull ResultCallBack<LiveData<EaseUser>> callBack) {
-                DemoHelper.getInstance().init(HxInit.getApplication());
+                DemoHelper.getInstance().init(ImDemoInit.getApplication());
                 DemoHelper.getInstance().getModel().setCurrentUserName(userName);
                 DemoHelper.getInstance().getModel().setCurrentUserPwd(pwd);
                 if(isTokenFlag) {
@@ -241,6 +241,6 @@ public class EMClientRepository extends BaseEMRepository{
     }
 
     private void closeDb() {
-        DemoDbHelper.getInstance(HxInit.getApplication()).closeDb();
+        DemoDbHelper.getInstance(ImDemoInit.getApplication()).closeDb();
     }
 }

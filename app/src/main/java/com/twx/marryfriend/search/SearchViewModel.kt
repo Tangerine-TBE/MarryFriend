@@ -2,7 +2,7 @@ package com.twx.marryfriend.search
 
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.twx.marryfriend.ImHelper
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.UserInfo.getOriginalUserSex
 import com.twx.marryfriend.UserInfo.reversalSex
@@ -91,7 +91,7 @@ class SearchViewModel:ViewModel() {
                 result.mapNotNull {
                     it.user_id?.toString()
                 }.also {
-                    ImHelper.updateFriendInfo(it)
+                    ImUserInfoHelper.updateFriendInfo(it)
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
@@ -117,7 +117,7 @@ class SearchViewModel:ViewModel() {
                 result.mapNotNull {
                     it.user_id?.toString()
                 }.also {
-                    ImHelper.updateFriendInfo(it)
+                    ImUserInfoHelper.updateFriendInfo(it)
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

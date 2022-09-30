@@ -11,7 +11,7 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter
 import com.scwang.smartrefresh.layout.header.ClassicsHeader
 
-object HxInit{
+object ImDemoInit{
     @JvmStatic
     var application: Application? = null
         private set
