@@ -137,6 +137,7 @@ class ImConversationFragment: ConversationListFragment() {
         refreshFollow()
 //        conversationListLayout.refreshList()
 //        ImUserInfoHelper.updateFriendInfo()
+        ImUserInfoHelper.refreshConversationsInfo()
     }
 
     private fun refreshMutualLike(){

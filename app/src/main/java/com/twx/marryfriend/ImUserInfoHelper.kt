@@ -70,7 +70,7 @@ object ImUserInfoHelper {
             iLog("首次启动设置环信用户信息")
             val conversations=try {
                 val s=messageViewModel.getAllConversations()
-                iLog("通过接口获取环信用户信息,${s}")
+                iLog("通过接口获取环信用户信息,${s?.map { it.nickname }}")
                 if (!s.isNullOrEmpty()){
                     iLog("环信用户信息存入缓存")
                     SPUtil.instance.putString(IM_USER_INFO_K,gson.toJson(s))
@@ -181,23 +181,36 @@ object ImUserInfoHelper {
     }
 
     fun addFriendInfo(ids:List<String>){
+        iLog("新增用户资料")
         ids.filter {
             ImUserInfoService.getUserNickName(it)==null
         }.also { list ->
-            iLog("已准备好获取用户资料,${list}")
-            GlobalScope.launch {
-                iLog("开始获取用户资料,${list}")
-                val conversations=messageViewModel.getConversationsInfo(list)
-                val result= conversations.map {
-                    ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
-                        ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
-                }
-                result.also { resultList ->
-                    iLog("获取用户资料成功,${resultList.map { it.userId }}")
-                    ImUserInfoService.setUserInfo(*resultList.toTypedArray())
+            updateFriendInfo(list)
+        }
+    }
+
+    fun refreshConversationsInfo(){
+        val userId=UserInfo.getUserId()
+        ImUserInfoService.setUserInfo(ImUserInfoService.ImUserInfo(userId?:return,UserInfo.getNickname(),UserInfo.getImgHead()))
+        iLog("刷新环信用户信息")
+        updateFriendInfo(ImMessageManager.getAllConversations().map { it.conversationId })
+    }
+
+    private fun updateFriendInfo(ids:List<String>){
+        iLog("更新用户资料")
+        iLog("已准备好获取用户资料,${ids}")
+        GlobalScope.launch {
+            iLog("开始获取用户资料,${ids}")
+            val conversations=messageViewModel.getConversationsInfo(ids)
+            val result= conversations?.map {
+                ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
+                    ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
+            }?:return@launch
+            result.also { resultList ->
+                iLog("获取用户资料成功,${resultList.map { it.userId }}")
+                ImUserInfoService.setUserInfo(*resultList.toTypedArray())
 //                    val fff= resultList.mapNotNull { it.userId.toIntOrNull() }.toIntArray()
-                    observableNewMessage.postValue(true)
-                }
+                observableNewMessage.postValue(true)
             }
         }
     }

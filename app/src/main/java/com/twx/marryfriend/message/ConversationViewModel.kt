@@ -30,39 +30,13 @@ class ConversationViewModel:ViewModel() {
             val allConversation= ImMessageManager.getAllConversations().sortedBy {
                 -it.lastTime
             }
-            val friendsInfo=try {
-                getFriendsInfo(allConversation.map { it.conversationId }).data
-            }catch (e:Exception){
-                null
-            }
-
-            friendsInfo?.mapNotNull {
-                val id=it.user_id?.toString()
-                if (id==null){
-                    null
-                }else{
-                    ConversationsItemModel(id)
-                        .apply {
-                            this.age=(it.age?:0)
-                            this.isSuperVip=it.isSuperVip()
-                            this.isVip=it.isVip()
-                            this.userImage=it.image_url
-                            this.nickname=it.nick
-                            this.isRealName=it.isRealName()
-                            this.occupation=it.occupation_str
-                            this.education=RecommendBean.getEducationStr(it.education)?.label
-                            this.location=it.work_city_str
-                            this.isMutualLike=it.isMutualLike()
-                            this.isFlower=it.isFlower()
-                        }
-                }
-            }.also { list ->
-                continuation.resume(list)
+            getConversationsInfo(allConversation.map { it.conversationId }).also {
+                continuation.resume(it)
             }
         }
     }
 
-    suspend fun getConversationsInfo(ids:List<String>)=suspendCoroutine<List<ConversationsItemModel>>{ continuation->
+    suspend fun getConversationsInfo(ids:List<String>)=suspendCoroutine<List<ConversationsItemModel>?>{ continuation->
         viewModelScope.launch {
             val friendsInfo=try {
                 getFriendsInfo(ids).data
@@ -90,7 +64,7 @@ class ConversationViewModel:ViewModel() {
                         }
                 }
             }.also { list ->
-                continuation.resume(list?: emptyList())
+                continuation.resume(list)
             }
         }
     }
