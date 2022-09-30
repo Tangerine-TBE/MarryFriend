@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
-import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
@@ -17,7 +16,6 @@ import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
-import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -84,8 +82,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun initView() {
         super.initView()
-
-        Log.i("guo", "mian_initView")
 
         doUpdateTokenPresent = doUpdateTokenPresentImpl.getsInstance()
         doUpdateTokenPresent.registerCallback(this)
@@ -488,7 +484,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
                     when (uMessage.custom) {
                         "shenhe_tongzhi" -> {
                             Log.i("guo", "审核通知，跳小秘书")
-                            ToastUtils.showShort("跳转至小秘书")
                             startActivity(MyHelperActivity.getIntent(this@MainActivity))
                         }
                         "ta_gang_xihuan_ni" -> {
@@ -602,10 +597,5 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         }
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        Log.i("guo", "main_resume")
-    }
 
 }

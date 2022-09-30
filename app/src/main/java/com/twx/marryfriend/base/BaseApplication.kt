@@ -82,7 +82,6 @@ open class BaseApplication : Application() {
             Thread { PushHelper.init(applicationContext) }.start()
         }
 
-
         initChild()
 
     }

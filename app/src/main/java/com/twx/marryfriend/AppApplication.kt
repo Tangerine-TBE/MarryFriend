@@ -11,15 +11,15 @@ import com.twx.marryfriend.utils.SpUtil
 import com.xyzz.myutils.MyUtils
 
 
-class AppApplication: BaseApplication() {
-    companion object{
-        lateinit var application :Application
+class AppApplication : BaseApplication() {
+    companion object {
+        lateinit var application: Application
             private set
     }
 
     override fun onCreate() {
         super.onCreate()
-        application=this
+        application = this
         MyUtils.init(this)
 
         LoadSir.beginBuilder()
@@ -33,10 +33,10 @@ class AppApplication: BaseApplication() {
        ImInit.init(this)
 
         ImInit.imLoginState.observeForever {
-            if (it==false){
+            if (it == false) {
                 SpUtil.deleteUserInfo()
                 startActivity(Intent(this, BeginActivity::class.java).also {
-                    it.flags=Intent.FLAG_ACTIVITY_NEW_TASK
+                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 })
             }
         }

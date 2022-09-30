@@ -19,7 +19,7 @@ public class PushConstants {
 //    /**
 //     * 后台加密消息的密码（仅Demo用，请勿将此密码泄漏）
 //     */
-//    public static final String APP_MASTER_SECRET = "e2jiksnoddsntp6r3rklouy7an2gohva";
+    public static final String APP_MASTER_SECRET = "e2jiksnoddsntp6r3rklouy7an2gohva";
 
     /**
      * 渠道名称，修改为您App的发布渠道名称
