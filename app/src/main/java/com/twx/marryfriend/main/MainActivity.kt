@@ -407,8 +407,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         //获取推送实例
         val pushAgent = PushAgent.getInstance(context)
 
-        //修改为您app/src/main/AndroidManifest.xml中package值
-        pushAgent.resourcePackageName = "com.twx.marryfriend"
+
 
         //推送设置
         pushSetting(context)
@@ -532,10 +531,11 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
      * 注册设备推送通道（小米、华为等设备的推送）
      */
     private fun registerDeviceChannel(context: Context) {
+        Log.i("MiPushBroadcastReceive","注册")
         MiPushRegistar.register(context, PushConstants.MI_ID, PushConstants.MI_KEY)
-        VivoRegister.register(context)
-        OppoRegister.register(context, PushConstants.OPPO_KEY, PushConstants.OPPO_SECRET)
-        HuaWeiRegister.register(context.applicationContext)
+//        VivoRegister.register(context)
+//        OppoRegister.register(context, PushConstants.OPPO_KEY, PushConstants.OPPO_SECRET)
+//        HuaWeiRegister.register(context.applicationContext)
     }
 
 
