@@ -81,9 +81,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     private val imLoginStateObserver= androidx.lifecycle.Observer<Boolean> { aBoolean ->
         if (aBoolean==false){
             SpUtil.deleteUserInfo()
-            startActivity(Intent(this, BeginActivity::class.java).also {
-                it.flags=Intent.FLAG_ACTIVITY_NEW_TASK
-            })
+            startActivity(Intent(this, BeginActivity::class.java))
         }
     }
 
