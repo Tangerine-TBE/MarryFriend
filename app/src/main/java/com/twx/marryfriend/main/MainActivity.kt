@@ -200,7 +200,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
 
     // 动态列表界面添加动态数据
-    fun addDynamicFragment(trendSaloonList: TrendSaloonList) {
+    fun addDynamicFragment(trendSaloonList: TrendSaloonList?) {
 
         rb_main_dynamic.isChecked = true
 
@@ -214,7 +214,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         transaction.show(dynamic!!)
         transaction.commit()
 
-        dynamic!!.addData(trendSaloonList)
+        if (trendSaloonList!=null) {
+            dynamic!!.addData(trendSaloonList)
+        }
 
     }
 

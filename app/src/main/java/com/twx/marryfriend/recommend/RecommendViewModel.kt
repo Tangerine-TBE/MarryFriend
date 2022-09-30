@@ -190,7 +190,7 @@ class RecommendViewModel():ViewModel() {
     suspend fun like(
         guest_uid: Int,
         mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
-//        if (BuildConfig.DEBUG){
+//        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
 //            coroutine.resume(RecommendCall())
 //            return@suspendCoroutine
 //        }

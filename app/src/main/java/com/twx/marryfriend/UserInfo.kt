@@ -53,6 +53,12 @@ object UserInfo {
         return SPStaticUtils.getString(Constant.USER_ID, null)
     }
 
+    fun isTestDv():Boolean{
+        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
+        return BuildConfig.DEBUG&&
+            (phone=="15270318482"||phone=="17370452215")
+    }
+
     fun getImgHead():String{
         return SPStaticUtils.getString(Constant.ME_AVATAR, "")
     }

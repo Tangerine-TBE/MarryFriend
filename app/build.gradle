@@ -36,12 +36,12 @@ android {
 
     defaultConfig {
 
-        applicationId rootProject.ext.version.applicationId
+        applicationId "com.jiaou.love"
 
         minSdk rootProject.ext.version.minSdkVersion
         targetSdk rootProject.ext.version.targetSdkVersion
-        versionCode rootProject.ext.version.versionCode
-        versionName rootProject.ext.version.versionName
+        versionCode 10010
+        versionName "1.0.0"
         flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -99,19 +99,19 @@ android {
         _anzhi {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_anzhi"]
         }
         _lenovo {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_lenovo"]
         }
         _oppo {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_oppo"]
         }
         _vivo {
@@ -123,49 +123,49 @@ android {
         _360 {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_360"]
         }
         _xiaomi {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_xiaomi"]
         }
         _yingyongbao {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_yingyongbao"]
         }
         _baidu {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_baidu"]
         }
         _huawei {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_huawei"]
         }
         _meizu {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_meizu"]
         }
         _alibaba {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_ali"]
         }
         _google {
 
             manifestPlaceholders = [
-                    app_name_channel: rootProject.ext.version.applicationName,
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_google"]
         }
     }

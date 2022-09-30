@@ -14,7 +14,7 @@ object BaseConstant {
                 application.packageName,
                 PackageManager.GET_META_DATA
             )
-            applicationInfo.metaData?.getString("CHANNEL_VALUE")?:"_channel"
+            applicationInfo.metaData?.getString("UMENG_CHANNEL")?:"_channel"
         } catch (e:Exception) {
             e.printStackTrace()
             "_channel"

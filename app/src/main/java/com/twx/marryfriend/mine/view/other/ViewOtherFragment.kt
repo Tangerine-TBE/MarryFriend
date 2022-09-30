@@ -136,7 +136,7 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
                     idList.add(meSeeWhoBean.data.list[i].host_uid.toString())
                 }
 
-                ImUserInfoHelper.updateFriendInfo(idList)
+                ImUserInfoHelper.addFriendInfo(idList)
 
                 adapter.notifyDataSetChanged()
             }

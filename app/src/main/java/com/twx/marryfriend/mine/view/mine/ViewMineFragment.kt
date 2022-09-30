@@ -157,7 +157,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
                 }
 
-                ImUserInfoHelper.updateFriendInfo(idList)
+                ImUserInfoHelper.addFriendInfo(idList)
 
                 adapter.notifyDataSetChanged()
             }
