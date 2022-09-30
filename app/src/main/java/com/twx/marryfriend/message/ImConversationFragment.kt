@@ -17,6 +17,9 @@ import com.hyphenate.chat.EMConversation
 import com.hyphenate.easeim.section.conversation.ConversationListFragment
 import com.hyphenate.easeui.EaseIM
 import com.hyphenate.easeui.adapter.EaseAdapterDelegate
+import com.hyphenate.easeui.modules.conversation.model.EaseConversationInfo
+import com.hyphenate.easeui.modules.conversation.presenter.EaseConversationPresenterImpl
+import com.message.ImUserInfoService
 import com.twx.marryfriend.*
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.vip.SVipGifEnum
@@ -31,7 +34,6 @@ import kotlinx.coroutines.launch
 class ImConversationFragment: ConversationListFragment() {
     companion object{
         const val MY_HELPER_ID="小秘书"//小秘书id
-        const val LINE_SERVICE="1"
     }
     private val viewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)
@@ -48,7 +50,34 @@ class ImConversationFragment: ConversationListFragment() {
         llRoot.addView(LayoutInflater.from(requireContext()).inflate(R.layout.fragment_im_message,llRoot,false), 0)
 
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
+        conversationListLayout.setCustomSort(object :EaseConversationPresenterImpl.ISortList{
+            override fun sort(
+                topSortList: MutableList<EaseConversationInfo>?,
+                sortList: MutableList<EaseConversationInfo>?
+            ): MutableList<EaseConversationInfo> {
+                val vipGroup=sortList?.groupBy {
+                    val conversationId=(it.info as? EMConversation)?.conversationId()
+                    if (conversationId!=null){
+                        ImUserInfoService.getExt(conversationId)?.isSuperVip?:false
+                    }else{
+                        false
+                    }
+                }
+                val result=ArrayList<EaseConversationInfo>()
+                result.addAll(topSortList?: emptyList())
 
+                result.addAll(vipGroup?.get(true)?: emptyList())
+                result.addAll(vipGroup?.get(false)?: emptyList())
+
+//                val myHelperConversation=result.find {
+//                    val conversationId=(it.info as? EMConversation)?.conversationId()
+//                    conversationId==ImConversationFragment.MY_HELPER_ID
+//                }
+//                val index=result.indexOf(myHelperConversation)
+                return result
+            }
+
+        })
         ImUserInfoHelper.observableNewMessage.observe(this){
             iLog("开始刷新会话，${it}")
             if (it==true){
@@ -106,7 +135,8 @@ class ImConversationFragment: ConversationListFragment() {
         super.onResume()
         refreshMutualLike()
         refreshFollow()
-        conversationListLayout.refreshList()
+//        conversationListLayout.refreshList()
+//        ImUserInfoHelper.updateFriendInfo()
     }
 
     private fun refreshMutualLike(){

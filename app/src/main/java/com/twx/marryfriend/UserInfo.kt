@@ -46,7 +46,17 @@ object UserInfo {
 //            }
 //            return "2"//3,4,6,11,16//
 //        }
+
+//        if (BuildConfig.DEBUG){
+//            return "4"
+//        }
         return SPStaticUtils.getString(Constant.USER_ID, null)
+    }
+
+    fun isTestDv():Boolean{
+        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
+        return BuildConfig.DEBUG&&
+            (phone=="15270318482"||phone=="17370452215")
     }
 
     fun getImgHead():String{

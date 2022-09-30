@@ -846,7 +846,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                     }
 
-                    ImUserInfoHelper.updateFriendInfo(mUserIdList)
+                    ImUserInfoHelper.addFriendInfo(mUserIdList)
 
 
                     max = Collections.max(mIdList)

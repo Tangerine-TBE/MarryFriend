@@ -90,6 +90,8 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
             stopVoice()
         }
         notifyItemRemoved(index)
+
+        notifyItemChanged(0)
         return e
     }
 
@@ -103,6 +105,8 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         }
         listData.remove(recommendBean)
         notifyItemRemoved(index)
+
+        notifyItemChanged(0)
     }
 
     fun getTopItem():RecommendBean{

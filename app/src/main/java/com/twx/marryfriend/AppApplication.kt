@@ -31,14 +31,5 @@ class AppApplication : BaseApplication() {
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
             .commit()
        ImInit.init(this)
-
-        ImInit.imLoginState.observeForever {
-            if (it == false) {
-                SpUtil.deleteUserInfo()
-                startActivity(Intent(this, BeginActivity::class.java).also {
-                    it.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                })
-            }
-        }
     }
 }

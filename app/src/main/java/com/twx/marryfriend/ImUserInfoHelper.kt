@@ -168,22 +168,19 @@ object ImUserInfoHelper {
                 }
             }
         })
-        updateFriendInfo()
-    }
 
-    private fun updateFriendInfo() {
         ImMessageManager.newMessageLiveData.observeForever { list ->
             iLog("准备获取用户资料")
             list?.map {
                 it.from
             }?.also {
                 iLog("已准备好获取用户资料,${it}")
-                updateFriendInfo(it)
+                addFriendInfo(it)
             }
         }
     }
 
-    fun updateFriendInfo(ids:List<String>){
+    fun addFriendInfo(ids:List<String>){
         ids.filter {
             ImUserInfoService.getUserNickName(it)==null
         }.also { list ->

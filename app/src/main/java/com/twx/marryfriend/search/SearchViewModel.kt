@@ -91,7 +91,7 @@ class SearchViewModel:ViewModel() {
                 result.mapNotNull {
                     it.user_id?.toString()
                 }.also {
-                    ImUserInfoHelper.updateFriendInfo(it)
+                    ImUserInfoHelper.addFriendInfo(it)
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
@@ -117,7 +117,7 @@ class SearchViewModel:ViewModel() {
                 result.mapNotNull {
                     it.user_id?.toString()
                 }.also {
-                    ImUserInfoHelper.updateFriendInfo(it)
+                    ImUserInfoHelper.addFriendInfo(it)
                 }
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))

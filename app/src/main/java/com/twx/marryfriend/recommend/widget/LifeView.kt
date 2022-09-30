@@ -37,7 +37,7 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
 
     fun setImageData(imageList: List<LifeImage>){
         if (imageList.isEmpty()){
-            life_images_recycler_view.visibility=View.GONE
+            this.visibility=View.GONE
             life_images_recycler_view.forEach {
                 if (it is ImageView){
                     it.setImageBitmap(null)
@@ -50,32 +50,37 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
         this.imageList.clear()
         this.imageList.addAll(imageList)
         for (i in 0 until 5){
-            if (i>=imageList.size){
-                for (j in i until life_images_recycler_view.childCount){
-                    life_images_recycler_view.get(i).visibility=View.GONE
-                }
-                break
-            }
-            val imageItemView=
+            if (imageList.size<=i){
                 if (life_images_recycler_view.childCount>i){
-                    life_images_recycler_view.get(i)
-                }else{
-                    LayoutInflater.from(context).inflate(R.layout.item_life_image,life_images_recycler_view,false).also {
-                        life_images_recycler_view.addView(it)
+                    val view=life_images_recycler_view.get(i)
+                    view.visibility=View.GONE
+                    if (view is ImageView){
+                        view.setImageBitmap(null)
                     }
                 }
-            if (imageItemView.visibility!=View.VISIBLE){
-                imageItemView.visibility=View.GONE
-            }
-            val item=this.imageList[i]
-            imageItemView.findViewById<TextView>(R.id.life_title).setText(item.title)
-            imageItemView.findViewById<TextView>(R.id.life_des).setText(item.des)
-            imageItemView.findViewById<ImageView>(R.id.life_image).also {
-                Glide
-                    .with(it)
-                    .load(item.imgUrl)
-                    .placeholder(R.drawable.ic_big_default_pic)
-                    .into(it)
+            }else{
+                val imageItemView=
+                    if (life_images_recycler_view.childCount>i){
+                        life_images_recycler_view.get(i)
+                    }else{
+                        LayoutInflater.from(context).inflate(R.layout.item_life_image,life_images_recycler_view,false).also {
+                            life_images_recycler_view.addView(it)
+                        }
+                    }
+                if (imageItemView.visibility!=View.VISIBLE){
+                    imageItemView.visibility=View.VISIBLE
+                }
+                val item=this.imageList[i]
+                imageItemView.findViewById<TextView>(R.id.life_title).setText(item.title)
+                imageItemView.findViewById<TextView>(R.id.life_des).setText(item.des)
+                imageItemView.findViewById<ImageView>(R.id.life_image).also {
+                    Glide
+                        .with(it)
+                        .load(item.imgUrl)
+                        .placeholder(R.drawable.ic_big_default_pic)
+                        .error(R.drawable.ic_big_default_pic)
+                        .into(it)
+                }
             }
         }
     }

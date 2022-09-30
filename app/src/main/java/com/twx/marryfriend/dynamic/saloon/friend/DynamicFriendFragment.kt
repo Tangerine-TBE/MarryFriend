@@ -624,7 +624,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
 
                     }
 
-                    ImUserInfoHelper.updateFriendInfo(mFocusUserIdList)
+                    ImUserInfoHelper.addFriendInfo(mFocusUserIdList)
 
                     max = Collections.max(mIdList)
                     min = Collections.min(mIdList)

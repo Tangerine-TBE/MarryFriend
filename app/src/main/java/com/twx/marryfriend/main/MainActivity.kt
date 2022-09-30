@@ -26,12 +26,14 @@ import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
+import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
+import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
@@ -52,6 +54,7 @@ import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
+import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -75,6 +78,12 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
     private var currentFragment: Fragment? = null
+    private val imLoginStateObserver= androidx.lifecycle.Observer<Boolean> { aBoolean ->
+        if (aBoolean==false){
+            SpUtil.deleteUserInfo()
+            startActivity(Intent(this, BeginActivity::class.java))
+        }
+    }
 
     private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
 
@@ -106,6 +115,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             messageNumNew.visibility = View.VISIBLE
             messageNumNew.text = ImMessageManager.getAllUnreadMessage().toString()
         }
+        ImInit.imLoginState.observeForever(imLoginStateObserver)
     }
 
     override fun initLoadData() {
@@ -190,7 +200,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
 
     // 动态列表界面添加动态数据
-    fun addDynamicFragment(trendSaloonList: TrendSaloonList) {
+    fun addDynamicFragment(trendSaloonList: TrendSaloonList?) {
 
         rb_main_dynamic.isChecked = true
 
@@ -204,7 +214,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         transaction.show(dynamic!!)
         transaction.commit()
 
-        dynamic!!.addData(trendSaloonList)
+        if (trendSaloonList!=null) {
+            dynamic!!.addData(trendSaloonList)
+        }
 
     }
 
@@ -545,7 +557,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         Log.i("guo", "main-destory")
 
         doUpdateTokenPresent.unregisterCallback(this)
-
+        ImInit.imLoginState.removeObserver(imLoginStateObserver)
     }
 
 

@@ -26,6 +26,7 @@ import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
 import com.twx.marryfriend.friend.FriendInfoViewModel
 import com.twx.marryfriend.ilove.ILikeActivity
+import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.widget.*
@@ -238,7 +239,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 lastDynamicTitle.text=lastDynamic.data?.label
                 lastDynamicDes.setExpandableText(lastDynamic.data?.text_content?:"", 3, "查看更多>", "收起")
                 lastDynamicView.setOnClickListener {
-                    toast("最后一条动态")
+                    val activity=requireActivity()
+                    if (activity is MainActivity){
+                        activity.addDynamicFragment(null)
+                    }else{
+                        toast("查看更多")
+                    }
                 }
             }catch (e:Exception){
                 wLog(e.stackTraceToString())
@@ -540,7 +546,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     moreContent.text="查看更多动态"
                     moreContent.setOnClickListener {
                         iLog("查看更多动态")
-                        toast("跳转到动态")
+                        val activity=requireActivity()
+                        if (activity is MainActivity){
+                            activity.addDynamicFragment(null)
+                        }else{
+                            toast("查看更多")
+                        }
                     }
                     val success=recommendViewModel.startCountDownTimer {
                         loadData()

@@ -278,6 +278,12 @@
         </provider>
 
         <meta-data
+        android:name="UMENG_APPKEY"
+        android:value="61b1a198e014255fcba8a3f5" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${CHANNEL_VALUE}" />
+        <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="bEkuBII5wW21oqv0OL2XE9XDNBOv6FGx" />
 
