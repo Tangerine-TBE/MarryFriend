@@ -26,7 +26,7 @@ data class PhoneLoginData(
     val hometown_city_str: String,
     val hometown_province_num: String,
     val hometown_province_str: String,
-    val industry_num: String,
+    val industry_num: Int,
     val industry_str: String,
     val introduce_self: String,
     val is_smoking: Int,
@@ -35,18 +35,22 @@ data class PhoneLoginData(
     val level_high: Int,
     val level_low: Int,
     val nick: String,
-    val occupation_num: String,
+    val occupation_num: Int,
     val occupation_str: String,
     val photos_count: List<PhotosCount>,
     val server_time: String,
     val sex: Int,
     val user_id: Int,
     val user_mobile: String,
-    val verify_status: Int,
     val voice_url: String,
     val want_child: Int,
-    val zhaohuyu_content: String
-)
+    val zhaohuyu_content: String,
+
+    val identity_name: String,
+    val identity_number: String,
+    val identity_status: Int,
+
+    )
 
 data class HeadfaceCount(
     val content: String,

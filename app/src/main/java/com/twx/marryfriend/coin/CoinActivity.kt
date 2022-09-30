@@ -170,7 +170,6 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
     }
 
     private fun doAliPay() {
-        mPrice = "0.01"
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.BUY_ORDER_NUMBER] = getOrder("JIN", mMode, mPay)
         map[Contents.FEE] = mPrice

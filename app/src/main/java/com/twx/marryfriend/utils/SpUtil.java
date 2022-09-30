@@ -34,12 +34,6 @@ public class SpUtil {
             SPStaticUtils.put(Constant.USER_VIP_LEVEL, 0);
         }
 
-
-        if (loginBean.getData().getVerify_status() == 1) {
-            SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true);
-        }
-
-        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true);
         SPStaticUtils.put(Constant.ME_HOBBY, loginBean.getData().getDaily_hobbies());
         SPStaticUtils.put(Constant.ME_GREET, loginBean.getData().getZhaohuyu_content());
         SPStaticUtils.put(Constant.ME_INTRODUCE, loginBean.getData().getIntroduce_self());

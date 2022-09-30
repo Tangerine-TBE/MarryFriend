@@ -179,7 +179,6 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
     }
 
     private fun doAliPay() {
-        mVipPrice = "0.01"
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.BUY_ORDER_NUMBER] = getOrder("VIP", mVipMode, mPay)
         map[Contents.FEE] = mVipPrice

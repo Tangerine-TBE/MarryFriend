@@ -44,10 +44,8 @@ object SpLoginUtil {
         } else {
             SPStaticUtils.put(Constant.USER_VIP_LEVEL, 0)
         }
-        if (loginBean.data.verify_status == 1) {
-            SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
-        }
-        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
+
+
         SPStaticUtils.put(Constant.ME_HOBBY, loginBean.data.daily_hobbies)
         SPStaticUtils.put(Constant.ME_GREET, loginBean.data.zhaohuyu_content)
         SPStaticUtils.put(Constant.ME_INTRODUCE, loginBean.data.introduce_self)
@@ -411,6 +409,12 @@ object SpLoginUtil {
             }
         }
 
+
+        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, loginBean.data.identity_status == 1)
+        SPStaticUtils.put(Constant.TRUE_NAME, loginBean.data.identity_name)
+        SPStaticUtils.put(Constant.TRUE_ID, loginBean.data.identity_number)
+
+
     }
 
 
@@ -443,10 +447,8 @@ object SpLoginUtil {
         } else {
             SPStaticUtils.put(Constant.USER_VIP_LEVEL, 0)
         }
-        if (autoLoginBean.data.verify_status == 1) {
-            SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
-        }
-        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, true)
+
+
         SPStaticUtils.put(Constant.ME_HOBBY, autoLoginBean.data.daily_hobbies)
         SPStaticUtils.put(Constant.ME_GREET, autoLoginBean.data.zhaohuyu_content)
         SPStaticUtils.put(Constant.ME_INTRODUCE, autoLoginBean.data.introduce_self)
@@ -458,8 +460,10 @@ object SpLoginUtil {
         SPStaticUtils.put(Constant.ME_SMOKE, autoLoginBean.data.is_smoking)
 
 
-        SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE, autoLoginBean.data.hometown_province_num)
-        SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_NAME, autoLoginBean.data.hometown_province_str)
+        SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE,
+            autoLoginBean.data.hometown_province_num)
+        SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_NAME,
+            autoLoginBean.data.hometown_province_str)
         SPStaticUtils.put(Constant.WANT_WORK_CITY_CODE, autoLoginBean.data.hometown_city_num)
         SPStaticUtils.put(Constant.WANT_WORK_CITY_NAME, autoLoginBean.data.hometown_city_str)
 
@@ -808,6 +812,11 @@ object SpLoginUtil {
                     autoLoginBean.data.photos_count[4].status.toString())
             }
         }
+
+
+        SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, autoLoginBean.data.identity_status == 1)
+        SPStaticUtils.put(Constant.TRUE_NAME, autoLoginBean.data.identity_name)
+        SPStaticUtils.put(Constant.TRUE_ID, autoLoginBean.data.identity_number)
 
     }
 
