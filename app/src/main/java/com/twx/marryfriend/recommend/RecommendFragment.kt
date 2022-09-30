@@ -36,7 +36,9 @@ import com.xyzz.myutils.setExpandableText
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import com.xyzz.myutils.show.wLog
+import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.fragment_recommend.*
+import kotlinx.android.synthetic.main.fragment_recommend.mutualLike
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_recommend_not_content.*
 import kotlinx.coroutines.delay
@@ -44,7 +46,7 @@ import kotlinx.coroutines.launch
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private val recommendAdapter by lazy {
-        RecommendAdapter(lifecycleScope)
+        RecommendAdapter(lifecycleScope,imChatViewModel)
     }
     private val loadSir by lazy {
         LoadSir.Builder()
@@ -356,13 +358,24 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendAdapter.reportAction={
             startActivity(IntentManager.getReportIntent(requireContext(),it.getId()))
         }
-        recommendAdapter.blacklistAction={
+        recommendAdapter.blacklistAction={blacklist,item,isBlock->
             lifecycleScope.launch{
-                try {
-                    imChatViewModel.addBlockList(it.getId().toString())
-                    toast("屏蔽成功")
-                }catch (e:Exception){
-                    toast(e.message)
+                if(isBlock){
+                    try {
+                        imChatViewModel.removeBlockList(item.getId().toString()?:return@launch)
+                        toast("取消屏蔽成功")
+                        blacklist.text="屏蔽"
+                    }catch (e:Exception){
+                        toast(e.message)
+                    }
+                }else{
+                    try {
+                        imChatViewModel.addBlockList(item.getId()?.toString()?:return@launch)
+                        toast("屏蔽成功")
+                        blacklist.text="取消屏蔽"
+                    }catch (e:Exception){
+                        toast(e.message)
+                    }
                 }
             }
         }
@@ -522,7 +535,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun openVip(){
-        startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+        if (UserInfo.isSuperVip()){
+            val activity=requireActivity()
+            if (activity is MainActivity){
+                activity.addDynamicFragment(null)
+            }
+        }else{
+            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+        }
     }
 
     enum class ViewType{

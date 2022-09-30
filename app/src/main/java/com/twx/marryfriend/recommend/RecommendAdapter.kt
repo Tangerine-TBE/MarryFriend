@@ -12,6 +12,7 @@ import android.widget.ViewSwitcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.widget.NestedScrollView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
@@ -24,17 +25,20 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.enumeration.HomeCardAction
+import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.toast
+import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.item_recommend.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewHolder>(){
+class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel: ImChatViewModel) :RecyclerView.Adapter<BaseViewHolder>(){
     companion object{
         private const val IS_FIRST_LISTENER_VOICE_KEY="first_listener_voice"
         private const val IS_FIRST_PUSH_VOICE="first_push_voice"
@@ -59,7 +63,7 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
     var likeAction:((RecommendBean, View)->Unit)?=null
     var superLikeAction:((RecommendBean, View)->Unit)?=null
     var reportAction:((RecommendBean)->Unit)?=null
-    var blacklistAction:((RecommendBean)->Unit)?=null
+    var blacklistAction:((TextView,RecommendBean,Boolean)->Unit)?=null
     var settingAction:((RecommendBean)->Unit)?=null
     var myLongitude:Double?=null
     var myLatitude:Double?=null
@@ -127,8 +131,45 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
         holder.getView<View>(R.id.report).setOnClickListener {
             reportAction?.invoke(item)
         }
-        holder.getView<View>(R.id.blacklist).setOnClickListener {
-            blacklistAction?.invoke(item)
+        val blacklist=holder.getView<TextView>(R.id.blacklist)
+        var isBlock=false
+        scope.launch {
+            isBlock=
+                try {
+                    imChatViewModel.getBlockState(item.getId().toString()).woPingBiTa
+                }catch (e:Exception){
+                    false
+                }
+            if (isBlock){
+                blacklist.text="取消屏蔽"
+            }else{
+                blacklist.text="屏蔽"
+            }
+        }
+        val context=holder.itemView.context
+        blacklist.setOnClickListener {
+//            blacklistAction?.invoke(item)
+            scope.launch{
+                if(isBlock){
+                    try {
+                        imChatViewModel.removeBlockList(item.getId().toString()?:return@launch)
+                        toast(context,"取消屏蔽成功")
+                        blacklist.text="屏蔽"
+                        isBlock=false
+                    }catch (e:Exception){
+                        toast(context,e.message)
+                    }
+                }else{
+                    try {
+                        imChatViewModel.addBlockList(item.getId()?.toString()?:return@launch)
+                        toast(context,"屏蔽成功")
+                        blacklist.text="取消屏蔽"
+                        isBlock=true
+                    }catch (e:Exception){
+                        toast(context,e.message)
+                    }
+                }
+            }
         }
 
         //简介模块
@@ -389,14 +430,19 @@ class RecommendAdapter(val scope:CoroutineScope) :RecyclerView.Adapter<BaseViewH
                     holder.setText(R.id.myDynamicCount,"查看所有"+item.getDynamicCount().toString()+"条动态")
                     val imageList=list.flatMap {
                         it.image_url?.split(",")?: emptyList()
-                    }
+                    }.filter { it.isNotBlank() }
                     val video=list.flatMap {
                         it.video_url?.split(",")?: emptyList()
-                    }
+                    }.filter { it.isNotBlank() }
                     if (position!=0){
                         holder.getView<PicturePreviewView>(R.id.dynamicPreview).clearImage()
                     }else if (imageList.isEmpty()){
                         holder.getView<View>(R.id.myDynamic).visibility=View.GONE
+                        dynamicText.text=list.firstOrNull()?.text_content.also {
+                            if (it.isNullOrBlank()){
+                                this.visibility=View.GONE
+                            }
+                        }
                     }else {
                         holder.getView<PicturePreviewView>(R.id.dynamicPreview).setImageData(imageList,video)
                     }

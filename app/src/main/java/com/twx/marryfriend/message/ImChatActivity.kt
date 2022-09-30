@@ -72,6 +72,7 @@ open class ImChatActivity: ChatActivity() {
                                 imChatViewModel.removeBlockList(conversationId?:return@launch)
                                 toast("取消屏蔽成功")
                                 blockText.text="屏蔽"
+                                isBlock=false
                             }catch (e:Exception){
                                 toast(e.message)
                             }
@@ -80,6 +81,7 @@ open class ImChatActivity: ChatActivity() {
                                 imChatViewModel.addBlockList(conversationId?:return@launch)
                                 toast("屏蔽成功")
                                 blockText.text="取消屏蔽"
+                                isBlock=true
                             }catch (e:Exception){
                                 toast(e.message)
                             }

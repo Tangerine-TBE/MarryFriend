@@ -6,8 +6,9 @@ import androidx.fragment.app.Fragment
 
 private var toast: Toast?=null
 
-fun Any.toast(context: Context?, text: String){
+fun Any.toast(context: Context?, text: String?){
     context?:return
+    text?:return
     toast?.cancel()
     toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
     toast?.show()
