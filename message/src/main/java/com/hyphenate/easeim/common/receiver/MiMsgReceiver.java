@@ -12,6 +12,7 @@ import com.hyphenate.easeim.common.utils.PushUtils;
 import com.hyphenate.easeim.common.utils.ToastUtils;
 import com.hyphenate.push.platform.mi.EMMiMsgReceiver;
 import com.hyphenate.util.EMLog;
+
 import com.xiaomi.mipush.sdk.MiPushMessage;
 import com.xyzz.myutils.SPUtil;
 

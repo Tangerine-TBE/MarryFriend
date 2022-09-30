@@ -23,8 +23,11 @@ data class PhoneLoginData(
     val daily_hobbies: String,
     val headface_count: List<HeadfaceCount>,
     val hometown_city_num: String,
+    val hometown_city_str: String,
     val hometown_province_num: String,
-    val industry_num: Int,
+    val hometown_province_str: String,
+    val industry_num: String,
+    val industry_str: String,
     val introduce_self: String,
     val is_smoking: Int,
     val jinbi_goldcoin: Int,
@@ -32,7 +35,8 @@ data class PhoneLoginData(
     val level_high: Int,
     val level_low: Int,
     val nick: String,
-    val occupation_num: Int,
+    val occupation_num: String,
+    val occupation_str: String,
     val photos_count: List<PhotosCount>,
     val server_time: String,
     val sex: Int,
@@ -41,7 +45,7 @@ data class PhoneLoginData(
     val verify_status: Int,
     val voice_url: String,
     val want_child: Int,
-    val zhaohuyu_content: String,
+    val zhaohuyu_content: String
 )
 
 data class HeadfaceCount(
@@ -71,4 +75,7 @@ data class PhotosCount(
     val status: Int,
     val user_id: Int,
 )
+
+
+
 

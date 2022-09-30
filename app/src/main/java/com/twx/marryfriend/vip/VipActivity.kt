@@ -189,6 +189,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         super.initEvent()
 
         iv_vip_finish.setOnClickListener {
+            val intent = intent
+            setResult(RESULT_OK, intent)
             finish()
         }
 
@@ -318,7 +320,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
                 Log.i("guo", "刷新普通会员的信息")
 
-                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) != 1) {
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
                     tv_vip_level.text = "您还不是会员"
                     tv_vip_time.visibility = View.GONE
                 } else {

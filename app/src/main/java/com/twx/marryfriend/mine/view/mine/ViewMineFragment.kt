@@ -1,17 +1,21 @@
 package com.twx.marryfriend.mine.view.mine
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.WhoSeeMeBean
 import com.twx.marryfriend.bean.mine.WhoSeeMeList
@@ -112,6 +116,17 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         getWhoSeeMePresent.getWhoSeeMe(map, page)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                0 -> {
+                    sfl_view_mime_refresh.autoRefresh()
+                }
+            }
+        }
+    }
+
     override fun onLoading() {
 
     }
@@ -128,14 +143,24 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
                 ll_view_mime_empty?.visibility = View.GONE
 
+
                 if (currentPaper == 1) {
                     mList.clear()
                 }
 
+                val idList = arrayListOf<String>()
+
+
                 currentPaper++
                 for (i in 0.until(whoSeeMeBean.data.list.size)) {
                     mList.add(whoSeeMeBean.data.list[i])
+
+                    idList.add(whoSeeMeBean.data.list[i].host_uid.toString())
+
                 }
+
+                ImHelper.updateFriendInfo(idList)
+
                 adapter.notifyDataSetChanged()
             }
         }
@@ -159,7 +184,11 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         Log.i("guo", "vip : ${SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0)}")
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
-            startActivity(context?.let { VipActivity.getVipIntent(it, 0, VipGifEnum.SeeMe) })
+            startActivityForResult(context?.let {
+                VipActivity.getVipIntent(it,
+                    0,
+                    VipGifEnum.SeeMe)
+            }, 0)
         } else {
             startActivity(context?.let {
                 FriendInfoActivity.getIntent(
@@ -178,11 +207,16 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 
-            startActivity(context?.let { VipActivity.getVipIntent(it, 0, VipGifEnum.Message) })
+            startActivityForResult(context?.let {
+                VipActivity.getVipIntent(it,
+                    0,
+                    VipGifEnum.Message)
+            }, 0)
 
         } else {
 
             val identity = mList[position].identity_status == 1
+
             startActivity(context?.let {
                 ImChatActivity.getIntent(
                     it,

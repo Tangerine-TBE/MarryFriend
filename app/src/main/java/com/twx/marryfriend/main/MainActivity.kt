@@ -46,7 +46,6 @@ import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
 import com.umeng.commonsdk.UMConfigure
-import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
 import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
@@ -104,7 +103,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     override fun initLoadData() {
         super.initLoadData()
 
-        Log.i("guo", "iamge: ${SPStaticUtils.getString(Constant.ME_AVATAR)}")
 
     }
 
@@ -385,8 +383,12 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         //推送设置
         pushSetting(context)
 
+        val pushAgent = PushAgent.getInstance(context)
+
+        pushAgent.resourcePackageName = "com.twx.marryfriend"
+
         //注册推送服务，每次调用register方法都会回调该接口
-        PushAgent.getInstance(context).register(object : UPushRegisterCallback {
+        pushAgent.register(object : UPushRegisterCallback {
             override fun onSuccess(deviceToken: String) {
 
                 //注册成功会返回deviceToken deviceToken是推送消息的唯一标志
@@ -404,9 +406,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             }
 
         })
-        if (UMUtils.isMainProgress(context)) {
-            registerDeviceChannel(context)
-        }
+//        if (UMUtils.isMainProgress(context)) {
+//            registerDeviceChannel(context)
+//        }
     }
 
 
@@ -517,6 +519,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
 //                小米推送：填写您在小米后台APP对应的xiaomi id和key
                 MiPushRegistar.register(context, "2882303761520176390", "5612017666390")
+
             }
 
 
@@ -591,9 +594,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             }
 
         }
-
     }
-
 
     // 消息通知
     inner class PopDialog(context: Context) : FullScreenPopupView(context) {
@@ -617,7 +618,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             }
 
         }
-
     }
 
 }

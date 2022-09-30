@@ -55,6 +55,8 @@ public class PushHelper {
         //推送设置
         pushSetting(context);
 
+        pushAgent.setResourcePackageName("com.twx.marryfriend");
+
         //注册推送服务，每次调用register方法都会回调该接口
         pushAgent.getInstance(context).register(new UPushRegisterCallback() {
 

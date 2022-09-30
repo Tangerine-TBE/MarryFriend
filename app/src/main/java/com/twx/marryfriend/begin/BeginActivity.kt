@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.TextPaint
+import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
@@ -17,6 +18,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.baidubce.model.User
 import com.blankj.utilcode.util.*
+import com.huawei.hms.aaid.HmsInstanceId
+import com.huawei.hms.common.ApiException
+import com.huawei.hms.push.HmsMessaging
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
@@ -81,6 +85,42 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
     override fun initLoadData() {
         super.initLoadData()
+
+
+        getToken()
+
+    }
+
+    private fun getToken() {
+        // 创建一个新线程
+        object : Thread() {
+            override fun run() {
+                try {
+                    // 从agconnect-services.json文件中读取APP_ID
+                    val appId = "106852163"
+
+                    Log.i("guo", "appid :$appId")
+
+                    // 输入token标识"HCM"
+                    val tokenScope = "HCM"
+                    val token =
+                        HmsInstanceId.getInstance(this@BeginActivity).getToken(appId, tokenScope)
+                    Log.i("guo", "get token:$token")
+
+                    // 判断token是否为空
+                    if (!TextUtils.isEmpty(token)) {
+                        sendRegTokenToServer(token)
+                    }
+
+                } catch (e: ApiException) {
+                    Log.e("guo", "get token failed, $e")
+                }
+            }
+        }.start()
+    }
+
+    private fun sendRegTokenToServer(token: String?) {
+        Log.i("guo", "sending token to server. token:$token")
     }
 
     override fun initPresent() {

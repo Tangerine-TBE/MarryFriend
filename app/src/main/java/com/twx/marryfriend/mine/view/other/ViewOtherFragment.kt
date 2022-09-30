@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
+import com.twx.marryfriend.ImHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.bean.mine.MeSeeWhoBean
 import com.twx.marryfriend.bean.mine.MeSeeWhoList
@@ -127,9 +128,17 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
                     mList.clear()
                 }
                 currentPaper++
+
+                val idList = arrayListOf<String>()
+
                 for (i in 0.until(meSeeWhoBean.data.list.size)) {
                     mList.add(meSeeWhoBean.data.list[i])
+
+                    idList.add(meSeeWhoBean.data.list[i].host_uid.toString())
                 }
+
+                ImHelper.updateFriendInfo(idList)
+
                 adapter.notifyDataSetChanged()
             }
         }
@@ -156,9 +165,9 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 
-            startActivity(context?.let { VipActivity.getVipIntent(it,0, VipGifEnum.Message) })
+            startActivity(context?.let { VipActivity.getVipIntent(it, 0, VipGifEnum.Message) })
 
-        }else{
+        } else {
 
             val identity = mList[position].identity_status == 1
             startActivity(context?.let {

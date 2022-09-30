@@ -57,7 +57,7 @@
             android:background="@drawable/shape_bg_common_input"
             android:gravity="center"
             android:paddingVertical="16dp"
-            android:text="确定"
+            android:text="取消"
             android:textColor="#9A9A9A"
             android:textSize="17sp" />
 
