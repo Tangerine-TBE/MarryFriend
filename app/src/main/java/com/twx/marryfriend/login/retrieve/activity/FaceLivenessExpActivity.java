@@ -116,6 +116,7 @@ public class FaceLivenessExpActivity extends FaceLivenessActivity implements
         Intent intent = new Intent(FaceLivenessExpActivity.this, CollectionSuccessActivity.class);
         intent.putExtra("destroyType", "FaceLivenessExpActivity");
         startActivity(intent);
+        this.finish();
     }
 
     private void showMessageDialog() {
