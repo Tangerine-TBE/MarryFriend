@@ -42,7 +42,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         if (item.conversationId()==ImConversationFragment.MY_HELPER_ID){
             holder.apply {
                 messageHead.setImageResource(R.mipmap.ic_launcher)
-                messageUserNickname.text="小秘书"
+                messageUserNickname.text="恋爱小管家"
                 conversationLastMsg.text="我是你的小秘书"
 
                 isMessageRealName.visibility=View.GONE

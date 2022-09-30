@@ -75,15 +75,14 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                         ImCustomEventListenerManager.click(it,type,message)
                     }
                 }
+                helperTipText.text=msg
                 when(type){
                     CustomEvent.dazhaohu_str->{//填写打招呼
                         helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        helperTipText.text="你给别人打招呼,又没有填打招呼语句的时候,每天一次"
                         gotoHandel.text="马上填写"
                     }
                     CustomEvent.putong_xihuan -> {//普通喜欢
                         helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)//
-                        helperTipText.text="普通喜欢"
                         gotoHandel.text="马上填写"
                     }
                     CustomEvent.touxiang_pass->{//头像通过
@@ -91,7 +90,6 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                             .placeholder(R.mipmap.ic_fill_in_say_hello)
                             .error(R.mipmap.ic_fill_in_say_hello)
                             .into(helperTipIcon)
-                        helperTipText.text="您好,您的头像已经通过了我们的人工审核,祝愿你在这里早日找到合适的对象"
                         gotoHandel.text="重新上传"
                     }
                     CustomEvent.touxiang_fail -> {//头像失败

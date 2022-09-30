@@ -56,13 +56,31 @@ class ImChatActivity: ChatActivity() {
     private val chatSettingDialog by lazy {
         ChatSettingDialog(this,conversationId?:return@lazy null)
             .also {
+                val blockText=it.getBlockFriendText()
+                var isBlock=false
+                if (isBlock){
+                    blockText.text="取消屏蔽"
+                }else{
+                    blockText.text="屏蔽"
+                }
                 it.setBlockFriendsListener {
                     lifecycleScope.launch{
-                        try {
-                            imChatViewModel.addBlockList(conversationId?:return@launch)
-                            toast("屏蔽成功")
-                        }catch (e:Exception){
-                            toast(e.message)
+                        if(isBlock){
+                            try {
+                                imChatViewModel.removeBlockList(conversationId?:return@launch)
+                                toast("取消屏蔽成功")
+                                blockText.text="屏蔽"
+                            }catch (e:Exception){
+                                toast(e.message)
+                            }
+                        }else{
+                            try {
+                                imChatViewModel.addBlockList(conversationId?:return@launch)
+                                toast("屏蔽成功")
+                                blockText.text="取消屏蔽"
+                            }catch (e:Exception){
+                                toast(e.message)
+                            }
                         }
                     }
                 }
