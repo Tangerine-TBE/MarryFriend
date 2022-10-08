@@ -38,7 +38,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel: ImChatViewModel) :RecyclerView.Adapter<BaseViewHolder>(){
+class RecommendAdapter constructor(private val scope:CoroutineScope, private val imChatViewModel: ImChatViewModel) :RecyclerView.Adapter<BaseViewHolder>(){
     companion object{
         private const val IS_FIRST_LISTENER_VOICE_KEY="first_listener_voice"
         private const val IS_FIRST_PUSH_VOICE="first_push_voice"
@@ -56,7 +56,6 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
             SPStaticUtils.put(IS_FIRST_PUSH_VOICE,false)
         }
     }
-    private val mainScope by lazy { MainScope() }
     private val listData=ArrayList<RecommendBean>()
     var openLocationPermissionAction:(()->Unit)?=null
     var disLikeAction:((RecommendBean, View)->Unit)?=null
@@ -99,7 +98,7 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
         return e
     }
 
-    fun remove(recommendBean: RecommendBean){
+    fun removeItem(recommendBean: RecommendBean){
         if (recommendBean==currentPlayVoiceItem){
             stopVoice()
         }
@@ -111,6 +110,18 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
         notifyItemRemoved(index)
 
         notifyItemChanged(0)
+    }
+
+    fun addItem(recommendBean: RecommendBean){
+        listData.add(recommendBean)
+        notifyItemInserted(listData.size)
+    }
+
+    fun cleanData(){
+        if (listData.isNotEmpty()){
+            listData.clear()
+            notifyDataSetChanged()
+        }
     }
 
     fun getTopItem():RecommendBean{
@@ -132,30 +143,21 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
             reportAction?.invoke(item)
         }
         val blacklist=holder.getView<TextView>(R.id.blacklist)
-        var isBlock=false
-        scope.launch {
-            isBlock=
-                try {
-                    imChatViewModel.getBlockState(item.getId().toString()).woPingBiTa
-                }catch (e:Exception){
-                    false
-                }
-            if (isBlock){
-                blacklist.text="取消屏蔽"
-            }else{
-                blacklist.text="屏蔽"
-            }
+        if (item.isBlock){
+            blacklist.text="取消屏蔽"
+        }else{
+            blacklist.text="屏蔽"
         }
         val context=holder.itemView.context
         blacklist.setOnClickListener {
 //            blacklistAction?.invoke(item)
             scope.launch{
-                if(isBlock){
+                if(item.isBlock){
                     try {
                         imChatViewModel.removeBlockList(item.getId().toString()?:return@launch)
                         toast(context,"取消屏蔽成功")
                         blacklist.text="屏蔽"
-                        isBlock=false
+                        item.isBlock=false
                     }catch (e:Exception){
                         toast(context,e.message)
                     }
@@ -164,7 +166,7 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
                         imChatViewModel.addBlockList(item.getId()?.toString()?:return@launch)
                         toast(context,"屏蔽成功")
                         blacklist.text="取消屏蔽"
-                        isBlock=true
+                        item.isBlock=true
                     }catch (e:Exception){
                         toast(context,e.message)
                     }
@@ -560,10 +562,5 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
 
     override fun getItemCount(): Int {
         return listData.size
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        mainScope.cancel()
     }
 }

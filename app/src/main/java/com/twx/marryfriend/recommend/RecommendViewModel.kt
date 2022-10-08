@@ -83,15 +83,20 @@ class RecommendViewModel():ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val idList=ArrayList<Int>()
-//                val data=JSONObject(response).getJSONObject("data")
-//                data.keys().forEach {
-//                    idList.add(it.toInt())
-//                }
-                JSONObject(response).getJSONArray("data").also {
-                    for (i in 0 until it.length()){
-                        idList.add(it.getInt(i))
+                val jsonObject=JSONObject(response)
+                try {
+                    val data=jsonObject.getJSONObject("data")
+                    data.keys().forEach {
+                        idList.add(it.toInt())
+                    }
+                }catch (e:Exception){
+                    jsonObject.getJSONArray("data").also {
+                        for (i in 0 until it.length()){
+                            idList.add(it.getInt(i))
+                        }
                     }
                 }
+
                 coroutine.resume(idList)
             }catch (e:Exception){
                 if (e.message=="Value [] at data of type org.json.JSONArray cannot be converted to JSONObject"){
@@ -101,7 +106,11 @@ class RecommendViewModel():ViewModel() {
                 }
             }
         },{
-            coroutine.resumeWithException(Exception(it))
+            if (BuildConfig.DEBUG){
+                coroutine.resume(listOf(5,8,13,15,21))
+            }else{
+                coroutine.resumeWithException(Exception(it))
+            }
         })
     }
 

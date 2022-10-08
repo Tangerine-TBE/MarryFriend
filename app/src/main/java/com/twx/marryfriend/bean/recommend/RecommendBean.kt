@@ -22,8 +22,9 @@ data class RecommendBean(
     val vip_info: VipInfo?=null,
     val zhaohu: Zhaohu?=null,
     val headface:List<HeadfaceBean>?=null,
-    val zo_place:List<Zo_place>?=null
+    val zo_place:List<Zo_place>?=null,
 ){
+    var isBlock=false
     fun getId():Int{
         return base?.user_id?:throw IllegalStateException("id为空")
     }

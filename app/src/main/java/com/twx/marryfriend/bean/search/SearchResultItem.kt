@@ -4,6 +4,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.Label
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.getAgeFromBirthday
 
 data class SearchResultItem(
     var age: Int? = 0,
@@ -25,7 +26,8 @@ data class SearchResultItem(
     var user_sex: Int? = 0,
     var vip_level: Int = 0,
     var img_status:Int=0,
-    var work_city_str: String? = ""
+    var work_city_str: String? = "",
+    var birthday:String?=null
 ){
     fun getHeadImage():String?{
         return if (isImageStatus()){
@@ -52,7 +54,7 @@ data class SearchResultItem(
     }
 
     fun getAgeDemand(): Label?{
-        return "${age}岁".toLabel(R.mipmap.ic_label_age)
+        return (birthday?.getAgeFromBirthday()?:age)?.let { "${it}岁" }?.toLabel(R.mipmap.ic_label_age)
     }
     fun getEducationStr():Label?{
         return RecommendBean.getEducationStr(education)
