@@ -39,7 +39,7 @@ class ConversationViewModel:ViewModel() {
     suspend fun getConversationsInfo(ids:List<String>)=suspendCoroutine<List<ConversationsItemModel>?>{ continuation->
         viewModelScope.launch {
             val friendsInfo=try {
-                getFriendsInfo(ids).data
+                getFriendsInfo(ids.filter { it!=ImConversationFragment.MY_HELPER_ID }).data
             }catch (e:Exception){
                 null
             }
@@ -61,6 +61,8 @@ class ConversationViewModel:ViewModel() {
                             this.location=it.work_city_str
                             this.isMutualLike=it.isMutualLike()
                             this.isFlower=it.isFlower()
+                            this.blacklist_permanent=it.blacklist_permanent?:0
+                            this.blacklist_close_time=it.blacklist_close_time
                         }
                 }
             }.also { list ->

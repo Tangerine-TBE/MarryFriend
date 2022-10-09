@@ -1,6 +1,7 @@
 package com.twx.marryfriend.message
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -119,6 +120,16 @@ class ImConversationFragment: ConversationListFragment() {
 
         val imUserInfo=EaseIM.getInstance().userProvider.getUser(item.conversationId())
         val ext=imUserInfo.getUserExt()
+        if(ext?.isSystemBlacklist()==true){
+            AlertDialog.Builder(requireContext())
+                .setTitle("提示")
+                .setMessage("该用户涉嫌违规，已被系统封禁")
+                .setPositiveButton("确定"){dialog,which->
+
+                }
+                .show()
+            return
+        }
         if (UserInfo.isVip()||ext?.isSuperVip==true||ext?.isMutualLike==true){
             val isRealName=ext?.isRealName?:false
             startActivityForResult.launch(ImChatActivity.getIntent(

@@ -126,22 +126,9 @@ object IntentManager {
 //        return null
 //    }
 
-    suspend fun getUpFillInVoiceIntent(context: Context)= suspendCoroutine<Intent?>{//上传语音
-        XXPermissions.with(context)
-            .permission(Permission.RECORD_AUDIO)
-            .permission(Permission.MANAGE_EXTERNAL_STORAGE)
-            .request(object : OnPermissionCallback {
-                override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                    val intent=Intent(context, VoiceActivity::class.java)
-                    it.resume(intent)
-                }
-
-                override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
-                    super.onDenied(permissions, never)
-                    toast(context,"请授予应用相应权限")
-                    it.resume(null)
-                }
-            })
+    fun getUpFillInVoiceIntent(context: Context):Intent{//上传语音
+        val intent=Intent(context, VoiceActivity::class.java)
+        return intent
     }
 
     fun getFocusIntent(context: Context):Intent{

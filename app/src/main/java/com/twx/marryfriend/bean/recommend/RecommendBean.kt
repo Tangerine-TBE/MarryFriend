@@ -26,7 +26,7 @@ data class RecommendBean(
 ){
     var isBlock=false
     fun getId():Int{
-        return base?.user_id?:throw IllegalStateException("id为空")
+        return (base?.user_id?:more?.user_id)?:throw IllegalStateException("id为空")
     }
 
     fun isFollow():Boolean{//是否关注

@@ -4,15 +4,14 @@ import android.os.CountDownTimer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
-import com.twx.marryfriend.BuildConfig
+import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloBean
 import com.twx.marryfriend.bean.one_hello.OneClickHelloItemBean
-import com.twx.marryfriend.bean.recommend.LastDynamicBean
 import com.twx.marryfriend.constant.Contents
 import com.xyzz.myutils.NetworkUtil
-import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
@@ -106,15 +105,13 @@ class RecommendViewModel():ViewModel() {
                 }
             }
         },{
-            if (BuildConfig.DEBUG){
-                coroutine.resume(listOf(5,8,13,15,21))
-            }else{
-                coroutine.resumeWithException(Exception(it))
-            }
+            coroutine.resumeWithException(Exception(it))
         })
     }
 
     suspend fun loadRecommendUserInfo(idArray: List<Int>)=suspendCoroutine<List<RecommendBean>>{ coroutine->
+        ImUserInfoHelper.addFriendInfo(idArray.map { it.toString() })
+
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachFive"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -151,7 +148,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun loadLaseDynamic()=suspendCoroutine<LastDynamicBean>{ coroutine->
+    suspend fun loadLaseDynamic()=suspendCoroutine<TrendSaloonList?>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/newestTrends"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
@@ -159,9 +156,15 @@ class RecommendViewModel():ViewModel() {
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
-                coroutine.resume(Gson().fromJson(response,LastDynamicBean::class.java))
+                val jsonObject=JSONObject(response)
+                val data=jsonObject.getJSONArray("data")
+                if(data.length()<=0){
+                    coroutine.resume(null)
+                }else{
+                    coroutine.resume(Gson().fromJson(data.getJSONObject(0).toString(),TrendSaloonList::class.java))
+                }
             }catch (e:Exception){
-                eLog(e.stackTraceToString())
+                wLog(e.stackTraceToString())
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
         },{

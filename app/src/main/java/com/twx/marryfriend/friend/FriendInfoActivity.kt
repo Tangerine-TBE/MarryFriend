@@ -20,6 +20,7 @@ import com.google.android.material.chip.Chip
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.recommend.RecommendBean
@@ -28,6 +29,7 @@ import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.dialog.UploadHeadDialog
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
@@ -36,7 +38,6 @@ import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
@@ -137,7 +138,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
 
     override fun onResume() {
         super.onResume()
-        life_view.refreshView(lifecycleScope)
+        life_view.refreshView()
     }
 
     private fun loadData(){
@@ -598,9 +599,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 dislike.performClick()
             }
         }
-        sendMsg.setOnClickListener {
-            toast("给她发消息")
-        }
         closeMutual.setOnClickListener {
             if (friendViewSwitcher.currentView==mutualLike){
                 friendViewSwitcher.showNext()
@@ -645,6 +643,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     Glide.with(taHead).load(item.getHeadImg())
                         .placeholder(item.getUserSex().smallHead)
                         .placeholder(item.getUserSex().smallHead).into(taHead)
+                    sendMsg.setOnClickListener {
+                        startActivity(ImChatActivity.getIntent(this@FriendInfoActivity,item.getId().toString()))
+                    }
                 }
             }.also {t->
                 if (t.code==200){
@@ -674,6 +675,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     coinInsufficientDialog.show()
                 }.also {
                     if (it.code==200){
+                        ImMessageManager.getFlowerMsg(item.getId().toString())?.also {
+                            ImMessageManager.sendMsg(it)
+                        }
                         toast("送花成功")
                     }else{
                         toast(it.msg)

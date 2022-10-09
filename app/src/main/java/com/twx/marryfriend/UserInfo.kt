@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.SPStaticUtils
+import com.hjq.permissions.Permission
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
@@ -35,6 +36,9 @@ object UserInfo {
         })
     }
 
+    fun getPhone():String?{
+        return SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
+    }
 
     fun getUserId():String?{
 //        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
@@ -172,75 +176,71 @@ object UserInfo {
         return !SPStaticUtils.getString(Constant.ME_VOICE).isNullOrBlank()
     }
 
-    suspend fun getNextNotFillIn(context:Context,scope: CoroutineScope)= suspendCoroutine<Pair<Int,Intent?>?>{
+    fun getNextNotFillIn(context: Context, action:(permission:Array<String>?, intent:Pair<Int,Intent?>?)->Unit){
         if(!UserInfo.isHaveLifePhoto()){//生活
-            it.resume(R.mipmap.ic_item_up_load_life to IntentManager.getUpLifeIntent(context))
-            return@suspendCoroutine
+            action.invoke(null,R.mipmap.ic_item_up_load_life to IntentManager.getUpLifeIntent(context))
+            return
         }
         if(!UserInfo.isRealName()){//实名
-            it.resume(R.mipmap.ic_item_up_real_name to IntentManager.getUpRealNameIntent(context))
-            return@suspendCoroutine
+            action.invoke(null,R.mipmap.ic_item_up_real_name to IntentManager.getUpRealNameIntent(context))
+            return
         }
         if(!UserInfo.isHaveHeadImage()){//头像
-            it.resume(R.mipmap.ic_item_up_head_image to IntentManager.getUpHeadImageIntent(context))
-            return@suspendCoroutine
+            action.invoke(null,R.mipmap.ic_item_up_head_image to IntentManager.getUpHeadImageIntent(context))
+            return
         }
         if(!UserInfo.isFillInHobby()){//兴趣
-            it.resume(R.mipmap.ic_item_up_fill_in_hobby to IntentManager.getUpFillInHobbyIntent(context))
-            return@suspendCoroutine
+            action.invoke(null,R.mipmap.ic_item_up_fill_in_hobby to IntentManager.getUpFillInHobbyIntent(context))
+            return
         }
         if(!UserInfo.isFillInGreet()){//招呼
-            it.resume(R.mipmap.ic_item_up_fill_in_greet to IntentManager.getUpFillInGreetIntent(context))
-            return@suspendCoroutine
+            action.invoke(null,R.mipmap.ic_item_up_fill_in_greet to IntentManager.getUpFillInGreetIntent(context))
+            return
         }
         if(!UserInfo.isFillInIntroduce()){//介绍
-            it.resume(R.mipmap.ic_item_up_fill_in_introduce to IntentManager.getUpFillInIntroduceIntent(context))
-            return@suspendCoroutine
+            action.invoke(null,R.mipmap.ic_item_up_fill_in_introduce to IntentManager.getUpFillInIntroduceIntent(context))
+            return
         }
         if(!UserInfo.isFillInVoice()){//语音
-            scope.launch {
-                it.resume(R.mipmap.ic_item_up_fill_in_voice to IntentManager.getUpFillInVoiceIntent(context))
-            }
-            return@suspendCoroutine
+            action.invoke(arrayOf(Permission.RECORD_AUDIO, Permission.MANAGE_EXTERNAL_STORAGE),R.mipmap.ic_item_up_fill_in_voice to IntentManager.getUpFillInVoiceIntent(context))
+            return
         }else{
-            it.resume(null)
-            return@suspendCoroutine
+            action.invoke(null,null)
+            return
         }
     }
 
-    suspend fun getNextNotFillIn2(context:Context,scope: CoroutineScope)= suspendCoroutine<Pair<Int,Intent?>?>{
+    fun getNextNotFillIn2(context:Context, action:(permission:Array<String>?, intent:Pair<Int,Intent?>?)->Unit){
         if(!UserInfo.isHaveLifePhoto()){//生活
-            it.resume(R.mipmap.ic_item_up_load_life_l to IntentManager.getUpLifeIntent(context))
-            return@suspendCoroutine
+             action.invoke(null,R.mipmap.ic_item_up_load_life_l to IntentManager.getUpLifeIntent(context))
+            return
         }
         if(!UserInfo.isRealName()){//实名
-            it.resume(R.mipmap.ic_item_up_real_name_l to IntentManager.getUpRealNameIntent(context))
-            return@suspendCoroutine
+             action.invoke(null,R.mipmap.ic_item_up_real_name_l to IntentManager.getUpRealNameIntent(context))
+            return
         }
         if(!UserInfo.isHaveHeadImage()){//头像
-            it.resume(R.mipmap.ic_item_up_head_image_l to IntentManager.getUpHeadImageIntent(context))
-            return@suspendCoroutine
+             action.invoke(null,R.mipmap.ic_item_up_head_image_l to IntentManager.getUpHeadImageIntent(context))
+            return
         }
         if(!UserInfo.isFillInHobby()){//兴趣
-            it.resume(R.mipmap.ic_item_up_fill_in_hobby_l to IntentManager.getUpFillInHobbyIntent(context))
-            return@suspendCoroutine
+             action.invoke(null,R.mipmap.ic_item_up_fill_in_hobby_l to IntentManager.getUpFillInHobbyIntent(context))
+            return
         }
         if(!UserInfo.isFillInGreet()){//招呼
-            it.resume(R.mipmap.ic_item_up_fill_in_greet_l to IntentManager.getUpFillInGreetIntent(context))
-            return@suspendCoroutine
+             action.invoke(null,R.mipmap.ic_item_up_fill_in_greet_l to IntentManager.getUpFillInGreetIntent(context))
+            return
         }
         if(!UserInfo.isFillInIntroduce()){//介绍
-            it.resume(R.mipmap.ic_item_up_fill_in_introduce_l to IntentManager.getUpFillInIntroduceIntent(context))
-            return@suspendCoroutine
+             action.invoke(null,R.mipmap.ic_item_up_fill_in_introduce_l to IntentManager.getUpFillInIntroduceIntent(context))
+            return
         }
         if(!UserInfo.isFillInVoice()){//语音
-            scope.launch {
-                it.resume(R.mipmap.ic_item_up_fill_in_voice_l to IntentManager.getUpFillInVoiceIntent(context))
-            }
-            return@suspendCoroutine
+            action.invoke(arrayOf(Permission.RECORD_AUDIO, Permission.MANAGE_EXTERNAL_STORAGE),R.mipmap.ic_item_up_fill_in_voice_l to IntentManager.getUpFillInVoiceIntent(context))
+            return
         }else{
-            it.resume(null)
-            return@suspendCoroutine
+             action.invoke(null,null)
+            return
         }
     }
 }

@@ -12,14 +12,11 @@ import android.widget.ViewSwitcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.gson.Gson
-import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
@@ -31,11 +28,8 @@ import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
-import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.item_recommend.view.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class RecommendAdapter constructor(private val scope:CoroutineScope, private val imChatViewModel: ImChatViewModel) :RecyclerView.Adapter<BaseViewHolder>(){
@@ -460,7 +454,7 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
         holder.getView<LifeView>(R.id.life_view).apply {
             if (position==0){
                 lifeView=this
-                lifeView?.refreshView(scope)
+                lifeView?.refreshView()
             }
             item.getLifePhoto().also {
                 if(position!=0){

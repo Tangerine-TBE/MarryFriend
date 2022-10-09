@@ -1,26 +1,20 @@
 package com.twx.marryfriend.recommend.widget
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.Group
-import androidx.core.view.children
 import androidx.core.view.forEach
 import androidx.core.view.get
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.twx.marryfriend.IntentManager
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
-import com.twx.marryfriend.base.BaseViewHolder
-import com.twx.marryfriend.net.utils.BuildConfig.DEBUG
+import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.item_recommend_life_view.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -86,17 +80,30 @@ class LifeView @JvmOverloads constructor(context: Context, attrs: AttributeSet?=
     }
 
 
-    fun refreshView(scope: CoroutineScope){
-        scope.launch {
-            UserInfo.getNextNotFillIn(context,scope).also { pair ->
-                if (pair!=null) {
-                    upLifeImg.setImageResource(pair.first)
-                    upLoadLife.setOnClickListener {
+    fun refreshView() {
+        UserInfo.getNextNotFillIn(context) { permission, pair ->
+            if (pair!=null) {
+                upLifeImg.setImageResource(pair.first)
+                upLoadLife.setOnClickListener {
+                    if(!permission.isNullOrEmpty()){
+                        pair.second?:return@setOnClickListener
+                        XXPermissions.with(context)
+                            .permission(permission)
+                            .request(object : OnPermissionCallback {
+                                override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                                    context?.startActivity(pair.second?:return)
+                                }
+                                override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                                    super.onDenied(permissions, never)
+                                    context.toast(context,"请授予应用相应权限")
+                                }
+                            })
+                    }else{
                         context?.startActivity(pair.second?:return@setOnClickListener)
                     }
-                }else{
-                    upLoadLife.visibility= View.GONE
                 }
+            }else{
+                upLoadLife.visibility= View.GONE
             }
         }
     }

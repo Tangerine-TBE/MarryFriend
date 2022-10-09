@@ -1,6 +1,6 @@
 package com.twx.marryfriend.bean.message
 
-import com.twx.marryfriend.textTimeToTimeInMillis
+import com.xyzz.myutils.textTimeToTimeInMillis
 
 data class FriendInfo(
 //    var id: Int? = null,
@@ -44,6 +44,20 @@ data class FriendInfo(
     var close_time_high: String? = null,
     var identity_status: Int? = null
 ){
+    var blacklist_close_time:String?=null
+    var blacklist_permanent:Int?=null
+
+    /**
+     * 该账号是否被系统封
+     */
+    fun isSystemBlacklist():Boolean{
+        if (blacklist_permanent==1){
+            return true
+        }else{
+            return (blacklist_close_time?.textTimeToTimeInMillis()?:0L)>System.currentTimeMillis()
+        }
+    }
+
     fun isVip():Boolean{
         return (close_time_low?.textTimeToTimeInMillis()?:0L)>System.currentTimeMillis()
     }

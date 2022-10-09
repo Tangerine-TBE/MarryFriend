@@ -229,7 +229,7 @@ object ImMessageManager {
         return message
     }
 
-    fun sendFlower(username: String):EMMessage?{
+    fun getFlowerMsg(username: String):EMMessage?{
         val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
 // event为需要传递的自定义消息事件，比如礼物消息，可以设置event = "gift"
         val customBody = EMCustomMessageBody(CustomEvent.flower.code)
@@ -240,8 +240,11 @@ object ImMessageManager {
         customMessage.setTo(username)
 // 如果是群聊，设置chattype，默认是单聊
         customMessage.chatType = EMMessage.ChatType.Chat
-        EMClient.getInstance().chatManager().sendMessage(customMessage)
         return customMessage
+    }
+
+    fun sendMsg(msg:EMMessage){
+        EMClient.getInstance().chatManager().sendMessage(msg)
     }
 
     fun getCustomMessage(username: String, type: CustomEvent):EMMessage?{
