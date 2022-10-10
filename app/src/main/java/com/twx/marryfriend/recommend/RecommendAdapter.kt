@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.ViewSwitcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
@@ -206,16 +207,8 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
                 .error(item.getUserSex().homeBigHead)
                 .into(recommendPhoto)
             holder.setText(R.id.itemNickname,item.getNickname())
-            if (item.isRealName()){
-                holder.getView<View>(R.id.realNameView).visibility=View.VISIBLE
-            }else{
-                holder.getView<View>(R.id.realNameView).visibility=View.GONE
-            }
-            if (item.isVip()){
-                holder.getView<View>(R.id.vipLabel).visibility=View.VISIBLE
-            }else{
-                holder.getView<View>(R.id.vipLabel).visibility=View.GONE
-            }
+            holder.getView<View>(R.id.realNameView).isVisible=item.isRealName()
+            holder.getView<View>(R.id.vipLabel).isVisible=item.isVip()
             holder.setText(R.id.age,item.getAge().toString()+"岁")
             holder.setText(R.id.occupation,item.getOccupation())
             holder.setText(R.id.education,item.getSchoolName())

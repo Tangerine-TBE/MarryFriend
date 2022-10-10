@@ -46,16 +46,13 @@ data class FriendInfo(
 ){
     var blacklist_close_time:String?=null
     var blacklist_permanent:Int?=null
+    var blacklist_status=0
 
     /**
      * 该账号是否被系统封
      */
     fun isSystemBlacklist():Boolean{
-        if (blacklist_permanent==1){
-            return true
-        }else{
-            return (blacklist_close_time?.textTimeToTimeInMillis()?:0L)>System.currentTimeMillis()
-        }
+        return blacklist_status==1
     }
 
     fun isVip():Boolean{

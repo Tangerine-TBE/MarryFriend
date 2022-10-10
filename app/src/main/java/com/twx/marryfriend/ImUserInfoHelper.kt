@@ -113,6 +113,12 @@ object ImUserInfoHelper {
                     CustomEvent.dazhaohu_str -> {
                         view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
                     }
+                    CustomEvent.greetext_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.greetext_fail -> {
+                        view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
+                    }
                     CustomEvent.putong_xihuan -> {
                         view.context.toast(event.title)
                     }
@@ -162,6 +168,9 @@ object ImUserInfoHelper {
                         view.context.toast(event.title)
 //                        view.context.startActivity(IntentManager.getReportIntent(view.context))
                     }
+                    CustomEvent.interdi_pass -> {
+                        view.context.toast(event.title)
+                    }
                     CustomEvent.HELPER_VIP_EXPIRE -> {
                         view.context.startActivity(IntentManager.getVipIntent(view.context))
                     }
@@ -208,6 +217,7 @@ object ImUserInfoHelper {
                     ImUserInfoService.Ext(itemModel.age,itemModel.isRealName,itemModel.isVip,itemModel.isSuperVip,itemModel.location,itemModel.occupation,itemModel.education,itemModel.isMutualLike,itemModel.isFlower).also {
                         it.blacklist_permanent=itemModel.blacklist_permanent
                         it.blacklist_close_time=itemModel.blacklist_close_time
+                        it.blacklist_status=itemModel.blacklist_status
                     })
             }?:return@launch
             result.also { resultList ->

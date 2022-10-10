@@ -45,7 +45,6 @@ class ImChatFragment: ChatFragment() {
         }
     }
 
-    private var isSendSecurity=false
     private val recommendViewModel by lazy {
         ViewModelProvider(this).get(RecommendViewModel::class.java)
     }
@@ -53,22 +52,14 @@ class ImChatFragment: ChatFragment() {
         ReChargeCoinDialog(requireActivity())
     }
     private val isMyHelper by lazy {
-        conversationId==ImConversationFragment.MY_HELPER_ID
+        conversationId==ImMessageManager.MY_HELPER_ID
     }
 
     override fun initView() {
         super.initView()
         isSendSuperVip= isSendOpenVipMsg(conversationId?:return)
         isSendHead=isUploadHeadMsg(conversationId?:return)
-        val msgs= ImMessageManager.getHistoryMessage(conversationId?:return,10)
-        if (!isMyHelper&&msgs.all { it.from!=UserInfo.getUserId() }){//发送安全提示
-            ImMessageManager.getCustomMessage(conversationId?:return, CustomEvent.security)?.also {
-                ImMessageManager.insertMessage(it)
-            }
-            isSendSecurity=true
-        }else{
-            isSendSecurity=true
-        }
+        ImMessageManager.insertSecurityMessage(conversationId?:return)//发送安全提示
 
 
         val easeChatPrimaryMenuListener= EaseChatPrimaryMenu::class.java.getDeclaredField("listener").also {
@@ -215,7 +206,7 @@ class ImChatFragment: ChatFragment() {
     override fun resetChatExtendMenu() {
         super.resetChatExtendMenu()
         val chatExtendMenu = chatLayout.chatInputMenu.chatExtendMenu
-        if (conversationId!=ImConversationFragment.MY_HELPER_ID){
+        if (conversationId!=ImMessageManager.MY_HELPER_ID){
             chatExtendMenu.registerMenuItem(
                 R.string.send_flower,
                 R.mipmap.ic_item_send_flowers,

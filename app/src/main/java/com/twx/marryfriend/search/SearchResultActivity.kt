@@ -21,6 +21,7 @@ import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_search_result.*
+import kotlinx.android.synthetic.main.item_search_empty_data.*
 import kotlinx.coroutines.launch
 
 //https://lanhuapp.com/web/#/item/project/detailDetach?pid=0f172b45-d776-4080-a03e-618374ed56e4&image_id=f9fe8766-8e25-453c-a61c-4537300f7b45&tid=5173cb5f-00ad-4a38-b103-b616ccec0e12&project_id=0f172b45-d776-4080-a03e-618374ed56e4&fromEditor=true&type=image
@@ -66,16 +67,6 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
     }
 
     private val searchResultAdapter by lazy { SearchResultAdapter() }
-    private val loadService by lazy {
-        val loadSir=LoadSir.Builder()
-            .addCallback(SearchEmptyDataCallBack())
-            .build()
-        loadSir.register(searchResultRecyclerView
-        ) {
-            startSearch()
-            iLog("重加载")
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +82,7 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
             if(UserInfo.isVip()){
                 startActivity(ImChatActivity.getIntent(this,userid.toString(),it.isRealName()))
             }else{
-                startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Inbox))
+                startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Message))
             }
         }
         searchResultAdapter.likeAction={item,view->
@@ -137,15 +128,19 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         lifecycleScope.launch() {
             loadingDialog.show()
             try {
-
                 searchResultRefreshLayout.resetNoMoreData()
                 val result=searchViewModel.refreshData()
                 searchResultAdapter.setData(result)
                 if(result.isEmpty()){
-                    loadService.showCallback(SearchEmptyDataCallBack::class.java)
+                    if (UserInfo.isInterdiction()){
+                        emptyDataDes.text="你已经被系统封禁,请联系客服"
+                    }
                     searchResultRefreshLayout.finishRefresh()
                 }else{
                     searchResultRefreshLayout.finishRefresh(false)
+                }
+                if (result.isNotEmpty().xor(contentViw.currentView==searchResultRecyclerView)){
+                    contentViw.showNext()
                 }
             }catch (e:Exception){
                 toast(e.message?:"")

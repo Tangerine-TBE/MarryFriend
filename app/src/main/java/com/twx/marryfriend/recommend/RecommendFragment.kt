@@ -21,6 +21,7 @@ import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
@@ -212,13 +213,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadService?.showCallback(LoadingCallback::class.java)
         viewLifecycleOwner.lifecycleScope.launch(){
             try {
-                val list=recommendViewModel.loadRecommendUserId().let {
-                    if (BuildConfig.DEBUG){
-                        it.filter { it!=0&&it!=10 }
-                    }else{
-                        it
-                    }
-                }
+                val list=recommendViewModel.loadRecommendUserId()
+//                    .let {
+//                        if (BuildConfig.DEBUG){
+//                            it.filter { it!=0&&it!=10 }
+//                        }else{
+//                            it
+//                        }
+//                    }
                 val data=if (list.isEmpty()){
                     emptyList<RecommendBean>()
                 }else{
@@ -574,7 +576,11 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //                activity.addDynamicFragment(null)
 //            }
         }else{
-            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+            if (UserInfo.isVip()){
+                startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
+            }else{
+                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+            }
         }
     }
 
@@ -595,7 +601,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 notContent.visibility=View.GONE
             }
             ViewType.notContent -> {
-                if(UserInfo.isVip()){
+                if(UserInfo.isSuperVip()){
                     moreContent.text="查看更多动态"
                     moreContent.setOnClickListener {
                         iLog("查看更多动态")

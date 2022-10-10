@@ -5,12 +5,20 @@ import android.content.Intent
 import android.os.Build
 import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.SPStaticUtils
+import com.google.gson.Gson
 import com.hjq.permissions.Permission
+import com.hyphenate.chat.EMCustomMessageBody
+import com.message.ImMessageManager
+import com.message.chat.CustomEvent
+import com.twx.marryfriend.bean.InterdictionBean
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.message.ImConversationFragment
 import com.xyzz.myutils.NetworkUtil
+import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
+import com.xyzz.myutils.show.iLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
@@ -18,6 +26,38 @@ import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 
 object UserInfo {
+    private const val INTERDICTION_KEY="INTERDICTION_KEY"
+    private val gson by lazy { Gson() }
+    init {
+        ImMessageManager.newMessageLiveData.observeForever { list ->
+            list?.forEach {
+                if (it.from==ImMessageManager.MY_HELPER_ID){
+                    iLog("收到小秘书消息")
+                    val body=it.body
+                    if (body is EMCustomMessageBody){
+                        if (body.event()==CustomEvent.interdi_pass.code){
+                            iLog("收到封禁消息，${body.params}")
+                            val interdictionBean=InterdictionBean().apply {
+                                this.interdictionTime=body.params.get("expire")
+                                this.isPermanentInterdiction=body.params.get("permanent")=="1"
+                            }
+
+                            SPUtil.instance.putString(INTERDICTION_KEY,gson.toJson(interdictionBean))
+                        }else if (body.event()==CustomEvent.interdi_fail.code){
+                            iLog("收到解封消息")
+                            SPUtil.instance.remove(INTERDICTION_KEY)
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    fun isInterdiction():Boolean{
+        val s=SPUtil.instance.getString(INTERDICTION_KEY,null)?:return false
+        return gson.fromJson(s,InterdictionBean::class.java)?.isInterdiction()?:false
+    }
 
     fun updateUserInfo(){
         val url="${Contents.USER_URL}/marryfriend/LoginRegister/getFive"

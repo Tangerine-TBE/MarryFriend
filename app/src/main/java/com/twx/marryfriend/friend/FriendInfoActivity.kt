@@ -12,6 +12,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -265,6 +266,32 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 education.text=(item.getSchoolName())
                 dynamicCount.text=(item.getDynamicCount().toString()+"条动态")//上面的
                 albumPhotoCount.text=(item.getLifePhoto().size.toString()+"张照片")
+            }
+            val isInterdiction=item.blaklist?.isInterdiction()?:false
+            if (isInterdiction.xor(interdictionViewViewSwitcher.currentView==InterdictionView)){
+                interdictionViewViewSwitcher.showNext()
+            }
+            if (isInterdiction){
+                jubao.setOnClickListener {
+                    startActivity(IntentManager.getReportIntent(this@FriendInfoActivity,item?.getId()))
+                }
+                shuoming.text="该用户（ID：${item.getId()}）账号存在异常，为了您的征婚安全，该账号已被限制。"
+                itemNickname2.text=item.getNickname().ifBlank {
+                    item.getId().toString()
+                }
+                isLikeMe.isVisible=false
+                selfIntroduction.isVisible=false
+                expectedTA.isVisible=false
+                voiceIntroduce.isVisible=false
+                myAlbum.isVisible=false
+                myLabel.isVisible=false
+                myAuthentication.isVisible=false
+                myDynamic.isVisible=false
+                life_view.isVisible=false
+                richang.isVisible=false//
+                itemInteraction.isVisible=false
+                sendAction.isVisible=false
+                return@launch
             }
             //关于我
             selfIntroduction.apply {

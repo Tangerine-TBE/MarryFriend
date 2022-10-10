@@ -18,6 +18,7 @@ import com.hyphenate.easeui.modules.conversation.model.EaseConversationInfo
 import com.hyphenate.easeui.utils.EaseCommonUtils
 import com.hyphenate.easeui.utils.EaseDateUtils
 import com.hyphenate.easeui.utils.EaseSmileUtils
+import com.message.ImMessageManager
 import com.message.ImUserInfoService
 import com.message.chat.CustomEvent
 import com.twx.marryfriend.R
@@ -65,7 +66,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             holder.conversationLastMsg.text = EaseSmileUtils.getSmiledText(holder.mContext, text)
             holder.messageTimeText.text = EaseDateUtils.getTimestampString(holder.mContext,Date(lastMessage.msgTime))
         }
-        if (item.conversationId()==ImConversationFragment.MY_HELPER_ID){
+        if (item.conversationId()== ImMessageManager.MY_HELPER_ID){
             holder.apply {
                 messageHead.setImageResource(R.mipmap.ic_launcher)
                 messageUserNickname.text="恋爱小管家"

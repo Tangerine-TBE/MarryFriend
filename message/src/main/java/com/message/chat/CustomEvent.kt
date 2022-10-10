@@ -8,6 +8,10 @@ enum class CustomEvent(val title:String, val code:String,val category:String?=nu
     upload_head("上传头像","uploadhead"),
 
     dazhaohu_str("填写打招呼","dazhaohu_str",HELPER_STYLE_1),
+
+    greetext_pass("招呼语通过审核","greetext_pass",HELPER_STYLE_1),
+    greetext_fail("招呼语未通过审核","greetext_fail",HELPER_STYLE_1),
+
     putong_xihuan("普通喜欢","putong_xihuan",HELPER_STYLE_1),
     touxiang_pass("头像通过","touxiang_pass",HELPER_STYLE_1),
     touxiang_fail("头像失败","touxiang_fail",HELPER_STYLE_1),
@@ -24,6 +28,8 @@ enum class CustomEvent(val title:String, val code:String,val category:String?=nu
     jubao_pass("举报通过","jubao_pass",HELPER_STYLE_1),
     jubao_fail("举报失败","jubao_fail",HELPER_STYLE_1),
 
+    interdi_pass("涉嫌违规","interdi_pass",HELPER_STYLE_1),
+    interdi_fail("封禁解除","interdi_fail",HELPER_STYLE_1),
 
     HELPER_VIP_EXPIRE("会员到期","VIP_EXPIRE");
 
