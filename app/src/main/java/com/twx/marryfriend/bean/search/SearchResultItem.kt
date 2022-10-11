@@ -29,6 +29,20 @@ data class SearchResultItem(
     var work_city_str: String? = "",
     var birthday:String?=null
 ){
+    var ta_like_wo:Int?=0
+
+    fun setLikeTa(){
+        like_uid=0
+    }
+
+    fun isSendMsg():Boolean{
+        return if (UserInfo.isVip()){
+            true
+        }else if (ta_like_wo!=null&&like_uid!=null){
+            true
+        }else vip_level >1
+    }
+
     fun getHeadImage():String?{
         return if (isImageStatus()){
             image_url

@@ -23,6 +23,7 @@ import kotlin.collections.ArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.abs
 
 class RecommendViewModel():ViewModel() {
     private var preDisLike=0
@@ -339,6 +340,24 @@ class RecommendViewModel():ViewModel() {
                 }else{
                     coroutine.resumeWithException(Exception("${response}"))
                 }
+            }catch (e:Exception){
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
+            }
+        },{
+            coroutine.resumeWithException(Exception(it))
+        })
+    }
+
+    suspend fun likeWoUnread()=suspendCoroutine<Int>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/TrendsNotice/getLikeFavorites"
+        val map= mutableMapOf<String,String>(
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))))
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val jsonObject=JSONObject(response)
+//jsonObject.getJSONObject("data").getInt("newLikeNum")
+                coroutine.resume(abs(Random().nextInt()))
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }

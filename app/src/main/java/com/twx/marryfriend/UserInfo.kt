@@ -2,8 +2,6 @@ package com.twx.marryfriend
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import androidx.lifecycle.MutableLiveData
 import com.blankj.utilcode.util.SPStaticUtils
 import com.google.gson.Gson
 import com.hjq.permissions.Permission
@@ -14,18 +12,12 @@ import com.twx.marryfriend.bean.InterdictionBean
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
-import com.twx.marryfriend.message.ImConversationFragment
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-import kotlin.random.Random
 
-object UserInfo {
+object UserInfo :ILoginListener{
     private const val INTERDICTION_KEY="INTERDICTION_KEY"
     private val gson by lazy { Gson() }
     init {
@@ -52,6 +44,16 @@ object UserInfo {
 
             }
         }
+    }
+
+    fun getLoginListener():ILoginListener=this
+
+    override fun onLoginSuccess(userId:String){
+
+    }
+
+    override fun onLogOut(){
+
     }
 
     fun isInterdiction():Boolean{
@@ -117,11 +119,19 @@ object UserInfo {
     }
 
     fun isVip():Boolean{
+        if (BuildConfig.DEBUG){
+            iLog("DEBUG,默认成为会员")
+            return true
+        }
         return getUserVipLevel()>0
     }
 
     fun isSuperVip():Boolean{
-        return true
+        if (BuildConfig.DEBUG){
+            iLog("DEBUG,默认成为超级会员")
+            return true
+        }
+        return getUserVipLevel()>1
     }
     fun getHeadPortrait():String{
         return SPStaticUtils.getString(

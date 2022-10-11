@@ -161,8 +161,8 @@ class ImConversationFragment: ConversationListFragment() {
 
     private fun refreshMutualLike(){
         iLog("加载一下")
-        loadingDialog.show()
         lifecycleScope.launch {
+            loadingDialog.show()
             try {
                 val mutualLike=viewModel.getMutualLike()
                 mutualLikeView.visibility=if (!mutualLike.list.isNullOrEmpty()){

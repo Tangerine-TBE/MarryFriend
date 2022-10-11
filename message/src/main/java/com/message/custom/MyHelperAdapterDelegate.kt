@@ -78,7 +78,7 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                 }
                 helperTipIconForeground?.setImageBitmap(null)
                 helperTipText?.text=msg
-                val defHad=if (sexAction?.invoke()==1){
+                var defHad=if (sexAction?.invoke()==1){
                     R.mipmap.ic_my_helper_head_man_def
                 }else{
                     R.mipmap.ic_my_helper_head_woman_def
@@ -167,6 +167,7 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                         gotoHandel.text="重新上传"
                     }
                     CustomEvent.dongtai_pass -> {//动态通过
+                        defHad=R.mipmap.ic_my_helper_dynamic
                         Glide.with(helperTipIcon).load(img)
                             .placeholder(defHad)
                             .error(defHad)
@@ -190,6 +191,10 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                         goneLine()
                     }
                     CustomEvent.interdi_pass -> {
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_report)
+                        goneLine()
+                    }
+                    CustomEvent.interdi_fail -> {
                         helperTipIcon.setImageResource(R.mipmap.ic_my_helper_report)
                         goneLine()
                     }

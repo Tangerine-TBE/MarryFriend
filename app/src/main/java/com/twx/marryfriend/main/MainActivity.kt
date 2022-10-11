@@ -11,11 +11,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.Nullable
 import androidx.core.provider.FontRequest
+import androidx.core.view.isVisible
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -51,6 +54,7 @@ import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.push.help.PushConstants
 import com.twx.marryfriend.recommend.RecommendFragment
+import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
 import com.twx.marryfriend.utils.SpUtil
@@ -61,8 +65,10 @@ import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
+import com.xyzz.myutils.show.iLog
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.launch
 import org.android.agoo.xiaomi.MiPushRegistar
 import java.util.*
 
@@ -80,6 +86,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             startActivity(Intent(this, BeginActivity::class.java))
         }
     }
+    private val recommendViewModel by lazy {
+        ViewModelProvider(this)
+            .get(RecommendViewModel::class.java)
+    }
 
     private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
 
@@ -87,6 +97,19 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun initView() {
         super.initView()
+
+//        lifecycleScope.launch {
+//            try {
+//                val c=recommendViewModel.likeWoUnread()
+//                likeWoUnread.isVisible=c>0
+//                likeWoUnread2.isVisible=c>0
+//                likeWoUnread.text="又有${c}个人喜欢你了"
+//                likeWoUnread2.text="${c}"
+//
+//            }catch (e:Exception){
+//                iLog(e.stackTraceToString())
+//            }
+//        }
 
         doUpdateTokenPresent = doUpdateTokenPresentImpl.getsInstance()
         doUpdateTokenPresent.registerCallback(this)

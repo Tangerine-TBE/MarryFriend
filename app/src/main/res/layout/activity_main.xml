@@ -138,6 +138,7 @@
 
     </RadioGroup>
     <TextView
+        android:id="@+id/likeWoUnread"
         android:visibility="gone"
         tools:visibility="visible"
         android:text="又有12个人喜欢你了"
@@ -151,6 +152,7 @@
         android:layout_width="0dp"
         android:layout_height="41dp"/>
     <TextView
+        android:id="@+id/likeWoUnread2"
         android:visibility="gone"
         tools:visibility="visible"
         app:layout_constraintTop_toTopOf="@id/menu2"

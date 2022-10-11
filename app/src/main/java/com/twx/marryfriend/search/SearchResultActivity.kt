@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
@@ -17,10 +17,10 @@ import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.recommend.RecommendCall
 import com.twx.marryfriend.recommend.RecommendViewModel
-import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_search_result.*
+import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_search_empty_data.*
 import kotlinx.coroutines.launch
 
@@ -77,18 +77,49 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
     }
 
     private fun initListener(){
+        Glide.with(myHead)
+            .load(UserInfo.getHeadPortrait())
+            .placeholder(UserInfo.getDefHeadImage())
+            .error(UserInfo.getDefHeadImage())
+            .into(myHead)
         searchResultAdapter.chatAction={
             val userid=it.user_id
-            if(UserInfo.isVip()){
+            if(it.isSendMsg()){
                 startActivity(ImChatActivity.getIntent(this,userid.toString(),it.isRealName()))
             }else{
                 startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Message))
             }
         }
+        closeMutual.setOnClickListener {
+            if (this@SearchResultActivity.viewSwitch.currentView!=contentView){
+                viewSwitch.showNext()
+            }
+        }
         searchResultAdapter.likeAction={item,view->
             lifecycleScope.launch {
-                recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空")).also {t->
+                recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空")) {
+                    if (this@SearchResultActivity.viewSwitch.currentView != mutualView) {
+                        viewSwitch.showNext()
+                    }
+                    Glide.with(taHead)
+                        .load(item.getHeadImage())
+                        .placeholder(UserInfo.getReversedDefHeadImage())
+                        .error(UserInfo.getReversedDefHeadImage())
+                        .into(taHead)
+                    sendMsg.setOnClickListener {
+                        if (this@SearchResultActivity.viewSwitch.currentView != contentView) {
+                            viewSwitch.showNext()
+                        }
+                        startActivity(
+                            ImChatActivity.getIntent(
+                                this@SearchResultActivity,
+                                item.user_id?.toString() ?: return@setOnClickListener
+                            )
+                        )
+                    }
+                }.also { t->
                     if (t.code==200){
+                        item.setLikeTa()
                         view.isSelected=true
                         item.like()
                         toast("喜欢成功")

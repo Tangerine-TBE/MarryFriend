@@ -82,38 +82,4 @@ object ImLoginHelper {
             }
         })
     }
-
-
-
-    /*    private fun autoLogin(mUserName:String,success:(EaseUser?)->Unit,error:(Int,String)->Unit){
-        val userId=DemoHelper.instance.currentUser
-//        val userId=EMClient.getInstance().currentUser
-        if (userId!=mUserName&&userId!=null){
-            logout({
-                error.invoke(0,"用户不一致")
-            },{code,msg->{
-                error.invoke(code,msg)
-            }})
-        }else{
-            splashViewModel.loginData.observeForever{
-                when(it.status){
-                    Status.SUCCESS -> {
-                        success.invoke(DemoHelper.instance.userProfileManager.currentUserInfo)
-                        iLog("自动登录成功")
-                    }
-                    Status.ERROR -> {
-                        error.invoke(it.errorCode,it.message)
-                        iLog("自动登录失败,code=${it.errorCode},message=${it.message}")
-                    }
-                    Status.LOADING -> {
-                        iLog("正在自动登录")
-                    }
-                    else->{
-                        error.invoke(it.errorCode,it.message)
-                        iLog("自动登录失败,code=${it.errorCode},message=${it.message}")
-                    }
-                }
-            }
-        }
-    }*/
 }

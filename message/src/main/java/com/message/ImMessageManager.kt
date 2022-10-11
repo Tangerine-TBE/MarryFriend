@@ -1,10 +1,12 @@
 package com.message
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.hyphenate.EMConversationListener
 import com.hyphenate.EMMessageListener
-import com.hyphenate.chat.*
+import com.hyphenate.chat.EMClient
+import com.hyphenate.chat.EMCustomMessageBody
+import com.hyphenate.chat.EMMessage
+import com.hyphenate.chat.EMTextMessageBody
 import com.hyphenate.exceptions.HyphenateException
 import com.message.chat.CustomEvent
 import com.message.conversations.ConversationType
@@ -31,9 +33,6 @@ object ImMessageManager {
             override fun onMessageReceived(messages: MutableList<EMMessage>?) {
                 //收到消息
                 iLog(messages?.firstOrNull()?.from,"收到消息,收到")
-                messages?.forEach {
-                    insertSecurityMessage(it.from)
-                }
                 newMessageLiveData.postValue(messages)
             }
 
@@ -41,13 +40,19 @@ object ImMessageManager {
                 messages?.forEach {
                     val ext=it.ext()
                     iLog("收到来自${it.from}的cmd消息，ext:${ext}")
-                    if (ext["kind"]=="dazhaohu_str"){
-                        insertSecurityMessage(it.conversationId())
-                        // 将消息插入到指定会话中。
-                        it.body=EMTextMessageBody(ext["str"].toString())
-                        val conversation = EMClient.getInstance().chatManager().getConversation(it.conversationId())
-                        conversation?.insertMessage(it)?:EMClient.getInstance().chatManager().saveMessage(it)
-                    }
+                  /*  val kind=ext["kind"]
+                    when(kind){
+                        "dazhaohu_str","putong_xihuan"->{
+                            insertSecurityMessage(it.conversationId())
+                            // 将消息插入到指定会话中。
+                            it.body=EMTextMessageBody(ext["str"].toString())
+                            val conversation = EMClient.getInstance().chatManager().getConversation(it.conversationId())
+                            conversation?.insertMessage(it)?:EMClient.getInstance().chatManager().saveMessage(it)
+                        }
+                        else->{
+
+                        }
+                    }*/
                 }
             }
 
@@ -91,6 +96,20 @@ object ImMessageManager {
         if (conversationId==MY_HELPER_ID){
             return
         }
+        val conversation=EMClient.getInstance().chatManager().getConversation(conversationId)
+        val lastMsg=conversation?.lastMessage
+        if ((conversation?.allMessages?.size?:0)<=1){
+            val lastMsgBody=lastMsg?.body
+            if (lastMsgBody is EMCustomMessageBody&&lastMsgBody.event()==CustomEvent.security.code){
+                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
+                isSendSecurityMap[conversationId]=true
+                return
+            }else{
+                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,false)
+                isSendSecurityMap[conversationId]=false
+            }
+        }
+
         val isSendSecurity= isSendSecurityMap.get(conversationId)
         if (isSendSecurity==null){
             isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(SECURITY_MESSAGE_KEY+conversationId,false)
@@ -99,13 +118,12 @@ object ImMessageManager {
         }
 
         if (isSendSecurity!=true){
-            if (!EMClient.getInstance().chatManager().getConversation(conversationId)?.allMessages.isNullOrEmpty()){
-                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
-                isSendSecurityMap[conversationId]=true
-                return
-            }
-            ImMessageManager.getCustomMessage(conversationId, CustomEvent.security)?.also {
-                ImMessageManager.insertMessage(it)
+            ImMessageManager.getCustomMessage(conversationId, CustomEvent.security)?.also { emMessage ->
+                emMessage.msgTime=lastMsg?.msgTime?.let {
+                    it-60*60*1000
+                }?:(System.currentTimeMillis()-60*60*1000)
+                emMessage.msgId=System.currentTimeMillis().toString()
+                ImMessageManager.insertMessage(emMessage)
                 SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
                 isSendSecurityMap[conversationId]=true
             }
@@ -229,41 +247,6 @@ object ImMessageManager {
         EMClient.getInstance().chatManager().updateMessage(msg)
     }
 
-    fun sendTextMsg(username: String,content:String):EMMessage?{
-        iLog("发送\"${content}\"给${username}")
-        //创建一条文本消息，content为消息文字内容，toChatUsername为对方用户或者群聊的id，后文皆是如此
-        val message = EMMessage.createTxtSendMessage(content, username)
-//        message.isAcked
-//        message.isDelivered
-//        message.progress()
-        //如果是群聊，设置chattype，默认是单聊
-//        if (chatType === CHATTYPE_GROUP) message.chatType = ChatType.GroupChat
-        //发送消息
-        EMClient.getInstance().chatManager().sendMessage(message)
-        return message
-    }
-
-    fun sendImageMsg(username: String,uri: Uri):EMMessage?{
-        val message=EMMessage.createImageSendMessage(uri,true,username)
-        EMClient.getInstance().chatManager().sendMessage(message)
-        return message
-    }
-
-    fun sendImageMsg(username: String,file: String):EMMessage?{
-        val message=EMMessage.createImageSendMessage(file,true,username)
-        EMClient.getInstance().chatManager().sendMessage(message)
-        return message
-    }
-
-    fun sendVoiceMsg(username: String,voiceUri:Uri,length:Int):EMMessage?{
-        //voiceUri 为语音文件本地资源标志符，length 为录音时间(秒)
-        val message = EMMessage.createVoiceSendMessage(voiceUri, length, username)
-//如果是群聊，设置 chattype，默认是单聊
-//        message.chatType = ChatType.GroupChat
-        EMClient.getInstance().chatManager().sendMessage(message)
-        return message
-    }
-
     fun getFlowerMsg(username: String):EMMessage?{
         val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
 // event为需要传递的自定义消息事件，比如礼物消息，可以设置event = "gift"
@@ -288,6 +271,8 @@ object ImMessageManager {
         customMessage.addBody(customBody)
         customMessage.to = username
         customMessage.chatType = EMMessage.ChatType.Chat
+        customMessage.msgTime=System.currentTimeMillis()
+        customMessage.msgId=System.currentTimeMillis().toString()
         return customMessage
     }
 

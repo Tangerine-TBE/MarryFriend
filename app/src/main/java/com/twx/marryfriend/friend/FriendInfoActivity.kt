@@ -443,18 +443,22 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             myAuthentication.apply {
                 idCardInfo.isSelected=
                 if (item.isRealName()){
+                    realNameTitle.text="已认证"
                     realNameDes.text=(item.getRealNameNumber()?:"")
                     true
                 }else{
-                    realNameDes.text=(item.getRealNameNumber()?:"未认证")
+                    realNameTitle.text="未认证"
+                    realNameDes.text=("未认证")
                     false
                 }
                 headPorInfo.isSelected=
                 if (item.isHeadIdentification()){
+                    headPorTitle.text="头像已认证"
                     headPorDes.text=("头像是用户本人真实照片，已通过人脸对比。")
                     true
                 }else{
-                    headPorDes.text=("未认证。")
+                    headPorTitle.text="头像未认证"
+                    headPorDes.text=("头像未认证。")
                     false
                 }
             }
