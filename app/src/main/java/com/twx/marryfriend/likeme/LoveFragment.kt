@@ -66,6 +66,8 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
                 text2.text = "${data?.total ?: 0}"
                 if (data?.list.isNullOrEmpty()) {
                     loadService.showCallback(LiveEmptyData::class.java)
+                }else{
+                    loadService.showSuccess()
                 }
                 loveSwipeRefreshLayout.finishRefresh()
             } catch (e: Exception) {

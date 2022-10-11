@@ -63,22 +63,6 @@ fun String.getAgeFromBirthday():Int?{
     }
 }
 
-private val simpleDateFormat by lazy {
-    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
-}
-/**
- * 将 yyyy-MM-dd HH:mm:ss
- * 转换为 long类型
- */
-fun String.textTimeToTimeInMillis():Long?{
-    return try {
-        simpleDateFormat.parse(this)?.time
-    }catch (e:Exception){
-        wLog(e.stackTraceToString())
-        null
-    }
-}
-
 fun UploadHeadDialog.showUploadHeadDialog():Boolean{
     if (RecommendGuideView.isShowGuide()){
         return false

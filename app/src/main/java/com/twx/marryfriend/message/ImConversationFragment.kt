@@ -1,6 +1,7 @@
 package com.twx.marryfriend.message
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import com.hyphenate.easeui.EaseIM
 import com.hyphenate.easeui.adapter.EaseAdapterDelegate
 import com.hyphenate.easeui.modules.conversation.model.EaseConversationInfo
 import com.hyphenate.easeui.modules.conversation.presenter.EaseConversationPresenterImpl
+import com.message.ImMessageManager
 import com.message.ImUserInfoService
 import com.twx.marryfriend.*
 import com.twx.marryfriend.base.BaseViewHolder
@@ -32,9 +34,6 @@ import kotlinx.android.synthetic.main.fragment_im_message.*
 import kotlinx.coroutines.launch
 
 class ImConversationFragment: ConversationListFragment() {
-    companion object{
-        const val MY_HELPER_ID="小秘书"//小秘书id
-    }
     private val viewModel by lazy {
         ViewModelProvider(this).get(ConversationViewModel::class.java)
     }
@@ -112,13 +111,33 @@ class ImConversationFragment: ConversationListFragment() {
             }
         })
     override fun toChatActivity(item: EMConversation) {
-        if (item.conversationId()==MY_HELPER_ID){
+        if (item.conversationId()== ImMessageManager.MY_HELPER_ID){
             startActivity(MyHelperActivity.getIntent(requireContext()))
+            return
+        }
+        if (UserInfo.isInterdiction()){
+            AlertDialog.Builder(requireContext())
+                .setTitle("温馨提示")
+                .setMessage("您已被系统封禁，暂时无法聊天")
+                .setPositiveButton("确定"){dialog,which->
+
+                }
+                .show()
             return
         }
 
         val imUserInfo=EaseIM.getInstance().userProvider.getUser(item.conversationId())
         val ext=imUserInfo.getUserExt()
+        if(ext?.isSystemBlacklist()==true){
+            AlertDialog.Builder(requireContext())
+                .setTitle("提示")
+                .setMessage("该用户涉嫌违规，已被系统封禁")
+                .setPositiveButton("确定"){dialog,which->
+                    ImMessageManager.ackConversationRead(item.conversationId())
+                }
+                .show()
+            return
+        }
         if (UserInfo.isVip()||ext?.isSuperVip==true||ext?.isMutualLike==true){
             val isRealName=ext?.isRealName?:false
             startActivityForResult.launch(ImChatActivity.getIntent(

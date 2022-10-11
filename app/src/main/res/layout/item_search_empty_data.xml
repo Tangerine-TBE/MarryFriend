@@ -21,6 +21,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"/>
     <TextView
+        android:id="@+id/emptyDataDes"
         android:text="很抱歉，无搜索结果~"
         android:textColor="#FF9A9A9A"
         android:textSize="13sp"

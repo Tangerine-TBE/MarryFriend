@@ -99,8 +99,8 @@
                             android:layout_marginStart="12dp"
                             android:orientation="horizontal"
                             android:gravity="center"
-                            android:paddingStart="7dp"
-                            android:paddingEnd="7dp"
+                            android:paddingStart="9dp"
+                            android:paddingEnd="9dp"
                             android:paddingTop="5dp"
                             android:paddingBottom="5dp"
                             android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
                                 android:layout_width="12dp"
                                 android:layout_height="11dp"/>
                             <TextView
-                                android:text="实名·真实头像"
+                                android:text="已实名"
                                 android:textColor="#FFFFFFFF"
                                 android:textSize="11dp"
                                 android:layout_width="wrap_content"

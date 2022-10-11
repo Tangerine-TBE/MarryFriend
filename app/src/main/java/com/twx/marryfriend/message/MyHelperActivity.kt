@@ -5,12 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.hyphenate.easeui.constants.EaseConstant
+import com.message.ImMessageManager
 
 class MyHelperActivity:ImChatActivity() {
     companion object{
         fun getIntent(context: Context): Intent {
             val intent= Intent(context,MyHelperActivity::class.java)
-            intent.putExtra(EaseConstant.EXTRA_CONVERSATION_ID,ImConversationFragment.MY_HELPER_ID)
+            intent.putExtra(EaseConstant.EXTRA_CONVERSATION_ID, ImMessageManager.MY_HELPER_ID)
             intent.putExtra(EaseConstant.EXTRA_CHAT_TYPE, EaseConstant.CHATTYPE_SINGLE)
             return intent
         }

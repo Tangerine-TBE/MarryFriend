@@ -12,6 +12,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ import com.google.android.material.chip.Chip
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
+import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.recommend.RecommendBean
@@ -28,6 +30,7 @@ import com.twx.marryfriend.dialog.FollowReportDialog
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.dialog.UploadHeadDialog
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
@@ -36,7 +39,6 @@ import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
@@ -137,7 +139,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
 
     override fun onResume() {
         super.onResume()
-        life_view.refreshView(lifecycleScope)
+        life_view.refreshView()
     }
 
     private fun loadData(){
@@ -264,6 +266,32 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 education.text=(item.getSchoolName())
                 dynamicCount.text=(item.getDynamicCount().toString()+"条动态")//上面的
                 albumPhotoCount.text=(item.getLifePhoto().size.toString()+"张照片")
+            }
+            val isInterdiction=item.blaklist?.isInterdiction()?:false
+            if (isInterdiction.xor(interdictionViewViewSwitcher.currentView==InterdictionView)){
+                interdictionViewViewSwitcher.showNext()
+            }
+            if (isInterdiction){
+                jubao.setOnClickListener {
+                    startActivity(IntentManager.getReportIntent(this@FriendInfoActivity,item?.getId()))
+                }
+                shuoming.text="该用户（ID：${item.getId()}）账号存在异常，为了您的征婚安全，该账号已被限制。"
+                itemNickname2.text=item.getNickname().ifBlank {
+                    item.getId().toString()
+                }
+                isLikeMe.isVisible=false
+                selfIntroduction.isVisible=false
+                expectedTA.isVisible=false
+                voiceIntroduce.isVisible=false
+                myAlbum.isVisible=false
+                myLabel.isVisible=false
+                myAuthentication.isVisible=false
+                myDynamic.isVisible=false
+                life_view.isVisible=false
+                richang.isVisible=false//
+                itemInteraction.isVisible=false
+                sendAction.isVisible=false
+                return@launch
             }
             //关于我
             selfIntroduction.apply {
@@ -598,9 +626,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 dislike.performClick()
             }
         }
-        sendMsg.setOnClickListener {
-            toast("给她发消息")
-        }
         closeMutual.setOnClickListener {
             if (friendViewSwitcher.currentView==mutualLike){
                 friendViewSwitcher.showNext()
@@ -645,6 +670,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     Glide.with(taHead).load(item.getHeadImg())
                         .placeholder(item.getUserSex().smallHead)
                         .placeholder(item.getUserSex().smallHead).into(taHead)
+                    sendMsg.setOnClickListener {
+                        startActivity(ImChatActivity.getIntent(this@FriendInfoActivity,item.getId().toString()))
+                    }
                 }
             }.also {t->
                 if (t.code==200){
@@ -674,6 +702,9 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     coinInsufficientDialog.show()
                 }.also {
                     if (it.code==200){
+                        ImMessageManager.getFlowerMsg(item.getId().toString())?.also {
+                            ImMessageManager.sendMsg(it)
+                        }
                         toast("送花成功")
                     }else{
                         toast(it.msg)

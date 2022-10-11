@@ -36,56 +36,48 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
 
     override fun getEaseChatRow(parent: ViewGroup?, isSender: Boolean): EaseChatRow {
         return object :EaseChatRow(parent?.context,isSender){
-            val flowerContent by lazy {
-                findViewById<View>(R.id.flowerContent)
-            }
-            val helperTipIcon by lazy {
-                findViewById<ImageView>(R.id.helperTipIcon)
-            }
-            val helperTipIconForeground by lazy {
-                findViewById<ImageView>(R.id.helperTipIconForeground)
-            }
-            val helperTipText by lazy {
-                findViewById<TextView>(R.id.helperTipText)
-            }
-            val divisionLine by lazy {
-                findViewById<View>(R.id.divisionLine)
-            }
-            val gotoHandel by lazy {
-                findViewById<TextView>(R.id.gotoHandel)
-            }
-            val userHead by lazy {
-                findViewById<ImageView>(R.id.userHead)
-            }
-
-            val body by lazy {
-                message.body as? EMCustomMessageBody
-            }
-            val img by lazy {
-                body?.params?.get("img")
-            }
-            val msg by lazy {
-                body?.params?.get("msg")
-            }
+            lateinit var flowerContent :View
+            lateinit var helperTipIcon :ImageView
+            lateinit var helperTipIconForeground :ImageView
+            lateinit var helperTipText :TextView
+            lateinit var divisionLine :View
+            lateinit var gotoHandel :TextView
+            lateinit var userHead :ImageView
 
             override fun onInflateView() {
                 inflater.inflate(R.layout.custom_my_helper_msg, this)
             }
 
             override fun onFindViewById() {
-
+                flowerContent =findViewById<View>(R.id.flowerContent)
+                helperTipIcon =findViewById<ImageView>(R.id.helperTipIcon)
+                helperTipIconForeground =findViewById<ImageView>(R.id.helperTipIconForeground)
+                helperTipText =findViewById<TextView>(R.id.helperTipText)
+                divisionLine =findViewById<View>(R.id.divisionLine)
+                gotoHandel =findViewById<TextView>(R.id.gotoHandel)
+                userHead =findViewById<ImageView>(R.id.userHead)
             }
 
             override fun onSetUpView() {
-                userHead.setImageResource(R.mipmap.ic_launcher)//设置小秘书图标
+                val body by lazy {
+                    message.body as? EMCustomMessageBody
+                }
+                val img by lazy {
+                    body?.params?.get("img")
+                }
+                val msg by lazy {
+                    body?.params?.get("msg")
+                }
+
+                userHead?.setImageResource(R.mipmap.ic_launcher)//设置小秘书图标
                 val type=CustomEvent.codeToEvent(body?.event())
                 if (type!=null){
-                    flowerContent.setOnClickListener {
+                    flowerContent?.setOnClickListener {
                         ImCustomEventListenerManager.click(it,type,message)
                     }
                 }
-                helperTipIconForeground.setImageBitmap(null)
-                helperTipText.text=msg
+                helperTipIconForeground?.setImageBitmap(null)
+                helperTipText?.text=msg
                 val defHad=if (sexAction?.invoke()==1){
                     R.mipmap.ic_my_helper_head_man_def
                 }else{
@@ -93,11 +85,19 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                 }
                 when(type){
                     CustomEvent.dazhaohu_str->{//填写打招呼
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)
-                        gotoHandel.text="马上填写"
+                        helperTipIcon?.setImageResource(R.mipmap.ic_fill_in_say_hello)
+                        gotoHandel?.text="马上填写"
+                    }
+                    CustomEvent.greetext_pass->{//招呼语通过审核
+                        helperTipIcon?.setImageResource(R.mipmap.ic_fill_in_say_hello)
+                        goneLine()
+                    }
+                    CustomEvent.greetext_fail->{//招呼语未通过审核
+                        helperTipIcon?.setImageResource(R.mipmap.ic_fill_in_say_hello)
+                        gotoHandel?.text="马上修改"
                     }
                     CustomEvent.putong_xihuan -> {//普通喜欢
-                        helperTipIcon.setImageResource(R.mipmap.ic_fill_in_say_hello)//
+                        helperTipIcon?.setImageResource(R.mipmap.ic_fill_in_say_hello)//
                         goneLine()
                     }
                     CustomEvent.touxiang_pass->{//头像通过
@@ -189,6 +189,11 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                         helperTipIcon.setImageResource(R.mipmap.ic_my_helper_report)
                         goneLine()
                     }
+                    CustomEvent.interdi_pass -> {
+                        helperTipIcon.setImageResource(R.mipmap.ic_my_helper_report)
+                        goneLine()
+                    }
+
                     CustomEvent.HELPER_VIP_EXPIRE->{
                         helperTipIcon.setImageResource(R.mipmap.ic_vip_expire)
                         gotoHandel.text="立即续费"

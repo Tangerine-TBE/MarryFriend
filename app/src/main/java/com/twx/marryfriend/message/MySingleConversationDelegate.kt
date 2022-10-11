@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.hyphenate.chat.EMConversation
 import com.hyphenate.chat.EMCustomMessageBody
@@ -17,6 +18,7 @@ import com.hyphenate.easeui.modules.conversation.model.EaseConversationInfo
 import com.hyphenate.easeui.utils.EaseCommonUtils
 import com.hyphenate.easeui.utils.EaseDateUtils
 import com.hyphenate.easeui.utils.EaseSmileUtils
+import com.message.ImMessageManager
 import com.message.ImUserInfoService
 import com.message.chat.CustomEvent
 import com.twx.marryfriend.R
@@ -64,7 +66,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             holder.conversationLastMsg.text = EaseSmileUtils.getSmiledText(holder.mContext, text)
             holder.messageTimeText.text = EaseDateUtils.getTimestampString(holder.mContext,Date(lastMessage.msgTime))
         }
-        if (item.conversationId()==ImConversationFragment.MY_HELPER_ID){
+        if (item.conversationId()== ImMessageManager.MY_HELPER_ID){
             holder.apply {
                 messageHead.setImageResource(R.mipmap.ic_launcher)
                 messageUserNickname.text="恋爱小管家"
@@ -77,6 +79,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                 messageMutualLikeIcon.visibility=View.GONE
                 notVipShowView.visibility=View.GONE
                 superVipHead.visibility=View.GONE
+                isViolation.isVisible=false
             }
             return
         }
@@ -136,22 +139,14 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                     holder.messageMutualLikeIcon.isSelected=false
                 }
             }
-            if (it.isRealName==true){
-                holder.isMessageRealName.visibility=View.VISIBLE
-            }else{
-                holder.isMessageRealName.visibility=View.GONE
-            }
+            holder.isMessageRealName.isVisible=it.isRealName
             if (it.isSuperVip){
                 holder.vipIdentification2.visibility=View.VISIBLE
                 holder.superVipHead.visibility=View.VISIBLE
 
                 holder.vipIdentification.visibility=View.GONE
             }else{
-                if (it.isVip){
-                    holder.vipIdentification.visibility=View.VISIBLE
-                }else{
-                    holder.vipIdentification.visibility=View.GONE
-                }
+                holder.vipIdentification.isVisible=it.isVip
                 holder.vipIdentification2.visibility=View.GONE
                 holder.superVipHead.visibility=View.GONE
             }
@@ -160,6 +155,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                 conversationAge.text=it.age.toString()+"岁"
                 conversationOccupation.text=it.occupation
                 conversationEducation.text=it.education
+                isViolation.isVisible=it.isSystemBlacklist()
             }
         }
     }
@@ -272,6 +268,11 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
         val msgLock by lazy {
             with(itemView){
                 this.msgLock
+            }
+        }
+        val isViolation by lazy {
+            with(itemView){
+                this.isViolation
             }
         }
         override fun initView(itemView: View?) {

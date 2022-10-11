@@ -11,15 +11,13 @@ import android.widget.TextView
 import android.widget.ViewSwitcher
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.blankj.utilcode.util.SPStaticUtils
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import com.google.gson.Gson
-import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
@@ -31,14 +29,11 @@ import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
-import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.item_recommend.view.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel: ImChatViewModel) :RecyclerView.Adapter<BaseViewHolder>(){
+class RecommendAdapter constructor(private val scope:CoroutineScope, private val imChatViewModel: ImChatViewModel) :RecyclerView.Adapter<BaseViewHolder>(){
     companion object{
         private const val IS_FIRST_LISTENER_VOICE_KEY="first_listener_voice"
         private const val IS_FIRST_PUSH_VOICE="first_push_voice"
@@ -56,7 +51,6 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
             SPStaticUtils.put(IS_FIRST_PUSH_VOICE,false)
         }
     }
-    private val mainScope by lazy { MainScope() }
     private val listData=ArrayList<RecommendBean>()
     var openLocationPermissionAction:(()->Unit)?=null
     var disLikeAction:((RecommendBean, View)->Unit)?=null
@@ -99,7 +93,7 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
         return e
     }
 
-    fun remove(recommendBean: RecommendBean){
+    fun removeItem(recommendBean: RecommendBean){
         if (recommendBean==currentPlayVoiceItem){
             stopVoice()
         }
@@ -111,6 +105,18 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
         notifyItemRemoved(index)
 
         notifyItemChanged(0)
+    }
+
+    fun addItem(recommendBean: RecommendBean){
+        listData.add(recommendBean)
+        notifyItemInserted(listData.size)
+    }
+
+    fun cleanData(){
+        if (listData.isNotEmpty()){
+            listData.clear()
+            notifyDataSetChanged()
+        }
     }
 
     fun getTopItem():RecommendBean{
@@ -132,30 +138,21 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
             reportAction?.invoke(item)
         }
         val blacklist=holder.getView<TextView>(R.id.blacklist)
-        var isBlock=false
-        scope.launch {
-            isBlock=
-                try {
-                    imChatViewModel.getBlockState(item.getId().toString()).woPingBiTa
-                }catch (e:Exception){
-                    false
-                }
-            if (isBlock){
-                blacklist.text="取消屏蔽"
-            }else{
-                blacklist.text="屏蔽"
-            }
+        if (item.isBlock){
+            blacklist.text="取消屏蔽"
+        }else{
+            blacklist.text="屏蔽"
         }
         val context=holder.itemView.context
         blacklist.setOnClickListener {
 //            blacklistAction?.invoke(item)
             scope.launch{
-                if(isBlock){
+                if(item.isBlock){
                     try {
                         imChatViewModel.removeBlockList(item.getId().toString()?:return@launch)
                         toast(context,"取消屏蔽成功")
                         blacklist.text="屏蔽"
-                        isBlock=false
+                        item.isBlock=false
                     }catch (e:Exception){
                         toast(context,e.message)
                     }
@@ -164,7 +161,7 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
                         imChatViewModel.addBlockList(item.getId()?.toString()?:return@launch)
                         toast(context,"屏蔽成功")
                         blacklist.text="取消屏蔽"
-                        isBlock=true
+                        item.isBlock=true
                     }catch (e:Exception){
                         toast(context,e.message)
                     }
@@ -210,16 +207,8 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
                 .error(item.getUserSex().homeBigHead)
                 .into(recommendPhoto)
             holder.setText(R.id.itemNickname,item.getNickname())
-            if (item.isRealName()){
-                holder.getView<View>(R.id.realNameView).visibility=View.VISIBLE
-            }else{
-                holder.getView<View>(R.id.realNameView).visibility=View.GONE
-            }
-            if (item.isVip()){
-                holder.getView<View>(R.id.vipLabel).visibility=View.VISIBLE
-            }else{
-                holder.getView<View>(R.id.vipLabel).visibility=View.GONE
-            }
+            holder.getView<View>(R.id.realNameView).isVisible=item.isRealName()
+            holder.getView<View>(R.id.vipLabel).isVisible=item.isVip()
             holder.setText(R.id.age,item.getAge().toString()+"岁")
             holder.setText(R.id.occupation,item.getOccupation())
             holder.setText(R.id.education,item.getSchoolName())
@@ -458,7 +447,7 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
         holder.getView<LifeView>(R.id.life_view).apply {
             if (position==0){
                 lifeView=this
-                lifeView?.refreshView(scope)
+                lifeView?.refreshView()
             }
             item.getLifePhoto().also {
                 if(position!=0){
@@ -560,10 +549,5 @@ class RecommendAdapter constructor(val scope:CoroutineScope,val imChatViewModel:
 
     override fun getItemCount(): Int {
         return listData.size
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        mainScope.cancel()
     }
 }

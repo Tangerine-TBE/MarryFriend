@@ -46,7 +46,7 @@
                     <!--           大图-->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/briefIntroduction"
-                        tools:visibility="gone"
+                        tools:visibility="visible"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.twx.marryfriend.recommend.widget.RecommendImage
@@ -87,141 +87,196 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"/>
                         </androidx.appcompat.widget.LinearLayoutCompat>
-                        <androidx.constraintlayout.widget.ConstraintLayout
+                        <ViewSwitcher
+                            android:id="@+id/interdictionViewViewSwitcher"
                             app:layout_constraintTop_toBottomOf="@id/recommendPhoto"
                             android:background="@drawable/shape_recommend_user_info"
                             android:paddingBottom="26dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
-                            <TextView
-                                android:id="@+id/itemNickname"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                android:layout_marginStart="17dp"
-                                android:layout_marginTop="17dp"
-                                android:text="罐头香菜"
-                                android:textColor="#FF404040"
-                                android:textSize="17sp"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"/>
-                            <androidx.appcompat.widget.LinearLayoutCompat
-                                android:id="@+id/realNameView"
-                                app:layout_constraintTop_toTopOf="@id/itemNickname"
-                                app:layout_constraintBottom_toBottomOf="@id/itemNickname"
-                                app:layout_constraintStart_toEndOf="@id/itemNickname"
-                                android:background="@drawable/shape_real_name"
-                                android:layout_marginStart="12dp"
-                                android:orientation="horizontal"
-                                android:gravity="center"
-                                android:paddingStart="7dp"
-                                android:paddingEnd="7dp"
-                                android:paddingTop="5dp"
-                                android:paddingBottom="5dp"
-                                android:layout_width="wrap_content"
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/itemNickname"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    android:layout_marginStart="17dp"
+                                    android:layout_marginTop="17dp"
+                                    android:text="罐头香菜"
+                                    android:textColor="#FF404040"
+                                    android:textSize="17sp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    android:id="@+id/realNameView"
+                                    app:layout_constraintTop_toTopOf="@id/itemNickname"
+                                    app:layout_constraintBottom_toBottomOf="@id/itemNickname"
+                                    app:layout_constraintStart_toEndOf="@id/itemNickname"
+                                    android:background="@drawable/shape_real_name"
+                                    android:layout_marginStart="12dp"
+                                    android:orientation="horizontal"
+                                    android:gravity="center"
+                                    android:paddingStart="9dp"
+                                    android:paddingEnd="9dp"
+                                    android:paddingTop="5dp"
+                                    android:paddingBottom="5dp"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+                                    <ImageView
+                                        android:src="@mipmap/ic_item_real_name"
+                                        android:layout_width="12dp"
+                                        android:layout_height="11dp"/>
+                                    <TextView
+                                        android:text="已实名"
+                                        android:textColor="#FFFFFFFF"
+                                        android:textSize="11dp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                </androidx.appcompat.widget.LinearLayoutCompat>
                                 <ImageView
-                                    android:src="@mipmap/ic_item_real_name"
-                                    android:layout_width="12dp"
-                                    android:layout_height="11dp"/>
-                                <TextView
-                                    android:text="实名认证"
-                                    android:textColor="#FFFFFFFF"
-                                    android:textSize="11dp"
+                                    android:id="@+id/vipLabel"
+                                    app:layout_constraintStart_toEndOf="@id/realNameView"
+                                    app:layout_constraintTop_toTopOf="@id/realNameView"
+                                    app:layout_constraintBottom_toBottomOf="@id/realNameView"
+                                    android:layout_marginStart="7dp"
+                                    android:src="@mipmap/ic_item_vip"
+                                    android:layout_width="43dp"
+                                    android:layout_height="21dp"/>
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    android:id="@+id/ageView"
+                                    app:layout_constraintStart_toStartOf="@id/itemNickname"
+                                    app:layout_constraintTop_toBottomOf="@id/itemNickname"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
-                            </androidx.appcompat.widget.LinearLayoutCompat>
-                            <ImageView
-                                android:id="@+id/vipLabel"
-                                app:layout_constraintStart_toEndOf="@id/realNameView"
-                                app:layout_constraintTop_toTopOf="@id/realNameView"
-                                app:layout_constraintBottom_toBottomOf="@id/realNameView"
-                                android:layout_marginStart="7dp"
-                                android:src="@mipmap/ic_item_vip"
-                                android:layout_width="43dp"
-                                android:layout_height="21dp"/>
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="12dp"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/age"
+                                        android:text="28岁"
+                                        android:textColor="#FF404040"
+                                        android:textSize="15sp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                    <ImageView
+                                        android:id="@+id/sexIcon"
+                                        android:layout_marginStart="@dimen/adaptive_8dp"
+                                        tools:src="@mipmap/ic_sex_woman"
+                                        android:layout_width="17dp"
+                                        android:layout_height="17dp"/>
+                                </androidx.appcompat.widget.LinearLayoutCompat>
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    android:id="@+id/doing"
+                                    app:layout_constraintStart_toStartOf="@id/ageView"
+                                    app:layout_constraintTop_toBottomOf="@id/ageView"
+                                    android:layout_marginTop="12dp"
+                                    android:gravity="center"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/occupation"
+                                        android:text="互联网·程序员"
+                                        android:textColor="#FF404040"
+                                        android:textSize="15sp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                    <View
+                                        android:layout_marginStart="9dp"
+                                        android:background="#FF0D0D0D"
+                                        android:layout_width="1px"
+                                        android:layout_height="11dp"/>
+                                    <TextView
+                                        android:id="@+id/education"
+                                        android:text="北京交通大学·本科"
+                                        android:layout_marginStart="8dp"
+                                        android:textColor="#FF404040"
+                                        android:textSize="15sp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                </androidx.appcompat.widget.LinearLayoutCompat>
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    app:layout_constraintStart_toStartOf="@id/doing"
+                                    app:layout_constraintTop_toBottomOf="@id/doing"
+                                    android:layout_marginTop="18dp"
+                                    android:gravity="center"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/albumPhotoCount"
+                                        android:text="2张照片"
+                                        android:textColor="#FF9A9A9A"
+                                        android:textSize="13sp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                    <View
+                                        android:layout_marginStart="9dp"
+                                        android:background="#FF0D0D0D"
+                                        android:layout_width="1px"
+                                        android:layout_height="11dp"/>
+                                    <TextView
+                                        android:id="@+id/dynamicCount"
+                                        android:text="16条动态"
+                                        android:layout_marginStart="8dp"
+                                        android:textColor="#FF9A9A9A"
+                                        android:textSize="13sp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                </androidx.appcompat.widget.LinearLayoutCompat>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
                             <androidx.appcompat.widget.LinearLayoutCompat
-                                android:id="@+id/ageView"
-                                app:layout_constraintStart_toStartOf="@id/itemNickname"
-                                app:layout_constraintTop_toBottomOf="@id/itemNickname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:gravity="center"
-                                android:orientation="horizontal">
+                                android:id="@+id/InterdictionView"
+                                android:orientation="vertical"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
                                 <TextView
-                                    android:id="@+id/age"
-                                    android:text="28岁"
+                                    android:id="@+id/itemNickname2"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    android:layout_marginStart="17dp"
+                                    android:layout_marginTop="17dp"
+                                    tools:text="罐头香菜"
                                     android:textColor="#FF404040"
-                                    android:textSize="15sp"
+                                    android:textSize="17sp"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"/>
-                                <ImageView
-                                    android:id="@+id/sexIcon"
-                                    android:layout_marginStart="@dimen/adaptive_8dp"
-                                    tools:src="@mipmap/ic_sex_woman"
-                                    android:layout_width="17dp"
-                                    android:layout_height="17dp"/>
-                            </androidx.appcompat.widget.LinearLayoutCompat>
-                            <androidx.appcompat.widget.LinearLayoutCompat
-                                android:id="@+id/doing"
-                                app:layout_constraintStart_toStartOf="@id/ageView"
-                                app:layout_constraintTop_toBottomOf="@id/ageView"
-                                android:layout_marginTop="12dp"
-                                android:gravity="center"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
                                 <TextView
-                                    android:id="@+id/occupation"
-                                    android:text="互联网·程序员"
+                                    android:id="@+id/shuoming"
+                                    android:layout_marginStart="17dp"
+                                    android:layout_marginEnd="17dp"
+                                    android:text="该用户（ID：13245788525）账号存在异常，为了您的征婚安全，该账号已被限制。"
                                     android:textColor="#FF404040"
-                                    android:textSize="15sp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
-                                <View
-                                    android:layout_marginStart="9dp"
-                                    android:background="#FF0D0D0D"
-                                    android:layout_width="1px"
-                                    android:layout_height="11dp"/>
-                                <TextView
-                                    android:id="@+id/education"
-                                    android:text="北京交通大学·本科"
-                                    android:layout_marginStart="8dp"
-                                    android:textColor="#FF404040"
-                                    android:textSize="15sp"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
-                            </androidx.appcompat.widget.LinearLayoutCompat>
-                            <androidx.appcompat.widget.LinearLayoutCompat
-                                app:layout_constraintStart_toStartOf="@id/doing"
-                                app:layout_constraintTop_toBottomOf="@id/doing"
-                                android:layout_marginTop="18dp"
-                                android:gravity="center"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
-                                <TextView
-                                    android:id="@+id/albumPhotoCount"
-                                    android:text="2张照片"
-                                    android:textColor="#FF9A9A9A"
                                     android:textSize="13sp"
-                                    android:layout_width="wrap_content"
+                                    android:layout_marginTop="12dp"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"/>
-                                <View
-                                    android:layout_marginStart="9dp"
-                                    android:background="#FF0D0D0D"
-                                    android:layout_width="1px"
-                                    android:layout_height="11dp"/>
-                                <TextView
-                                    android:id="@+id/dynamicCount"
-                                    android:text="16条动态"
-                                    android:layout_marginStart="8dp"
-                                    android:textColor="#FF9A9A9A"
-                                    android:textSize="13sp"
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="24dp"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"/>
+                                    android:layout_height="wrap_content">
+                                    <TextView
+                                        android:text="如果您的权益被侵犯，"
+                                        android:textColor="#FF404040"
+                                        android:textSize="13sp"
+                                        android:layout_marginStart="17dp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                    <TextView
+                                        android:id="@+id/jubao"
+                                        android:text="点击此处对该用户进行举报"
+                                        android:textColor="#FFFF4444"
+                                        android:textSize="13sp"
+                                        android:layout_marginStart="17dp"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"/>
+                                </androidx.appcompat.widget.LinearLayoutCompat>
                             </androidx.appcompat.widget.LinearLayoutCompat>
-                        </androidx.constraintlayout.widget.ConstraintLayout>
+                        </ViewSwitcher>
+
                     </androidx.constraintlayout.widget.ConstraintLayout>
                     <LinearLayout
                         android:id="@+id/isLikeMe"

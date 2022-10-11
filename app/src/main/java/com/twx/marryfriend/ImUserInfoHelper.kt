@@ -43,7 +43,7 @@ object ImUserInfoHelper {
     }
     private const val IM_USER_INFO_K="im_user_info_k"
     var cacheValue:List<ConversationsItemModel>?=null
-    private set
+        private set
 
     fun getUserInfo(userId: String):ConversationsItemModel?{
         return cacheValue?.find {
@@ -113,6 +113,12 @@ object ImUserInfoHelper {
                     CustomEvent.dazhaohu_str -> {
                         view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
                     }
+                    CustomEvent.greetext_pass -> {
+                        view.context.toast(event.title)
+                    }
+                    CustomEvent.greetext_fail -> {
+                        view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
+                    }
                     CustomEvent.putong_xihuan -> {
                         view.context.toast(event.title)
                     }
@@ -162,6 +168,9 @@ object ImUserInfoHelper {
                         view.context.toast(event.title)
 //                        view.context.startActivity(IntentManager.getReportIntent(view.context))
                     }
+                    CustomEvent.interdi_pass -> {
+                        view.context.toast(event.title)
+                    }
                     CustomEvent.HELPER_VIP_EXPIRE -> {
                         view.context.startActivity(IntentManager.getVipIntent(view.context))
                     }
@@ -202,9 +211,14 @@ object ImUserInfoHelper {
         GlobalScope.launch {
             iLog("开始获取用户资料,${ids}")
             val conversations=messageViewModel.getConversationsInfo(ids)
-            val result= conversations?.map {
-                ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
-                    ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
+            val result= conversations?.map { itemModel ->
+                ImUserInfoService.ImUserInfo(itemModel.conversationId,itemModel.nickname,itemModel.userImage,
+
+                    ImUserInfoService.Ext(itemModel.age,itemModel.isRealName,itemModel.isVip,itemModel.isSuperVip,itemModel.location,itemModel.occupation,itemModel.education,itemModel.isMutualLike,itemModel.isFlower).also {
+                        it.blacklist_permanent=itemModel.blacklist_permanent
+                        it.blacklist_close_time=itemModel.blacklist_close_time
+                        it.blacklist_status=itemModel.blacklist_status
+                    })
             }?:return@launch
             result.also { resultList ->
                 iLog("获取用户资料成功,${resultList.map { it.userId }}")

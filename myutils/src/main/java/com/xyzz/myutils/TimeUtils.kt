@@ -1,5 +1,6 @@
 package com.xyzz.myutils
 
+import com.xyzz.myutils.show.wLog
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -30,4 +31,20 @@ fun Long.timeToHourRemainder():Int{
  */
 fun Long.timeToMinutesRemainder():Int{
     return ((System.currentTimeMillis()-this)%TimeUnit.DAYS.toMillis(1)%TimeUnit.HOURS.toMillis(1)/TimeUnit.MINUTES.toMillis(1)).toInt()
+}
+
+private val simpleDateFormat by lazy {
+    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
+}
+/**
+ * 将 yyyy-MM-dd HH:mm:ss
+ * 转换为 long类型
+ */
+fun String.textTimeToTimeInMillis():Long?{
+    return try {
+        simpleDateFormat.parse(this)?.time
+    }catch (e:Exception){
+        wLog(e.stackTraceToString())
+        null
+    }
 }

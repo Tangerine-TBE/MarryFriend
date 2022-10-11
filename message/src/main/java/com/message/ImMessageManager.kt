@@ -9,6 +9,7 @@ import com.hyphenate.exceptions.HyphenateException
 import com.message.chat.CustomEvent
 import com.message.conversations.ConversationType
 import com.message.conversations.ConversationsBean
+import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 
@@ -16,6 +17,8 @@ import com.xyzz.myutils.show.iLog
 //https://docs-im.easemob.com/im/android/basics/message
 //http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
+    private const val SECURITY_MESSAGE_KEY="security_message_k_"
+    const val MY_HELPER_ID="小秘书"//小秘书id
 
     val newMessageLiveData=MutableLiveData<List<EMMessage>?>()//收到新消息
     private val fromConversationRead=MutableLiveData<String>()
@@ -28,20 +31,24 @@ object ImMessageManager {
             override fun onMessageReceived(messages: MutableList<EMMessage>?) {
                 //收到消息
                 iLog(messages?.firstOrNull()?.from,"收到消息,收到")
+                messages?.forEach {
+                    insertSecurityMessage(it.from)
+                }
                 newMessageLiveData.postValue(messages)
             }
 
             override fun onCmdMessageReceived(messages: MutableList<EMMessage>?) {
                 messages?.forEach {
-                    iLog("收到来自${it.from}的cmd消息，ext:${it.ext()}")
                     val ext=it.ext()
-                    // 将消息插入到指定会话中。
-                    it.body=EMTextMessageBody(ext["str"].toString())
-
-                    val conversation = EMClient.getInstance().chatManager().getConversation(it.conversationId())
-                    conversation?.insertMessage(it)?:EMClient.getInstance().chatManager().saveMessage(it)
+                    iLog("收到来自${it.from}的cmd消息，ext:${ext}")
+                    if (ext["kind"]=="dazhaohu_str"){
+                        insertSecurityMessage(it.conversationId())
+                        // 将消息插入到指定会话中。
+                        it.body=EMTextMessageBody(ext["str"].toString())
+                        val conversation = EMClient.getInstance().chatManager().getConversation(it.conversationId())
+                        conversation?.insertMessage(it)?:EMClient.getInstance().chatManager().saveMessage(it)
+                    }
                 }
-
             }
 
             override fun onMessageRead(messages: MutableList<EMMessage>?) {
@@ -73,6 +80,34 @@ object ImMessageManager {
             override fun onConversationRead(from: String?, to: String?) {
                 iLog("会话已读${from+"发送给"+to}")
                 fromConversationRead.value=from
+            }
+        }
+    }
+
+    private val isSendSecurityMap by lazy {
+        HashMap<String,Boolean>()
+    }
+    fun insertSecurityMessage(conversationId:String){
+        if (conversationId==MY_HELPER_ID){
+            return
+        }
+        val isSendSecurity= isSendSecurityMap.get(conversationId)
+        if (isSendSecurity==null){
+            isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(SECURITY_MESSAGE_KEY+conversationId,false)
+        }else if (isSendSecurity==true){
+            return
+        }
+
+        if (isSendSecurity!=true){
+            if (!EMClient.getInstance().chatManager().getConversation(conversationId)?.allMessages.isNullOrEmpty()){
+                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
+                isSendSecurityMap[conversationId]=true
+                return
+            }
+            ImMessageManager.getCustomMessage(conversationId, CustomEvent.security)?.also {
+                ImMessageManager.insertMessage(it)
+                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
+                isSendSecurityMap[conversationId]=true
             }
         }
     }
@@ -229,7 +264,7 @@ object ImMessageManager {
         return message
     }
 
-    fun sendFlower(username: String):EMMessage?{
+    fun getFlowerMsg(username: String):EMMessage?{
         val customMessage = EMMessage.createSendMessage(EMMessage.Type.CUSTOM)
 // event为需要传递的自定义消息事件，比如礼物消息，可以设置event = "gift"
         val customBody = EMCustomMessageBody(CustomEvent.flower.code)
@@ -240,8 +275,11 @@ object ImMessageManager {
         customMessage.setTo(username)
 // 如果是群聊，设置chattype，默认是单聊
         customMessage.chatType = EMMessage.ChatType.Chat
-        EMClient.getInstance().chatManager().sendMessage(customMessage)
         return customMessage
+    }
+
+    fun sendMsg(msg:EMMessage){
+        EMClient.getInstance().chatManager().sendMessage(msg)
     }
 
     fun getCustomMessage(username: String, type: CustomEvent):EMMessage?{

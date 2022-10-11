@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.hyphenate.EMValueCallBack
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMUserInfo
+import com.xyzz.myutils.textTimeToTimeInMillis
 
 object ImUserInfoService {
     class ImUserInfo(val userId:String,val nickname:String?=null,val avatar:String?=null,val ext:Ext?=null){
@@ -17,7 +18,18 @@ object ImUserInfoService {
                    val occupation: String? = null,
                    val education: String? = null,
                    val isMutualLike:Boolean = false,
-                   val isFlower:Boolean = false)
+                   val isFlower:Boolean = false){
+        var blacklist_permanent=0//系统是否永久拉黑	0否，1是
+        var blacklist_close_time:String?=null//系统拉黑过期时间
+        var blacklist_status=0
+
+        /**
+         * 该账号是否被系统封
+         */
+        fun isSystemBlacklist():Boolean{
+            return blacklist_status==1
+        }
+    }
     private val userInfoContainer by lazy {
         HashMap<String,ImUserInfo>()
     }

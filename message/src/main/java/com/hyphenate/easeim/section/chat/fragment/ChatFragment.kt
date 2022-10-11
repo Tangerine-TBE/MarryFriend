@@ -364,7 +364,7 @@ open class ChatFragment : EaseChatFragment(), OnRecallMessageResultListener {
     }
 
     protected open fun onClickSendFlower(){
-        val msg=ImMessageManager.sendFlower(conversationId)
+        val msg=ImMessageManager.getFlowerMsg(conversationId)
         sendMessage(msg)
     }
 

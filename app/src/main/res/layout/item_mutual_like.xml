@@ -93,7 +93,7 @@
                             <ImageView
                                 android:id="@+id/sexIcon"
                                 android:layout_marginStart="4dp"
-                                android:src="@mipmap/ic_mutual_women"
+                                tools:src="@mipmap/ic_mutual_women"
                                 android:layout_width="17dp"
                                 android:layout_height="17dp"/>
                         </androidx.appcompat.widget.LinearLayoutCompat>

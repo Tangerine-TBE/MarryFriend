@@ -50,7 +50,6 @@ import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.push.help.PushConstants
-import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
@@ -64,9 +63,6 @@ import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
-import org.android.agoo.huawei.HuaWeiRegister
-import org.android.agoo.oppo.OppoRegister
-import org.android.agoo.vivo.VivoRegister
 import org.android.agoo.xiaomi.MiPushRegistar
 import java.util.*
 

@@ -52,11 +52,13 @@
         android:layout_height="wrap_content">
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="98dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
             <FrameLayout
                 android:layout_marginStart="14dp"
-                android:layout_marginTop="14dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <ImageView
@@ -72,8 +74,7 @@
             </FrameLayout>
             <TextView
                 android:id="@+id/helperTipText"
-                android:layout_marginTop="26dp"
-                android:text="你上传的照片没有通过审核，请重新上传！"
+                tools:text="你上传的照片没有通过审核，请重新上传！你上传的照片没有通过审核你上传的照片没有通过审核你上传的照片没有通过审核你上传的照片没有通过审核你上传的照片没有通过审核"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="16dp"
                 android:textColor="#FF404040"

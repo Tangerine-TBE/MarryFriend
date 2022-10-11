@@ -21,6 +21,7 @@ import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.recommend.RecommendBean
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.dialog.*
 import com.twx.marryfriend.enumeration.HomeCardAction
@@ -32,11 +33,9 @@ import com.twx.marryfriend.message.ImChatViewModel
 import com.twx.marryfriend.recommend.widget.*
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
-import com.xyzz.myutils.setExpandableText
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import com.xyzz.myutils.show.wLog
-import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.fragment_recommend.mutualLike
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
@@ -181,8 +180,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     iLog("获取失败")
                 }
             }else{
-                if (UserInfo.getNextNotFillIn(requireContext(),this)!=null&&IntentManager.isOpenOneFillIn()){
-                    startActivity(IntentManager.toFillInDialogIntent(requireContext()))
+                UserInfo.getNextNotFillIn(requireContext()){ permissions, pair->
+                    if (pair!=null&&IntentManager.isOpenOneFillIn()){
+                        startActivity(IntentManager.toFillInDialogIntent(requireContext()))
+                    }
                 }
             }
         }
@@ -213,6 +214,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         viewLifecycleOwner.lifecycleScope.launch(){
             try {
                 val list=recommendViewModel.loadRecommendUserId()
+//                    .let {
+//                        if (BuildConfig.DEBUG){
+//                            it.filter { it!=0&&it!=10 }
+//                        }else{
+//                            it
+//                        }
+//                    }
                 val data=if (list.isEmpty()){
                     emptyList<RecommendBean>()
                 }else{
@@ -237,15 +245,20 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
             try {
                 val lastDynamic=recommendViewModel.loadLaseDynamic()
-                Glide.with(lastDynamicImage).load(lastDynamic.data?.image_url).placeholder(R.mipmap.ic_launcher).into(lastDynamicImage)
-                lastDynamicTitle.text=lastDynamic.data?.label
-                lastDynamicDes.setExpandableText(lastDynamic.data?.text_content?:"", 3, "查看更多>", "收起")
-                lastDynamicView.setOnClickListener {
-                    val activity=requireActivity()
-                    if (activity is MainActivity){
-                        activity.addDynamicFragment(null)
-                    }else{
-                        toast("查看更多")
+                if(lastDynamic==null){
+                    lastDynamicView.visibility=View.GONE
+                }else{
+                    Glide.with(lastDynamicImage).load(lastDynamic?.image_url.split(",").firstOrNull()).placeholder(R.mipmap.ic_launcher).into(lastDynamicImage)
+                    lastDynamicTitle.text=lastDynamic?.label
+                    lastDynamicDes/*.setExpandableText(lastDynamic?.text_content?:"", 30, "查看更多>", "收起")*/
+                        .text=lastDynamic?.text_content
+                    lastDynamicView.setOnClickListener {
+                        val activity=requireActivity()
+                        if (activity is MainActivity){
+                            activity.addDynamicFragment(lastDynamic)
+                        }else{
+                            toast("查看更多")
+                        }
                     }
                 }
             }catch (e:Exception){
@@ -254,7 +267,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
     }
 
-    private fun moveView(view: View,isLike:Boolean,action:()->Unit){
+    private fun moveAnimationView(view: View, isLike:Boolean, action:()->Unit){
         val f=if (isLike)
             1
         else
@@ -328,7 +341,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         recommendAdapter.superLikeAction={item,view->
             if(!uploadHeadDialog.showUploadHeadDialog()){
                 superLike(item){
-                    moveView(view,true) {
+                    moveAnimationView(view,true) {
                         iLog("超级喜欢")
                         guideView.guideComplete(HomeCardAction.clickFlower)
                     }
@@ -339,7 +352,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
-                moveView(view,true) {
+                moveAnimationView(view,true) {
                     iLog("喜欢")
                     like(item)
                 }
@@ -349,7 +362,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
-                moveView(view,false) {
+                moveAnimationView(view,false) {
                     iLog("不喜欢")
                     disLike(item)
                 }
@@ -381,10 +394,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
         recommendAdapter.settingAction={
             settingDialog(it)
-        }
-
-        sendMsg.setOnClickListener {
-            toast("给她发消息")
         }
         closeMutual.setOnClickListener {
             showView(ViewType.content)
@@ -438,7 +447,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     override fun onResume() {
         super.onResume()
         if (recommendAdapter.itemCount>0){
-            recommendAdapter.lifeView?.refreshView(lifecycleScope)
+            recommendAdapter.lifeView?.refreshView()
         }else{
             notContent.refreshView(lifecycleScope)
         }
@@ -450,15 +459,20 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private fun disLike(item: RecommendBean){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
+            recommendAdapter.removeItem(item)
+            recommendAdapter.addItem(item)
+            if (recommendAdapter.getData().isEmpty()){
+                showView(ViewType.notContent)
+            }
             return
         }
         lifecycleScope.launch {
-            loadingDialog.show()
+//            loadingDialog.show()
             val t=recommendViewModel.disLike(item.getId())
-            loadingDialog.dismiss()
+//            loadingDialog.dismiss()
 
             if (t.code==200){
-                recommendAdapter.remove(item)
+                recommendAdapter.removeItem(item)
                 if (recommendAdapter.getData().isEmpty()){
                     showView(ViewType.notContent)
                 }
@@ -478,18 +492,28 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private fun like(item: RecommendBean){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
+
+            recommendAdapter.removeItem(item)
+            recommendAdapter.addItem(item)
+            if (recommendAdapter.getData().isEmpty()){
+                showView(ViewType.notContent)
+            }
             return
         }
         lifecycleScope.launch {
-            loadingDialog.show()
+//            loadingDialog.show()
             val t=recommendViewModel.like(item.getId()) {
                 showView(ViewType.mutual)
-                Glide.with(taHead).load(UserInfo.getHeadPortrait()).into(taHead)
+                Glide.with(taHead).load(item.getHeadImg()).into(taHead)
+                sendMsg.setOnClickListener {
+                    startActivity(ImChatActivity.getIntent(requireContext(),item.getId().toString()))
+                    showView(ViewType.content)
+                }
             }
-            loadingDialog.dismiss()
+//            loadingDialog.dismiss()
 
             if (t.code==200){
-                recommendAdapter.remove(item)
+                recommendAdapter.removeItem(item)
                 if (recommendAdapter.getData().isEmpty()){
                     showView(ViewType.notContent)
                 }
@@ -510,6 +534,13 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
             success.invoke()
+
+            recommendAdapter.removeItem(item)
+            recommendAdapter.addItem(item)
+            if (recommendAdapter.getData().isEmpty()){
+                showView(ViewType.notContent)
+            }
+            success.invoke()
             return
         }
         SendFlowerDialog.sendFlowerTip(requireContext()){
@@ -519,7 +550,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     coinInsufficientDialog.show(item.getHeadImg())
                 }.also {
                     if (it.code==200){
-                        ImMessageManager.sendFlower(item.getId().toString())
+                        ImMessageManager.getFlowerMsg(item.getId().toString())?.also {
+                            ImMessageManager.sendMsg(it)
+                        }
                         recommendAdapter.removeAt(0)
                         if (recommendAdapter.getData().isEmpty()){
                             showView(ViewType.notContent)
@@ -536,12 +569,18 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
     private fun openVip(){
         if (UserInfo.isSuperVip()){
-            val activity=requireActivity()
-            if (activity is MainActivity){
-                activity.addDynamicFragment(null)
-            }
+            recommendAdapter.cleanData()
+            showView(ViewType.notContent)
+//            val activity=requireActivity()
+//            if (activity is MainActivity){
+//                activity.addDynamicFragment(null)
+//            }
         }else{
-            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+            if (UserInfo.isVip()){
+                startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
+            }else{
+                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+            }
         }
     }
 
@@ -562,7 +601,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 notContent.visibility=View.GONE
             }
             ViewType.notContent -> {
-                if(UserInfo.isVip()){
+                if(UserInfo.isSuperVip()){
                     moreContent.text="查看更多动态"
                     moreContent.setOnClickListener {
                         iLog("查看更多动态")

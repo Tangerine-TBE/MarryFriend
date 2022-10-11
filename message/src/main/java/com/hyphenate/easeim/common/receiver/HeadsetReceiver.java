@@ -24,6 +24,5 @@ public class HeadsetReceiver extends BroadcastReceiver {
         boolean mic = intent.getIntExtra("microphone", 0) == 0 ? false : true;
         String headsetChange = String.format(context.getString(R.string.headset_insert), state, mic);
         EMLog.d("HeadsetReceiver", headsetChange);
-        Toast.makeText(context, headsetChange, Toast.LENGTH_SHORT).show();
     }
 }

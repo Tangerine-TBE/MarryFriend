@@ -16,7 +16,7 @@ class MutualLikeViewModel:ViewModel() {
     private val gson by lazy { Gson() }
 
     suspend fun getMutualLike()= suspendCoroutine<MutualLikeBean>{ coroutine->
-        val url="${Contents.USER_URL}/marryfriend/TrendsNotice/fiveLikeTotal"
+        val url="${Contents.USER_URL}/marryfriend/TrendsNotice/likeEachOtherList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
         )
