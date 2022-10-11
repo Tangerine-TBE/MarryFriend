@@ -20,6 +20,7 @@ import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.*
+import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.preview.image.ImagePreviewActivity
@@ -37,6 +38,7 @@ import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.TimeUtil
 import com.twx.marryfriend.utils.UnicodeUtils
 import com.twx.marryfriend.utils.emoji.EmojiUtils
+import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
 import kotlinx.android.synthetic.main.activity_dynamic_other_show.*
 import java.util.*
@@ -274,17 +276,25 @@ class DynamicOtherShowActivity : MainBaseViewActivity(),
 
         ll_dynamic_other_show_mode.setOnClickListener {
             if (haveFocus) {
-                // 关注了，需要跳转到聊天界面
-                ToastUtils.showShort("聊天")
-                val identity = info.identity_status == 1
-                startActivity(ImChatActivity.getIntent(
-                    this,
-                    info.user_id
-                ))
+
+
+                if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
+                    startActivity(
+                        VipActivity.getVipIntent(this,
+                            info.user_id.toInt(),
+                            VipGifEnum.Message)
+                    )
+                } else {
+                    // 关注了，需要跳转到聊天界面
+                    startActivity(ImChatActivity.getIntent(
+                        this,
+                        info.user_id
+                    ))
+                }
+
 
             } else {
                 // 未关注了，需要关注
-                ToastUtils.showShort("关注")
                 doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
 
             }

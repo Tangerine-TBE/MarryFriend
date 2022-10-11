@@ -574,7 +574,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                     val identity = mTrendList[position].identity_status == 1
 
-
                     if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
                         startActivity(context?.let {
                             VipActivity.getVipIntent(it,
@@ -611,7 +610,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     // 动态添加一条信息
     fun addDynamicInfo(trendSaloonList: TrendSaloonList) {
-        
+
         val focus = trendSaloonList.focus_uid != null
 
         val like = trendSaloonList.guest_uid != null
@@ -622,15 +621,22 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             like,
             trendSaloonList.like_count)
 
+        val mDeleteList = arrayListOf<Int>()
 
-        if (mTrendList.contains(trendSaloonList)){
-            for (i in 0.until(mTrendList.size)){
-                if (mTrendList[i] == trendSaloonList){
-                    Log.i("guo","元素位置为 ：$i")
-                    mTrendList.removeAt(i)
-                    mDiyList.removeAt(i)
+        if (mTrendList.isNotEmpty()){
+            if (mTrendList.contains(trendSaloonList)){
+                for (i in 0.until(mTrendList.size)){
+                    if (mTrendList[i] == trendSaloonList){
+                        Log.i("guo","元素位置为 ：$i")
+                        mDeleteList.add(i)
+                    }
                 }
             }
+        }
+
+        for (j in 0.until(mDeleteList.size)){
+            mTrendList.removeAt(j)
+            mDiyList.removeAt(j)
         }
 
         mTrendList.add(0, trendSaloonList)
