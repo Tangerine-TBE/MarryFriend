@@ -363,12 +363,18 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
                 .error(R.drawable.ic_mine_male_default)
                 .placeholder(R.drawable.ic_mine_male_default)
                 .into(riv_vip_dialog_avatar)
+
+            tv_vip_dialog_dynamic_buy.text = "购买会员，查看他的消息"
+
         } else {
             Glide.with(applicationContext)
                 .load(base.image_url)
                 .error(R.drawable.ic_mine_female_default)
                 .placeholder(R.drawable.ic_mine_female_default)
                 .into(riv_vip_dialog_avatar)
+
+            tv_vip_dialog_dynamic_buy.text = "购买会员，查看她的消息"
+
         }
 
         tv_vip_dialog_nick.text = base.nick
@@ -392,7 +398,12 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
         if (previewOtherBean.data.photos_count != 0) {
 
-            tv_vip_dialog_photo_sum.text = "她上传了${previewOtherBean.data.photos_count}张照片"
+            if (base.user_sex == 1) {
+                tv_vip_dialog_photo_sum.text = "他上传了${previewOtherBean.data.photos_count}张照片"
+            } else {
+                tv_vip_dialog_photo_sum.text = "她上传了${previewOtherBean.data.photos_count}张照片"
+            }
+
 
             val photoList = arrayListOf<String>()
 
@@ -415,7 +426,13 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
 
         if (previewOtherBean.data.trends_count != 0) {
-            tv_vip_dialog_dynamic_sum.text = "她上传了${previewOtherBean.data.trends_count}条动态"
+
+            if (base.user_sex == 1) {
+                tv_vip_dialog_dynamic_sum.text = "他上传了${previewOtherBean.data.trends_count}条动态"
+            } else {
+                tv_vip_dialog_dynamic_sum.text = "她上传了${previewOtherBean.data.trends_count}条动态"
+            }
+
 
             when (trends.trends_type) {
                 1 -> {

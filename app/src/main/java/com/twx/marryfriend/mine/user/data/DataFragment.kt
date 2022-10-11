@@ -2381,6 +2381,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
                 // 拍照返回至裁切
                 2 -> {
+                    Log.i("guo","222222222222")
                     val temp = File(mTempPhotoPath)
                     startPhotoCropActivity(Uri.fromFile(temp))
                 }
@@ -2906,28 +2907,34 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 XXPermissions.with(context)
                     .permission(Permission.CAMERA)
+                    .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
                             permissions: MutableList<String>?,
                             all: Boolean,
                         ) {
 
-                            val tempPhotoFile: File = File(mTempPhotoPath)
-                            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                            // 如果在Android7.0以上,使用FileProvider获取Uri
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                val authority = context.packageName.toString() + ".fileProvider"
-                                val contentUri: Uri = FileProvider.getUriForFile(context,
-                                    authority,
-                                    tempPhotoFile)
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                            if (all){
+                                val tempPhotoFile: File = File(mTempPhotoPath)
+                                val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority = context.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri = FileProvider.getUriForFile(context,
+                                        authority,
+                                        tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
 
-                            } else {
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                    Uri.fromFile(tempPhotoFile))
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+                                startActivityForResult(intent, 2)
+                            }else{
+                                ToastUtils.showShort("请授予应用相关权限")
                             }
-                            startActivityForResult(intent, 2)
+
                         }
 
                         override fun onDenied(
