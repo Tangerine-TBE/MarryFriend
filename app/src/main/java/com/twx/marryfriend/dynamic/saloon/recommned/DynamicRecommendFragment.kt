@@ -622,6 +622,17 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
             like,
             trendSaloonList.like_count)
 
+
+        if (mTrendList.contains(trendSaloonList)){
+            for (i in 0.until(mTrendList.size)){
+                if (mTrendList[i] == trendSaloonList){
+                    Log.i("guo","元素位置为 ：$i")
+                    mTrendList.removeAt(i)
+                    mDiyList.removeAt(i)
+                }
+            }
+        }
+
         mTrendList.add(0, trendSaloonList)
         mDiyList.add(0, diy)
 
