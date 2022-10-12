@@ -3,10 +3,7 @@ package com.twx.marryfriend.utils
 import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.TimeUtils
-import com.twx.marryfriend.bean.AutoLoginBean
-import com.twx.marryfriend.bean.HeadfaceCount
-import com.twx.marryfriend.bean.PhoneLoginBean
-import com.twx.marryfriend.bean.PhotosCount
+import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 
 /**
@@ -416,7 +413,13 @@ object SpLoginUtil {
         SPStaticUtils.put(Constant.TRUE_ID, loginBean.data.identity_number)
 
 
+        val interdictionBean = InterdictionBean().also {
+            it.blacklist_permanent = loginBean.data.blacklist_permanent
+            it.blacklist_close_time = loginBean.data.blacklist_close_time
+            it.blacklist_status = loginBean.data.blacklist_status
+        }
 
+        InterdictionBean.putInterdictionState(interdictionBean)
 
 
     }
@@ -822,6 +825,14 @@ object SpLoginUtil {
         SPStaticUtils.put(Constant.IS_IDENTITY_VERIFY, autoLoginBean.data.identity_status == 1)
         SPStaticUtils.put(Constant.TRUE_NAME, autoLoginBean.data.identity_name)
         SPStaticUtils.put(Constant.TRUE_ID, autoLoginBean.data.identity_number)
+
+        val interdictionBean = InterdictionBean().also {
+            it.blacklist_permanent = autoLoginBean.data.blacklist_permanent
+            it.blacklist_close_time = autoLoginBean.data.blacklist_close_time
+            it.blacklist_status = autoLoginBean.data.blacklist_status
+        }
+
+        InterdictionBean.putInterdictionState(interdictionBean)
 
     }
 
