@@ -268,6 +268,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 albumPhotoCount.text=(item.getLifePhoto().size.toString()+"张照片")
             }
             val isInterdiction=item.blaklist?.isInterdiction()?:false
+            //用户被封禁
             if (isInterdiction.xor(interdictionViewViewSwitcher.currentView==InterdictionView)){
                 interdictionViewViewSwitcher.showNext()
             }

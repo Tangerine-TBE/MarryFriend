@@ -206,7 +206,7 @@ object ImMessageManager {
     }
 
     fun getAllUnreadMessage():Int{
-        return EMClient.getInstance().chatManager().unreadMessageCount
+        return EMClient.getInstance()?.chatManager()?.unreadMessageCount?:0
     }
 
     fun markAllMsgAsRead(username: String){

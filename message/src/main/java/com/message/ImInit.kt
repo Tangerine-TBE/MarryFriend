@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.os.Process
+import androidx.lifecycle.MutableLiveData
 import com.hyphenate.easeim.ImDemoInit
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 
@@ -11,7 +12,7 @@ object ImInit {
     lateinit var application: Application
     //环信BaseActivity有处理踢下线逻辑
     val imLoginState by lazy {
-        LiveDataBus.get().with("im_login_state",Boolean::class.java)
+        MutableLiveData<String>()
     }
     fun init(application: Application){
         this.application=application

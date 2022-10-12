@@ -7,10 +7,7 @@ import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.hyphenate.easeim.section.base.WebViewActivity
 import com.hyphenate.easeui.utils.EaseUserUtils
-import com.message.ImLoginHelper
-import com.message.ImMessageManager
-import com.message.ImUserInfoService
-import com.message.ImUserManager
+import com.message.*
 import com.message.chat.CustomEvent
 import com.message.custom.IImEventListener
 import com.message.custom.ImCustomEventListenerManager
@@ -34,9 +31,6 @@ object ImUserInfoHelper {
     }
     private val messageViewModel by lazy {
         ConversationViewModel()
-    }
-    private val imUiHelper by lazy {
-        ImLoginHelper
     }
     private val gson by lazy {
         Gson()
@@ -230,11 +224,13 @@ object ImUserInfoHelper {
     }
 
     private fun login(userId:String){
-        imUiHelper.login(userId,{easeUser->
+        iLog("登录成功后设置信息")
+        ImLoginHelper.login(userId,{easeUser->
             iLog("登录成功，开始刷新会话列表")
             MyHelperAdapterDelegate.sexAction={
                 UserInfo.getOriginalUserSex()
             }
+            ImInit.imLoginState.value=userId
             EaseUserUtils.setManDefHead(Sex.male.smallHead)
             EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
             EaseUserUtils.setSex(UserInfo.getOriginalUserSex())

@@ -16,15 +16,6 @@ data class HeadfaceBean(
     var user_id: Int? = 0,
 )
 
-data class blaklistBean(var blacklist_close_time:String?=null,
-                        var blacklist_permanent:Int=0,
-                        var blacklist_status:Int=0
-){
-    fun isInterdiction():Boolean{
-        return blacklist_status==1
-    }
-}
-
 data class Base(
     val age: Int? = null,
     val birthday: String? = null,

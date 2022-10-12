@@ -15,4 +15,10 @@ object MyUtils {
             ThreadExceptionLog.printUncaughtExceptionLog()
         }
     }
+
+    fun getFrontBackstageLiveData()=LifecycleCallbacks.instance.frontBackstageLiveData
+
+    fun getLastResumedActivityLiveData()=LifecycleCallbacks.instance.lastResumedActivity
+
+    fun getAllRunActivity()=LifecycleCallbacks.instance.getRunActivity()
 }

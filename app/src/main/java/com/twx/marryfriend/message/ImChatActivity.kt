@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ViewSwitcher
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.hyphenate.easeim.DemoHelper
@@ -49,10 +50,23 @@ open class ImChatActivity: ChatActivity() {
     protected val chatSetting by lazy {
         findViewById<View>(com.hyphenate.easeim.R.id.chatSetting)
     }
+    private val contentViewSwitcher by lazy {
+        findViewById<ViewSwitcher>(com.hyphenate.easeim.R.id.contentViewSwitcher)
+    }
+    private val chatView by lazy {
+        findViewById<View>(com.hyphenate.easeim.R.id.chatView)
+    }
+    private val interdictionView by lazy {
+        findViewById<View>(com.hyphenate.easeim.R.id.interdictionView)
+    }
+    private val reportUser by lazy {
+        findViewById<View>(com.hyphenate.easeim.R.id.reportUser)
+    }
     private val imChatViewModel by lazy {
         ViewModelProvider(this).get(ImChatViewModel::class.java)
     }
     private var isBlock=false
+    private var isInterdiction=false
     private val chatSettingDialog by lazy {
         val cid=conversationId
         ChatSettingDialog(this,cid?:return@lazy null)
@@ -106,12 +120,19 @@ open class ImChatActivity: ChatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            isBlock=
+
                 try {
-                    imChatViewModel.getBlockState(conversationId?:return@launch).woPingBiTa
+                    val aaa=imChatViewModel.getBlockState(conversationId?:return@launch)
+                    isBlock= aaa.woPingBiTa
+                    isInterdiction=aaa.woGuanZhuTa
                 }catch (e:Exception){
-                    false
+                    isBlock=false
+                    isInterdiction=false
                 }
+
+            if (isInterdiction.xor(contentViewSwitcher.currentView==interdictionView)){
+                contentViewSwitcher.showNext()
+            }
         }
     }
 

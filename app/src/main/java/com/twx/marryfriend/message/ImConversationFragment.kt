@@ -238,11 +238,7 @@ class ImConversationFragment: ConversationListFragment() {
             .placeholder(UserInfo.getReversedDefHeadImage())
             .into(imageView)
         this.itemView.setOnClickListener {
-            if (UserInfo.isSuperVip()){
-                it.context.startActivity(IntentManager.getFocusIntent(it.context))
-            }else{
-                it.context.startActivity(IntentManager.getSuperVipIntent(it.context, sVipGifEnum = SVipGifEnum.FocusMe))
-            }
+            it.context.startActivity(IntentManager.getFocusIntent(it.context))
         }
     }
 

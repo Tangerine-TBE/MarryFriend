@@ -33,6 +33,7 @@ import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
+import com.twx.marryfriend.base.BaseConstant
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
@@ -65,7 +66,9 @@ import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
+import com.xyzz.myutils.MyUtils
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.wLog
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
@@ -74,18 +77,13 @@ import java.util.*
 
 class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
+    private var isFirst=true
     private var recommend: RecommendFragment? = null
     private var love: LoveFragment? = null
     private var dynamic: DynamicFragment? = null
     private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
     private var currentFragment: Fragment? = null
-    private val imLoginStateObserver= androidx.lifecycle.Observer<Boolean> { aBoolean ->
-        if (aBoolean==false){
-            SpUtil.deleteUserInfo()
-            startActivity(Intent(this, BeginActivity::class.java))
-        }
-    }
     private val recommendViewModel by lazy {
         ViewModelProvider(this)
             .get(RecommendViewModel::class.java)
@@ -95,21 +93,36 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun getLayoutView(): Int = R.layout.activity_main
 
+    override fun onResume() {
+        super.onResume()
+        if (!isFirst){
+            lifecycleScope.launch {
+                likeWoUnread.isVisible=false
+                try {
+                    val c=recommendViewModel.likeWoUnread()
+                    likeWoUnread2.isVisible=c>0
+                    likeWoUnread2.text="${c}"
+                }catch (e:Exception){
+                    iLog(e.stackTraceToString())
+                }
+            }
+        }
+        isFirst=false
+    }
+
     override fun initView() {
         super.initView()
 
-//        lifecycleScope.launch {
-//            try {
-//                val c=recommendViewModel.likeWoUnread()
-//                likeWoUnread.isVisible=c>0
-//                likeWoUnread2.isVisible=c>0
-//                likeWoUnread.text="又有${c}个人喜欢你了"
-//                likeWoUnread2.text="${c}"
-//
-//            }catch (e:Exception){
-//                iLog(e.stackTraceToString())
-//            }
-//        }
+        lifecycleScope.launch {
+            likeWoUnread2.isVisible=false
+            try {
+                val c=recommendViewModel.likeWoUnread()
+                likeWoUnread.isVisible=c>0
+                likeWoUnread.text="又有${c}个人喜欢你了"
+            }catch (e:Exception){
+                iLog(e.stackTraceToString())
+            }
+        }
 
         doUpdateTokenPresent = doUpdateTokenPresentImpl.getsInstance()
         doUpdateTokenPresent.registerCallback(this)
@@ -134,7 +147,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             messageNumNew.visibility = View.VISIBLE
             messageNumNew.text = ImMessageManager.getAllUnreadMessage().toString()
         }
-        ImInit.imLoginState.observeForever(imLoginStateObserver)
+
     }
 
     override fun initLoadData() {
@@ -199,6 +212,15 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         }
 
         rb_main_love.setOnClickListener {
+            lifecycleScope.launch {
+                likeWoUnread.isVisible=false
+                likeWoUnread2.isVisible=false
+                try {
+                    recommendViewModel.likeWoUnread(true)
+                }catch (e:Exception){
+                    wLog(e.stackTraceToString())
+                }
+            }
             initLoveFragment()
         }
 
@@ -576,7 +598,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         Log.i("guo", "main-destory")
 
         doUpdateTokenPresent.unregisterCallback(this)
-        ImInit.imLoginState.removeObserver(imLoginStateObserver)
     }
 
 
