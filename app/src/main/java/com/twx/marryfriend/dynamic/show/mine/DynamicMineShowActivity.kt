@@ -34,12 +34,9 @@ import com.twx.marryfriend.utils.emoji.EmojiUtils
 import kotlinx.android.synthetic.main.activity_dynamic_mine_show.*
 import java.util.*
 
-class DynamicMineShowActivity : MainBaseViewActivity(),
-    IDoCheckTrendCallback,
-    IGetCommentOneCallback,
-    IGetCommentTwoCallback,
-    CommentOneAdapter.OnItemClickListener, CommentOneAdapter.OnItemLongClickListener,
-    IDoCommentOneCreateCallback,
+class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
+    IGetCommentOneCallback, IGetCommentTwoCallback, CommentOneAdapter.OnItemClickListener,
+    CommentOneAdapter.OnItemLongClickListener, IDoCommentOneCreateCallback,
     IDoCommentTwoCreateCallback {
 
     private var currentPaper = 1
@@ -198,20 +195,14 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         }
 
         iv_dynamic_mine_show_heard_edit.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DynamicEditDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DynamicEditDialog(this)).show()
         }
 
         riv_dynamic_mine_show_avatar.setOnClickListener {
-            startActivity(FriendInfoActivity.getIntent(
-                this,
-                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
-            ))
+            startActivity(FriendInfoActivity.getIntent(this,
+                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()))
         }
 
         fl_dynamic_mine_show_video.setOnClickListener {
@@ -371,13 +362,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
                     }
 
                 } else {
-                    XPopup.Builder(this)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(AvatarDialog(this))
-                        .show()
+                        .asCustom(AvatarDialog(this)).show()
                 }
 
             } else {
@@ -456,13 +444,10 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
                     }
 
                 } else {
-                    XPopup.Builder(this)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(AvatarDialog(this))
-                        .show()
+                        .asCustom(AvatarDialog(this)).show()
                 }
 
             } else {
@@ -606,6 +591,9 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
                 }
                 444 -> {
                     ToastUtils.showShort("不能回复自己")
+                }
+                else -> {
+                    ToastUtils.showShort(commentTwoCreateBean.msg)
                 }
             }
         }
@@ -1212,10 +1200,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
 
         ToastUtils.showShort("点击父评论头像 ： $positionOne ")
 
-        startActivity(FriendInfoActivity.getIntent(
-            this,
-            mCommentOneList[positionOne].list.one_level_uid
-        ))
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].list.one_level_uid))
 
     }
 
@@ -1253,10 +1239,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onItemChildAvatarClick(v: View?, positionOne: Int) {
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/000")
 
-        startActivity(FriendInfoActivity.getIntent(
-            this,
-            mCommentOneList[positionOne].list.two_last_uid
-        ))
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].list.two_last_uid))
 
     }
 
@@ -1292,10 +1276,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
         ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(
-            this,
-            mCommentOneList[positionOne].twoList[two].two_last_uid
-        ))
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].twoList[two].two_last_uid))
     }
 
     override fun onChildReplyClick(positionOne: Int, two: Int) {
@@ -1322,10 +1304,8 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
         ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
-        startActivity(FriendInfoActivity.getIntent(
-            this,
-            mCommentOneList[positionOne].twoList[two].two_first_uid
-        ))
+        startActivity(FriendInfoActivity.getIntent(this,
+            mCommentOneList[positionOne].twoList[two].two_first_uid))
     }
 
     override fun onLocalChildClick(positionOne: Int, two: Int) {
@@ -1348,8 +1328,9 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         ToastUtils.showShort(positionOne)
         // adapter
 
-        if (mCommentOneList[positionOne].list.one_level_uid.toString() ==
-            SPStaticUtils.getString(Constant.USER_ID, "13")
+        if (mCommentOneList[positionOne].list.one_level_uid.toString() == SPStaticUtils.getString(
+                Constant.USER_ID,
+                "13")
         ) {
 
             val id = mCommentOneList[positionOne].list.id
@@ -1357,23 +1338,15 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
             val hostId = mCommentOneList[positionOne].list.host_uid
 
             ToastUtils.showShort("本人发的")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0, 0))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 0, 0)).show()
 
         } else {
             ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(ReportDialog(this)).show()
         }
 
     }
@@ -1385,8 +1358,9 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         // 当除了这条没其他数据时，直接删除这个
         // 当还有其他数据时，首先需要取出adapter 中数据的第一条数据，然后替换上面固定的数据 ，然后adapter的数据移除第一条
 
-        if (mCommentOneList[positionOne].list.two_last_uid.toString() ==
-            SPStaticUtils.getString(Constant.USER_ID, "13")
+        if (mCommentOneList[positionOne].list.two_last_uid.toString() == SPStaticUtils.getString(
+                Constant.USER_ID,
+                "13")
         ) {
 
             val id = mCommentOneList[positionOne].list.id_two
@@ -1394,31 +1368,24 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
             val hostId = mCommentOneList[positionOne].list.id
 
             ToastUtils.showShort("本人发的")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 1, 0))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, 0, 1, 0)).show()
 
         } else {
             ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(ReportDialog(this)).show()
         }
     }
 
     override fun onChildContentLongClick(positionOne: Int, two: Int) {
         ToastUtils.showShort(" $positionOne  ,  $two")
 
-        if (mCommentOneList[positionOne].twoList[two].two_last_uid.toString() ==
-            SPStaticUtils.getString(Constant.USER_ID, "13")
+        if (mCommentOneList[positionOne].twoList[two].two_last_uid.toString() == SPStaticUtils.getString(
+                Constant.USER_ID,
+                "13")
         ) {
 
             ToastUtils.showShort("本人发的")
@@ -1426,22 +1393,14 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
             val trendId = mCommentOneList[positionOne].twoList[two].trends_id
             val hostId = mCommentOneList[positionOne].twoList[two].pid
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, two, 1, 1))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(DeleteDialog(this, id, trendId, hostId, positionOne, two, 1, 1)).show()
         } else {
             ToastUtils.showShort("不是本人发的，无法删除")
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(ReportDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(ReportDialog(this)).show()
         }
 
     }
@@ -1533,8 +1492,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(),
         two: Int,
         mode: Int,
         childMode: Int,
-    ) :
-        FullScreenPopupView(context), IDoCommentOneDeleteCallback, IDoCommentTwoDeleteCallback {
+    ) : FullScreenPopupView(context), IDoCommentOneDeleteCallback, IDoCommentTwoDeleteCallback {
 
         private val mid = id
         private val trendsId = trendsId

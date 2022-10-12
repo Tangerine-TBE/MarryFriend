@@ -14,6 +14,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.DemandAddressBean
 import com.twx.marryfriend.bean.FiveInfoBean
+import com.twx.marryfriend.bean.InterdictionBean
 import com.twx.marryfriend.bean.PhotoListBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
@@ -308,6 +309,154 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
                 SPStaticUtils.put(Constant.TA_HAVE_PHOTO, fiveInfoBean.data.demand.is_headface)
 
                 SPStaticUtils.put(Constant.TA_MARRY, fiveInfoBean.data.demand.marry_time)
+
+                when (fiveInfoBean.data.headface.size) {
+                    0 -> {
+                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+                    }
+                    1 -> {
+                        when (fiveInfoBean.data.headface[0].status) {
+                            0 -> {
+                                SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                    fiveInfoBean.data.headface[0].image_url)
+                                SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+                            }
+                            1 -> {
+                                SPStaticUtils.put(Constant.ME_AVATAR,
+                                    fiveInfoBean.data.headface[0].image_url)
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+                            }
+                            2 -> {
+                                SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                    fiveInfoBean.data.headface[0].image_url)
+                            }
+                        }
+                    }
+                    2 -> {
+                        when (fiveInfoBean.data.headface[0].status) {
+                            0 -> {
+                                // 第一张为审核中
+                                when (fiveInfoBean.data.headface[1].status) {
+                                    0 -> {
+                                        // 第二张为审核中
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+                                    }
+                                    1 -> {
+                                        // 第二张为审核通过
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            fiveInfoBean.data.headface[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+
+                                    }
+                                    2 -> {
+                                        // 第二张为审核拒绝
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            fiveInfoBean.data.headface[1].image_url)
+
+                                    }
+                                }
+
+                            }
+
+                            1 -> {
+                                // 第一张为审核通过
+
+                                when (fiveInfoBean.data.headface[1].status) {
+                                    0 -> {
+                                        // 第二张为审核中
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            fiveInfoBean.data.headface[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+                                    }
+                                    1 -> {
+                                        // 第二张为审核通过
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "")
+                                    }
+                                    2 -> {
+                                        // 第二张为审核拒绝
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            fiveInfoBean.data.headface[1].image_url)
+                                    }
+                                }
+
+                            }
+
+                            2 -> {
+                                // 第一张为审核拒绝
+                                when (fiveInfoBean.data.headface[1].status) {
+                                    0 -> {
+                                        // 第二张为审核中
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT,
+                                            fiveInfoBean.data.headface[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                    }
+                                    1 -> {
+                                        // 第二张为审核通过
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR,
+                                            fiveInfoBean.data.headface[1].image_url)
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                    }
+                                    2 -> {
+                                        // 第二张为审核拒绝
+
+                                        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR, "")
+                                        SPStaticUtils.put(Constant.ME_AVATAR_FAIL,
+                                            fiveInfoBean.data.headface[0].image_url)
+                                    }
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+                if (fiveInfoBean.data.blacklist != null) {
+
+                    val interdictionBean = InterdictionBean().also {
+                        it.blacklist_status = fiveInfoBean.data.blacklist.blacklist_status
+                        it.blacklist_permanent = fiveInfoBean.data.blacklist.blacklist_permanent
+                        it.blacklist_close_time = fiveInfoBean.data.blacklist.blacklist_close_time
+                    }
+
+                    InterdictionBean.putInterdictionState(interdictionBean)
+
+                }
 
                 // 更新UI数据
                 dateFragment.updateDateUI()

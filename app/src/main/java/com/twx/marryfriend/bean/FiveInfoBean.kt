@@ -22,6 +22,7 @@ data class FiveInfoData(
     val vip_info: VipInfo,
     val zhaohu: Zhaohu,
     val zo_place: List<Any>,
+    val blacklist: Blacklist?,
 )
 
 data class Base(
@@ -187,3 +188,23 @@ data class Zhaohu(
     val zhaohuyu_status: Int,
     val zhaohuyu_time: String,
 )
+
+
+data class Blacklist(
+    val id: Int,
+    val user_id: Int,
+    val blacklist_start_time: String,
+    val blacklist_close_time: String,
+    val time_type: Int,
+    val reason_code: Int,
+    val reason_text: String,
+    val blacklist_permanent: Int,
+    val blacklist_status: Int,
+    val create_time: String,
+    val create_user: Int,
+    val update_time: Any,
+    val update_user: Int,
+)
+
+
+

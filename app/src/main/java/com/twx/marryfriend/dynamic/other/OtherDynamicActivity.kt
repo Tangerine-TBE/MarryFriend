@@ -507,7 +507,8 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             if (plusFocusBean.code == 200) {
                 haveFocus = true
                 ToastUtils.showShort("关注成功")
-
+            }else{
+                ToastUtils.showShort(plusFocusBean.msg)
             }
         }
     }
@@ -521,6 +522,8 @@ class OtherDynamicActivity : MainBaseViewActivity(),
             if (cancelFocusBean.code == 200) {
                 haveFocus = false
                 ToastUtils.showShort("取消关注成功")
+            }else{
+                ToastUtils.showShort(cancelFocusBean.msg)
             }
         }
     }

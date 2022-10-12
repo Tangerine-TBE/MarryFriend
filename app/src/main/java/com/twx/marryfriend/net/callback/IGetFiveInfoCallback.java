@@ -1,7 +1,6 @@
 package com.twx.marryfriend.net.callback;
 
 import com.twx.marryfriend.bean.FiveInfoBean;
-import com.twx.marryfriend.bean.VerifyCodeBean;
 
 /**
  * @author: Administrator

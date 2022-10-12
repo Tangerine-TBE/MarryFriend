@@ -81,9 +81,8 @@ import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MineFragment : Fragment(), IDoFaceDetectCallback,
-    IDoUpdateGreetInfoCallback, IDoViewHeadFaceCallback, IGetFourTotalCallback,
-    IGetFiveInfoCallback {
+class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallback,
+    IDoViewHeadFaceCallback, IGetFourTotalCallback, IGetFiveInfoCallback {
 
     // 头像暂存bitmap
     private var mBitmap: Bitmap? = null
@@ -194,14 +193,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                     .placeholder(R.drawable.ic_mine_male_default)
-                    .error(R.drawable.ic_mine_male_default)
-                    .into(iv_mine_avatar)
+                    .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
             } else {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                     .placeholder(R.drawable.ic_mine_female_default)
-                    .error(R.drawable.ic_mine_female_default)
-                    .into(iv_mine_avatar)
+                    .error(R.drawable.ic_mine_female_default).into(iv_mine_avatar)
             }
 
             tv_mine_avatar_check.visibility = View.VISIBLE
@@ -214,14 +211,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 }
 
                 tv_mine_avatar_check.visibility = View.GONE
@@ -237,14 +232,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         Glide.with(requireContext())
                             .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, ""))
                             .placeholder(R.drawable.ic_mine_male_default)
-                            .error(R.drawable.ic_mine_male_default)
-                            .into(iv_mine_avatar)
+                            .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                     } else {
                         Glide.with(requireContext())
                             .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, ""))
                             .placeholder(R.drawable.ic_mine_female_default)
-                            .error(R.drawable.ic_mine_female_default)
-                            .into(iv_mine_avatar)
+                            .error(R.drawable.ic_mine_female_default).into(iv_mine_avatar)
                     }
 
                     tv_mine_avatar_check.visibility = View.GONE
@@ -253,12 +246,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
                 } else {
                     if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                        Glide.with(requireContext())
-                            .load(R.drawable.ic_mine_male_default)
+                        Glide.with(requireContext()).load(R.drawable.ic_mine_male_default)
                             .into(iv_mine_avatar)
                     } else {
-                        Glide.with(requireContext())
-                            .load(R.drawable.ic_mine_female_default)
+                        Glide.with(requireContext()).load(R.drawable.ic_mine_female_default)
                             .into(iv_mine_avatar)
                     }
 
@@ -324,16 +315,13 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             onCloseAvatar()
 
             // 此时需要验证是否有头像
-            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") == "" &&
-                SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") == ""
+            if (SPStaticUtils.getString(Constant.ME_AVATAR, "") == "" && SPStaticUtils.getString(
+                    Constant.ME_AVATAR_AUDIT,
+                    "") == ""
             ) {
-                XPopup.Builder(context)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(PhotoGuideDialog(requireContext()))
-                    .show()
+                XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(PhotoGuideDialog(requireContext())).show()
             }
         }
 
@@ -358,13 +346,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 0 -> {
                     // 上传头像
 
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(PhotoGuideDialog(requireContext()))
-                        .show()
+                        .asCustom(PhotoGuideDialog(requireContext())).show()
 
                 }
                 1 -> {
@@ -382,56 +367,43 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 3 -> {
                     // 添加爱好
 
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(HobbyDialog(requireContext()))
-                        .show()
+                        .asCustom(HobbyDialog(requireContext())).show()
 
                 }
                 4 -> {
                     // 添加招呼语
 
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(GreetDialog(requireContext()))
-                        .show()
+                        .asCustom(GreetDialog(requireContext())).show()
 
                 }
                 5 -> {
                     // 添加自我介绍
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(IntroduceDialog(requireContext()))
-                        .show()
+                        .asCustom(IntroduceDialog(requireContext())).show()
 
                 }
                 6 -> {
                     // 录语音
 
-                    XXPermissions.with(context)
-                        .permission(Permission.RECORD_AUDIO)
+                    XXPermissions.with(context).permission(Permission.RECORD_AUDIO)
                         .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                         .request(object : OnPermissionCallback {
                             override fun onGranted(
                                 permissions: MutableList<String>?,
                                 all: Boolean,
                             ) {
-                                XPopup.Builder(context)
-                                    .dismissOnTouchOutside(false)
-                                    .dismissOnBackPressed(false)
-                                    .isDestroyOnDismiss(true)
+                                XPopup.Builder(context).dismissOnTouchOutside(false)
+                                    .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                                     .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                                    .asCustom(VoiceDialog(requireContext()))
-                                    .show()
+                                    .asCustom(VoiceDialog(requireContext())).show()
                             }
 
                             override fun onDenied(
@@ -451,13 +423,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 0 -> {
                     // 上传头像
 
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(PhotoGuideDialog(requireContext()))
-                        .show()
+                        .asCustom(PhotoGuideDialog(requireContext())).show()
 
                 }
                 1 -> {
@@ -475,56 +444,43 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 3 -> {
                     // 添加爱好
 
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(HobbyDialog(requireContext()))
-                        .show()
+                        .asCustom(HobbyDialog(requireContext())).show()
 
                 }
                 4 -> {
                     // 添加招呼语
 
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(GreetDialog(requireContext()))
-                        .show()
+                        .asCustom(GreetDialog(requireContext())).show()
 
                 }
                 5 -> {
                     // 添加自我介绍
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(IntroduceDialog(requireContext()))
-                        .show()
+                        .asCustom(IntroduceDialog(requireContext())).show()
 
                 }
                 6 -> {
                     // 录语音
 
-                    XXPermissions.with(context)
-                        .permission(Permission.RECORD_AUDIO)
+                    XXPermissions.with(context).permission(Permission.RECORD_AUDIO)
                         .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                         .request(object : OnPermissionCallback {
                             override fun onGranted(
                                 permissions: MutableList<String>?,
                                 all: Boolean,
                             ) {
-                                XPopup.Builder(context)
-                                    .dismissOnTouchOutside(false)
-                                    .dismissOnBackPressed(false)
-                                    .isDestroyOnDismiss(true)
+                                XPopup.Builder(context).dismissOnTouchOutside(false)
+                                    .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                                     .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                                    .asCustom(VoiceDialog(requireContext()))
-                                    .show()
+                                    .asCustom(VoiceDialog(requireContext())).show()
                             }
 
                             override fun onDenied(
@@ -562,9 +518,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         rl_mine_vip.setOnClickListener {
             startActivity(context?.let { it1 ->
-                VipActivity.getVipIntent(it1,
-                    0,
-                    VipGifEnum.Message)
+                VipActivity.getVipIntent(it1, 0, VipGifEnum.Message)
             })
         }
 
@@ -584,9 +538,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
         ll_mine_set_svip.setOnClickListener {
             startActivity(context?.let { it1 ->
-                VipActivity.getSVipIntent(it1,
-                    0,
-                    SVipGifEnum.SeeMe)
+                VipActivity.getSVipIntent(it1, 0, SVipGifEnum.SeeMe)
             })
         }
 
@@ -674,14 +626,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                     .placeholder(R.drawable.ic_mine_male_default)
-                    .error(R.drawable.ic_mine_male_default)
-                    .into(iv_mine_avatar)
+                    .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
             } else {
                 Glide.with(requireContext())
                     .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                     .placeholder(R.drawable.ic_mine_female_default)
-                    .error(R.drawable.ic_mine_female_default)
-                    .into(iv_mine_avatar)
+                    .error(R.drawable.ic_mine_female_default).into(iv_mine_avatar)
             }
 
             tv_mine_avatar_check.visibility = View.VISIBLE
@@ -694,14 +644,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 }
 
                 tv_mine_avatar_check.visibility = View.GONE
@@ -717,14 +665,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         Glide.with(requireContext())
                             .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, ""))
                             .placeholder(R.drawable.ic_mine_male_default)
-                            .error(R.drawable.ic_mine_male_default)
-                            .into(iv_mine_avatar)
+                            .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                     } else {
                         Glide.with(requireContext())
                             .load(SPStaticUtils.getString(Constant.ME_AVATAR_FAIL, ""))
                             .placeholder(R.drawable.ic_mine_female_default)
-                            .error(R.drawable.ic_mine_female_default)
-                            .into(iv_mine_avatar)
+                            .error(R.drawable.ic_mine_female_default).into(iv_mine_avatar)
                     }
 
                     tv_mine_avatar_check.visibility = View.GONE
@@ -733,12 +679,10 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
                 } else {
                     if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                        Glide.with(requireContext())
-                            .load(R.drawable.ic_mine_male_default)
+                        Glide.with(requireContext()).load(R.drawable.ic_mine_male_default)
                             .into(iv_mine_avatar)
                     } else {
-                        Glide.with(requireContext())
-                            .load(R.drawable.ic_mine_female_default)
+                        Glide.with(requireContext()).load(R.drawable.ic_mine_female_default)
                             .into(iv_mine_avatar)
                     }
 
@@ -782,14 +726,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                         .placeholder(R.drawable.ic_mine_female_default)
-                        .error(R.drawable.ic_mine_female_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_female_default).into(iv_mine_avatar)
                 }
                 tv_mine_avatar_check.visibility = View.VISIBLE
             } else {
@@ -797,14 +739,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
                 }
                 tv_mine_avatar_check.visibility = View.GONE
 
@@ -928,8 +868,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
             UCrop.of<Any>(source, it) // 长宽比
                 .withAspectRatio(1f, 1f) // 图片大小
                 .withMaxResultSize(512, 512) // 配置参数
-                .withOptions(options)
-                .start(requireActivity())
+                .withOptions(options).start(requireActivity())
         }
     }
 
@@ -996,11 +935,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
         val greet = SPStaticUtils.getString(Constant.ME_GREET, "")
 
         val greetInfo =
-            " {\"user_sex\":                    $sex, " +
-                    "\"voice_url\":           \"$voiceUrl\"," +
-                    "\"voice_long\":          \"$voiceLong\"," +
-                    "\"voice_name\":          \"$voiceName\"," +
-                    " \"zhaohuyu_content\":   \"$greet\"}"
+            " {\"user_sex\":                    $sex, " + "\"voice_url\":           \"$voiceUrl\"," + "\"voice_long\":          \"$voiceLong\"," + "\"voice_name\":          \"$voiceName\"," + " \"zhaohuyu_content\":   \"$greet\"}"
 
         return greetInfo
 
@@ -1133,6 +1068,68 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 SPStaticUtils.put(Constant.ME_WEIGHT, fiveInfoBean.data.more.weight)
 
                 SPStaticUtils.put(Constant.ME_BODY, fiveInfoBean.data.more.figure_nan.toInt())
+
+                // 择偶条件
+
+                SPStaticUtils.put(Constant.TA_AGE_MIN, fiveInfoBean.data.demand.age_min)
+                SPStaticUtils.put(Constant.TA_AGE_MAX, fiveInfoBean.data.demand.age_max)
+
+                SPStaticUtils.put(Constant.TA_HEIGHT_MIN, fiveInfoBean.data.demand.min_high)
+                SPStaticUtils.put(Constant.TA_HEIGHT_MAX, fiveInfoBean.data.demand.max_high)
+
+
+                val salary = fiveInfoBean.data.demand.salary_range
+
+                val x = salary.replace("[", "")
+                val y = x.replace("]", "")
+
+                val salaryList = y.split(",")
+
+                when (salaryList.size) {
+                    0 -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX, 9)
+                    }
+                    1 -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MIN, salaryList[0].toInt())
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX, salaryList[0].toInt())
+                    }
+                    else -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MIN, salaryList[0].toInt())
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX,
+                            salaryList[salaryList.size - 1].toInt())
+
+                    }
+                }
+
+
+                val edu1 = fiveInfoBean.data.demand.education.replace("[", "")
+                val edu2 = edu1.replace("]", "")
+
+                SPStaticUtils.put(Constant.TA_EDU, edu2)
+
+                val marry1 = fiveInfoBean.data.demand.marry_status.replace("[", "")
+                val marry2 = marry1.replace("]", "")
+
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, marry2)
+
+                if (fiveInfoBean.data.demand.figure_nan == 0) {
+                    SPStaticUtils.put(Constant.TA_BODY, fiveInfoBean.data.demand.figure_nv)
+                } else {
+                    SPStaticUtils.put(Constant.TA_BODY, fiveInfoBean.data.demand.figure_nan)
+                }
+
+
+                SPStaticUtils.put(Constant.TA_HAVE_CHILD, fiveInfoBean.data.demand.child_had)
+
+                SPStaticUtils.put(Constant.TA_WANT_CHILD, fiveInfoBean.data.demand.want_child)
+
+                SPStaticUtils.put(Constant.TA_SMOKE, fiveInfoBean.data.demand.is_smoking)
+
+                SPStaticUtils.put(Constant.TA_DRINK, fiveInfoBean.data.demand.drink_wine)
+
+                SPStaticUtils.put(Constant.TA_HAVE_PHOTO, fiveInfoBean.data.demand.is_headface)
+
+                SPStaticUtils.put(Constant.TA_MARRY, fiveInfoBean.data.demand.marry_time)
 
                 when (fiveInfoBean.data.headface.size) {
                     0 -> {
@@ -1271,6 +1268,18 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                         }
                         updateAvatar()
                     }
+                }
+
+                if (fiveInfoBean.data.blacklist != null) {
+
+                    val interdictionBean = InterdictionBean().also {
+                        it.blacklist_status = fiveInfoBean.data.blacklist.blacklist_status
+                        it.blacklist_permanent = fiveInfoBean.data.blacklist.blacklist_permanent
+                        it.blacklist_close_time = fiveInfoBean.data.blacklist.blacklist_close_time
+                    }
+
+                    InterdictionBean.putInterdictionState(interdictionBean)
+
                 }
 
             }
@@ -1634,17 +1643,12 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                 animationStyle.setActivityExitAnimation(R.anim.ps_anim_down_out)
                 selectorStyle.windowAnimationStyle = animationStyle
 
-                PictureSelector.create(activity)
-                    .openGallery(SelectMimeType.TYPE_IMAGE)
+                PictureSelector.create(activity).openGallery(SelectMimeType.TYPE_IMAGE)
                     .setImageEngine(GlideEngine.createGlideEngine())
                     .setSelectionMode(SelectModeConfig.SINGLE)
-                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                    .setImageSpanCount(3)
-                    .isDisplayCamera(true)
-                    .isPreviewImage(true)
-                    .isEmptyResultReturn(true)
-                    .setLanguage(LanguageConfig.CHINESE)
-                    .setSelectorUIStyle(selectorStyle)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                    .isDisplayCamera(true).isPreviewImage(true).isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                         override fun onResult(result: ArrayList<LocalMedia>?) {
 
@@ -1666,8 +1670,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
 
                 dismiss()
 
-                XXPermissions.with(context)
-                    .permission(Permission.CAMERA)
+                XXPermissions.with(context).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
@@ -1682,10 +1685,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                     intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                                     val authority = context.packageName.toString() + ".fileProvider"
-                                    val contentUri: Uri =
-                                        FileProvider.getUriForFile(context,
-                                            authority,
-                                            tempPhotoFile)
+                                    val contentUri: Uri = FileProvider.getUriForFile(context,
+                                        authority,
+                                        tempPhotoFile)
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
                                 } else {
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -2379,13 +2381,11 @@ class MineFragment : Fragment(), IDoFaceDetectCallback,
                     // key值为保存文件名，试用固定的几种格式来命名
 
                     val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
                     }", FileUtils.getFileName(recordPath), file)
 
                     val mVoiceUrl = client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
                     }", FileUtils.getFileName(recordPath), -1).toString()
 
                     Log.i("guo", mVoiceUrl)
