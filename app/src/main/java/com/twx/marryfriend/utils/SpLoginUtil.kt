@@ -56,9 +56,10 @@ object SpLoginUtil {
         SPStaticUtils.put(Constant.ME_CAR, loginBean.data.buy_car)
         SPStaticUtils.put(Constant.ME_SMOKE, loginBean.data.is_smoking)
 
-        SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE, loginBean.data.hometown_province_num)
+        SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE,
+            loginBean.data.hometown_province_num.toString())
         SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_NAME, loginBean.data.hometown_province_str)
-        SPStaticUtils.put(Constant.WANT_WORK_CITY_CODE, loginBean.data.hometown_city_num)
+        SPStaticUtils.put(Constant.WANT_WORK_CITY_CODE, loginBean.data.hometown_city_num.toString())
         SPStaticUtils.put(Constant.WANT_WORK_CITY_NAME, loginBean.data.hometown_city_str)
 
 
@@ -415,6 +416,9 @@ object SpLoginUtil {
         SPStaticUtils.put(Constant.TRUE_ID, loginBean.data.identity_number)
 
 
+
+
+
     }
 
 
@@ -461,10 +465,11 @@ object SpLoginUtil {
 
 
         SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_CODE,
-            autoLoginBean.data.hometown_province_num)
+            autoLoginBean.data.hometown_province_num.toString())
         SPStaticUtils.put(Constant.WANT_WORK_PROVINCE_NAME,
             autoLoginBean.data.hometown_province_str)
-        SPStaticUtils.put(Constant.WANT_WORK_CITY_CODE, autoLoginBean.data.hometown_city_num)
+        SPStaticUtils.put(Constant.WANT_WORK_CITY_CODE,
+            autoLoginBean.data.hometown_city_num.toString())
         SPStaticUtils.put(Constant.WANT_WORK_CITY_NAME, autoLoginBean.data.hometown_city_str)
 
 

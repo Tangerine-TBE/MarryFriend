@@ -9,10 +9,7 @@ import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
-import com.twx.marryfriend.bean.AccessTokenBean
-import com.twx.marryfriend.bean.CityBean
-import com.twx.marryfriend.bean.IndustryBean
-import com.twx.marryfriend.bean.JobBean
+import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.guide.baseInfo.BaseInfoActivity
@@ -26,10 +23,17 @@ import java.util.*
 
 class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCallback,
     IGetJobCallback, IGetAccessTokenCallback, IGetIdAccessTokenCallback,
-    IGetLifeAccessTokenCallback {
+    IGetLifeAccessTokenCallback, IGetFiveInfoCallback {
+
+    /**
+     * 此处进行数据处理，获取所有所需的数据，包括用户信息数据刷新
+     **/
 
     // 跳转模式
     private var jumpMode = 0
+
+    // 是否需要刷新
+    private var needRefresh = false
 
     // 是否加载城市
     private var isLoadCity = false
@@ -40,6 +44,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     // 是否加载岗位
     private var isLoadJob = false
 
+    // 是否加载用户信息
+    private var isLoadUser = false
+
     // 城市获取
     private lateinit var getCityPresent: getCityPresentImpl
     private lateinit var getIndustryPresent: getIndustryPresentImpl
@@ -49,17 +56,24 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     private lateinit var getIdAccessTokenPresent: getIdAccessTokenPresentImpl
     private lateinit var getLifeAccessTokenPresent: getLifeAccessTokenPresentImpl
 
+    private lateinit var getFiveInfoPresent: getFiveInfoPresentImpl
+
 
     /**
      * mode : 跳转模式
      * 0 : 注册流程，去注册界面
      * 1 : 登录流程，直接去首页
+     * needRefresh : 是否需要刷新用户数据
+     * false : 不做处理
+     * true : 进行刷新
      * */
     companion object {
         private const val MODE = "mode"
-        fun getIntent(context: Context, mode: Int): Intent {
+        private const val REFRESH = "refresh"
+        fun getIntent(context: Context, mode: Int, needRefresh: Boolean? = false): Intent {
             val intent = Intent(context, GetInfoActivity::class.java)
             intent.putExtra(MODE, mode)
+            intent.putExtra(REFRESH, needRefresh)
             return intent
         }
     }
@@ -87,7 +101,11 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         getLifeAccessTokenPresent = getLifeAccessTokenPresentImpl.getsInstance()
         getLifeAccessTokenPresent.registerCallback(this)
 
+        getFiveInfoPresent = getFiveInfoPresentImpl.getsInstance()
+        getFiveInfoPresent.registerCallback(this)
+
         jumpMode = intent.getIntExtra("mode", 0)
+        needRefresh = intent.getBooleanExtra("refresh", false)
 
     }
 
@@ -98,6 +116,13 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         getAccessToken()
         getIdAccessToken()
         getLifeAccessToken()
+        // 进行数据刷新
+        if (needRefresh) {
+            getFiveInfo()
+            isLoadUser = false
+        } else {
+            isLoadUser = true
+        }
 
     }
 
@@ -155,6 +180,13 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         getLifeAccessTokenPresent.getAccessToken(map)
     }
 
+    // 获取五个（所有信息）
+    private fun getFiveInfo() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        getFiveInfoPresent.getFiveInfo(map)
+    }
+
     private fun isCompleteLoading() {
 
         ThreadUtils.runOnUiThread {
@@ -162,9 +194,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
             when (jumpMode) {
                 0 -> {
                     // 走注册流程
-                    if (SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) &&
-                        SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) &&
-                        SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+                    if (SPStaticUtils.getBoolean(Constant.JOB_HAVE,
+                            false) && SPStaticUtils.getBoolean(Constant.CITY_HAVE,
+                            false) && SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
                     ) {
                         if (!SPStaticUtils.getBoolean(Constant.BASE_INFO_FINISH, false)) {
                             val intent = Intent(this, BaseInfoActivity::class.java)
@@ -196,9 +228,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                 }
                 else -> {
                     // 走注册流程
-                    if (SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) &&
-                        SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) &&
-                        SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+                    if (SPStaticUtils.getBoolean(Constant.JOB_HAVE,
+                            false) && SPStaticUtils.getBoolean(Constant.CITY_HAVE,
+                            false) && SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
                     ) {
                         if (!SPStaticUtils.getBoolean(Constant.BASE_INFO_FINISH, false)) {
                             val intent = Intent(this, BaseInfoActivity::class.java)
@@ -223,11 +255,164 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     }
 
+
     override fun onLoading() {
 
     }
 
     override fun onError() {
+
+    }
+
+    override fun onGetFiveInfoSuccess(fiveInfoBean: FiveInfoBean?) {
+        if (fiveInfoBean != null) {
+            if (fiveInfoBean.code == 200) {
+
+
+                // 自我介绍、语音介绍、心目中的ta
+
+                SPStaticUtils.put(Constant.ME_INTRODUCE, fiveInfoBean.data.base.introduce_self)
+
+                SPStaticUtils.put(Constant.ME_TA, fiveInfoBean.data.base.ta_in_my_mind)
+
+                SPStaticUtils.put(Constant.ME_VOICE_LONG, fiveInfoBean.data.zhaohu.voice_long)
+
+                SPStaticUtils.put(Constant.ME_VOICE, fiveInfoBean.data.zhaohu.voice_url)
+
+                SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+
+
+
+                SPStaticUtils.put(Constant.ME_NAME, fiveInfoBean.data.base.nick)
+
+                SPStaticUtils.put(Constant.ME_SEX, fiveInfoBean.data.base.user_sex)
+
+                SPStaticUtils.put(Constant.ME_BIRTH, fiveInfoBean.data.base.birthday)
+
+
+                SPStaticUtils.put(Constant.ME_HEIGHT, fiveInfoBean.data.base.height)
+
+                SPStaticUtils.put(Constant.ME_INDUSTRY_NAME, fiveInfoBean.data.base.industry_str)
+                SPStaticUtils.put(Constant.ME_OCCUPATION_NAME,
+                    fiveInfoBean.data.base.occupation_str)
+
+                SPStaticUtils.put(Constant.ME_INCOME, fiveInfoBean.data.base.salary_range)
+
+                if (fiveInfoBean.data.base.work_province_str != "") {
+
+                    if (fiveInfoBean.data.base.work_city_str != "") {
+                        SPStaticUtils.put(Constant.ME_WORK,
+                            "${fiveInfoBean.data.base.work_province_str}-${fiveInfoBean.data.base.work_city_str}")
+                    } else {
+                        SPStaticUtils.put(Constant.ME_WORK,
+                            "${fiveInfoBean.data.base.work_province_str}")
+                    }
+
+                } else {
+
+                    if (fiveInfoBean.data.base.work_city_str != "") {
+                        SPStaticUtils.put(Constant.ME_WORK,
+                            "${fiveInfoBean.data.base.work_city_str}")
+                    } else {
+                        SPStaticUtils.put(Constant.ME_WORK, "")
+                    }
+
+                }
+
+                SPStaticUtils.put(Constant.ME_EDU, fiveInfoBean.data.base.education)
+
+                SPStaticUtils.put(Constant.ME_MARRY_STATE, fiveInfoBean.data.base.marry_had)
+
+                SPStaticUtils.put(Constant.ME_LOVE_TARGET, fiveInfoBean.data.more.love_target)
+
+                SPStaticUtils.put(Constant.ME_HAVE_CHILD, fiveInfoBean.data.more.child_had)
+
+                SPStaticUtils.put(Constant.ME_WANT_CHILD, fiveInfoBean.data.more.want_child)
+
+                SPStaticUtils.put(Constant.ME_HOUSE, fiveInfoBean.data.more.buy_house)
+
+                SPStaticUtils.put(Constant.ME_CAR, fiveInfoBean.data.more.buy_car)
+
+                SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME,
+                    fiveInfoBean.data.base.hometown_province_str)
+                SPStaticUtils.put(Constant.ME_HOME_CITY_NAME,
+                    fiveInfoBean.data.base.hometown_city_str)
+
+                SPStaticUtils.put(Constant.ME_WEIGHT, fiveInfoBean.data.more.weight)
+
+                SPStaticUtils.put(Constant.ME_BODY, fiveInfoBean.data.more.figure_nan.toInt())
+
+
+                // 择偶条件
+
+                SPStaticUtils.put(Constant.TA_AGE_MIN, fiveInfoBean.data.demand.age_min)
+                SPStaticUtils.put(Constant.TA_AGE_MAX, fiveInfoBean.data.demand.age_max)
+
+                SPStaticUtils.put(Constant.TA_HEIGHT_MIN, fiveInfoBean.data.demand.min_high)
+                SPStaticUtils.put(Constant.TA_HEIGHT_MAX, fiveInfoBean.data.demand.max_high)
+
+
+                val salary = fiveInfoBean.data.demand.salary_range
+
+                val x = salary.replace("[", "")
+                val y = x.replace("]", "")
+
+                val salaryList = y.split(",")
+
+                when (salaryList.size) {
+                    0 -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX, 9)
+                    }
+                    1 -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MIN, salaryList[0].toInt())
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX, salaryList[0].toInt())
+                    }
+                    else -> {
+                        SPStaticUtils.put(Constant.TA_INCOME_MIN, salaryList[0].toInt())
+                        SPStaticUtils.put(Constant.TA_INCOME_MAX,
+                            salaryList[salaryList.size - 1].toInt())
+
+                    }
+                }
+
+
+                val edu1 = fiveInfoBean.data.demand.education.replace("[", "")
+                val edu2 = edu1.replace("]", "")
+
+                SPStaticUtils.put(Constant.TA_EDU, edu2)
+
+                val marry1 = fiveInfoBean.data.demand.marry_status.replace("[", "")
+                val marry2 = marry1.replace("]", "")
+
+                SPStaticUtils.put(Constant.TA_MARRY_STATE, marry2)
+
+                if (fiveInfoBean.data.demand.figure_nan == 0) {
+                    SPStaticUtils.put(Constant.TA_BODY, fiveInfoBean.data.demand.figure_nv)
+                } else {
+                    SPStaticUtils.put(Constant.TA_BODY, fiveInfoBean.data.demand.figure_nan)
+                }
+
+
+                SPStaticUtils.put(Constant.TA_HAVE_CHILD, fiveInfoBean.data.demand.child_had)
+
+                SPStaticUtils.put(Constant.TA_WANT_CHILD, fiveInfoBean.data.demand.want_child)
+
+                SPStaticUtils.put(Constant.TA_SMOKE, fiveInfoBean.data.demand.is_smoking)
+
+                SPStaticUtils.put(Constant.TA_DRINK, fiveInfoBean.data.demand.drink_wine)
+
+                SPStaticUtils.put(Constant.TA_HAVE_PHOTO, fiveInfoBean.data.demand.is_headface)
+
+                SPStaticUtils.put(Constant.TA_MARRY, fiveInfoBean.data.demand.marry_time)
+
+
+                Log.i("guo", "数据解析完成")
+
+            }
+        }
+    }
+
+    override fun onGetFiveInfoError() {
 
     }
 
@@ -325,8 +510,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
         Log.i("guo",
             GsonUtils.fromJson(SPStaticUtils.getString(Constant.CITY_JSON_DATE,
-                GsonUtils.toJson(cityBean)), CityBean::class.java)
-                .toString())
+                GsonUtils.toJson(cityBean)), CityBean::class.java).toString())
 
         SPStaticUtils.put(Constant.CITY_HAVE, true)
 
@@ -352,6 +536,8 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         getAccessTokenPresent.unregisterCallback(this)
         getIdAccessTokenPresent.unregisterCallback(this)
         getLifeAccessTokenPresent.unregisterCallback(this)
+
+        getFiveInfoPresent.unregisterCallback(this)
 
     }
 

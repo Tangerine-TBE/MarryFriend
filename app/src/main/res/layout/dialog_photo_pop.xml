@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:text="开启通知权限"
+            android:text="开启后台弹出界面权限"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />

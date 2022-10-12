@@ -12,8 +12,11 @@ data class AutoLoginBean(
 
 data class AutoLoginData(
     val age: Int,
+
     val blacklist_close_time: String,
     val blacklist_permanent: Int,
+    val blacklist_status: Int,
+
     val buy_car: Int,
     val buy_house: Int,
     val child_had: Int,
@@ -22,9 +25,9 @@ data class AutoLoginData(
     val create_time: String,
     val daily_hobbies: String,
     val headface_count: List<HeadfaceCount>,
-    val hometown_city_num: String,
+    val hometown_city_num: Int,
     val hometown_city_str: String,
-    val hometown_province_num: String,
+    val hometown_province_num: Int,
     val hometown_province_str: String,
     val industry_num: Int,
     val industry_str: String,

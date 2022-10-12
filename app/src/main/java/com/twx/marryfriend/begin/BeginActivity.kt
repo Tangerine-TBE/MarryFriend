@@ -102,8 +102,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             }
         } else {
             // 跳过登录界面
-            val intent = Intent(this, GetInfoActivity::class.java)
-            startActivity(intent)
+            startActivity(GetInfoActivity.getIntent(this, 1, true))
+
             this.finish()
 
         }

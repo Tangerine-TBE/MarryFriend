@@ -1,8 +1,17 @@
 package com.twx.marryfriend.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.media.MediaMetadataRetriever
 import android.media.MediaPlayer
 import android.util.Log
+import com.blankj.utilcode.util.FileUtils
+import com.blankj.utilcode.util.ImageUtils
+import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.TimeUtils
+import com.twx.marryfriend.constant.Constant
+import java.io.File
 
 /**
  * @author: Administrator
@@ -50,7 +59,8 @@ object VideoUtil {
         try {
             val mmr = MediaMetadataRetriever()
             mmr.setDataSource(filePath)
-            height = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toInt()!!
+            height =
+                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toInt()!!
             //            //高
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
@@ -71,6 +81,32 @@ object VideoUtil {
         Log.d("guo", "getDuration: $duration")
         player.release() //记得释放资源
         return (duration / 1000).toString()
+    }
+
+
+    /**
+     *
+     * 获取视频封面图
+     *
+     * */
+    fun getVideoCover(filePath: String, context: Context): String {
+
+        Log.i("guo","获取视频封面文件")
+
+        val mWatermarkPath = context.externalCacheDir.toString() + File.separator + "cover.png"
+
+        FileUtils.delete(mWatermarkPath)
+
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(filePath)
+        val bitmap: Bitmap? = retriever.frameAtTime
+
+        if (bitmap != null) {
+            BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
+        }
+
+        return mWatermarkPath
+
     }
 
 

@@ -65,6 +65,7 @@ import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.dynamic.doUploadTrendPresentImpl
 import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.*
+import com.twx.marryfriend.utils.VideoUtil.getVideoCover
 import com.twx.marryfriend.utils.emoji.EmojiDetailAdapter
 import com.twx.marryfriend.utils.emoji.EmojiUtils
 import io.microshow.rxffmpeg.RxFFmpegCommandList
@@ -98,7 +99,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     private var videoUrl = ""
 
     // 视频封面
-    private val videoCover = ""
+    private var coverUrl = ""
 
     // 储备字段，暂时不用
     private val label = ""
@@ -741,6 +742,31 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                             BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
                                         }
 
+                                        val coverPath = getVideoCover(mDataList[0], this)
+
+
+
+                                        Thread {
+
+                                            val coverName = TimeUtils.getNowMills()
+
+                                            val putObjectFromFileResponse =
+                                                client.putObject("user${
+                                                    SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default")
+                                                }", "${coverName}.jpg", File(coverPath))
+
+
+                                            coverUrl = client.generatePresignedUrl("user${
+                                                SPStaticUtils.getString(Constant.USER_ID,
+                                                    "default")
+                                            }", "${coverName}.jpg", -1).toString()
+
+                                            Log.i("guo", "coverUrl : $coverUrl")
+
+                                        }.start()
+
+
                                         val targetWaterMarkPath =
                                             externalCacheDir.toString() + File.separator + "water" + FileUtils.getFileNameNoExtension(
                                                 mDataList[0]) + ".mp4"
@@ -861,7 +887,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                     "\"text_content\": \"$content\"," +          // 文字内容
                     "\"image_url\":    \"$imageUrl\"," +         // 图片地址
                     "\"video_url\":    \"$videoUrl\"," +         // 视频地址
-                    "\"video_cover\":  \"$videoCover\"," +       // 视频封面
+                    "\"video_cover\":  \"$coverUrl\"," +       // 视频封面
                     "\"label\":        \"$label\"," +            // 储备字段，暂时不用
                     "\"jingdu\":       \"$jingdu\"," +             // 经度
                     "\"weidu\":        \"$weidu\"," +              // 纬度
