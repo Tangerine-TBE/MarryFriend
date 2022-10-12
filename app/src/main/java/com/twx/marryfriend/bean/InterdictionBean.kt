@@ -10,6 +10,7 @@ class InterdictionBean {
         private val gson by lazy { Gson() }
         private var currentInterDiction:InterdictionBean?=null
         fun putInterdictionState(interdictionBean:InterdictionBean?){
+            currentInterDiction=interdictionBean
             if (interdictionBean==null){
                 SPUtil.instance.remove(INTERDICTION_KEY)
             }else{
