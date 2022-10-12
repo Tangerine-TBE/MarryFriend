@@ -51,7 +51,6 @@ import com.hyphenate.easeui.manager.EaseSystemMsgManager;
 import com.hyphenate.easeui.model.EaseEvent;
 import com.hyphenate.exceptions.HyphenateException;
 import com.hyphenate.util.EMLog;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -293,6 +292,7 @@ public class ChatPresenter extends EaseChatPresenter {
 
         @Override
         public void onConnected() {
+            Log.i("myLog,环信","用户连接");
             EMLog.i(TAG, "onConnected");
             if(!DemoHelper.getInstance().isLoggedIn()) {
                 return;
@@ -353,6 +353,7 @@ public class ChatPresenter extends EaseChatPresenter {
          */
         @Override
         public void onDisconnected(int error) {
+            Log.i("myLog,环信","连接断开");
             EMLog.i(TAG, "onDisconnected ="+error);
             String event = null;
             if (error == EMError.USER_REMOVED) {

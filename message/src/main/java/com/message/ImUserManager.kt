@@ -46,25 +46,20 @@ object ImUserManager {
                 when (errorCode) {
                     EMError.USER_REMOVED -> {
                         iLog("账号被后台删除")
-                        ImInit.imLoginState.postValue(false)
+                        ImInit.imLoginState.postValue(null)
                     }
                     EMError.USER_LOGIN_ANOTHER_DEVICE -> {
                         iLog("异地登录")
-                        ImInit.imLoginState.postValue(false)
-                        logout({
-
-                        },{code, message ->
-
-                        })
+                        ImInit.imLoginState.postValue(null)
                     }
                     EMError.SERVER_SERVICE_RESTRICTED -> {
-                        ImInit.imLoginState.postValue(false)
+                        ImInit.imLoginState.postValue(null)
                     }
                     EMError.USER_KICKED_BY_CHANGE_PASSWORD -> {
 
                     }
                     EMError.USER_KICKED_BY_OTHER_DEVICE -> {
-                        ImInit.imLoginState.postValue(false)
+                        ImInit.imLoginState.postValue(null)
                     }
                 }
             }
@@ -80,48 +75,18 @@ object ImUserManager {
         EMClient.getInstance().addConnectionListener(connectionListener)
     }
 
-    fun createOrLogin(username: String,pwd: String=username.toMd5()){
-        iLog("当前登录的用户${EMClient.getInstance().currentUser}")
-        if (!EMClient.getInstance().currentUser.isNullOrBlank()){
-            if (EMClient.getInstance().currentUser==username){
-                iLog("当前用户已登录，重新登录刷新信息")
-//                onLoginSuccess()
-                login(username,pwd)
-                return
-            }else{
-                logout({
-                    try {
-                        createAccount(username,pwd)
-                    }catch (e:Exception){
-                        iLog(e.stackTraceToString())
-                    }
-                    login(username,pwd)
-                },{code, message ->
-
-                })
-            }
-        }else{
-            try {
-                createAccount(username,pwd)
-            }catch (e:Exception){
-                iLog(e.stackTraceToString())
-            }
-            login(username,pwd)
-        }
-    }
-
-    fun createAccount(username:String,pwd:String){//注册用户名会自动转为小写字母，所以建议用户名均以小写注册。
+    private fun createAccount(username:String,pwd:String){//注册用户名会自动转为小写字母，所以建议用户名均以小写注册。
         EMClient.getInstance().createAccount(username, pwd)//同步方法
         iLog("注册成功")
     }
 
-    fun login(userName:String,password:String){
-        return
+     private fun login(userName:String,password:String,success: () -> Unit,fail: (code: Int, message: String) -> Unit){
         iLog("用户:${userName},正在登录")
         EMClient.getInstance().login(userName, password, object : EMCallBack {
             //回调
             override fun onSuccess() {
                 iLog( "登录聊天服务器成功！")
+                success.invoke()
                 onLoginSuccess()
             }
 
@@ -140,12 +105,6 @@ object ImUserManager {
                     204->{
                         iLog("登录失败,code:${code},msg:${message}")
                         iLog("用户不存在,重新注册")
-                        try {
-                            createAccount(userName,password)
-                            login(userName, password)
-                        }catch (e:Exception){
-                            eLog(e.stackTraceToString())
-                        }
                     }
                     else->{
                         iLog("登录失败,code:${code},msg:${message}")
@@ -155,8 +114,7 @@ object ImUserManager {
         })
     }
 
-    fun logout(success:()->Unit,fail:(code: Int, message: String)->Unit){
-        return
+    private fun logout(success:()->Unit,fail:(code: Int, message: String)->Unit){
         iLog("退出当前账户")
         EMClient.getInstance().logout(true, object : EMCallBack {
             override fun onSuccess() {

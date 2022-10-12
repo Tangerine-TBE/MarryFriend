@@ -28,6 +28,13 @@ class LifecycleCallbacks private constructor(): Application.ActivityLifecycleCal
     private val runActivity=ArrayList<Activity>()
     private var activityFrontCount=0
     private val appFrontBackstage by lazy { ArrayList<AppFrontBackstage>() }
+    val lastResumedActivity by lazy {
+        MutableLiveData<Activity>()
+    }
+
+    fun getRunActivity():List<Activity>{
+        return runActivity
+    }
 
     fun addFrontBackstageListener(listener:AppFrontBackstage){
         appFrontBackstage.add(listener)
@@ -53,6 +60,7 @@ class LifecycleCallbacks private constructor(): Application.ActivityLifecycleCal
     }
 
     override fun onActivityResumed(p0: Activity) {
+        lastResumedActivity.value=p0
     }
 
     override fun onActivityPaused(p0: Activity) {

@@ -15,6 +15,7 @@ class ImChatViewModel:ViewModel() {
     class BlockState{
         var woPingBiTa=false
         var woGuanZhuTa=false
+        var ta_zhuxiao=false
     }
 
     suspend fun addBlockList(guest_uid:String)=suspendCoroutine<Unit>{ coroutine->

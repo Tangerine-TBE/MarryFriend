@@ -25,7 +25,7 @@ data class RecommendBean(
     val zo_place:List<Zo_place>?=null,
 ){
     var isBlock=false
-    var blaklist:blaklistBean?=null
+    var blaklist:InterdictionBean?=null
     fun getId():Int{
         return (base?.user_id?:more?.user_id)?:throw IllegalStateException("id为空")
     }

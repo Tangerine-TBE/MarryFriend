@@ -348,16 +348,17 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun likeWoUnread()=suspendCoroutine<Int>{ coroutine->
+    suspend fun likeWoUnread(isRe:Boolean=false)=suspendCoroutine<Int>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/TrendsNotice/getLikeFavorites"
         val map= mutableMapOf<String,String>(
-            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))))
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+        "is_up" to if (isRe) "1" else "0"
+        )
 
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
-//jsonObject.getJSONObject("data").getInt("newLikeNum")
-                coroutine.resume(abs(Random().nextInt()))
+                coroutine.resume(jsonObject.getJSONObject("data").getInt("newLikeNum"))
             }catch (e:Exception){
                 coroutine.resumeWithException(Exception("转换失败:${response}"))
             }

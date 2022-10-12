@@ -114,6 +114,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 }
                 if (recommendAdapter.getData().isEmpty()){
                     showView(ViewType.notContent)
+                }else if (cardSwipeView.childCount<=0){
+                    recommendAdapter.notifyDataSetChanged()
                 }
             }
         }
@@ -286,7 +288,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 override fun onAnimationEnd(animation: Animator?) {
                     action.invoke()
                     lifecycleScope.launch {
-                        delay(500)
+                        delay(300)
                         view.apply {
                             this.alpha = 1f
                             this.rotation = 0f
@@ -463,6 +465,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
+            }else if (cardSwipeView.childCount<=0){
+                recommendAdapter.notifyDataSetChanged()
             }
             return
         }
@@ -475,6 +479,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 recommendAdapter.removeItem(item)
                 if (recommendAdapter.getData().isEmpty()){
                     showView(ViewType.notContent)
+                }else if (cardSwipeView.childCount<=0){
+                    recommendAdapter.notifyDataSetChanged()
                 }
             }else{
                 if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
@@ -497,6 +503,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
+            }else if (cardSwipeView.childCount<=0){
+                recommendAdapter.notifyDataSetChanged()
             }
             return
         }
@@ -516,6 +524,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 recommendAdapter.removeItem(item)
                 if (recommendAdapter.getData().isEmpty()){
                     showView(ViewType.notContent)
+                }else if (cardSwipeView.childCount<=0){
+                    recommendAdapter.notifyDataSetChanged()
                 }
             }else{
                 if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
@@ -539,6 +549,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
+            }else if (cardSwipeView.childCount<=0){
+                recommendAdapter.notifyDataSetChanged()
             }
             success.invoke()
             return
@@ -556,6 +568,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                         recommendAdapter.removeAt(0)
                         if (recommendAdapter.getData().isEmpty()){
                             showView(ViewType.notContent)
+                        }else if (cardSwipeView.childCount<=0){
+                            recommendAdapter.notifyDataSetChanged()
                         }
                         success.invoke()
                     }else{
