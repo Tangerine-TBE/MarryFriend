@@ -24,6 +24,7 @@ import com.twx.marryfriend.net.impl.vip.doAliPayPresentImpl
 import com.twx.marryfriend.net.impl.vip.doRefreshSelfPresentImpl
 import com.twx.marryfriend.net.impl.vip.getCoinPricePresentImpl
 import com.twx.marryfriend.utils.SpUtil.refreshUserInfo
+import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_coin.*
 import java.util.*
 
@@ -97,6 +98,10 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         }
 
         rl_coin_one.setOnClickListener {
+
+            //选择10块钱10金币
+            MobclickAgent.onEvent(this, "70000_gold_coin_choose_10");
+
             clearChoose()
             ll_coin_one.setBackgroundResource(R.drawable.shape_bg_coin_choose)
             tv_coin_one_coin.setTextColor(Color.parseColor("#FF4444"))
@@ -106,6 +111,10 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         }
 
         rl_coin_two.setOnClickListener {
+
+            //选择30块钱30金币
+            MobclickAgent.onEvent(this, "70001_gold_coin_choose_11");
+
             clearChoose()
             ll_coin_two.setBackgroundResource(R.drawable.shape_bg_coin_choose)
             tv_coin_two_coin.setTextColor(Color.parseColor("#FF4444"))
@@ -115,6 +124,10 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         }
 
         rl_coin_three.setOnClickListener {
+
+            //选择98块钱100金币(98折)
+            MobclickAgent.onEvent(this, "70002_gold_coin_choose_12");
+
             clearChoose()
             ll_coin_three.setBackgroundResource(R.drawable.shape_bg_coin_choose)
             tv_coin_three_coin.setTextColor(Color.parseColor("#FF4444"))
@@ -124,6 +137,10 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         }
 
         rl_coin_four.setOnClickListener {
+
+            //选择285块钱300金币(95折)
+            MobclickAgent.onEvent(this, "70003_gold_coin_choose_13");
+
             clearChoose()
             ll_coin_four.setBackgroundResource(R.drawable.shape_bg_coin_choose)
             tv_coin_four_coin.setTextColor(Color.parseColor("#FF4444"))
@@ -133,6 +150,10 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         }
 
         rl_coin_five.setOnClickListener {
+
+            //选择900块钱1000金币(9折)
+            MobclickAgent.onEvent(this, "70004_gold_coin_choose_14");
+
             clearChoose()
             ll_coin_five.setBackgroundResource(R.drawable.shape_bg_coin_choose)
             tv_coin_five_coin.setTextColor(Color.parseColor("#FF4444"))
@@ -154,6 +175,10 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         }
 
         tv_coin_pay.setOnClickListener {
+
+            //点击立即购买
+            MobclickAgent.onEvent(this, "70005_gold_coin_buy");
+
             ToastUtils.showShort("使用${mPay}方式支付${mPrice}元购买套餐${mMode}")
             doAliPay()
         }
@@ -212,10 +237,8 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
         try {
             val packageManager: PackageManager = this.packageManager
             //注意此处为ApplicationInfo 而不是 ActivityInfo,因为友盟设置的meta-data是在application标签中，而不是某activity标签中，所以用ApplicationInfo
-            val applicationInfo: ApplicationInfo = packageManager.getApplicationInfo(
-                this.packageName,
-                PackageManager.GET_META_DATA
-            )
+            val applicationInfo: ApplicationInfo =
+                packageManager.getApplicationInfo(this.packageName, PackageManager.GET_META_DATA)
             if (applicationInfo.metaData != null) {
                 channelName =
                     java.lang.String.valueOf(applicationInfo.metaData.get("UMENG_CHANNEL"))
@@ -321,28 +344,53 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
             when (result.resultStatus) {
                 "9000" -> {
 
+                    //购买成功
+                    MobclickAgent.onEvent(this@CoinActivity, "70006_gold_coin_buy_success");
+
                     ToastUtils.showShort("用户支付成功")
                     // 刷新数据
                     updateCoin()
                 }
                 "6001" -> {
 
+                    //取消购买
+                    MobclickAgent.onEvent(this@CoinActivity, "70008_gold_coin_buy_cancel");
+
                     ToastUtils.showShort("用户取消支付")
                 }
                 "6002" -> {
+
+                    //购买失败
+                    MobclickAgent.onEvent(this@CoinActivity, "70007_gold_coin_buy_fail");
 
                     ToastUtils.showShort("网络连接出错")
                 }
                 "4000" -> {
 
+                    //购买失败
+                    MobclickAgent.onEvent(this@CoinActivity, "70007_gold_coin_buy_fail");
+
                     ToastUtils.showShort("订单支付失败")
                 }
                 else -> {
+
+                    //购买失败
+                    MobclickAgent.onEvent(this@CoinActivity, "70007_gold_coin_buy_fail");
 
 //                    ToastUtils.showShort("支付失败，请稍后再试")
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
     }
 
     override fun onLoading() {

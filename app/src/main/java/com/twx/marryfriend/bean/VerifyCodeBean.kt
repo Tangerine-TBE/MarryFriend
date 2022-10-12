@@ -5,7 +5,7 @@ package com.twx.marryfriend.bean
  * @date: 2022/5/11
  */
 data class VerifyCodeBean(
-    val code: String,
+    val code: Int,
     val data: Any,
     val msg: String,
 )

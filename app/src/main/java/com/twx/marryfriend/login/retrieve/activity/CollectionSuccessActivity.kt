@@ -13,6 +13,7 @@ import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.net.callback.*
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.utils.TimeUtil
+import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_collect_success.*
 import java.net.URLDecoder
 import java.util.*
@@ -259,6 +260,10 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
 
+
+            //实名认证成功,进入首页
+            MobclickAgent.onEvent(this, "10043_real_name_success");
+
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             this.finish()
@@ -277,6 +282,16 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
                 1
             }
         } else 0
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
     }
 
     override fun onLoading() {

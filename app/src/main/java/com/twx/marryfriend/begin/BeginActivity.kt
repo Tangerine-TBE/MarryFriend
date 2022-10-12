@@ -51,6 +51,7 @@ import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.UnicodeUtils
+import com.umeng.analytics.MobclickAgent
 import java.util.*
 
 class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
@@ -78,6 +79,10 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         doAutoLoginPresent = doAutoLoginPresentImpl.getsInstance()
         doAutoLoginPresent.registerCallback(this)
 
+
+        //准备进入登录流程
+        MobclickAgent.onEvent(this,"10000_login_process");
+
         sdkInit(AUTH_SECRET)
         mUIConfig = BaseUIConfig.init(0, this, mPhoneNumberAuthHelper)
 
@@ -87,7 +92,6 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         super.initLoadData()
 
     }
-
 
     override fun initPresent() {
         super.initPresent()
@@ -114,6 +118,10 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
     }
 
     private fun showPhoneLoginDialog() {
+
+        //不满足一键登录条件,进入验证码登录
+        MobclickAgent.onEvent(this,"10002_goto_sms_login");
+
         XPopup.Builder(this)
             .dismissOnTouchOutside(false)
             .dismissOnBackPressed(false)
@@ -181,8 +189,13 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
      * @param timeout 超时时间
      */
     private fun getLoginToken(timeout: Int) {
+
+        //满足一键登录条件,弹出一键登录框
+        MobclickAgent.onEvent(this,"10001_quick_login_alert");
+
         mPhoneNumberAuthHelper.getLoginToken(this, timeout)
         showLoadingDialog("正在唤起授权页")
+
     }
 
     fun getResultWithToken(token: String?) {
@@ -229,6 +242,15 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         mProgressDialog?.dismiss()
     }
 
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
+    }
 
     override fun onLoading() {
 
@@ -242,6 +264,10 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
         if (autoLoginBean != null) {
             if (autoLoginBean.code == "200") {
+
+                //点击一键登录,登录成功
+                MobclickAgent.onEvent(this,"10003_quick_login_success");
+
                 hideLoadingDialog()
 
                 // 存储一下资料
@@ -254,14 +280,20 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 this.finish()
 
             } else {
+
+                //点击一键登录,登录失败
+                MobclickAgent.onEvent(this,"10004_quick_login_fail");
+
                 ToastUtils.showShort(autoLoginBean.msg)
             }
         }
 
-
     }
 
     override fun onDoAutoLoginError() {
+
+        //点击一键登录,登录失败
+        MobclickAgent.onEvent(this,"10004_quick_login_fail");
 
     }
 
@@ -302,6 +334,10 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             findViewById<TextView>(R.id.tv_dialog_login_pwd).setOnClickListener {
 
                 if (agreePermission) {
+
+                    //一键登录页面点击其他手机号登录
+                    MobclickAgent.onEvent(context,"10005_quick_login_otherphone");
+
                     val intent = Intent(this@BeginActivity, LoginActivity::class.java)
                     startActivity(intent)
 

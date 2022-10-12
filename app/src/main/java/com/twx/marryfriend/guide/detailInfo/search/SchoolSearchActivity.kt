@@ -30,6 +30,7 @@ import com.twx.marryfriend.net.callback.IGetSchoolCallback
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.getSchoolPresentImpl
 import com.twx.marryfriend.utils.UnicodeUtils
+import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_school_search.*
 import java.util.*
@@ -170,6 +171,10 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
         })
 
         tv_search_school_create.setOnClickListener {
+
+            //点击没有找到,创建一个
+            MobclickAgent.onEvent(this, "10020_education_add_school");
+
             XPopup.Builder(this)
                 .dismissOnTouchOutside(false)
                 .dismissOnBackPressed(false)
@@ -186,6 +191,16 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
         for (i in 0.until(size)) {
             mList.add(SPStaticUtils.getString("school_item_$i", null))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
     }
 
     override fun onLoading() {
@@ -296,6 +311,9 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
 //                        finish()
 //                    }
 
+
+                    //输入学校名,点击创建
+                    MobclickAgent.onEvent(context, "10021_education_add_school_success");
 
                     val map: MutableMap<String, String> = TreeMap()
                     map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")

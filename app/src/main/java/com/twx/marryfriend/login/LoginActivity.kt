@@ -30,6 +30,7 @@ import com.twx.marryfriend.net.impl.doPhoneLoginPresentImpl
 import com.twx.marryfriend.net.impl.getVerifyCodePresentImpl
 import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
+import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_login.*
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
@@ -73,6 +74,9 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 
         doFaceVerifyPresent = doFaceVerifyPresentImpl.getsInstance()
         doFaceVerifyPresent.registerCallback(this)
+
+        //进入验证码登录页面
+        MobclickAgent.onEvent(this, "10006_sms_login");
 
     }
 
@@ -132,6 +136,9 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
             phone = et_login_phone.text.toString().trim { it <= ' ' }
 
             if (RegexUtils.isMobileExact(phone)) {
+
+                //输入手机号码,获取验证码
+                MobclickAgent.onEvent(this, "10007_get_verification_code");
 
                 val map: MutableMap<String, String> = TreeMap()
                 map[Contents.Mobile] = phone
@@ -374,6 +381,16 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
+    }
+
     override fun onLoading() {
 
     }
@@ -390,49 +407,76 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 
     }
 
-    override fun onDoPhoneLoginSuccess(phoneLoginBean: PhoneLoginBean) {
+    override fun onDoPhoneLoginSuccess(phoneLoginBean: PhoneLoginBean?) {
 
-        if (phoneLoginBean.code == "200") {
-            ToastUtils.showShort("登陆成功，跳转至资料填写界面")
+        if (phoneLoginBean != null) {
+            if (phoneLoginBean.code == "200") {
 
-            // 存储一下资料
-            SpUtil.storeVipInfo(
-                phoneLoginBean.data.close_time_low,
-                phoneLoginBean.data.close_time_high)
+                //输入验证码登录成功
+                MobclickAgent.onEvent(this, "10010_sms_login_success");
+
+                // 存储一下资料
+                SpUtil.storeVipInfo(phoneLoginBean.data.close_time_low, phoneLoginBean.data.close_time_high)
 
 
-            SpLoginUtil.saveUserInfo(phoneLoginBean)
+                SpLoginUtil.saveUserInfo(phoneLoginBean)
 
-            startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type))
-            this.finish()
+                startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type))
+                this.finish()
 
-        } else {
-            Log.i("guo", "errormsg : ${phoneLoginBean.msg}")
+            } else {
 
-            ToastUtils.showShort(phoneLoginBean.msg)
+                //输入验证码校验失败
+                MobclickAgent.onEvent(this, "10011_sms_login_fail");
+
+                ToastUtils.showShort(phoneLoginBean.msg)
+            }
         }
 
     }
 
     override fun onDoPhoneLoginError() {
+
+        //输入验证码校验失败
+        MobclickAgent.onEvent(this, "10011_sms_login_fail");
+
         ToastUtils.showShort("登录失败，请稍后再试")
     }
 
-    override fun onGetVerifyCodeSuccess(verifyCodeBean: VerifyCodeBean) {
-        ToastUtils.showShort(verifyCodeBean.msg)
+    override fun onGetVerifyCodeSuccess(verifyCodeBean: VerifyCodeBean?) {
 
-        if (isPhone) {
-            tv_code_phone.text = phone
+        if (verifyCodeBean != null) {
+            if (verifyCodeBean.code == 200) {
 
-            ll_login_phone.visibility = View.GONE
-            ll_login_code.visibility = View.VISIBLE
-            startCurrentDownTimer()
-            isPhone = false
+
+                //获取验证码成功
+                MobclickAgent.onEvent(this, "10008_get_verification_code_success");
+
+                if (isPhone) {
+                    tv_code_phone.text = phone
+
+                    ll_login_phone.visibility = View.GONE
+                    ll_login_code.visibility = View.VISIBLE
+                    startCurrentDownTimer()
+                    isPhone = false
+                }
+
+            } else {
+
+                //获取验证码失败
+                MobclickAgent.onEvent(this, "10009_get_verification_code_fail");
+
+                ToastUtils.showShort(verifyCodeBean.msg)
+            }
         }
 
     }
 
     override fun onGetVerifyCodeError() {
+
+        //获取验证码失败
+        MobclickAgent.onEvent(this, "10009_get_verification_code_fail");
+
         ToastUtils.showShort("验证码发送失败，请重试")
     }
 

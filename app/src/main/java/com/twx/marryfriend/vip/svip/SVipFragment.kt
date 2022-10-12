@@ -42,6 +42,7 @@ import com.twx.marryfriend.vip.VipActivity
 import com.twx.marryfriend.vip.adapter.BannerFragment
 import com.twx.marryfriend.vip.adapter.ToolAdapter
 import com.twx.marryfriend.vip.adapter.VipBannerAdapter
+import com.umeng.analytics.MobclickAgent
 import com.youth.banner.Banner
 import com.youth.banner.indicator.RoundLinesIndicator
 import kotlinx.android.synthetic.main.activity_tips.*
@@ -124,6 +125,66 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
     private fun initData() {
 
+        // 收件箱
+        // 发件箱
+        // 高级搜索
+
+        // 查看更多嘉宾，多推荐20个
+        // 消息置顶
+        // 访问他的资料
+        // 超级会员标志
+        // 查看消息是否已读
+        // 随意聊天
+        // 查看关注我的人
+        // 突出显示消息
+        // 谁看过我
+        // 谁喜欢我
+
+        when (item) {
+            1 -> {
+
+            }
+            2 -> {
+
+            }
+            3 -> {
+
+            }
+            4 -> {
+
+            }
+            5 -> {
+
+            }
+            6 -> {
+
+            }
+            7 -> {
+
+            }
+            8 -> {
+                //消息页面,查看消息是否已读? 点击跳转开通超级会员
+                MobclickAgent.onEvent(mContext, "60009_chat_message_read_goto_vip");
+            }
+            9 -> {
+
+            }
+            10 -> {
+                //关注我的,点击立即查看,跳转到开通超级会员
+                MobclickAgent.onEvent(mContext, "60006_follow_me_goto_vip");
+            }
+            11 -> {
+
+            }
+            12 -> {
+
+            }
+            13 -> {
+
+            }
+
+        }
+
         banner_super_container.currentItem = item
 
         mVipPriceList.add("388")
@@ -181,6 +242,9 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
             if (mPay == "WX") {
                 ToastUtils.showShort("暂不支持微信支付")
             } else {
+
+                //点击开通超级会员
+                MobclickAgent.onEvent(mContext, "60015_open_super_member");
 
                 doAliPay()
             }
@@ -296,27 +360,57 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
             val status = result.resultStatus
             when (result.resultStatus) {
                 "9000" -> {
+
+                    //开通超级会员成功
+                    MobclickAgent.onEvent(mContext, "60016_open_super_member_success");
+
                     ToastUtils.showShort("用户支付成功")
                     doUpdate()
                 }
                 "6001" -> {
+
+                    //取消开通超级会员
+                    MobclickAgent.onEvent(mContext, "60018_open_super_member_cancel");
+
                     ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("用户取消支付")
                 }
                 "6002" -> {
+
+                    //开通超级会员失败
+                    MobclickAgent.onEvent(mContext, "60017_open_super_member_fail");
+
                     ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("网络连接出错")
                 }
                 "4000" -> {
+
+                    //开通超级会员失败
+                    MobclickAgent.onEvent(mContext, "60017_open_super_member_fail");
+
                     ll_vip_super_loading?.visibility = View.GONE
                     ToastUtils.showShort("订单支付失败")
                 }
                 else -> {
+
+                    //开通超级会员失败
+                    MobclickAgent.onEvent(mContext, "60017_open_super_member_fail");
+
                     ll_vip_super_loading?.visibility = View.GONE
 //                    ToastUtils.showShort("支付失败，请稍后再试")
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(mContext)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(mContext)
     }
 
     override fun onLoading() {

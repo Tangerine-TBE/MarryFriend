@@ -24,6 +24,7 @@ import com.twx.marryfriend.net.callback.IGetAccessTokenCallback
 import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateBaseInfoPresentImpl
+import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.layout_guide_step_name.*
 import kotlinx.android.synthetic.main.layout_guide_step_sex.*
@@ -86,6 +87,9 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
         doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
         doTextVerifyPresent.registerCallback(this)
+
+        //进入填写昵称页面
+        MobclickAgent.onEvent(this, "10012_nickname");
 
         initStep()
 
@@ -194,6 +198,10 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 //                            }
 //                        }
 
+
+                        //输入昵称,点击下一步
+                        MobclickAgent.onEvent(this, "10014_nickname_next");
+
                         if (SPStaticUtils.getString(Constant.ACCESS_TOKEN, "") != null) {
 
                             Log.i("guo", SPStaticUtils.getString(Constant.ACCESS_TOKEN, ""))
@@ -218,7 +226,11 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
                 }
                 1 -> {
 
+
                     if (chooseSex && chooseAge && chooseHeight) {
+
+                        //填写基本资料,点击下一步
+                        MobclickAgent.onEvent(this, "10017_information_next");
 
                         // 存储基础信息
 //                        SPStaticUtils.put(Constant.BASE_INFO_FINISH, true)
@@ -398,6 +410,16 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
+    }
+
     override fun onLoading() {
 
     }
@@ -412,7 +434,12 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
             if (textVerifyBean.conclusion == "合规") {
                 tv_guide_base_previous.visibility = View.VISIBLE
                 tv_guide_base_tip.visibility = View.VISIBLE
+
+                //进入基本资料页面
+                MobclickAgent.onEvent(this, "10015_information");
+
                 vf_guide_base_container.showNext()
+
                 if (chooseSex && chooseAge && chooseHeight) {
                     tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
                 } else {

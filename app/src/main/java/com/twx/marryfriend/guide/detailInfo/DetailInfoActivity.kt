@@ -72,6 +72,7 @@ import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.DoubleSlideSeekBar
+import com.umeng.analytics.MobclickAgent
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
 import kotlinx.android.synthetic.main.activity_life_photo.*
@@ -502,6 +503,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         doDeletePhotoPresent = doDeletePhotoPresentImpl.getsInstance()
         doDeletePhotoPresent.registerCallback(this)
 
+
+        //进入教育信息页
+        MobclickAgent.onEvent(this, "10018_education");
+
+
         mLocationClient = LocationClient(this)
 
         val str1 = "遇到问题？联系客服"
@@ -529,11 +535,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             iv_photo_container.setImageResource(R.mipmap.icon_photo_female)
         }
 
-        xx = XPopup.Builder(this)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+        xx = XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(AddressJobCity(this))
 
     }
@@ -747,7 +750,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //填写完教育信息点击下一步
+                        MobclickAgent.onEvent(this, "10022_education_next");
+
                         vf_guide_detail_container.showNext()
+
+                        //进入职业收入情况页面
+                        MobclickAgent.onEvent(this, "10023_occupation");
 
                         tsb_guide_detail_guide.setPercent(0.19f, "19")
 
@@ -767,7 +776,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //职业收入情况页面填写数据点击下一步
+                        MobclickAgent.onEvent(this, "10025_occupation_next");
+
                         vf_guide_detail_container.showNext()
+
+                        //进入居住城市和家乡页面
+                        MobclickAgent.onEvent(this, "10026_hometown");
 
                         tsb_guide_detail_guide.setPercent(0.26f, "26")
 
@@ -797,7 +812,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //居住城市和家乡页面填写资料点击下一步
+                        MobclickAgent.onEvent(this, "10028_hometown_next");
+
                         vf_guide_detail_container.showNext()
+
+                        //进入我的恋爱目标页面
+                        MobclickAgent.onEvent(this, "10029_love_goal");
+
+
                         tsb_guide_detail_guide.setPercent(0.39f, "39")
 
                         if (isJobLocal) {
@@ -849,7 +872,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //填写我的恋爱目标点击下一步
+                        MobclickAgent.onEvent(this, "10031_love_goal_next");
+
                         vf_guide_detail_container.showNext()
+
+                        //进入上传头像页面
+                        MobclickAgent.onEvent(this, "10032_upload_avatar");
 
                         tsb_guide_detail_guide.setPercent(0.46f, "46")
 
@@ -875,7 +904,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
                         }
 
+                        //上传头像成功,点击下一步
+                        MobclickAgent.onEvent(this, "10034_upload_avatar_success");
+
+
                         vf_guide_detail_container.showNext()
+
+                        //进入我的生活页面
+                        MobclickAgent.onEvent(this, "10035_my_life");
 
                         tsb_guide_detail_guide.setPercent(0.49f, "49")
 
@@ -887,11 +923,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             // bucketName 为文件夹名 ，使用用户id来进行命名
                             // key值为保存文件名，试用固定的几种格式来命名
 
-                            val putObjectFromFileResponse =
-                                client.putObject("user${
-                                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                                }",
-                                    FileUtils.getFileName(mPhotoPath), file)
+                            val putObjectFromFileResponse = client.putObject("user${
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }", FileUtils.getFileName(mPhotoPath), file)
 
 
                             mPhotoUrl = client.generatePresignedUrl("user${
@@ -915,7 +949,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //我的生活上传成功,点击下一步
+                        MobclickAgent.onEvent(this, "10037_my_life_next");
+
                         vf_guide_detail_container.showNext()
+
+                        //进入关于我页面
+                        MobclickAgent.onEvent(this, "10038_about_me");
+
                         tsb_guide_detail_guide.setPercent(0.60f, "60")
 
                     } else {
@@ -926,35 +967,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 6 -> {
 
                     if (isFinishIntroduce) {
-
-//                        for (i in 0.until(banTextList.size)) {
-//                            val code = banTextList[i]
-//                            if (introduceText.contains(code)) {
-//                                haveBanText = true
-//                            }
-//                        }
-//                        if (haveBanText) {
-//
-//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//
-//                            isFinishIntroduce = false
-//                            haveBanText = false
-//
-//                            et_guide_mine_content.setText("")
-//
-//                        } else {
-//
-//                            if (!isFinishHobby) {
-//                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//                            }
-//
-//                            vf_guide_detail_container.showNext()
-//                            tsb_guide_detail_guide.setPercent(0.73f, "73")
-//
-//                            SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
-//
-//                        }
 
                         val map: MutableMap<String, String> = TreeMap()
                         map[Contents.ACCESS_TOKEN] =
@@ -972,33 +984,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 7 -> {
                     if (isFinishHobby) {
 
-//                        for (i in 0.until(banTextList.size)) {
-//                            val code = banTextList[i]
-//                            if (hobbyText.contains(code)) {
-//                                haveBanText = true
-//                            }
-//                        }
-//                        if (haveBanText) {
-//
-//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//
-//                            isFinishHobby = false
-//                            haveBanText = false
-//
-//                            et_guide_hobby_content.setText("")
-//
-//                        } else {
-//
-//                            if (!isFinishIdeal) {
-//                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//                            }
-//
-//                            vf_guide_detail_container.showNext()
-//                            tsb_guide_detail_guide.setPercent(0.88f, "88")
-//
-//                            SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
-//                        }
 
                         val map: MutableMap<String, String> = TreeMap()
                         map[Contents.ACCESS_TOKEN] =
@@ -1094,13 +1079,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         rl_guide_edu_edu.setOnClickListener {
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(EduDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(EduDialog(this)).show()
 
         }
 
@@ -1114,62 +1095,42 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         rl_guide_income_job.setOnClickListener {
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(IncomeJobDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IncomeJobDialog(this)).show()
 
         }
 
         rl_guide_income_income.setOnClickListener {
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(IncomeIncomeDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IncomeIncomeDialog(this)).show()
 
         }
 
         // -------------------  居住地和家乡界面  -----------------
 
         rl_guide_address_jobcity.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(AddressJobCity(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(AddressJobCity(this)).show()
         }
 
         rl_guide_address_homecity.setOnClickListener {
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(AddressHomeCity(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(AddressHomeCity(this)).show()
         }
 
         // -------------------  择偶条件界面  -----------------
 
         ll_guide_target_visibility.setOnClickListener {
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(TargetVisibilityDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(TargetVisibilityDialog(this)).show()
 
         }
 
@@ -1227,13 +1188,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             }
 
             iv_photo_container.setOnClickListener {
-                XPopup.Builder(this)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(PhotoGuideDialog(this))
-                    .show()
+                XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(PhotoGuideDialog(this)).show()
             }
 
             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
@@ -1245,23 +1202,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         }
 
         tv_photo_reupload.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(PhotoGuideDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(PhotoGuideDialog(this)).show()
         }
 
         iv_photo_container.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(PhotoGuideDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(PhotoGuideDialog(this)).show()
         }
 
 
@@ -1271,23 +1220,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         // -------------------  我的生活界面  -----------------
 
         ll_guide_life_default.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeGuidDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeGuidDialog(this)).show()
         }
 
         rl_guide_life_pic_more.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeGuidDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeGuidDialog(this)).show()
         }
 
         rl_guide_life_pic_one.setOnClickListener {
@@ -1308,13 +1249,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             lifeDeleteMode = "one"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
         }
 
         rl_guide_life_pic_two.setOnClickListener {
@@ -1331,13 +1268,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             lifeDeleteMode = "two"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
         }
 
         rl_guide_life_pic_three.setOnClickListener {
@@ -1352,13 +1285,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         iv_guide_life_pic_three_delete.setOnClickListener {
             lifeDeleteMode = "three"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
         }
 
         rl_guide_life_pic_four.setOnClickListener {
@@ -1375,13 +1304,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         iv_guide_life_pic_four_delete.setOnClickListener {
             lifeDeleteMode = "four"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
 
         }
 
@@ -1399,13 +1324,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         iv_guide_life_pic_five_delete.setOnClickListener {
             lifeDeleteMode = "five"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
 
         }
 
@@ -1592,13 +1513,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }
 
                 if (mStepDetailNine == null) {
-                    mStepDetailNine =
-                        StepDetailNine(this, vf_guide_detail_container.getChildAt(8))
+                    mStepDetailNine = StepDetailNine(this, vf_guide_detail_container.getChildAt(8))
                 }
 
                 if (mStepDetailTen == null) {
-                    mStepDetailTen =
-                        StepDetailTen(this, vf_guide_detail_container.getChildAt(9))
+                    mStepDetailTen = StepDetailTen(this, vf_guide_detail_container.getChildAt(9))
                 }
             }
         }
@@ -1616,8 +1535,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         // 应用上下文
         // 申请License取得的APPID
         // assets目录下License文件名
-        FaceSDKManager.getInstance().initialize(this, "jiaou-hunlian-face-android",
-            "idl-license.face-android", object : IInitCallback {
+        FaceSDKManager.getInstance().initialize(this,
+            "jiaou-hunlian-face-android",
+            "idl-license.face-android",
+            object : IInitCallback {
                 override fun initSuccess() {
                     runOnUiThread {
                         Log.e("guo", "初始化成功")
@@ -2160,8 +2081,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             UCrop.of<Any>(source, it) // 长宽比
                 .withAspectRatio(1f, 1f) // 图片大小
                 .withMaxResultSize(512, 512) // 配置参数
-                .withOptions(options)
-                .start(this)
+                .withOptions(options).start(this)
         }
 
     }
@@ -2238,6 +2158,16 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             AppUtils.exitApp()
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(this)
     }
 
     override fun onLoading() {
@@ -2953,7 +2883,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //填写关于我,点击下一步
+                        MobclickAgent.onEvent(this, "10040_about_me_next");
+
                         vf_guide_detail_container.showNext()
+
+
+
                         tsb_guide_detail_guide.setPercent(0.73f, "73")
 
                         SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
@@ -2980,7 +2916,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (!isFinishIdeal) {
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
+
+
+
                         vf_guide_detail_container.showNext()
+
+
+
                         tsb_guide_detail_guide.setPercent(0.88f, "88")
                         SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
                     } else {
@@ -3008,6 +2950,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         }
 
                         vf_guide_detail_container.showNext()
+
+                        //进入实名认证页面
+                        MobclickAgent.onEvent(this, "10041_real_name");
+
                         tv_guide_detail_privacy.visibility = View.VISIBLE
                         tv_guide_detail_service.visibility = View.VISIBLE
 
@@ -3099,8 +3045,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             // 这里需要
 
 
-            XXPermissions.with(this)
-                .permission(Permission.CAMERA)
+            XXPermissions.with(this).permission(Permission.CAMERA)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
                         val intent =
@@ -3156,10 +3101,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     // key值为保存文件名，试用固定的几种格式来命名
 
                     val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID,
-                            "default")
-                    }",
-                        FileUtils.getFileName(mPhotoPath), file)
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", FileUtils.getFileName(mPhotoPath), file)
 
                     Log.i("guo", FileUtils.getFileName(mPhotoPath))
 
@@ -3446,8 +3389,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 chooseJob = true
 
-                tv_guide_income_job.text =
-                    "${jobFirstList[jobFirst]}-${jobSecondList[jobSecond]}"
+                tv_guide_income_job.text = "${jobFirstList[jobFirst]}-${jobSecondList[jobSecond]}"
 
                 tv_guide_income_job.setTextColor(Color.parseColor("#0F0F0F"))
 
@@ -4109,13 +4051,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     .openGallery(SelectMimeType.TYPE_IMAGE)
                     .setImageEngine(GlideEngine.createGlideEngine())
                     .setSelectionMode(SelectModeConfig.SINGLE)
-                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                    .setImageSpanCount(3)
-                    .isDisplayCamera(true)
-                    .isPreviewImage(true)
-                    .isEmptyResultReturn(true)
-                    .setLanguage(LanguageConfig.CHINESE)
-                    .setSelectorUIStyle(selectorStyle)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                    .isDisplayCamera(true).isPreviewImage(true).isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                         override fun onResult(result: ArrayList<LocalMedia>?) {
 
@@ -4140,8 +4078,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 dismiss()
 
-                XXPermissions.with(this@DetailInfoActivity)
-                    .permission(Permission.CAMERA)
+                XXPermissions.with(this@DetailInfoActivity).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
@@ -4157,10 +4094,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                     intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                                     val authority = context.packageName.toString() + ".fileProvider"
-                                    val contentUri: Uri =
-                                        FileProvider.getUriForFile(context,
-                                            authority,
-                                            tempPhotoFile)
+                                    val contentUri: Uri = FileProvider.getUriForFile(context,
+                                        authority,
+                                        tempPhotoFile)
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
                                 } else {
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -4219,8 +4155,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 isCamera = true
                 dismiss()
 
-                XXPermissions.with(this@DetailInfoActivity)
-                    .permission(Permission.CAMERA)
+                XXPermissions.with(this@DetailInfoActivity).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
@@ -4266,13 +4201,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     .openGallery(SelectMimeType.TYPE_IMAGE)
                     .setImageEngine(GlideEngine.createGlideEngine())
                     .setSelectionMode(SelectModeConfig.SINGLE)
-                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                    .setImageSpanCount(3)
-                    .isDisplayCamera(true)
-                    .isPreviewImage(true)
-                    .isEmptyResultReturn(true)
-                    .setLanguage(LanguageConfig.CHINESE)
-                    .setSelectorUIStyle(selectorStyle)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                    .isDisplayCamera(true).isPreviewImage(true).isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                         override fun onResult(result: ArrayList<LocalMedia>) {
 

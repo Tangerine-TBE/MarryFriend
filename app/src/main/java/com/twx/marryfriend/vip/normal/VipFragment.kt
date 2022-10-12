@@ -32,6 +32,7 @@ import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.vip.VipActivity
 import com.twx.marryfriend.vip.adapter.ToolAdapter
 import com.twx.marryfriend.vip.adapter.VipBannerAdapter
+import com.umeng.analytics.MobclickAgent
 import com.youth.banner.Banner
 import com.youth.banner.config.IndicatorConfig
 import com.youth.banner.indicator.CircleIndicator
@@ -116,6 +117,45 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
     private fun initData() {
 
+        // 收件箱
+        // 消息发送
+        // 高级搜索
+        // 查看更多嘉宾，多加10个
+        // 突出显示消息
+        // 谁看过我
+        // 谁喜欢我
+
+        when (item) {
+            1 -> {
+
+            }
+            2 -> {
+                //消息页面点击发送,开通会员
+                MobclickAgent.onEvent(mContext, "60008_chat_send_goto_vip");
+            }
+            3 -> {
+                //搜索高级资料,开通会员
+                MobclickAgent.onEvent(mContext, "60000_search_goto_vip");
+            }
+            4 -> {
+                //首页推荐次数用完,开通会员
+                MobclickAgent.onEvent(mContext, "60001_recommend_more_goto_vip");
+            }
+            5 -> {
+                //聊天页面,置顶功能,开通会员
+                MobclickAgent.onEvent(mContext, "60010_chat_message_message_topping");
+            }
+            6 -> {
+
+            }
+            7 -> {
+                //查看谁喜欢我,开通会员
+                MobclickAgent.onEvent(mContext, "60002_who_like_me_goto_vip");
+            }
+
+        }
+
+
         banner_normal_container.currentItem = item
 
         mVipPriceList.add("258")
@@ -173,6 +213,10 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
             if (mPay == "WX") {
                 ToastUtils.showShort("暂不支持微信支付")
             } else {
+
+                //点击开通佳偶会员
+                MobclickAgent.onEvent(mContext, "60011_open_jiaou_member");
+
                 doAliPay()
             }
         }
@@ -222,10 +266,9 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
         try {
             val packageManager: PackageManager = requireActivity().packageManager
             //注意此处为ApplicationInfo 而不是 ActivityInfo,因为友盟设置的meta-data是在application标签中，而不是某activity标签中，所以用ApplicationInfo
-            val applicationInfo: ApplicationInfo = packageManager.getApplicationInfo(
-                requireActivity().packageName,
-                PackageManager.GET_META_DATA
-            )
+            val applicationInfo: ApplicationInfo =
+                packageManager.getApplicationInfo(requireActivity().packageName,
+                    PackageManager.GET_META_DATA)
             if (applicationInfo.metaData != null) {
                 channelName =
                     java.lang.String.valueOf(applicationInfo.metaData.get("UMENG_CHANNEL"))
@@ -281,27 +324,57 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
             val status = result.resultStatus
             when (result.resultStatus) {
                 "9000" -> {
+
+                    //开通佳偶会员成功
+                    MobclickAgent.onEvent(mContext, "60012_open_jiaou_member_success");
+
                     ToastUtils.showShort("用户支付成功")
                     doUpdate()
                 }
                 "6001" -> {
+
+                    //取消开通佳偶会员
+                    MobclickAgent.onEvent(mContext, "60014_open_jiaou_member_cancel");
+
                     ll_vip_normal_loading?.visibility = View.GONE
                     ToastUtils.showShort("用户取消支付")
                 }
                 "6002" -> {
+
+                    //开通佳偶会员失败
+                    MobclickAgent.onEvent(mContext, "60013_open_jiaou_member_fail");
+
                     ll_vip_normal_loading?.visibility = View.GONE
                     ToastUtils.showShort("网络连接出错")
                 }
                 "4000" -> {
+
+                    //开通佳偶会员失败
+                    MobclickAgent.onEvent(mContext, "60013_open_jiaou_member_fail");
+
                     ll_vip_normal_loading?.visibility = View.GONE
                     ToastUtils.showShort("订单支付失败")
                 }
                 else -> {
+
+                    //开通佳偶会员失败
+                    MobclickAgent.onEvent(mContext, "60013_open_jiaou_member_fail");
+
                     ll_vip_normal_loading?.visibility = View.GONE
 //                    ToastUtils.showShort("支付失败，请稍后再试")
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MobclickAgent.onResume(mContext)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        MobclickAgent.onPause(mContext)
     }
 
     override fun onLoading() {
