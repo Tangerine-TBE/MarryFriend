@@ -18,8 +18,6 @@ import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 
 object UserInfo :ILoginListener{
-    private const val INTERDICTION_KEY="INTERDICTION_KEY"
-    private val gson by lazy { Gson() }
     init {
         ImMessageManager.newMessageLiveData.observeForever { list ->
             list?.forEach {
@@ -30,14 +28,14 @@ object UserInfo :ILoginListener{
                         if (body.event()==CustomEvent.interdi_pass.code){
                             iLog("收到封禁消息，${body.params}")
                             val interdictionBean=InterdictionBean().apply {
-                                this.interdictionTime=body.params.get("expire")
-                                this.isPermanentInterdiction=body.params.get("permanent")=="1"
+                                this.blacklist_close_time=body.params.get("expire")
+                                this.blacklist_permanent=body.params.get("permanent")?.toIntOrNull()?:0
+                                this.blacklist_status=body.params.get("blacklist_status")?.toIntOrNull()?:0
                             }
-
-                            SPUtil.instance.putString(INTERDICTION_KEY,gson.toJson(interdictionBean))
+                            InterdictionBean.putInterdictionState(interdictionBean)
                         }else if (body.event()==CustomEvent.interdi_fail.code){
                             iLog("收到解封消息")
-                            SPUtil.instance.remove(INTERDICTION_KEY)
+                            InterdictionBean.putInterdictionState(null)
                         }
                     }
                 }
@@ -57,8 +55,7 @@ object UserInfo :ILoginListener{
     }
 
     fun isInterdiction():Boolean{
-        val s=SPUtil.instance.getString(INTERDICTION_KEY,null)?:return false
-        return gson.fromJson(s,InterdictionBean::class.java)?.isInterdiction()?:false
+        return InterdictionBean.getInterdictionState()
     }
 
     fun updateUserInfo(){
