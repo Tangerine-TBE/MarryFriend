@@ -20,7 +20,9 @@ class InterdictionBean {
         private fun getInterdictionBean():InterdictionBean?{
             val str=SPUtil.instance.getString(INTERDICTION_KEY)
             return if (!str.isNullOrBlank()){
-                gson.fromJson(str,InterdictionBean::class.java)
+                gson.fromJson(str,InterdictionBean::class.java)?.also {
+                    currentInterDiction=it
+                }
             }else{
                 null
             }
