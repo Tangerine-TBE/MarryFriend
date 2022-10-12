@@ -645,7 +645,7 @@
                                 android:layout_marginStart="5dp"
                                 android:layout_marginTop="17dp"
                                 android:layout_toEndOf="@id/realNameIcon"
-                                android:text="实名已认证"
+                                tools:text="未认证"
                                 android:textColor="#101010"
                                 android:textSize="13sp" />
                             <TextView
@@ -654,7 +654,7 @@
                                 android:layout_below="@id/realNameTitle"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="8dp"
-                                android:text="已认证居民身份证：4415************，用户年龄属实"
+                                tools:text="已认证居民身份证：4415************，用户年龄属实"
                                 android:textColor="#101010"
                                 android:textSize="13sp"
                                 android:layout_width="wrap_content"
@@ -683,7 +683,7 @@
                                 android:layout_marginTop="17dp"
                                 android:layout_marginStart="5dp"
                                 android:layout_toEndOf="@id/headPorIcon"
-                                android:text="头像已认证"
+                                tools:text="头像已认证"
                                 android:textColor="#101010"
                                 android:textSize="13sp" />
 

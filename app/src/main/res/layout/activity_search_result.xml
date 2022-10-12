@@ -1,35 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<ViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="#FFF5F5F5"
+    android:id="@+id/viewSwitch"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <com.xyzz.myutils.action.ActionBar
-        app:title="搜索结果"
-        android:background="#FFFFFFFF"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <com.scwang.smart.refresh.layout.SmartRefreshLayout
-        android:id="@+id/searchResultRefreshLayout"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/contentView"
+        android:orientation="vertical"
+        android:background="#FFF5F5F5"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <com.scwang.smart.refresh.header.ClassicsHeader
+        <com.xyzz.myutils.action.ActionBar
+            app:title="搜索结果"
+            android:background="#FFFFFFFF"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <ViewSwitcher
-            android:id="@+id/contentViw"
+            android:layout_height="wrap_content"/>
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/searchResultRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <include layout="@layout/item_search_empty_data"/>
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/searchResultRecyclerView"
+            <com.scwang.smart.refresh.header.ClassicsHeader
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </ViewSwitcher>
-        <com.scwang.smart.refresh.footer.ClassicsFooter
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-</androidx.appcompat.widget.LinearLayoutCompat>
+                android:layout_height="wrap_content" />
+            <ViewSwitcher
+                android:id="@+id/contentViw"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <include layout="@layout/item_search_empty_data"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/searchResultRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </ViewSwitcher>
+            <com.scwang.smart.refresh.footer.ClassicsFooter
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <com.twx.marryfriend.recommend.widget.MutualLikeView
+        android:id="@+id/mutualView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</ViewSwitcher>
