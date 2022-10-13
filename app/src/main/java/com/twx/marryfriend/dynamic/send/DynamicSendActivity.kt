@@ -1062,28 +1062,19 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                         } else {
 
-
                             val width = VideoUtil.getLocalVideoWidth(targetPath)
                             val height = VideoUtil.getLocalVideoHeight(targetPath)
 
 
-                            Log.i("guo", "width : $width")
-                            Log.i("guo", "Height : $height")
+                            val widthD = (width * 0.08).toInt()
+                            val heightD = (height * 0.08).toInt()
 
-
-                            val vga = "${(width * 0.8).toInt()}x${(height * 0.8).toInt()}"
+                            val vga = "${widthD * 10}x${heightD * 10}"
 
 
                             val targetZipPath =
                                 externalCacheDir.toString() + File.separator + "Zip" + FileUtils.getFileNameNoExtension(
                                     targetPath) + ".mp4"
-
-
-                            Log.i("guo", "targetPath : $targetPath")
-                            Log.i("guo", "vga  ： $vga")
-                            Log.i("guo", "targetZipPath : $targetZipPath")
-
-                            //  473*1049
 
                             doZipVideo(targetPath, vga, targetZipPath)
 
