@@ -646,6 +646,50 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         tv_guide_detail_skip.setOnClickListener {
             ToastUtils.showShort("跳过整个流程，前往主页")
 
+
+            when (vf_guide_detail_container.displayedChild) {
+                0 -> {
+                    //教育信息页点击跳过
+                    MobclickAgent.onEvent(this, "10019_education_skip");
+                }
+                1 -> {
+                    //职业收入情况页面点击跳过
+                    MobclickAgent.onEvent(this, "10024_occupation_skip");
+                }
+                2 -> {
+                    //居住城市和家乡页面点击跳过
+                    MobclickAgent.onEvent(this, "10027_hometown_skip");
+                }
+                3 -> {
+                    //我的恋爱目标页面点击跳过
+                    MobclickAgent.onEvent(this, "10030_love_goal_skip");
+                }
+                4 -> {
+                    //上传头像页面点击跳过
+                    MobclickAgent.onEvent(this, "10033_upload_avatar_skip");
+                }
+                5 -> {
+                    //我的生活页面点击跳过
+                    MobclickAgent.onEvent(this, "10036_my_life_skip");
+                }
+                6 -> {
+                    //关于我页面点击跳过
+                    MobclickAgent.onEvent(this, "10039_about_me_skip");
+                }
+                7 -> {
+                    //我的爱好页面点击跳过
+                    MobclickAgent.onEvent(this, "10042_hobby_skip");
+                }
+                8 -> {
+                    //我心目中的ta页面点击跳过
+                    MobclickAgent.onEvent(this, "10045_hobby_skip");
+                }
+                9 -> {
+                    //实名认证页面点击跳过
+                    MobclickAgent.onEvent(this, "10048_real_name_skip");
+                }
+            }
+
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
 
             startActivity(Intent(this, MainActivity::class.java))
@@ -2883,11 +2927,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
-                        //填写关于我,点击下一步
+                        //填写关于我_点击下一步
                         MobclickAgent.onEvent(this, "10040_about_me_next");
 
                         vf_guide_detail_container.showNext()
 
+                        //进入我的爱好页面
+                        MobclickAgent.onEvent(this, "10041_hobby");
 
 
                         tsb_guide_detail_guide.setPercent(0.73f, "73")
@@ -2917,11 +2963,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
-
+                        //填写我的爱好_点击下一步
+                        MobclickAgent.onEvent(this, "10043_hobby_next");
 
                         vf_guide_detail_container.showNext()
 
-
+                        //进入我心目中的ta页面
+                        MobclickAgent.onEvent(this, "10044_hobby");
 
                         tsb_guide_detail_guide.setPercent(0.88f, "88")
                         SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
@@ -2949,10 +2997,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
                         }
 
+                        //填写我心目中的ta_点击下一步
+                        MobclickAgent.onEvent(this, "10046_hobby_next");
+
                         vf_guide_detail_container.showNext()
 
                         //进入实名认证页面
-                        MobclickAgent.onEvent(this, "10041_real_name");
+                        MobclickAgent.onEvent(this, "10047_real_name");
 
                         tv_guide_detail_privacy.visibility = View.VISIBLE
                         tv_guide_detail_service.visibility = View.VISIBLE

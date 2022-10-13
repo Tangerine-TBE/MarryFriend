@@ -7,12 +7,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class SortMapUtil {
 
 
     /**
      * 使用 Map按value进行排序
+     *
      * @param oriMap
      * @return
      */
@@ -21,8 +23,7 @@ public class SortMapUtil {
             return null;
         }
         Map<String, String> sortedMap = new LinkedHashMap<String, String>();
-        List<Map.Entry<String, String>> entryList = new ArrayList<Map.Entry<String, String>>(
-                oriMap.entrySet());
+        List<Map.Entry<String, String>> entryList = new ArrayList<Map.Entry<String, String>>(oriMap.entrySet());
         Collections.sort(entryList, new MapValueComparator());
 
         Iterator<Map.Entry<String, String>> iter = entryList.iterator();
@@ -38,11 +39,32 @@ public class SortMapUtil {
         }
 
 
-
-        return stringBuilder+"";
+        return stringBuilder + "";
     }
 
-   public static class  MapValueComparator implements Comparator<Map.Entry<String, String>> {
+    /**
+     * 使用 Map按key进行排序
+     *
+     * @param map
+     * @return
+     */
+    public static String sortMapByKey(Map<String, String> map) {
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        Map<String, String> sortMap = new TreeMap(new MapKeyComparator());
+        sortMap.putAll(map);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String value : sortMap.values()) {
+            stringBuilder.append(value);
+        }
+
+        return stringBuilder + "";
+    }
+
+
+    public static class MapValueComparator implements Comparator<Map.Entry<String, String>> {
 
         @Override
         public int compare(Map.Entry<String, String> me1, Map.Entry<String, String> me2) {
@@ -51,8 +73,14 @@ public class SortMapUtil {
         }
     }
 
-
-
+    public static class MapKeyComparator implements Comparator<String> {
+        @Override
+        public int compare(String o1, String o2) {
+            return o1.compareTo(o2);
+        }
     }
+
+
+}
 
 

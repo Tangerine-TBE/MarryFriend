@@ -127,7 +127,8 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
         when (item) {
             1 -> {
-
+                //消息列表点击收件箱_跳转到开通会员
+                MobclickAgent.onEvent(mContext, "60019_inbox_goto_vip");
             }
             2 -> {
                 //消息页面点击发送,开通会员
@@ -146,7 +147,8 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
                 MobclickAgent.onEvent(mContext, "60010_chat_message_message_topping");
             }
             6 -> {
-
+                //点击谁看过我_跳转到开通会员
+                MobclickAgent.onEvent(mContext, "60020_who_has_seen_me_goto_vip");
             }
             7 -> {
                 //查看谁喜欢我,开通会员

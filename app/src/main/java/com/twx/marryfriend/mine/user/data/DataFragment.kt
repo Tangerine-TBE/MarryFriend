@@ -75,8 +75,8 @@ import kotlin.math.log
 
 
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
-    IDoFaceDetectCallback, IDoUpdateProportionCallback,
-    IDoUpdateGreetInfoCallback, IDoUploadAvatarCallback {
+    IDoFaceDetectCallback, IDoUpdateProportionCallback, IDoUpdateGreetInfoCallback,
+    IDoUploadAvatarCallback {
 
     // 敏感字
     private var banTextList: MutableList<String> = arrayListOf()
@@ -276,33 +276,25 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                Glide.with(requireContext())
-                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
+                Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
                     .placeholder(R.mipmap.icon_avatar_upload_male)
-                    .error(R.mipmap.icon_avatar_upload_male)
-                    .into(iv_user_data_avatar)
+                    .error(R.mipmap.icon_avatar_upload_male).into(iv_user_data_avatar)
             } else {
-                Glide.with(requireContext())
-                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
+                Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT))
                     .placeholder(R.mipmap.icon_avatar_upload_female)
-                    .error(R.mipmap.icon_avatar_upload_female)
-                    .into(iv_user_data_avatar)
+                    .error(R.mipmap.icon_avatar_upload_female).into(iv_user_data_avatar)
             }
             tv_user_data_avatar_check.visibility = View.VISIBLE
         } else {
             if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                    Glide.with(requireContext())
-                        .load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                    Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR))
                         .placeholder(R.mipmap.icon_avatar_upload_male)
-                        .error(R.mipmap.icon_avatar_upload_male)
-                        .into(iv_user_data_avatar)
+                        .error(R.mipmap.icon_avatar_upload_male).into(iv_user_data_avatar)
                 } else {
-                    Glide.with(requireContext())
-                        .load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                    Glide.with(requireContext()).load(SPStaticUtils.getString(Constant.ME_AVATAR))
                         .placeholder(R.mipmap.icon_avatar_upload_female)
-                        .error(R.mipmap.icon_avatar_upload_female)
-                        .into(iv_user_data_avatar)
+                        .error(R.mipmap.icon_avatar_upload_female).into(iv_user_data_avatar)
                 }
                 tv_user_data_avatar_check.visibility = View.GONE
             } else {
@@ -383,21 +375,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         updateVoice()
 
-//        val banBean: BanBean =
-//            GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-//
-//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-//
-//        val y = String(x)
-//        var yy = "{\"data\":$y}"
-//        var aa =
-//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-//
-//        for (i in 0.until(aa.data.size)) {
-//            banTextList.add(aa.data[i])
-//        }
-
-
     }
 
 
@@ -417,63 +394,38 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         client = BosClient(config)
 
 
-        introduceDialog = XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(IntroduceDialog(requireContext()))
+        introduceDialog =
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IntroduceDialog(requireContext()))
 
     }
 
     private fun initEvent() {
 
-
-//        // 此时需要验证是否有头像
-//        if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "" ||
-//            SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != ""
-//        ) {
-//            showNextDialog(0)
-//        } else {
-//            XPopup.Builder(context)
-//                .dismissOnTouchOutside(false)
-//                .dismissOnBackPressed(false)
-//                .isDestroyOnDismiss(true)
-//                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-//                .asCustom(AvatarDialog(requireContext()))
-//                .show()
-//        }
-
+        showFirstDialog()
 
         iv_user_data_avatar.setOnClickListener {
 
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(PhotoGuideDialog(requireContext()))
-                .show()
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(PhotoGuideDialog(requireContext())).show()
 
         }
 
         rl_user_data_voice_non.setOnClickListener {
 
-            XXPermissions.with(context)
-                .permission(Permission.RECORD_AUDIO)
+            XXPermissions.with(context).permission(Permission.RECORD_AUDIO)
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(
                         permissions: MutableList<String>?,
                         all: Boolean,
                     ) {
-                        XPopup.Builder(context)
-                            .dismissOnTouchOutside(false)
-                            .dismissOnBackPressed(false)
-                            .isDestroyOnDismiss(true)
+                        XPopup.Builder(context).dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                            .asCustom(VoiceDialog(requireContext()))
-                            .show()
+                            .asCustom(VoiceDialog(requireContext())).show()
                     }
 
                     override fun onDenied(
@@ -488,21 +440,17 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         rl_user_data_voice.setOnClickListener {
 
-            XXPermissions.with(context)
-                .permission(Permission.RECORD_AUDIO)
+            XXPermissions.with(context).permission(Permission.RECORD_AUDIO)
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(
                         permissions: MutableList<String>?,
                         all: Boolean,
                     ) {
-                        XPopup.Builder(context)
-                            .dismissOnTouchOutside(false)
-                            .dismissOnBackPressed(false)
-                            .isDestroyOnDismiss(true)
+                        XPopup.Builder(context).dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                            .asCustom(VoiceDialog(requireContext()))
-                            .show()
+                            .asCustom(VoiceDialog(requireContext())).show()
                     }
 
                     override fun onDenied(
@@ -534,19 +482,17 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                     Log.i("guo", "播放")
 
-                    playVoice(videoUrl,
-                        {
-                            //playAnim
+                    playVoice(videoUrl, {
+                        //playAnim
 
-                            isPause = false
-                            iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_pause)
+                        isPause = false
+                        iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_pause)
 
 //                        startCurrentDownTimer((SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()))
-                        },
-                        {
-                            isPause = true
+                    }, {
+                        isPause = true
 
-                            iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
+                        iv_user_data_voice.setImageResource(R.drawable.ic_data_voice_play)
 
 //                            val time = SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toLong()
 //                            var formatTime = if (time.div(1000) / 60 >= 10) {
@@ -565,12 +511,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //
 //                            tv_user_data_voice.text = formatTime
 
-                        },
-                        {
-                            isPause = true
+                    }, {
+                        isPause = true
 
-                            ToastUtils.showShort("播放错误")
-                        })
+                        ToastUtils.showShort("播放错误")
+                    })
                 }
 
             } else {
@@ -601,24 +546,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //            introduceDialog!!.show()
 
 
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(IntroduceDialog(requireContext()))
-                .show()
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IntroduceDialog(requireContext())).show()
         }
 
         ll_user_data_ideal.setOnClickListener {
 
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(IdealDialog(requireContext()))
-                .show()
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(IdealDialog(requireContext())).show()
 
         }
 
@@ -998,9 +935,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                 // 想不想要孩子
                                 showWantChildDialog()
                             } else {
-                                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                                        "") == ""
-                                ) {
+                                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                                     // 职业
                                     showJobDialog()
                                 } else {
@@ -1058,9 +993,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 想不想要孩子
                             showWantChildDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                                    "") == ""
-                            ) {
+                            if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                                 // 职业
                                 showJobDialog()
                             } else {
@@ -1078,9 +1011,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             // 籍贯
                                             showHomeDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                                    0) == 0
-                                            ) {
+                                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                                                 // 体重
                                                 showWeightDialog()
                                             } else {
@@ -1258,9 +1189,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                 // 想不想要孩子
                                 showWantChildDialog()
                             } else {
-                                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                                        "") == ""
-                                ) {
+                                if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                                     // 职业
                                     showJobDialog()
                                 } else {
@@ -1316,9 +1245,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 想不想要孩子
                             showWantChildDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                                    "") == ""
-                            ) {
+                            if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                                 // 职业
                                 showJobDialog()
                             } else {
@@ -1336,9 +1263,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                             // 籍贯
                                             showHomeDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                                    0) == 0
-                                            ) {
+                                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                                                 // 体重
                                                 showWeightDialog()
                                             } else {
@@ -1369,9 +1294,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 想不想要孩子
                         showWantChildDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                                "") == ""
-                        ) {
+                        if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                             // 职业
                             showJobDialog()
                         } else {
@@ -1389,15 +1312,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         // 籍贯
                                         showHomeDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                                0) == 0
-                                        ) {
+                                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                                             // 体重
                                             showWeightDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                    10) == 10
-                                            ) {
+                                            if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                                                 // 体型
                                                 showBodyDialog()
                                             } else {
@@ -1417,9 +1336,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 想不想要孩子
                     showWantChildDialog()
                 } else {
-                    if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME,
-                            "") == ""
-                    ) {
+                    if (SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "") == "") {
                         // 职业
                         showJobDialog()
                     } else {
@@ -1431,21 +1348,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                 // 购车情况
                                 showCarDialog()
                             } else {
-                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
-                                        "") == ""
-                                ) {
+                                if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") == "") {
                                     // 籍贯
                                     showHomeDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                            0) == 0
-                                    ) {
+                                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                                         // 体重
                                         showWeightDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                                10) == 10
-                                        ) {
+                                        if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                                             // 体型
                                             showBodyDialog()
                                         } else {
@@ -1472,21 +1383,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             // 购车情况
                             showCarDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
-                                    "") == ""
-                            ) {
+                            if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") == "") {
                                 // 籍贯
                                 showHomeDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                        0) == 0
-                                ) {
+                                if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                                     // 体重
                                     showWeightDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                            10) == 10
-                                    ) {
+                                    if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                                         // 体型
                                         showBodyDialog()
                                     } else {
@@ -1508,21 +1413,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // 购车情况
                         showCarDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
-                                "") == ""
-                        ) {
+                        if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") == "") {
                             // 籍贯
                             showHomeDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                    0) == 0
-                            ) {
+                            if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                                 // 体重
                                 showWeightDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                        10) == 10
-                                ) {
+                                if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                                     // 体型
                                     showBodyDialog()
                                 } else {
@@ -1539,21 +1438,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 购车情况
                     showCarDialog()
                 } else {
-                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME,
-                            "") == ""
-                    ) {
+                    if (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "") == "") {
                         // 籍贯
                         showHomeDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                                0) == 0
-                        ) {
+                        if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                             // 体重
                             showWeightDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                    10) == 10
-                            ) {
+                            if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                                 // 体型
                                 showBodyDialog()
                             } else {
@@ -1569,15 +1462,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 籍贯
                     showHomeDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT,
-                            0) == 0
-                    ) {
+                    if (SPStaticUtils.getInt(Constant.ME_WEIGHT, 0) == 0) {
                         // 体重
                         showWeightDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.ME_BODY,
-                                10) == 10
-                        ) {
+                        if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                             // 体型
                             showBodyDialog()
                         } else {
@@ -1592,9 +1481,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     // 体重
                     showWeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.ME_BODY,
-                            10) == 10
-                    ) {
+                    if (SPStaticUtils.getInt(Constant.ME_BODY, 10) == 10) {
                         // 体型
                         showBodyDialog()
                     } else {
@@ -1849,8 +1736,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         home = when (SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")) {
             "" -> "未填写"
             else -> "${
-                SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME,
-                    "")
+                SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
             }-${SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")}"
 
         }
@@ -1936,54 +1822,81 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         }
 
         for (i in 0.until(moreInfoList.size)) {
-            if (moreInfoList[i] == "未填写") {
+            if (moreInfoList[i] == "未填写" || moreInfoList[i] == "保密") {
                 moreSize++
             }
         }
+
+        Log.i("guo","baseSize:$baseSize")
+        Log.i("guo","moreSize:$moreSize")
 
         var progress = 0
 
         when (baseSize + moreSize) {
             0 -> {
-                progress = 100
+                progress = 70
             }
             2 -> {
-                progress = 90
+                progress = 67
             }
             3 -> {
-                progress = 80
+                progress = 63
             }
             4 -> {
-                progress = 72
+                progress = 58
             }
             5 -> {
-                progress = 68
+                progress = 51
             }
             6 -> {
-                progress = 60
+                progress = 44
             }
             7 -> {
-                progress = 53
-            }
-            8 -> {
-                progress = 47
-            }
-            9 -> {
                 progress = 39
             }
+            8 -> {
+                progress = 35
+            }
+            9 -> {
+                progress = 29
+            }
             10 -> {
-                progress = 30
+                progress = 24
             }
             11 -> {
-                progress = 20
+                progress = 21
             }
             12 -> {
-                progress = 10
+                progress = 17
             }
             13 -> {
-                progress = 0
+                progress = 11
+            }
+            14 -> {
+                progress = 8
             }
         }
+
+//        if (SPStaticUtils.getString(Constant.ME_INTRODUCE, "") != "") {
+//            progress += 6
+//        }
+//
+//        if (SPStaticUtils.getString(Constant.ME_TA, "") != "") {
+//            progress += 6
+//        }
+//
+//        if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "") != "") {
+//            progress += 6
+//        }
+//
+//        if (SPStaticUtils.getString(Constant.ME_LIFE_PHOTO_ONE, "") != "") {
+//            progress += 6
+//        }
+//
+//        if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "" ||
+//            SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
+//            progress += 6
+//        }
 
         tv_user_data_progress.text = "( 完成$progress% )"
         sb_user_data_progress.progress = progress
@@ -2015,8 +1928,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             mDayList.add(1 + i)
         }
 
-        val defaultYear = 100 - (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
-            Calendar.YEAR) - 1990)
+        val defaultYear =
+            100 - (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(), Calendar.YEAR) - 1990)
 
         if (SPStaticUtils.getInt(Constant.ME_BIRTH_YEAR, defaultYear) != defaultYear) {
 
@@ -2135,13 +2048,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 昵称
     private fun showNameDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(NameDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(NameDialog(requireContext())).show()
     }
 
     // 性别
@@ -2156,188 +2065,120 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //            .show()
 
         if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(SexVerifyDialog(requireContext()))
-                .show()
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(SexVerifyDialog(requireContext())).show()
         } else {
-            XPopup.Builder(context)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(SexNonVerifyDialog(requireContext()))
-                .show()
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(SexNonVerifyDialog(requireContext())).show()
         }
 
     }
 
     // 生日
     private fun showBirthDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(BirthDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(BirthDialog(requireContext())).show()
     }
 
     // 身高
     private fun showHeightDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HeightDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(HeightDialog(requireContext())).show()
     }
 
     // 月收入
     private fun showIncomeDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(IncomeDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(IncomeDialog(requireContext())).show()
     }
 
     // 工作地区
     private fun showWorkPlaceDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(WorkPlaceDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(WorkPlaceDialog(requireContext())).show()
     }
 
     // 学历
     private fun showEduDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(EduDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(EduDialog(requireContext())).show()
     }
 
     // 婚况
     private fun showMarryStateDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(MarryStateDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(MarryStateDialog(requireContext())).show()
     }
 
     // 恋爱目标
     private fun showTargetDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(TargetDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(TargetDialog(requireContext())).show()
     }
 
     // 有没有孩子
     private fun showHaveChildDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HaveChildDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(HaveChildDialog(requireContext())).show()
     }
 
     // 想不想要孩子
     private fun showWantChildDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(WantChildDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(WantChildDialog(requireContext())).show()
     }
 
     // 职业
     private fun showJobDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(JobDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(JobDialog(requireContext())).show()
     }
 
     // 购房情况
     private fun showHouseDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HouseDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(HouseDialog(requireContext())).show()
     }
 
     // 购车情况
     private fun showCarDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(CarDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(CarDialog(requireContext())).show()
     }
 
     // 籍贯
     private fun showHomeDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HomeDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(HomeDialog(requireContext())).show()
     }
 
     // 体重
     private fun showWeightDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(WeightDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(WeightDialog(requireContext())).show()
     }
 
     // 体型
     private fun showBodyDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(BodyDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(BodyDialog(requireContext())).show()
     }
 
 
@@ -2364,8 +2205,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 UCrop.of<Any>(source, it) // 长宽比
                     .withAspectRatio(1f, 1f) // 图片大小
                     .withMaxResultSize(512, 512) // 配置参数
-                    .withOptions(options)
-                    .start(it1)
+                    .withOptions(options).start(it1)
             }
         }
 
@@ -2381,7 +2221,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 }
                 // 拍照返回至裁切
                 2 -> {
-                    Log.i("guo","222222222222")
+                    Log.i("guo", "222222222222")
                     val temp = File(mTempPhotoPath)
                     startPhotoCropActivity(Uri.fromFile(temp))
                 }
@@ -2398,8 +2238,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         if (null != resultUri) {
             var bitmap: Bitmap? = null
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver,
-                    resultUri)
+                bitmap =
+                    MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, resultUri)
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
             } catch (e: IOException) {
@@ -2578,33 +2418,32 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
         val ta = SPStaticUtils.getString(Constant.ME_TA, "")
 
-        val baseInfo =
-            " {\"user_sex\":                $sex, " +               // 性别
-                    "\"nick\":              \"$nick\"," +           // 昵称
-                    "\"age\":               $age," +                // 年龄
-                    "\"birthday\":          \"$birthday\"," +       // 出生年月日
-                    "\"height\":            $height," +             // 身高厘米
-                    "\"school_name\":       \"$school\"," +         // 学校名字
-                    "\"education\":         $edu," +                // 学历
-                    "\"industry_num\":      $industryCode," +       // 行业编码
-                    "\"industry_str\":      \"$industryName\"," +       // 行业名字
-                    "\"occupation_num\":    $occupationCode," +     // 岗位编码
-                    "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
-                    "\"work_province_num\": \"$province\"," +           // 工作省份编码
-                    "\"work_province_str\": \"$provinceName\"," +           // 工作省份编码
-                    "\"work_city_num\":     \"$cityCode\"," +           // 工作城市编码
-                    "\"work_city_str\":     \"$cityName\"," +           // 工作城市名字
+        val baseInfo = " {\"user_sex\":                $sex, " +               // 性别
+                "\"nick\":              \"$nick\"," +           // 昵称
+                "\"age\":               $age," +                // 年龄
+                "\"birthday\":          \"$birthday\"," +       // 出生年月日
+                "\"height\":            $height," +             // 身高厘米
+                "\"school_name\":       \"$school\"," +         // 学校名字
+                "\"education\":         $edu," +                // 学历
+                "\"industry_num\":      $industryCode," +       // 行业编码
+                "\"industry_str\":      \"$industryName\"," +       // 行业名字
+                "\"occupation_num\":    $occupationCode," +     // 岗位编码
+                "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
+                "\"work_province_num\": \"$province\"," +           // 工作省份编码
+                "\"work_province_str\": \"$provinceName\"," +           // 工作省份编码
+                "\"work_city_num\":     \"$cityCode\"," +           // 工作城市编码
+                "\"work_city_str\":     \"$cityName\"," +           // 工作城市名字
 
-                    "\"hometown_province_num\": \"$homeProvince\"," +           // 家乡省份编码
-                    "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
-                    "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
-                    "\"hometown_city_str\":     \"$homeCityName\"," +           // 家乡城市名字
+                "\"hometown_province_num\": \"$homeProvince\"," +           // 家乡省份编码
+                "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
+                "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
+                "\"hometown_city_str\":     \"$homeCityName\"," +           // 家乡城市名字
 
-                    "\"salary_range\":      $income," +             // 月薪范围
-                    "\"marry_had\":         $marryState," +         // 当前婚育状况
-                    "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
-                    "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
-                    " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
+                "\"salary_range\":      $income," +             // 月薪范围
+                "\"marry_had\":         $marryState," +         // 当前婚育状况
+                "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
+                "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
+                " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
 
 
         Log.i("guo", "baseInfo : ${baseInfo}")
@@ -2633,22 +2472,21 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val wantChild = SPStaticUtils.getInt(Constant.ME_WANT_CHILD, 0)
         val marryTime = SPStaticUtils.getInt(Constant.ME_MARRY_TIME, 0)
 
-        val moreInfo =
-            " {\"weight\":       $weight," +            // 体重公斤
-                    "\"figure_nan\":       $body," +          // 身材男
-                    "\"figure_nv\":       $body," +           // 身材女
-                    "\"blood_type\":   \"$blood\"," +         // 血型，不作筛选条
-                    "\"constellation\":   \"$constellation\"," +     // 星座，不作筛选条件
-                    "\"nationality\":   \"$nationality\"," +       // 民族，不作筛选条件
-                    "\"love_target\":       $loveTarget," +       // 恋爱目标
-                    "\"target_show\":       $loveTargetShow," +       // 是否展示目标
-                    "\"buy_car\":       $car," +           // 是否买车
-                    "\"buy_house\":       $house," +         // 是否买房
-                    "\"is_smoking\":       $smoke," +        // 是否抽烟
-                    "\"is_drinking\":       $drink," +       // 是否喝酒
-                    "\"child_had\":       $haveChild," +         // 是否有娃
-                    "\"want_child\":       $wantChild," +        // 想要生娃
-                    "\"marry_time\":    $marryTime}"  // 想结婚时间
+        val moreInfo = " {\"weight\":       $weight," +            // 体重公斤
+                "\"figure_nan\":       $body," +          // 身材男
+                "\"figure_nv\":       $body," +           // 身材女
+                "\"blood_type\":   \"$blood\"," +         // 血型，不作筛选条
+                "\"constellation\":   \"$constellation\"," +     // 星座，不作筛选条件
+                "\"nationality\":   \"$nationality\"," +       // 民族，不作筛选条件
+                "\"love_target\":       $loveTarget," +       // 恋爱目标
+                "\"target_show\":       $loveTargetShow," +       // 是否展示目标
+                "\"buy_car\":       $car," +           // 是否买车
+                "\"buy_house\":       $house," +         // 是否买房
+                "\"is_smoking\":       $smoke," +        // 是否抽烟
+                "\"is_drinking\":       $drink," +       // 是否喝酒
+                "\"child_had\":       $haveChild," +         // 是否有娃
+                "\"want_child\":       $wantChild," +        // 想要生娃
+                "\"marry_time\":    $marryTime}"  // 想结婚时间
 
         Log.i("guo", "moreInfo ； $moreInfo")
 
@@ -2668,11 +2506,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         Log.i("guo", "voice_long : $voiceLong")
 
         val greetInfo =
-            " {\"user_sex\":                    $sex, " +
-                    "\"voice_url\":           \"$voiceUrl\"," +
-                    "\"voice_long\":          \"$voiceLong\"," +
-                    "\"voice_name\":          \"$voiceName\"," +
-                    " \"zhaohuyu_content\":   \"$greet\"}"
+            " {\"user_sex\":                    $sex, " + "\"voice_url\":           \"$voiceUrl\"," + "\"voice_long\":          \"$voiceLong\"," + "\"voice_name\":          \"$voiceName\"," + " \"zhaohuyu_content\":   \"$greet\"}"
 
         return greetInfo
 
@@ -2754,10 +2588,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 // key值为保存文件名，试用固定的几种格式来命名
 
                 val putObjectFromFileResponse = client.putObject("user${
-                    SPStaticUtils.getString(Constant.USER_ID,
-                        "default")
-                }",
-                    FileUtils.getFileName(mPhotoPath), file)
+                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                }", FileUtils.getFileName(mPhotoPath), file)
 
                 Log.i("guo", FileUtils.getFileName(mPhotoPath))
 
@@ -2868,17 +2700,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 animationStyle.setActivityExitAnimation(R.anim.ps_anim_down_out)
                 selectorStyle.windowAnimationStyle = animationStyle
 
-                PictureSelector.create(context)
-                    .openGallery(SelectMimeType.TYPE_IMAGE)
+                PictureSelector.create(context).openGallery(SelectMimeType.TYPE_IMAGE)
                     .setImageEngine(GlideEngine.createGlideEngine())
                     .setSelectionMode(SelectModeConfig.SINGLE)
-                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                    .setImageSpanCount(3)
-                    .isDisplayCamera(true)
-                    .isPreviewImage(true)
-                    .isEmptyResultReturn(true)
-                    .setLanguage(LanguageConfig.CHINESE)
-                    .setSelectorUIStyle(selectorStyle)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                    .isDisplayCamera(true).isPreviewImage(true).isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                         override fun onResult(result: ArrayList<LocalMedia>?) {
 
@@ -2905,8 +2732,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 dismiss()
 
-                XXPermissions.with(context)
-                    .permission(Permission.CAMERA)
+                XXPermissions.with(context).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
@@ -2914,7 +2740,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             all: Boolean,
                         ) {
 
-                            if (all){
+                            if (all) {
                                 val tempPhotoFile: File = File(mTempPhotoPath)
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                                 // 如果在Android7.0以上,使用FileProvider获取Uri
@@ -2931,7 +2757,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                                         Uri.fromFile(tempPhotoFile))
                                 }
                                 startActivityForResult(intent, 2)
-                            }else{
+                            } else {
                                 ToastUtils.showShort("请授予应用相关权限")
                             }
 
@@ -2966,13 +2792,9 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
                 dismiss()
 
-                XPopup.Builder(context)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(PhotoGuideDialog(requireContext()))
-                    .show()
+                XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(PhotoGuideDialog(requireContext())).show()
 
             }
 
@@ -3229,40 +3051,39 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             }
 
-            timer.onChronometerTickListener =
-                Chronometer.OnChronometerTickListener { chronometer ->
-                    // 如果从开始计时到现在超过了60s
-                    if (chronometer != null) {
-                        if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
-                            ToastUtils.showShort("超过最大时间，自动上传")
-                            Log.i("guo", "超过60s了")
+            timer.onChronometerTickListener = Chronometer.OnChronometerTickListener { chronometer ->
+                // 如果从开始计时到现在超过了60s
+                if (chronometer != null) {
+                    if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
+                        ToastUtils.showShort("超过最大时间，自动上传")
+                        Log.i("guo", "超过60s了")
 
-                            chronometer.stop()
-                            timer.stop()
-                            audioRecorder.stopRecord()
+                        chronometer.stop()
+                        timer.stop()
+                        audioRecorder.stopRecord()
 
-                            Log.i("guo",
-                                "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
 
-                            Log.i("guo",
-                                "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
 
-                            // 存储录音文件的长度
-                            SPStaticUtils.put(Constant.ME_VOICE_LONG,
-                                (SystemClock.elapsedRealtime() - timer.base).toString())
-                            SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+                        // 存储录音文件的长度
+                        SPStaticUtils.put(Constant.ME_VOICE_LONG,
+                            (SystemClock.elapsedRealtime() - timer.base).toString())
+                        SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
 
-                            mode.text = "点击播放"
-                            delete.visibility = View.VISIBLE
-                            confirm.visibility = View.VISIBLE
-                            recordMode = "listen"
-                            state.visibility = View.VISIBLE
-                            animation.visibility = View.GONE
-                            state.setImageResource(R.drawable.ic_record_play)
+                        mode.text = "点击播放"
+                        delete.visibility = View.VISIBLE
+                        confirm.visibility = View.VISIBLE
+                        recordMode = "listen"
+                        state.visibility = View.VISIBLE
+                        animation.visibility = View.GONE
+                        state.setImageResource(R.drawable.ic_record_play)
 
-                        }
                     }
                 }
+            }
 
             delete.setOnClickListener {
                 delete.visibility = View.GONE
@@ -3279,18 +3100,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
 
                 if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000 < 2) {
-                    Log.i("guo",
-                        "不让    ${
-                            SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
-                        }")
+                    Log.i("guo", "不让    ${
+                        SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
+                    }")
                     ToastUtils.showShort("录音时长需大于2s")
                     isNeedUpdate = false
                     dismiss()
                 } else {
-                    Log.i("guo",
-                        "让    ${
-                            SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
-                        }")
+                    Log.i("guo", "让    ${
+                        SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
+                    }")
 
                     Thread {
 
@@ -3300,13 +3119,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // key值为保存文件名，试用固定的几种格式来命名
 
                         val putObjectFromFileResponse = client.putObject("user${
-                            SPStaticUtils.getString(Constant.USER_ID,
-                                "default")
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
                         }", FileUtils.getFileName(recordPath), file)
 
                         val mVoiceUrl = client.generatePresignedUrl("user${
-                            SPStaticUtils.getString(Constant.USER_ID,
-                                "default")
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
                         }", FileUtils.getFileName(recordPath), -1).toString()
 
                         Log.i("guo", mVoiceUrl)
@@ -3860,16 +3677,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             val defaultYear = 100 - (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
                 Calendar.YEAR) - 1990)
 
-            Log.i("guo",
-                "default 1111 : ${
-                    TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
-                        Calendar.YEAR)
-                }")
-            Log.i("guo",
-                "default 2222 : ${
-                    TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
-                        Calendar.YEAR) - 1990
-                }")
+            Log.i("guo", "default 1111 : ${
+                TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(), Calendar.YEAR)
+            }")
+            Log.i("guo", "default 2222 : ${
+                TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(), Calendar.YEAR) - 1990
+            }")
 
             Log.i("guo", "default 3333 : ${defaultYear}")
 
@@ -4985,8 +4798,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             wheelOne.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_INDUSTRY_PICK, 0),
                 false)
             getJobSecondList(SPStaticUtils.getInt(Constant.ME_INDUSTRY_PICK, 0))
-            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_OCCUPATION_PICK,
-                0),
+            wheelTwo.setSelectedItemPosition(SPStaticUtils.getInt(Constant.ME_OCCUPATION_PICK, 0),
                 false)
 
             // 是否为循环状态
@@ -5057,10 +4869,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 SPStaticUtils.put(Constant.ME_INDUSTRY_CODE, mJobIdFirstList[mFirstJobPosition])
                 SPStaticUtils.put(Constant.ME_INDUSTRY_PICK, mFirstJobPosition)
 
-                SPStaticUtils.put(Constant.ME_OCCUPATION_NAME,
-                    mJobSecondList[mSecondJobPosition])
-                SPStaticUtils.put(Constant.ME_OCCUPATION_CODE,
-                    mJobIdSecondList[mSecondJobPosition])
+                SPStaticUtils.put(Constant.ME_OCCUPATION_NAME, mJobSecondList[mSecondJobPosition])
+                SPStaticUtils.put(Constant.ME_OCCUPATION_CODE, mJobIdSecondList[mSecondJobPosition])
                 SPStaticUtils.put(Constant.ME_OCCUPATION_PICK, mSecondJobPosition)
                 isNeedJump = true
                 dismiss()
@@ -5479,8 +5289,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             wheel.data = mWeightList
 
-            wheel.setSelectedItemPosition((SPStaticUtils.getInt(Constant.ME_WEIGHT) - 40),
-                false)
+            wheel.setSelectedItemPosition((SPStaticUtils.getInt(Constant.ME_WEIGHT) - 40), false)
 
             // 是否为循环状态
             wheel.isCyclic = false

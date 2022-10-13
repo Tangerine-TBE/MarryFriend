@@ -262,7 +262,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
 
             //实名认证成功,进入首页
-            MobclickAgent.onEvent(this, "10043_real_name_success");
+            MobclickAgent.onEvent(this, "10049_real_name_success");
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
