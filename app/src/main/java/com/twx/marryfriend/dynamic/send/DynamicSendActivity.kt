@@ -266,13 +266,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                     ll_emoji_send_container.visibility = View.GONE
                 }
 
-                XPopup.Builder(this@DynamicSendActivity)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
+                XPopup.Builder(this@DynamicSendActivity).dismissOnTouchOutside(false)
+                    .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                     .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(AddChooseDialog(this@DynamicSendActivity))
-                    .show()
+                    .asCustom(AddChooseDialog(this@DynamicSendActivity)).show()
 
             }
 
@@ -282,11 +279,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                 if (imageView != null) {
 
-                    Glide.with(context!!)
-                        .load(data)
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .centerCrop()
-                        .into(imageView)
+                    Glide.with(context!!).load(data).diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .centerCrop().into(imageView)
 
                     if (FileUtils.getFileExtension(data) == "mp4") {
                         if (addVisible) {
@@ -392,14 +386,14 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
             // 保证只执行一次
             var x = true
 
-            XXPermissions.with(this)
-                .permission(Permission.ACCESS_FINE_LOCATION)
+            XXPermissions.with(this).permission(Permission.ACCESS_FINE_LOCATION)
                 .permission(Permission.ACCESS_COARSE_LOCATION)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
 
-                        if (SPStaticUtils.getString("dynamic_send_city", "") != "" &&
-                            SPStaticUtils.getString("dynamic_send_location", "") != ""
+                        if (SPStaticUtils.getString("dynamic_send_city",
+                                "") != "" && SPStaticUtils.getString("dynamic_send_location",
+                                "") != ""
                         ) {
 
                             val locations = SPStaticUtils.getString("dynamic_send_location", "")
@@ -468,8 +462,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
             // 当数据列表中有数据时，当有视频时，直接提示不可选取，当为图片时，则为只选择图片模式
             if (mDataList.isEmpty()) {
                 // 第一个文件不是视频，即选取都为图片
-                XXPermissions.with(this)
-                    .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                XXPermissions.with(this).permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
                             PictureSelector.create(this@DynamicSendActivity)
@@ -477,13 +470,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                 .setImageEngine(GlideEngine.createGlideEngine())
                                 .setLanguage(LanguageConfig.SYSTEM_LANGUAGE)
                                 .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                                .setImageSpanCount(3)
-                                .isPreviewVideo(false)
-                                .isDisplayCamera(true)
-                                .isPreviewImage(true)
-                                .isEmptyResultReturn(true)
-                                .setSelectorUIStyle(selectorStyle)
-                                .setMaxSelectNum(9)
+                                .setImageSpanCount(3).isPreviewVideo(false).isDisplayCamera(true)
+                                .isPreviewImage(true).isEmptyResultReturn(true)
+                                .setSelectorUIStyle(selectorStyle).setMaxSelectNum(9)
                                 .setMaxVideoSelectNum(1)
                                 .forResult(object : OnResultCallbackListener<LocalMedia> {
                                     override fun onResult(result: ArrayList<LocalMedia>) {
@@ -509,8 +498,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
                     ToastUtils.showShort("只可同时上传一个视频文件")
                 } else {
-                    XXPermissions.with(this)
-                        .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                    XXPermissions.with(this).permission(Permission.MANAGE_EXTERNAL_STORAGE)
                         .request(object : OnPermissionCallback {
                             override fun onGranted(
                                 permissions: MutableList<String>?,
@@ -521,14 +509,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                     .setImageEngine(GlideEngine.createGlideEngine())
                                     .setLanguage(LanguageConfig.SYSTEM_LANGUAGE)
                                     .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                                    .setImageSpanCount(3)
-                                    .isPreviewVideo(false)
-                                    .isDisplayCamera(true)
-                                    .isPreviewImage(true)
-                                    .isEmptyResultReturn(true)
-                                    .setSelectorUIStyle(selectorStyle)
-                                    .setMaxSelectNum(9 - mDataList.size)
-                                    .setMaxVideoSelectNum(1)
+                                    .setImageSpanCount(3).isPreviewVideo(false)
+                                    .isDisplayCamera(true).isPreviewImage(true)
+                                    .isEmptyResultReturn(true).setSelectorUIStyle(selectorStyle)
+                                    .setMaxSelectNum(9 - mDataList.size).setMaxVideoSelectNum(1)
                                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                                         override fun onResult(result: ArrayList<LocalMedia>) {
                                             for (i in 0.until(result.size)) {
@@ -561,8 +545,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         iv_send_camera.setOnClickListener {
             ToastUtils.showShort("打开相机")
 
-            XXPermissions.with(this@DynamicSendActivity)
-                .permission(Permission.CAMERA)
+            XXPermissions.with(this@DynamicSendActivity).permission(Permission.CAMERA)
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(
@@ -675,16 +658,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                                 val file = File(mDataList[i])
 
-                                                val bitmap =
-                                                    BitmapUtil.generateBitmap("佳偶婚恋交友",
-                                                        16f,
-                                                        Color.WHITE)
-                                                        ?.let {
-                                                            BitmapUtil.createWaterMarkBitmap(
-                                                                ImageUtils.getBitmap(
-                                                                    file),
-                                                                it)
-                                                        }
+                                                val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友",
+                                                    16f,
+                                                    Color.WHITE)?.let {
+                                                    BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(
+                                                        file), it)
+                                                }
 
                                                 val mPhotoPath =
                                                     this.externalCacheDir.toString() + File.separator + "${
@@ -750,16 +729,13 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                             val coverName = TimeUtils.getNowMills()
 
-                                            val putObjectFromFileResponse =
-                                                client.putObject("user${
-                                                    SPStaticUtils.getString(Constant.USER_ID,
-                                                        "default")
-                                                }", "${coverName}.jpg", File(coverPath))
+                                            val putObjectFromFileResponse = client.putObject("user${
+                                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                                            }", "${coverName}.jpg", File(coverPath))
 
 
                                             coverUrl = client.generatePresignedUrl("user${
-                                                SPStaticUtils.getString(Constant.USER_ID,
-                                                    "default")
+                                                SPStaticUtils.getString(Constant.USER_ID, "default")
                                             }", "${coverName}.jpg", -1).toString()
 
                                             Log.i("guo", "coverUrl : $coverUrl")
@@ -800,24 +776,18 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                         }
 
                     } else {
-                        XPopup.Builder(this)
-                            .dismissOnTouchOutside(false)
-                            .dismissOnBackPressed(false)
-                            .isDestroyOnDismiss(true)
+                        XPopup.Builder(this).dismissOnTouchOutside(false)
+                            .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                            .asCustom(AvatarDialog(this))
-                            .show()
+                            .asCustom(AvatarDialog(this)).show()
                     }
 
                 } else {
                     // 前往认证
-                    XPopup.Builder(this@DynamicSendActivity)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
-                        .isDestroyOnDismiss(true)
+                    XPopup.Builder(this@DynamicSendActivity).dismissOnTouchOutside(false)
+                        .dismissOnBackPressed(false).isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(IdentityDialog(this@DynamicSendActivity))
-                        .show()
+                        .asCustom(IdentityDialog(this@DynamicSendActivity)).show()
                 }
             } else {
                 ToastUtils.showShort("请输入您想发布的动态内容")
@@ -881,17 +851,16 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         val id = SPStaticUtils.getString(Constant.USER_ID, "13")
 
-        val trendInfo =
-            " {\"user_id\":              $id, " +                // 用户id
-                    "\"trends_type\":  \"$trendsType\"," +      // 动态类型
-                    "\"text_content\": \"$content\"," +          // 文字内容
-                    "\"image_url\":    \"$imageUrl\"," +         // 图片地址
-                    "\"video_url\":    \"$videoUrl\"," +         // 视频地址
-                    "\"video_cover\":  \"$coverUrl\"," +       // 视频封面
-                    "\"label\":        \"$label\"," +            // 储备字段，暂时不用
-                    "\"jingdu\":       \"$jingdu\"," +             // 经度
-                    "\"weidu\":        \"$weidu\"," +              // 纬度
-                    "\"position\":     \"$position\"}"           // 定位
+        val trendInfo = " {\"user_id\":              $id, " +                // 用户id
+                "\"trends_type\":  \"$trendsType\"," +      // 动态类型
+                "\"text_content\": \"$content\"," +          // 文字内容
+                "\"image_url\":    \"$imageUrl\"," +         // 图片地址
+                "\"video_url\":    \"$videoUrl\"," +         // 视频地址
+                "\"video_cover\":  \"$coverUrl\"," +       // 视频封面
+                "\"label\":        \"$label\"," +            // 储备字段，暂时不用
+                "\"jingdu\":       \"$jingdu\"," +             // 经度
+                "\"weidu\":        \"$weidu\"," +              // 纬度
+                "\"position\":     \"$position\"}"           // 定位
 
 
         Log.i("guo", "trendInfo :$trendInfo")
@@ -907,8 +876,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         vga: String,
         targetPath: String,
     ) {
-        RxFFmpegInvoke.getInstance()
-            .runCommandRxJava(zipVideo(path, vga, targetPath))
+        RxFFmpegInvoke.getInstance().runCommandRxJava(zipVideo(path, vga, targetPath))
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
                     mVideoZipDialog.setContent(0)
@@ -951,17 +919,13 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             val name = TimeUtils.getNowMills()
 
                             val file = File(targetPath)
-                            val putObjectFromFileResponse =
-                                client.putObject("user${
-                                    SPStaticUtils.getString(Constant.USER_ID,
-                                        "default")
-                                }", "${name}.mp4", file)
+                            val putObjectFromFileResponse = client.putObject("user${
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }", "${name}.mp4", file)
 
-                            val mLifeFirstUrl =
-                                client.generatePresignedUrl("user${
-                                    SPStaticUtils.getString(Constant.USER_ID,
-                                        "default")
-                                }", "${name}.mp4", -1).toString()
+                            val mLifeFirstUrl = client.generatePresignedUrl("user${
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }", "${name}.mp4", -1).toString()
 
                             xlist.add(mLifeFirstUrl)
 
@@ -1000,8 +964,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         picPath: String,
         targetPath: String,
     ) {
-        RxFFmpegInvoke.getInstance()
-            .runCommandRxJava(addWaterMark(path, picPath, targetPath))
+        RxFFmpegInvoke.getInstance().runCommandRxJava(addWaterMark(path, picPath, targetPath))
             .subscribe(object : RxFFmpegSubscriber() {
                 override fun onError(message: String?) {
                     mVideoWaterMarkDialog.setContent(0)
@@ -1042,11 +1005,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                         var size = 0F
 
                         if (FileUtils.getSize(targetPath).contains("MB")) {
-                            size = FileUtils.getSize(targetPath).replace("MB", "")
-                                .toFloat()
+                            size = FileUtils.getSize(targetPath).replace("MB", "").toFloat()
                         } else if (FileUtils.getSize(targetPath).contains("KB")) {
-                            size = FileUtils.getSize(targetPath).replace("KB", "")
-                                .toFloat()
+                            size = FileUtils.getSize(targetPath).replace("KB", "").toFloat()
                             if (size < 1000) {
                                 size = 1F
                             } else {
@@ -1070,17 +1031,13 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                 val name = TimeUtils.getNowMills()
 
                                 val file = File(targetPath)
-                                val putObjectFromFileResponse =
-                                    client.putObject("user${
-                                        SPStaticUtils.getString(Constant.USER_ID,
-                                            "default")
-                                    }", "${name}.mp4", file)
+                                val putObjectFromFileResponse = client.putObject("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${name}.mp4", file)
 
-                                val mLifeFirstUrl =
-                                    client.generatePresignedUrl("user${
-                                        SPStaticUtils.getString(Constant.USER_ID,
-                                            "default")
-                                    }", "${name}.mp4", -1).toString()
+                                val mLifeFirstUrl = client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${name}.mp4", -1).toString()
 
                                 xlist.add(mLifeFirstUrl)
 
@@ -1105,8 +1062,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                         } else {
 
-                            ToastUtils.showShort("视频过大或者过长，需要压缩")
-
 
                             val width = VideoUtil.getLocalVideoWidth(targetPath)
                             val height = VideoUtil.getLocalVideoHeight(targetPath)
@@ -1116,13 +1071,19 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             Log.i("guo", "Height : $height")
 
 
-                            val vga = "${(width * 0.8).toInt()}*${(height * 0.8).toInt()}"
+                            val vga = "${(width * 0.8).toInt()}x${(height * 0.8).toInt()}"
 
-                            Log.i("guo", vga)
 
                             val targetZipPath =
                                 externalCacheDir.toString() + File.separator + "Zip" + FileUtils.getFileNameNoExtension(
                                     targetPath) + ".mp4"
+
+
+                            Log.i("guo", "targetPath : $targetPath")
+                            Log.i("guo", "vga  ： $vga")
+                            Log.i("guo", "targetZipPath : $targetZipPath")
+
+                            //  473*1049
 
                             doZipVideo(targetPath, vga, targetZipPath)
 
@@ -1331,8 +1292,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 // 当数据列表中有数据时，当有视频时，直接提示不可选取，当为图片时，则为只选择图片模式
                 if (mDataList.isEmpty()) {
                     // 第一个文件不是视频，即选取都为图片
-                    XXPermissions.with(context)
-                        .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                    XXPermissions.with(context).permission(Permission.MANAGE_EXTERNAL_STORAGE)
                         .request(object : OnPermissionCallback {
                             override fun onGranted(
                                 permissions: MutableList<String>?,
@@ -1343,14 +1303,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                     .setImageEngine(GlideEngine.createGlideEngine())
                                     .setLanguage(LanguageConfig.SYSTEM_LANGUAGE)
                                     .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                                    .setImageSpanCount(3)
-                                    .isPreviewVideo(false)
-                                    .isDisplayCamera(true)
-                                    .isPreviewImage(true)
-                                    .isEmptyResultReturn(true)
-                                    .setSelectorUIStyle(selectorStyle)
-                                    .setMaxSelectNum(9)
-                                    .setMaxVideoSelectNum(1)
+                                    .setImageSpanCount(3).isPreviewVideo(false)
+                                    .isDisplayCamera(true).isPreviewImage(true)
+                                    .isEmptyResultReturn(true).setSelectorUIStyle(selectorStyle)
+                                    .setMaxSelectNum(9).setMaxVideoSelectNum(1)
                                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                                         override fun onResult(result: ArrayList<LocalMedia>) {
                                             for (i in 0.until(result.size)) {
@@ -1404,8 +1360,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                     if (FileUtils.getFileExtension(mDataList[0]) == "mp4") {
                         ToastUtils.showShort("只可同时上传一个视频文件")
                     } else {
-                        XXPermissions.with(context)
-                            .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                        XXPermissions.with(context).permission(Permission.MANAGE_EXTERNAL_STORAGE)
                             .request(object : OnPermissionCallback {
                                 override fun onGranted(
                                     permissions: MutableList<String>?,
@@ -1416,14 +1371,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                         .setImageEngine(GlideEngine.createGlideEngine())
                                         .setLanguage(LanguageConfig.SYSTEM_LANGUAGE)
                                         .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                                        .setImageSpanCount(3)
-                                        .isPreviewVideo(false)
-                                        .isDisplayCamera(true)
-                                        .isPreviewImage(true)
-                                        .isEmptyResultReturn(true)
-                                        .setSelectorUIStyle(selectorStyle)
-                                        .setMaxSelectNum(9 - mDataList.size)
-                                        .setMaxVideoSelectNum(1)
+                                        .setImageSpanCount(3).isPreviewVideo(false)
+                                        .isDisplayCamera(true).isPreviewImage(true)
+                                        .isEmptyResultReturn(true).setSelectorUIStyle(selectorStyle)
+                                        .setMaxSelectNum(9 - mDataList.size).setMaxVideoSelectNum(1)
                                         .forResult(object : OnResultCallbackListener<LocalMedia> {
                                             override fun onResult(result: ArrayList<LocalMedia>) {
                                                 for (i in 0.until(result.size)) {
@@ -1458,8 +1409,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                 ToastUtils.showShort("打开相机")
 
-                XXPermissions.with(this@DynamicSendActivity)
-                    .permission(Permission.CAMERA)
+                XXPermissions.with(this@DynamicSendActivity).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
@@ -1511,8 +1461,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                 ToastUtils.showShort("打开相机,录制视频")
 
-                XXPermissions.with(this@DynamicSendActivity)
-                    .permission(Permission.CAMERA)
+                XXPermissions.with(this@DynamicSendActivity).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
