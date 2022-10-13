@@ -184,6 +184,9 @@ object ImUserInfoHelper {
     }
 
     fun addFriendInfo(ids:List<String>){
+        if (ids.isEmpty()){
+            return
+        }
         iLog("新增用户资料")
         ids.filter {
             ImUserInfoService.getUserNickName(it)==null

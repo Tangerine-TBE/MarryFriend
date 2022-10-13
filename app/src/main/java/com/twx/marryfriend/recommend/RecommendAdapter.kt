@@ -105,6 +105,7 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
         notifyItemRemoved(index)
 
         notifyItemChanged(0)
+        iLog("移除第一个")
     }
 
     fun addItem(recommendBean: RecommendBean){

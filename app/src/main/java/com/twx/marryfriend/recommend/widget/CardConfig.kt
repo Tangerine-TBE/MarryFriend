@@ -8,7 +8,7 @@ object CardConfig {
     var MAX_SHOW_COUNT = 0
 
     //每一级Scale相差0.05f，translationY相差7dp左右
-    var SCALE_GAP = 0f
+    var SCALE_GAP = 0.05f
     var TRANS_Y_GAP = 0
     fun initConfig(context: Context?) {
         context?:return

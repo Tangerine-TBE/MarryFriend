@@ -108,7 +108,9 @@ class SearchViewModel:ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/idNickSearch"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "id_nick" to text
+            "id_nick" to text,
+            "page" to "${page}"
+            ,"size" to "20"
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -127,7 +129,7 @@ class SearchViewModel:ViewModel() {
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf("page" to "${page}","size" to "20"))
+        })
     }
 
     fun setAgeParameter(intRange:IntRange?){
