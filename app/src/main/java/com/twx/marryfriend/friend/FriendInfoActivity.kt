@@ -197,7 +197,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
             lifecycleScope.launch {
                 isBlock=
                     try {
-                        imChatViewModel.getBlockState(item.getId().toString()).woPingBiTa
+                        imChatViewModel.getOurRelationship(item.getId().toString()).woPingBiTa
                     }catch (e:Exception){
                         false
                     }
@@ -533,6 +533,8 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     }
                 })
             }
+
+            itemInteraction.isVisible=dislike.isVisible||sendFlowers.isVisible||care.isVisible
         }
     }
 
@@ -683,6 +685,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                 if (t.code==200){
                     care.isSelected=true
                     care2.isSelected=true
+                    toast("喜欢成功")
                 }else{
                     if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
                         startActivity(IntentManager.getVipIntent(this@FriendInfoActivity, vipGif = VipGifEnum.MoreView))

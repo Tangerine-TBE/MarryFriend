@@ -834,7 +834,7 @@
                                 android:layout_height="0dp"/>
                             <ImageView
                                 android:id="@+id/care"
-                                android:src="@mipmap/ic_search_like"
+                                android:src="@drawable/selector_search_like"
                                 app:layout_constraintStart_toEndOf="@id/sendFlowers"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
@@ -915,7 +915,7 @@
                     <ImageView
                         android:id="@+id/care2"
                         android:layout_marginTop="24dp"
-                        android:src="@mipmap/ic_search_like"
+                        android:src="@drawable/selector_search_like"
                         android:layout_width="58dp"
                         android:layout_height="58dp"/>
                     <ImageView

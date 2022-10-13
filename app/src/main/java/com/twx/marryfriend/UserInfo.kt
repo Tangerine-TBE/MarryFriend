@@ -16,6 +16,8 @@ import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.wLog
+import org.json.JSONObject
 
 object UserInfo :ILoginListener{
     init {
@@ -42,6 +44,23 @@ object UserInfo :ILoginListener{
 
             }
         }
+        NetworkUtil.addResponseListener {
+            try {
+                val jsonObject=JSONObject(it)
+                if (jsonObject.getInt("code")==456){
+                    val data=jsonObject.getJSONObject("data")
+                    val interdictionBean= InterdictionBean().also {
+                        it.blacklist_status=data.getInt("blacklist_status")
+                        it.blacklist_permanent=data.getInt("blacklist_permanent")
+                        it.blacklist_close_time=data.getString("blacklist_close_time")
+                    }
+                    UserInfo.putInterdiction(interdictionBean)
+                }
+            }catch (e:Exception){
+                wLog(e.stackTraceToString())
+            }
+
+        }
     }
 
     fun getLoginListener():ILoginListener=this
@@ -52,6 +71,10 @@ object UserInfo :ILoginListener{
 
     override fun onLogOut(){
 
+    }
+
+    fun putInterdiction(interdictionBean:InterdictionBean?){
+        InterdictionBean.putInterdictionState(interdictionBean)
     }
 
     fun isInterdiction():Boolean{

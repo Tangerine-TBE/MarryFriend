@@ -132,10 +132,6 @@ object IntentManager {
     }
 
     fun getFocusIntent(context: Context):Intent{
-        return if (UserInfo.isVip()){
-            Intent(context, RecentFocusActivity::class.java)
-        }else{
-            getVipIntent(context)
-        }
+        return Intent(context, RecentFocusActivity::class.java)
     }
 }

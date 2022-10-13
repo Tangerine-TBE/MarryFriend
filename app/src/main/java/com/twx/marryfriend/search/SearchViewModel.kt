@@ -7,6 +7,7 @@ import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.UserInfo.getOriginalUserSex
 import com.twx.marryfriend.UserInfo.reversalSex
 import com.twx.marryfriend.bean.City
+import com.twx.marryfriend.bean.InterdictionBean
 import com.twx.marryfriend.bean.Province
 import com.twx.marryfriend.bean.post.OccupationDataBean
 import com.twx.marryfriend.bean.search.SearchResultBean
@@ -14,6 +15,7 @@ import com.twx.marryfriend.bean.search.SearchResultItem
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.enumeration.*
 import com.xyzz.myutils.NetworkUtil
+import org.json.JSONObject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
@@ -84,11 +86,12 @@ class SearchViewModel:ViewModel() {
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val gson=Gson()
-                val result=gson.fromJson(response,SearchResultBean::class.java).data?.list?: emptyList()
-                coroutine.resume(result)
+                val result=gson.fromJson(response,SearchResultBean::class.java)
+                val list=result.data?.list?: emptyList()
+                coroutine.resume(list)
 
                 //给环信用户预加载头像昵称等信息
-                result.mapNotNull {
+                list.mapNotNull {
                     it.user_id?.toString()
                 }.also {
                     ImUserInfoHelper.addFriendInfo(it)

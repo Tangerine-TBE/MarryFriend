@@ -6,16 +6,25 @@ import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
 import java.util.*
+import kotlin.collections.ArrayList
 
 object NetworkUtil {
     private val volley by lazy { Volley.newRequestQueue(MyUtils.application) }
+    private val responseListener by lazy {
+        ArrayList<(String)->Unit>()
+    }
+    fun addResponseListener(a:(String)->Unit){
+        responseListener.add(a)
+    }
     fun sendPostSecret(url: String, parameter:Map<String,String>, success: (String) -> Unit, fail: (msg: String) -> Unit, notEncryptionParameter:Map<String,String>?=null): StringRequest {
-        iLog(url,"网络,接口")
-        iLog(parameter.toString(),"网络,发出请求,加密参数")
-        iLog(notEncryptionParameter.toString(),"网络,发出请求,未加密参数")
-        val request=object : StringRequest(Method.POST, url, {
-            iLog("${it}","网络,响应")
-            success.invoke(it)
+        iLog("接口:"+url+"\n加密参数:"+parameter.toString()+"\n未加密参数:"+notEncryptionParameter.toString(),"网络,接口")
+        val request=object : StringRequest(Method.POST, url, { response ->
+            iLog("${response}","网络,响应")
+            //456,被封禁
+            success.invoke(response)
+            responseListener.forEach {
+                it.invoke(response)
+            }
         }, {
             wLog("${it.networkResponse?.statusCode?.toString()?:""}","网络,响应")
             fail.invoke(it.networkResponse?.statusCode.toString())
@@ -43,9 +52,12 @@ object NetworkUtil {
     }
 
     fun sendPost(url: String, parameter:Map<String,Any>, success: (String) -> Unit, fail: (msg: String) -> Unit): StringRequest {
-        val request=object : StringRequest(Method.POST, url, {
-            iLog(it,"网络,响应")
-            success.invoke(it)
+        val request=object : StringRequest(Method.POST, url, { response ->
+            iLog(response,"网络,响应")
+            success.invoke(response)
+            responseListener.forEach {
+                it.invoke(response)
+            }
         }, {
             eLog(it.networkResponse?.statusCode?.toString()?:"","网络,响应失败")
             fail.invoke(it.message?:"null")

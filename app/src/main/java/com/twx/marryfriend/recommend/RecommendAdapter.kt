@@ -350,7 +350,7 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
         }
         //我的标签
         holder.getView<View>(R.id.myLabel).apply {
-            holder.getView<ChipGroup>(R.id.baseChipGroup).also { chipGroup ->
+            baseChipGroup.also { chipGroup ->
                 val demandLabel=item.getBaseLabel()
                 for (i in 0 until demandLabel.size-chipGroup.children.filterIsInstance<Chip>().toList().size){
                     val chip=LayoutInflater.from(holder.itemView.context).inflate(R.layout.item_chip_base,chipGroup,false)
@@ -391,7 +391,7 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
         }
 //我的认证
         holder.getView<View>(R.id.myAuthentication).apply {
-            holder.getView<View>(R.id.idCardInfo).isSelected=
+            idCardInfo.isSelected=
             if (item.isRealName()){
                 holder.setText(R.id.realNameDes,item.getRealNameNumber()?:"")
                 true
@@ -399,13 +399,14 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
                 holder.setText(R.id.realNameDes,item.getRealNameNumber()?:"未认证")
                 false
             }
-            holder.getView<View>(R.id.headPorInfo).isSelected=
+            headPorInfo.isSelected=
             if (item.isHeadIdentification()){
-                holder.setText(R.id.headPorDes,"头像是用户本人真实照片，已通过人脸对比。")
+                headPorTitle.text="头像已认证"
+                headPorDes.text=("头像是用户本人真实照片，已通过人脸对比。")
                 true
             }else{
-                holder.setText(R.id.headPorTitle,"未认证")
-                holder.setText(R.id.headPorDes,"未认证。")
+                headPorTitle.text="头像未认证"
+                headPorDes.text=("头像未认证。")
                 false
             }
         }
@@ -424,9 +425,9 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
                         it.video_url?.split(",")?: emptyList()
                     }.filter { it.isNotBlank() }
                     if (position!=0){
-                        holder.getView<PicturePreviewView>(R.id.dynamicPreview).clearImage()
+                        dynamicPreview.clearImage()
                     }else if (imageList.isEmpty()){
-                        holder.getView<View>(R.id.myDynamic).visibility=View.GONE
+                        myDynamic.visibility=View.GONE
                         dynamicText.text=list.firstOrNull()?.text_content.also {
                             if (it.isNullOrBlank()){
                                 this.visibility=View.GONE
@@ -437,7 +438,7 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
                     }
                 }
             }
-            holder.getView<View>(R.id.toMyDynamic).setOnClickListener {view->
+            toMyDynamic.setOnClickListener {view->
                 IntentManager.getDynamicIntent(view.context,item.getId(),item.getUserSex().code,item.getNickname(),item.getHeadImg())?.also {
                     view.context.startActivity(it)
                 }

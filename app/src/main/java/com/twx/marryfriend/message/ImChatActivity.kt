@@ -7,12 +7,14 @@ import android.view.View
 import android.widget.ViewSwitcher
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.KeyboardUtils
 import com.hyphenate.easeim.DemoHelper
 import com.hyphenate.easeim.common.constant.DemoConstant
 import com.hyphenate.easeim.section.chat.activity.ChatActivity
 import com.hyphenate.easeim.section.chat.fragment.ChatFragment
 import com.hyphenate.easeui.constants.EaseConstant
 import com.message.ImUserInfoService
+import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.dialog.ChatSettingDialog
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.launch
@@ -120,16 +122,18 @@ open class ImChatActivity: ChatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-
                 try {
-                    val aaa=imChatViewModel.getBlockState(conversationId?:return@launch)
+                    val aaa=imChatViewModel.getOurRelationship(conversationId?:return@launch)
                     isBlock= aaa.woPingBiTa
-                    isInterdiction=aaa.woGuanZhuTa
+                    isInterdiction=aaa.ta_blacklist?.isInterdiction()?:false
                 }catch (e:Exception){
                     isBlock=false
                     isInterdiction=false
                 }
 
+            if (isInterdiction){
+                KeyboardUtils.hideSoftInput(this@ImChatActivity)
+            }
             if (isInterdiction.xor(contentViewSwitcher.currentView==interdictionView)){
                 contentViewSwitcher.showNext()
             }
@@ -151,6 +155,9 @@ open class ImChatActivity: ChatActivity() {
         }
         chatSetting.setOnClickListener {
             chatSettingDialog?.show()
+        }
+        reportUser.setOnClickListener {
+            startActivity(IntentManager.getReportIntent(this,conversationId?.toIntOrNull()?:return@setOnClickListener))
         }
     }
 
