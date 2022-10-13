@@ -125,7 +125,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
         rl_coin_three.setOnClickListener {
 
-            //选择98块钱100金币(98折)
+            //选择98块钱100金币_98折
             MobclickAgent.onEvent(this, "70002_gold_coin_choose_12");
 
             clearChoose()
@@ -138,7 +138,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
         rl_coin_four.setOnClickListener {
 
-            //选择285块钱300金币(95折)
+            //选择285块钱300金币_95折
             MobclickAgent.onEvent(this, "70003_gold_coin_choose_13");
 
             clearChoose()
@@ -151,7 +151,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
 
         rl_coin_five.setOnClickListener {
 
-            //选择900块钱1000金币(9折)
+            //选择900块钱1000金币_9折
             MobclickAgent.onEvent(this, "70004_gold_coin_choose_14");
 
             clearChoose()

@@ -163,7 +163,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
             }
             8 -> {
-                //消息页面,查看消息是否已读? 点击跳转开通超级会员
+                //消息页面_查看消息是否已读_点击跳转开通超级会员
                 MobclickAgent.onEvent(mContext, "60009_chat_message_read_goto_vip");
             }
             9 -> {

@@ -1,5 +1,7 @@
 package com.twx.marryfriend.net.module;
 
+import android.util.Log;
+
 import com.twx.marryfriend.bean.AccessTokenBean;
 import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.BanBean;
@@ -132,7 +134,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_VERIFY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_VERIFY, currentTimeMillis, random, checkCode, map);
         mApi.getVerifyCode(map1).enqueue(callback);
@@ -144,7 +146,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PHONE_LOGIN + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PHONE_LOGIN, currentTimeMillis, random, checkCode, map);
         mApi.doPhoneLogin(map1).enqueue(callback);
@@ -156,7 +158,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.AUTO_LOGIN + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.AUTO_LOGIN, currentTimeMillis, random, checkCode, map);
         mApi.doAutoLogin(map1).enqueue(callback);
@@ -169,7 +171,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_BASE_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_BASE_INFO, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateBaseInfo(map1).enqueue(callback);
@@ -181,7 +183,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_MORE_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_MORE_INFO, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateMoreInfo(map1).enqueue(callback);
@@ -193,7 +195,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_DEMAND_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_DEMAND_INFO, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateDemandInfo(map1).enqueue(callback);
@@ -205,7 +207,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_VERIFY_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_VERIFY_INFO, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateVerifyInfo(map1).enqueue(callback);
@@ -217,7 +219,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_GREET_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_GREET_INFO, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateGreetInfo(map1).enqueue(callback);
@@ -229,7 +231,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PLUS_DEMAND_ADDRESS + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PLUS_DEMAND_ADDRESS, currentTimeMillis, random, checkCode, map);
         mApi.plusDemandAddress(map1).enqueue(callback);
@@ -241,7 +243,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_DEMAND_ADDRESS + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_DEMAND_ADDRESS, currentTimeMillis, random, checkCode, map);
         mApi.getDemandAddress(map1).enqueue(callback);
@@ -254,7 +256,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_GREET_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_GREET_INFO, currentTimeMillis, random, checkCode, map);
         mApi.getGreetInfo(map1).enqueue(callback);
@@ -266,7 +268,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_FIVE_INFO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_FIVE_INFO, currentTimeMillis, random, checkCode, map);
         mApi.getFiveInfo(map1).enqueue(callback);
@@ -279,7 +281,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PHOTO_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PHOTO_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getPhotoList(map1).enqueue(callback);
@@ -291,7 +293,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPLOAD_PHOTO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPLOAD_PHOTO, currentTimeMillis, random, checkCode, map);
         mApi.doUploadPhoto(map1).enqueue(callback);
@@ -304,7 +306,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPLOAD_AVATAR + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPLOAD_AVATAR, currentTimeMillis, random, checkCode, map);
         mApi.doUploadAvatar(map1).enqueue(callback);
@@ -317,7 +319,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.VIEW_HEADFACE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.VIEW_HEADFACE, currentTimeMillis, random, checkCode, map);
         mApi.doViewHeadface(map1).enqueue(callback);
@@ -330,7 +332,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DELETE_PHOTO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DELETE_PHOTO, currentTimeMillis, random, checkCode, map);
         mApi.doDeletePhoto(map1).enqueue(callback);
@@ -343,7 +345,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.UPDATE_PROPORTION + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.UPDATE_PROPORTION, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateProportion(map1).enqueue(callback);
@@ -355,7 +357,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_SEE_WHO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_SEE_WHO, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getMeSeeWho(map1).enqueue(callback);
@@ -367,7 +369,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_SEE_ME + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_SEE_ME, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getWhoSeeMe(map1).enqueue(callback);
@@ -380,7 +382,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_FOCUS_WHO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_FOCUS_WHO, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getMeFocusWho(map1).enqueue(callback);
@@ -392,7 +394,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_FOCUS_ME + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_FOCUS_ME, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getWhoFocusMe(map1).enqueue(callback);
@@ -405,7 +407,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_LIKE_WHO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_LIKE_WHO, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getMeLikeWho(map1).enqueue(callback);
@@ -417,7 +419,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_LIKE_ME + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_LIKE_ME, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getWhoLikeMe(map1).enqueue(callback);
@@ -430,7 +432,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_DISCUSS_WHO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_DISCUSS_WHO, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getMeDiscussWho(map1).enqueue(callback);
@@ -442,7 +444,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_DISCUSS_ME + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_DISCUSS_ME, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getWhoDiscussMe(map1).enqueue(callback);
@@ -455,7 +457,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_FOUR_TOTAL + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_FOUR_TOTAL, currentTimeMillis, random, checkCode, map);
         mApi.getFourTotal(map1).enqueue(callback);
@@ -468,7 +470,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_CITY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_CITY, currentTimeMillis, random, checkCode, map);
         mApi.getCity(map1).enqueue(callback);
@@ -481,7 +483,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_SCHOOL + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_SCHOOL, currentTimeMillis, random, checkCode, map);
         mApi.getSchool(map1).enqueue(callback);
@@ -494,7 +496,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_BAN + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_BAN, currentTimeMillis, random, checkCode, map);
         mApi.getBan(map1).enqueue(callback);
@@ -506,7 +508,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_INDUSTRY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_INDUSTRY, currentTimeMillis, random, checkCode, map);
         mApi.getIndustry(map1).enqueue(callback);
@@ -518,7 +520,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_JOB + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_JOB, currentTimeMillis, random, checkCode, map);
         mApi.getJob(map1).enqueue(callback);
@@ -531,7 +533,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_ACCESS_TOKEN + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_ACCESS_TOKEN, currentTimeMillis, random, checkCode, map);
         mBaiduApi.getAccessToken(map1).enqueue(callback);
@@ -544,7 +546,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_IDENTITY_VERIFY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_IDENTITY_VERIFY, currentTimeMillis, random, checkCode, map);
         mBaiduApi.doIdentityVerify(map1).enqueue(callback);
@@ -557,7 +559,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_FACE_VERIFY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_FACE_VERIFY, currentTimeMillis, random, checkCode, map);
         mBaiduApi.doFaceVerify(map1).enqueue(callback);
@@ -570,7 +572,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_FACE_DETECT + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_FACE_DETECT, currentTimeMillis, random, checkCode, map);
         mBaiduApi.doFaceDetect(map1).enqueue(callback);
@@ -582,7 +584,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_TEXT_VERIFY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_TEXT_VERIFY, currentTimeMillis, random, checkCode, map);
         mBaiduApi.doTextVerify(map1).enqueue(callback);
@@ -595,7 +597,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_MY_TREND_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_MY_TREND_LIST, currentTimeMillis, random, checkCode, map, page, size);
         mApi.getMyTrendsList(map1).enqueue(callback);
@@ -608,7 +610,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_OTHER_TREND_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_OTHER_TREND_LIST, currentTimeMillis, random, checkCode, map, page, size);
         mApi.getOtherTrendsList(map1).enqueue(callback);
@@ -621,7 +623,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPLOAD_TREND + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPLOAD_TREND, currentTimeMillis, random, checkCode, map);
         mApi.doUploadTrend(map1).enqueue(callback);
@@ -634,7 +636,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_CHECK_TREND + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_CHECK_TREND, currentTimeMillis, random, checkCode, map);
         mApi.doCheckTrend(map1).enqueue(callback);
@@ -646,7 +648,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_DELETE_TREND + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_DELETE_TREND, currentTimeMillis, random, checkCode, map);
         mApi.doDeleteTrend(map1).enqueue(callback);
@@ -659,7 +661,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_LIKE_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_LIKE_LIST, currentTimeMillis, random, checkCode, map, page, size);
         mApi.getLikeList(map1).enqueue(callback);
@@ -671,7 +673,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_LICK_CLICK + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_LICK_CLICK, currentTimeMillis, random, checkCode, map);
         mApi.doLikeClick(map1).enqueue(callback);
@@ -683,7 +685,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_LICK_CANCEL + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_LICK_CANCEL, currentTimeMillis, random, checkCode, map);
         mApi.doLikeCancel(map1).enqueue(callback);
@@ -695,7 +697,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_ONE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_ONE, currentTimeMillis, random, checkCode, map, page, size);
         mApi.getCommentOne(map1).enqueue(callback);
@@ -707,7 +709,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_COMMENT_ONE_CREATE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_COMMENT_ONE_CREATE, currentTimeMillis, random, checkCode, map);
         mApi.doCommentOneCreate(map1).enqueue(callback);
@@ -720,7 +722,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_COMMENT_ONE_DELETE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_COMMENT_ONE_DELETE, currentTimeMillis, random, checkCode, map);
         mApi.doCommentOneDelete(map1).enqueue(callback);
@@ -733,7 +735,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_TWO + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TWO, currentTimeMillis, random, checkCode, map, page, size);
         mApi.getCommentTwo(map1).enqueue(callback);
@@ -745,7 +747,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_COMMENT_TWO_CREATE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_COMMENT_TWO_CREATE, currentTimeMillis, random, checkCode, map);
         mApi.doCommentTwoCreate(map1).enqueue(callback);
@@ -758,7 +760,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_COMMENT_TWO_DELETE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_COMMENT_TWO_DELETE, currentTimeMillis, random, checkCode, map);
         mApi.doCommentTwoDelete(map1).enqueue(callback);
@@ -771,7 +773,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.MINE_FOCUS_OTHER_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.MINE_FOCUS_OTHER_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getMyFocus(map1).enqueue(callback);
@@ -784,7 +786,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.OTHER_FOCUS_MINE_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.OTHER_FOCUS_MINE_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getOtherFocus(map1).enqueue(callback);
@@ -797,7 +799,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_PLUS_FOCUS_OTHER + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_PLUS_FOCUS_OTHER, currentTimeMillis, random, checkCode, map);
         mApi.doPlusFocusOther(map1).enqueue(callback);
@@ -810,7 +812,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_CANCEL_FOCUS_OTHER + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_CANCEL_FOCUS_OTHER, currentTimeMillis, random, checkCode, map);
         mApi.doCancelFocusOther(map1).enqueue(callback);
@@ -823,7 +825,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_SALOON + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_SALOON, currentTimeMillis, random, checkCode, map);
         mApi.getTrendSaloon(map1).enqueue(callback);
@@ -836,7 +838,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_FOCUS + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_FOCUS, currentTimeMillis, random, checkCode, map);
         mApi.getTrendFocus(map1).enqueue(callback);
@@ -849,7 +851,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TOTAL_COUNT + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TOTAL_COUNT, currentTimeMillis, random, checkCode, map);
         mApi.getTotalCount(map1).enqueue(callback);
@@ -861,7 +863,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_TIP + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getTrendTips(map1).enqueue(callback);
@@ -873,7 +875,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_TIP + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TIP, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getCommentTips(map1).enqueue(callback);
@@ -885,7 +887,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_DELETE_TIPS + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_DELETE_TIPS, currentTimeMillis, random, checkCode, map);
         mApi.doDeleteTips(map1).enqueue(callback);
@@ -898,7 +900,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_VIP_PRICE + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_VIP_PRICE, currentTimeMillis, random, checkCode, map);
         mApi.getVipPrice(map1).enqueue(callback);
@@ -910,8 +912,8 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
-        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COIN_PRICE + value);
+        String key = SortMapUtil.sortMapByKey(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COIN_PRICE + key);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COIN_PRICE, currentTimeMillis, random, checkCode, map);
         mApi.getCoinPrice(map1).enqueue(callback);
     }
@@ -922,7 +924,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_ALI_PAY + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_ALI_PAY, currentTimeMillis, random, checkCode, map);
         mApi.doAliPay(map1).enqueue(callback);
@@ -934,7 +936,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_PREVIEW_OTHER + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_PREVIEW_OTHER, currentTimeMillis, random, checkCode, map);
         mApi.doPreviewOther(map1).enqueue(callback);
@@ -946,7 +948,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COIN_RECORD + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COIN_RECORD, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getCoinRecord(map1).enqueue(callback);
@@ -959,7 +961,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REFRESH_SELF + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REFRESH_SELF, currentTimeMillis, random, checkCode, map);
         mApi.doRefreshSelf(map1).enqueue(callback);
@@ -972,7 +974,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPLOAD_FEEDBACK + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPLOAD_FEEDBACK, currentTimeMillis, random, checkCode, map);
         mApi.doUploadFeedback(map1).enqueue(callback);
@@ -985,7 +987,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REPORT_OTHER + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REPORT_OTHER, currentTimeMillis, random, checkCode, map);
         mApi.doReportOther(map1).enqueue(callback);
@@ -998,7 +1000,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPDATE_TOKEN + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPDATE_TOKEN, currentTimeMillis, random, checkCode, map);
         mApi.doUpdateToken(map1).enqueue(callback);
@@ -1011,7 +1013,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPDATE_PUSH_SET + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPDATE_PUSH_SET, currentTimeMillis, random, checkCode, map);
         mApi.doUpdatePushSet(map1).enqueue(callback);
@@ -1024,7 +1026,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_PUSH_SET + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_PUSH_SET, currentTimeMillis, random, checkCode, map);
         mApi.getPushSet(map1).enqueue(callback);
@@ -1036,7 +1038,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_BLACK_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_BLACK_LIST, currentTimeMillis, random, checkCode, map, page, 10);
         mApi.getBlackList(map1).enqueue(callback);
@@ -1049,7 +1051,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DELETE_BLACK_LIST + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DELETE_BLACK_LIST, currentTimeMillis, random, checkCode, map);
         mApi.doDeleteBlackList(map1).enqueue(callback);
@@ -1062,7 +1064,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.PLACE_SEARCH + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.PLACE_SEARCH, currentTimeMillis, random, checkCode, map);
         mMapApi.doPlaceSearch(map1).enqueue(callback);
@@ -1074,7 +1076,7 @@ public class UserData {
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
-        String value = SortMapUtil.sortMapByValue(map);
+        String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.BAIDU_SEARCH + value);
         Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.BAIDU_SEARCH, currentTimeMillis, random, checkCode, map);
         mBaiduMapApi.doSearch(map1).enqueue(callback);
