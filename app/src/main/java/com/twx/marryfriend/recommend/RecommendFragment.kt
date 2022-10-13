@@ -153,7 +153,17 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
-        Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+//        if (BuildConfig.DEBUG){
+//            lifecycleScope.launch {
+//                delay(1000)
+//                showView(ViewType.mutual)
+//            }
+//        }
+        Glide.with(myHead)
+            .load(UserInfo.getHeadPortrait())
+            .placeholder(UserInfo.getDefHeadImage())
+            .error(UserInfo.getDefHeadImage())
+            .into(myHead)
     }
 
     private fun showFillInOrOneClickHello(){
@@ -512,7 +522,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //            loadingDialog.show()
             val t=recommendViewModel.like(item.getId()) {
                 showView(ViewType.mutual)
-                Glide.with(taHead).load(item.getHeadImg()).into(taHead)
+                Glide.with(taHead)
+                    .load(item.getHeadImg())
+                    .into(taHead)
                 sendMsg.setOnClickListener {
                     startActivity(ImChatActivity.getIntent(requireContext(),item.getId().toString()))
                     showView(ViewType.content)

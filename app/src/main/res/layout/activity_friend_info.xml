@@ -46,7 +46,7 @@
                     <!--           大图-->
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/briefIntroduction"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.twx.marryfriend.recommend.widget.RecommendImage
@@ -54,7 +54,7 @@
                             android:scaleType="fitXY"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
-                            tools:visibility="visible"
+                            tools:visibility="gone"
                             tools:src="@drawable/default_head"
                             android:foreground="@drawable/shape_recommend_frame"
                             app:layout_constraintDimensionRatio="347:347"
@@ -719,7 +719,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="18dp"
-                        tools:visibility="visible"
+                        tools:visibility="gone"
                         android:background="@drawable/shape_recommend_about_me"
                         android:orientation="vertical">
                         <androidx.constraintlayout.widget.ConstraintLayout
@@ -799,12 +799,14 @@
                         android:layout_marginTop="10dp"
                         android:orientation="vertical">
                         <ImageView
+                            android:id="@+id/bottomActionTip"
                             android:src="@mipmap/ic_item_bottom_send_flowers"
                             android:layout_gravity="center_horizontal"
                             android:elevation="1dp"
                             android:layout_width="192dp"
                             android:layout_height="32.5dp"/>
                         <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/bottomAction"
                             android:background="@drawable/shape_recommend_about_me"
                             android:layout_marginTop="-26.5dp"
                             android:paddingBottom="32dp"
