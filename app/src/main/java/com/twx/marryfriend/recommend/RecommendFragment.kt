@@ -325,6 +325,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                             }
                             t1.await()
                             t2.await()
+                            guideView.guideComplete(HomeCardAction.clickFlower)
                             delay(50)
                             view.apply {
                                 this.alpha = 1f
