@@ -56,7 +56,7 @@ object ImUserManager {
                         ImInit.imLoginState.postValue(null)
                     }
                     EMError.USER_KICKED_BY_CHANGE_PASSWORD -> {
-
+                        ImInit.imLoginState.postValue(null)
                     }
                     EMError.USER_KICKED_BY_OTHER_DEVICE -> {
                         ImInit.imLoginState.postValue(null)

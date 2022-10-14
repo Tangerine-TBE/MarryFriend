@@ -144,8 +144,13 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             if (currentFragment == conversationListFragment) {
                 return@observe
             }
-            messageNumNew.visibility = View.VISIBLE
-            messageNumNew.text = ImMessageManager.getAllUnreadMessage().toString()
+            val unread=ImMessageManager.getAllUnreadMessage()
+            if (unread<=0){
+                messageNumNew.visibility = View.GONE
+            }else{
+                messageNumNew.visibility = View.VISIBLE
+                messageNumNew.text = unread.toString()
+            }
         }
 
     }
