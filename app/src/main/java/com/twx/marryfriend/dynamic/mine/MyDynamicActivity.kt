@@ -414,7 +414,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         map[Contents.TRENDS_TYPE] = trendType.toString()
-        getMyTrendsListPresent.getMyTrendsList(map, 1, 10)
+        map[Contents.PAGE] = "1"
+        map[Contents.SIZE] = "10"
+        getMyTrendsListPresent.getMyTrendsList(map)
     }
 
     // 加载更多我的动态列表
@@ -422,7 +424,9 @@ class MyDynamicActivity : MainBaseViewActivity(),
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         map[Contents.TRENDS_TYPE] = trendType.toString()
-        getMyTrendsListPresent.getMyTrendsList(map, currentPaper, 10)
+        map[Contents.PAGE] = currentPaper.toString()
+        map[Contents.SIZE] = "10"
+        getMyTrendsListPresent.getMyTrendsList(map)
     }
 
     // 删除我的动态

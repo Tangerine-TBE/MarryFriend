@@ -37,9 +37,9 @@ public class getCoinRecordPresentImpl implements IGetCoinRecordPresent {
     }
 
     @Override
-    public void getCoinRecord(Map<String, String> info, Integer page) {
+    public void getCoinRecord(Map<String, String> info) {
         handlerLoading();
-        mUserData.getCoinRecord(info, page, new Callback<CoinRecordBean>() {
+        mUserData.getCoinRecord(info, new Callback<CoinRecordBean>() {
 
             private CoinRecordBean mBody;
 

@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public interface IGetCommentTipsPresent extends IBasePresent<IGetCommentTipsCallback> {
 
-    void getCommentTips(Map<String, String> info, Integer page);
+    void getCommentTips(Map<String, String> info);
 
 }

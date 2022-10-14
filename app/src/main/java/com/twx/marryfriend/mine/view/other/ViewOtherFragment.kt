@@ -106,7 +106,9 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
     private fun getViewOtherData(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getMeSeeWhoPresent.getMeSeeWho(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getMeSeeWhoPresent.getMeSeeWho(map)
     }
 
     override fun onLoading() {

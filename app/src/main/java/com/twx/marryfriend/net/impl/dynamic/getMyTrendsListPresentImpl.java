@@ -37,9 +37,9 @@ public class getMyTrendsListPresentImpl implements IGetMyTrendsListPresent {
     }
 
     @Override
-    public void getMyTrendsList(Map<String, String> info, Integer page, Integer size) {
+    public void getMyTrendsList(Map<String, String> info) {
         handlerLoading();
-        mUserData.getMyTrendsList(info, page, size, new Callback<MyTrendsListBean>() {
+        mUserData.getMyTrendsList(info, new Callback<MyTrendsListBean>() {
 
             private MyTrendsListBean mBody;
 

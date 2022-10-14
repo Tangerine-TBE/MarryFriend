@@ -116,7 +116,9 @@ class CommentMineFragment : Fragment(), IGetWhoDiscussMeCallback,
         isRequest = true
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getWhoDiscussMePresent.getWhoDiscussMe(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getWhoDiscussMePresent.getWhoDiscussMe(map)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -103,7 +103,9 @@ class FocusMineFragment : Fragment(), IGetWhoFocusMeCallback, FocusMineAdapter.O
     private fun getFocusMineData(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getWhoFocusMePresent.getWhoFocusMe(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getWhoFocusMePresent.getWhoFocusMe(map)
     }
 
     override fun onLoading() {

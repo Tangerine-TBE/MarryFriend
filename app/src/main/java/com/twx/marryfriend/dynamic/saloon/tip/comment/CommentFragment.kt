@@ -132,7 +132,9 @@ class CommentFragment : Fragment(), IGetCommentTipsCallback {
     private fun getCommentData(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getCommentTipsPresent.getCommentTips(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getCommentTipsPresent.getCommentTips(map)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

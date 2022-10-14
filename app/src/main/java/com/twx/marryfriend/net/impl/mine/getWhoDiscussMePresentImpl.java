@@ -42,9 +42,9 @@ public class getWhoDiscussMePresentImpl implements IGetWhoDiscussMePresent {
     }
 
     @Override
-    public void getWhoDiscussMe(Map<String, String> info, Integer page) {
+    public void getWhoDiscussMe(Map<String, String> info) {
         handlerLoading();
-        mUserData.getWhoDiscussMe(info, page, new Callback<WhoDiscussMeBean>() {
+        mUserData.getWhoDiscussMe(info, new Callback<WhoDiscussMeBean>() {
 
             private WhoDiscussMeBean mBody;
 

@@ -672,7 +672,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = userId.toString()
-        getCommentOnePresent.getCommentOne(map, page, 10)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getCommentOnePresent.getCommentOne(map)
     }
 
     // 给动态提交父评论
@@ -690,7 +692,9 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.PARENT_ID] = parentId.toString()
-        getCommentTwoPresent.getCommentTwo(map, page, 10)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getCommentTwoPresent.getCommentTwo(map)
     }
 
     // 给动态提交子评论

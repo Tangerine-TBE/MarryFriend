@@ -111,7 +111,9 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
     private fun getViewMineData(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getWhoSeeMePresent.getWhoSeeMe(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getWhoSeeMePresent.getWhoSeeMe(map)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -183,16 +185,11 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
             startActivityForResult(context?.let {
-                VipActivity.getVipIntent(it,
-                    0,
-                    VipGifEnum.SeeMe)
+                VipActivity.getVipIntent(it, 0, VipGifEnum.SeeMe)
             }, 0)
         } else {
             startActivity(context?.let {
-                FriendInfoActivity.getIntent(
-                    it,
-                    mList[position].host_uid
-                )
+                FriendInfoActivity.getIntent(it, mList[position].host_uid)
             })
         }
 
@@ -206,9 +203,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
         if (SPStaticUtils.getInt(Constant.USER_VIP_LEVEL, 0) == 0) {
 
             startActivityForResult(context?.let {
-                VipActivity.getVipIntent(it,
-                    0,
-                    VipGifEnum.Message)
+                VipActivity.getVipIntent(it, 0, VipGifEnum.Message)
             }, 0)
 
         } else {
@@ -216,10 +211,7 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
             val identity = mList[position].identity_status == 1
 
             startActivity(context?.let {
-                ImChatActivity.getIntent(
-                    it,
-                    mList[position].host_uid.toString()
-                )
+                ImChatActivity.getIntent(it, mList[position].host_uid.toString())
             })
 
         }

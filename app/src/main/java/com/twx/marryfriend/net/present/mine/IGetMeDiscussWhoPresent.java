@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetMeDiscussWhoPresent extends IBasePresent<IGetMeDiscussWhoCallback> {
 
-    void getMeDiscussWho(Map<String, String> info, Integer page);
+    void getMeDiscussWho(Map<String, String> info);
 
 }

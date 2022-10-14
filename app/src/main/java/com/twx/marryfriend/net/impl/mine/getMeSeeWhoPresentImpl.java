@@ -39,9 +39,9 @@ public class getMeSeeWhoPresentImpl implements IGetMeSeeWhoPresent {
     }
 
     @Override
-    public void getMeSeeWho(Map<String, String> info, Integer page) {
+    public void getMeSeeWho(Map<String, String> info) {
         handlerLoading();
-        mUserData.getMeSeeWho(info, page, new Callback<MeSeeWhoBean>() {
+        mUserData.getMeSeeWho(info, new Callback<MeSeeWhoBean>() {
 
             private MeSeeWhoBean mBody;
 

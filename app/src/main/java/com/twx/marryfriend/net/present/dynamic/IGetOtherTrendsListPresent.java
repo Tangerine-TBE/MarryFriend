@@ -13,6 +13,6 @@ import java.util.Map;
  */
 public interface IGetOtherTrendsListPresent extends IBasePresent<IGetOtherTrendsListCallback> {
 
-    void getOtherTrendsList(Map<String, String> info, Integer page, Integer size);
+    void getOtherTrendsList(Map<String, String> info);
 
 }

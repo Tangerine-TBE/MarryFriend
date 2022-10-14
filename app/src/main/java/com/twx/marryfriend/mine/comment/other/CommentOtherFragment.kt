@@ -110,7 +110,9 @@ class CommentOtherFragment : Fragment(), IGetMeDiscussWhoCallback,
         isRequest = true
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getMeDiscussWhoPresent.getMeDiscussWho(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getMeDiscussWhoPresent.getMeDiscussWho(map)
     }
 
     override fun onLoading() {

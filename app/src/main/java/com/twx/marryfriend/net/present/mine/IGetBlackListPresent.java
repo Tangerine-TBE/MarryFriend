@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetBlackListPresent extends IBasePresent<IGetBlackListCallback> {
 
-    void getBlackList(Map<String, String> info, Integer page);
+    void getBlackList(Map<String, String> info);
 
 }

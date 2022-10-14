@@ -112,7 +112,9 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
         isRequest = true
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getMeLikeWhoPresent.getMeLikeWho(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getMeLikeWhoPresent.getMeLikeWho(map)
     }
 
     override fun onLoading() {

@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetCommentTwoPresent extends IBasePresent<IGetCommentTwoCallback> {
 
-    void getCommentTwo(Map<String, String> info, Integer page, Integer size);
+    void getCommentTwo(Map<String, String> info);
 
 }

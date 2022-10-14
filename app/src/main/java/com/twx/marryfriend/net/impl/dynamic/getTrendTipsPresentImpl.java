@@ -39,9 +39,9 @@ public class getTrendTipsPresentImpl implements IGetTrendTipsPresent {
     }
 
     @Override
-    public void getTrendTips(Map<String, String> info,Integer page) {
+    public void getTrendTips(Map<String, String> info) {
         handlerLoading();
-        mUserData.getTrendTips(info,page, new Callback<LikeTipBean>() {
+        mUserData.getTrendTips(info, new Callback<LikeTipBean>() {
 
             private LikeTipBean mBody;
 

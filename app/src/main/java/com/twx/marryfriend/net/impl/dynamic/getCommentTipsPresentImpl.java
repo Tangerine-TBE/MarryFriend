@@ -41,9 +41,9 @@ public class getCommentTipsPresentImpl implements IGetCommentTipsPresent {
     }
 
     @Override
-    public void getCommentTips(Map<String, String> info, Integer page) {
+    public void getCommentTips(Map<String, String> info) {
         handlerLoading();
-        mUserData.getCommentTips(info, page, new Callback<CommentTipBean>() {
+        mUserData.getCommentTips(info, new Callback<CommentTipBean>() {
 
             private CommentTipBean mBody;
 

@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetCoinRecordPresent extends IBasePresent<IGetCoinRecordCallback> {
 
-    void getCoinRecord(Map<String, String> info, Integer page);
+    void getCoinRecord(Map<String, String> info);
 
 }

@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetMeFocusWhoPresent extends IBasePresent<IGetMeFocusWhoCallback> {
 
-    void getMeFocusWho(Map<String, String> info, Integer page);
+    void getMeFocusWho(Map<String, String> info);
 
 }

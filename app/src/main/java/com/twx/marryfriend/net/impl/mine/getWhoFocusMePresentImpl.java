@@ -42,9 +42,9 @@ public class getWhoFocusMePresentImpl implements IGetWhoFocusMePresent {
     }
 
     @Override
-    public void getWhoFocusMe(Map<String, String> info, Integer page) {
+    public void getWhoFocusMe(Map<String, String> info) {
         handlerLoading();
-        mUserData.getWhoFocusMe(info, page, new Callback<WhoFocusMeBean>() {
+        mUserData.getWhoFocusMe(info, new Callback<WhoFocusMeBean>() {
 
             private WhoFocusMeBean mBody;
 

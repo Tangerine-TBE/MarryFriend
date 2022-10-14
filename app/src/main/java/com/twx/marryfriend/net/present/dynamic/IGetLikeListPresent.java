@@ -11,6 +11,6 @@ import java.util.Map;
  */
 public interface IGetLikeListPresent extends IBasePresent<IGetLikeListCallback> {
 
-    void getLikeList(Map<String, String> info, Integer page, Integer size);
+    void getLikeList(Map<String, String> info);
 
 }

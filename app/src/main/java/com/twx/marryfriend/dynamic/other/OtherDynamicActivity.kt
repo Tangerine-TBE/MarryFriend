@@ -433,7 +433,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         map[Contents.FRIEND_UID] = userId
         map[Contents.TRENDS_TYPE] = trendType.toString()
-        getOtherTrendsListPresent.getOtherTrendsList(map, 1, 10)
+        map[Contents.PAGE] = "1"
+        map[Contents.SIZE] = "10"
+        getOtherTrendsListPresent.getOtherTrendsList(map)
     }
 
     // 加载更多我的动态列表
@@ -442,7 +444,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
         map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         map[Contents.FRIEND_UID] = userId
         map[Contents.TRENDS_TYPE] = trendType.toString()
-        getOtherTrendsListPresent.getOtherTrendsList(map, currentPaper, 10)
+        map[Contents.PAGE] = currentPaper.toString()
+        map[Contents.SIZE] = "10"
+        getOtherTrendsListPresent.getOtherTrendsList(map)
     }
 
     // 动态点赞

@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetTrendTipsPresent extends IBasePresent<IGetTrendTipsCallback> {
 
-    void getTrendTips(Map<String, String> info, Integer page);
+    void getTrendTips(Map<String, String> info);
 
 }

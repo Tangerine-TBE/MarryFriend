@@ -42,9 +42,9 @@ public class getWhoLikeMePresentImpl implements IGetWhoLikeMePresent {
     }
 
     @Override
-    public void getWhoLikeMe(Map<String, String> info, Integer page) {
+    public void getWhoLikeMe(Map<String, String> info) {
         handlerLoading();
-        mUserData.getWhoLikeMe(info, page, new Callback<WhoLikeMeBean>() {
+        mUserData.getWhoLikeMe(info, new Callback<WhoLikeMeBean>() {
 
             private WhoLikeMeBean mBody;
 

@@ -11,6 +11,6 @@ import java.util.Map;
  */
 public interface IGetWhoSeeMePresent extends IBasePresent<IGetWhoSeeMeCallback> {
 
-    void getWhoSeeMe(Map<String, String> info, Integer page);
+    void getWhoSeeMe(Map<String, String> info);
 
 }

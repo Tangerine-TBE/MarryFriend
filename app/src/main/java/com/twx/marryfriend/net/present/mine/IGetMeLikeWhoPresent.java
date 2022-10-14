@@ -12,6 +12,6 @@ import java.util.Map;
  */
 public interface IGetMeLikeWhoPresent extends IBasePresent<IGetMeLikeWhoCallback> {
 
-    void getMeLikeWho(Map<String, String> info, Integer page);
+    void getMeLikeWho(Map<String, String> info);
 
 }

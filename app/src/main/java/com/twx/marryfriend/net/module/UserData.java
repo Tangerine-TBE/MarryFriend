@@ -352,101 +352,101 @@ public class UserData {
     }
 
     // 最近来访 -- 我看过谁列表
-    public void getMeSeeWho(Map<String, String> map, Integer page, Callback<MeSeeWhoBean> callback) {
+    public void getMeSeeWho(Map<String, String> map, Callback<MeSeeWhoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_SEE_WHO + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_SEE_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_SEE_WHO, currentTimeMillis, random, checkCode, map);
         mApi.getMeSeeWho(map1).enqueue(callback);
     }
 
     // 最近来访 -- 谁看过我列表
-    public void getWhoSeeMe(Map<String, String> map, Integer page, Callback<WhoSeeMeBean> callback) {
+    public void getWhoSeeMe(Map<String, String> map, Callback<WhoSeeMeBean> callback) {
         // 获取随机数
         int random = 523146;
-        //获取时间戳
+        // 获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_SEE_ME + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_SEE_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_SEE_ME, currentTimeMillis, random, checkCode, map);
         mApi.getWhoSeeMe(map1).enqueue(callback);
     }
 
 
     // 我关注其它人，列表
-    public void getMeFocusWho(Map<String, String> map, Integer page, Callback<MeFocusWhoBean> callback) {
+    public void getMeFocusWho(Map<String, String> map, Callback<MeFocusWhoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_FOCUS_WHO + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_FOCUS_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_FOCUS_WHO, currentTimeMillis, random, checkCode, map);
         mApi.getMeFocusWho(map1).enqueue(callback);
     }
 
     // 其它人关注我，列表
-    public void getWhoFocusMe(Map<String, String> map, Integer page, Callback<WhoFocusMeBean> callback) {
+    public void getWhoFocusMe(Map<String, String> map, Callback<WhoFocusMeBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_FOCUS_ME + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_FOCUS_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_FOCUS_ME, currentTimeMillis, random, checkCode, map);
         mApi.getWhoFocusMe(map1).enqueue(callback);
     }
 
 
     // 我点过谁赞列表
-    public void getMeLikeWho(Map<String, String> map, Integer page, Callback<MeLikeWhoBean> callback) {
+    public void getMeLikeWho(Map<String, String> map, Callback<MeLikeWhoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_LIKE_WHO + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_LIKE_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_LIKE_WHO, currentTimeMillis, random, checkCode, map);
         mApi.getMeLikeWho(map1).enqueue(callback);
     }
 
     // 谁点过我赞列表
-    public void getWhoLikeMe(Map<String, String> map, Integer page, Callback<WhoLikeMeBean> callback) {
+    public void getWhoLikeMe(Map<String, String> map, Callback<WhoLikeMeBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_LIKE_ME + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_LIKE_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_LIKE_ME, currentTimeMillis, random, checkCode, map);
         mApi.getWhoLikeMe(map1).enqueue(callback);
     }
 
 
     // 我评论过谁的列表
-    public void getMeDiscussWho(Map<String, String> map, Integer page, Callback<MeDiscussWhoBean> callback) {
+    public void getMeDiscussWho(Map<String, String> map, Callback<MeDiscussWhoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.ME_DISCUSS_WHO + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_DISCUSS_WHO, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.ME_DISCUSS_WHO, currentTimeMillis, random, checkCode, map);
         mApi.getMeDiscussWho(map1).enqueue(callback);
     }
 
     // 谁评论过我的列表
-    public void getWhoDiscussMe(Map<String, String> map, Integer page, Callback<WhoDiscussMeBean> callback) {
+    public void getWhoDiscussMe(Map<String, String> map, Callback<WhoDiscussMeBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.WHO_DISCUSS_ME + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_DISCUSS_ME, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.WHO_DISCUSS_ME, currentTimeMillis, random, checkCode, map);
         mApi.getWhoDiscussMe(map1).enqueue(callback);
     }
 
@@ -592,27 +592,27 @@ public class UserData {
 
 
     // 获取我的动态列表
-    public void getMyTrendsList(Map<String, String> map, Integer page, Integer size, Callback<MyTrendsListBean> callback) {
+    public void getMyTrendsList(Map<String, String> map, Callback<MyTrendsListBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_MY_TREND_LIST + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_MY_TREND_LIST, currentTimeMillis, random, checkCode, map, page, size);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_MY_TREND_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getMyTrendsList(map1).enqueue(callback);
     }
 
 
     // 获取其它人动态列表
-    public void getOtherTrendsList(Map<String, String> map, Integer page, Integer size, Callback<OtherTrendsListBean> callback) {
+    public void getOtherTrendsList(Map<String, String> map, Callback<OtherTrendsListBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_OTHER_TREND_LIST + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_OTHER_TREND_LIST, currentTimeMillis, random, checkCode, map, page, size);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_OTHER_TREND_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getOtherTrendsList(map1).enqueue(callback);
     }
 
@@ -656,14 +656,14 @@ public class UserData {
 
 
     // 动态的点赞列表
-    public void getLikeList(Map<String, String> map, Integer page, Integer size, Callback<LikeListBean> callback) {
+    public void getLikeList(Map<String, String> map, Callback<LikeListBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_LIKE_LIST + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_LIKE_LIST, currentTimeMillis, random, checkCode, map, page, size);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_LIKE_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getLikeList(map1).enqueue(callback);
     }
 
@@ -692,14 +692,14 @@ public class UserData {
     }
 
     // 一级评论 动态的父评论列表
-    public void getCommentOne(Map<String, String> map, Integer page, Integer size, Callback<CommentOneBean> callback) {
+    public void getCommentOne(Map<String, String> map, Callback<CommentOneBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_ONE + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_ONE, currentTimeMillis, random, checkCode, map, page, size);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_ONE, currentTimeMillis, random, checkCode, map);
         mApi.getCommentOne(map1).enqueue(callback);
     }
 
@@ -730,14 +730,14 @@ public class UserData {
 
 
     // 二级评论 动态的子评论列表
-    public void getCommentTwo(Map<String, String> map, Integer page, Integer size, Callback<CommentTwoBean> callback) {
+    public void getCommentTwo(Map<String, String> map, Callback<CommentTwoBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_TWO + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TWO, currentTimeMillis, random, checkCode, map, page, size);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TWO, currentTimeMillis, random, checkCode, map);
         mApi.getCommentTwo(map1).enqueue(callback);
     }
 
@@ -858,26 +858,26 @@ public class UserData {
     }
 
     // 点赞未读列表
-    public void getTrendTips(Map<String, String> map, Integer page, Callback<LikeTipBean> callback) {
+    public void getTrendTips(Map<String, String> map, Callback<LikeTipBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_TREND_TIP + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_TREND_TIP, currentTimeMillis, random, checkCode, map);
         mApi.getTrendTips(map1).enqueue(callback);
     }
 
     // 评论未读列表
-    public void getCommentTips(Map<String, String> map, Integer page, Callback<CommentTipBean> callback) {
+    public void getCommentTips(Map<String, String> map, Callback<CommentTipBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COMMENT_TIP + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TIP, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COMMENT_TIP, currentTimeMillis, random, checkCode, map);
         mApi.getCommentTips(map1).enqueue(callback);
     }
 
@@ -943,14 +943,14 @@ public class UserData {
     }
 
     // 金币收支记录列表
-    public void getCoinRecord(Map<String, String> map, Integer page, Callback<CoinRecordBean> callback) {
+    public void getCoinRecord(Map<String, String> map, Callback<CoinRecordBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_COIN_RECORD + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COIN_RECORD, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_COIN_RECORD, currentTimeMillis, random, checkCode, map);
         mApi.getCoinRecord(map1).enqueue(callback);
     }
 
@@ -1033,14 +1033,14 @@ public class UserData {
     }
 
     // 屏蔽列表
-    public void getBlackList(Map<String, String> map, Integer page, Callback<BlackListBean> callback) {
+    public void getBlackList(Map<String, String> map, Callback<BlackListBean> callback) {
         // 获取随机数
         int random = 523146;
         //获取时间戳
         long currentTimeMillis = System.currentTimeMillis();
         String value = SortMapUtil.sortMapByKey(map);
         String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.GET_BLACK_LIST + value);
-        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_BLACK_LIST, currentTimeMillis, random, checkCode, map, page, 10);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.GET_BLACK_LIST, currentTimeMillis, random, checkCode, map);
         mApi.getBlackList(map1).enqueue(callback);
     }
 

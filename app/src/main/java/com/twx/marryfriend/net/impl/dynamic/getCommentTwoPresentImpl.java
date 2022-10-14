@@ -37,9 +37,9 @@ public class getCommentTwoPresentImpl implements IGetCommentTwoPresent {
     }
 
     @Override
-    public void getCommentTwo(Map<String, String> info, Integer page, Integer size) {
+    public void getCommentTwo(Map<String, String> info) {
         handlerLoading();
-        mUserData.getCommentTwo(info, page, size, new Callback<CommentTwoBean>() {
+        mUserData.getCommentTwo(info, new Callback<CommentTwoBean>() {
 
             private CommentTwoBean mBody;
 

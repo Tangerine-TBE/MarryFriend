@@ -78,7 +78,9 @@ class CoinRecordActivity : MainBaseViewActivity(), IGetCoinRecordCallback {
     private fun getCoinRecord(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getCoinRecordPresent.getCoinRecord(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getCoinRecordPresent.getCoinRecord(map)
 
     }
 

@@ -37,9 +37,9 @@ public class getLikeListPresentImpl implements IGetLikeListPresent {
     }
 
     @Override
-    public void getLikeList(Map<String, String> info, Integer page, Integer size) {
+    public void getLikeList(Map<String, String> info) {
         handlerLoading();
-        mUserData.getLikeList(info,page,size, new Callback<LikeListBean>() {
+        mUserData.getLikeList(info, new Callback<LikeListBean>() {
 
             private LikeListBean mBody;
 

@@ -97,7 +97,9 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
     private fun getBlackList(page: Int) {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getBlackListPresent.getBlackList(map, page)
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getBlackListPresent.getBlackList(map)
     }
 
     // 移除黑名单

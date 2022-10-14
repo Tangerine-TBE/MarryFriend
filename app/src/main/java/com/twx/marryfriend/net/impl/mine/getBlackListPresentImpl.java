@@ -37,9 +37,9 @@ public class getBlackListPresentImpl implements IGetBlackListPresent {
     }
 
     @Override
-    public void getBlackList(Map<String, String> info, Integer page) {
+    public void getBlackList(Map<String, String> info) {
         handlerLoading();
-        mUserData.getBlackList(info, page, new Callback<BlackListBean>() {
+        mUserData.getBlackList(info, new Callback<BlackListBean>() {
 
             private BlackListBean mBody;
 

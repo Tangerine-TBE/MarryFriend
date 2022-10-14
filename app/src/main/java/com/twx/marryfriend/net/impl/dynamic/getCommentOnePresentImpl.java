@@ -38,9 +38,9 @@ public class getCommentOnePresentImpl implements IGetCommentOnePresent {
     }
 
     @Override
-    public void getCommentOne(Map<String, String> info, Integer page, Integer size) {
+    public void getCommentOne(Map<String, String> info) {
         handlerLoading();
-        mUserData.getCommentOne(info, page, size, new Callback<CommentOneBean>() {
+        mUserData.getCommentOne(info, new Callback<CommentOneBean>() {
 
             private CommentOneBean mBody;
 

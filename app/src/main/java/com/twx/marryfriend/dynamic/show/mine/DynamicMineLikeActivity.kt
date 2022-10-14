@@ -107,7 +107,9 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TRENDS_ID] = trendId.toString()
         map[Contents.HOST_UID] = userId.toString()
-        getLikeListPresent.getLikeList(map, Page, 50)
+        map[Contents.PAGE] = Page.toString()
+        map[Contents.SIZE] = "50"
+        getLikeListPresent.getLikeList(map)
 
     }
 

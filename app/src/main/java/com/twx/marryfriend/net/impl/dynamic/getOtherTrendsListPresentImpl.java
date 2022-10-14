@@ -40,9 +40,9 @@ public class getOtherTrendsListPresentImpl implements IGetOtherTrendsListPresent
     }
 
     @Override
-    public void getOtherTrendsList(Map<String, String> info, Integer page, Integer size) {
+    public void getOtherTrendsList(Map<String, String> info) {
         handlerLoading();
-        mUserData.getOtherTrendsList(info, page, size, new Callback<OtherTrendsListBean>() {
+        mUserData.getOtherTrendsList(info, new Callback<OtherTrendsListBean>() {
 
             private OtherTrendsListBean mBody;
 
