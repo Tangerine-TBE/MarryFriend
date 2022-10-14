@@ -141,17 +141,18 @@
         android:id="@+id/likeWoUnread"
         android:visibility="gone"
         tools:visibility="visible"
-        android:text="又有12个人喜欢你了"
+        tools:text="又有12个人喜欢你了"
+        android:paddingBottom="12dp"
         android:textColor="#FFFFFFFF"
         android:layout_marginStart="12dp"
-        android:background="@drawable/shape_home_bottom_num_b_tip"
+        android:background="@mipmap/ic_like_me"
         android:gravity="center"
         app:layout_constraintStart_toStartOf="@id/menu1"
         app:layout_constraintEnd_toEndOf="@id/menu3"
         app:layout_constraintBottom_toTopOf="@id/menu1"
-        android:layout_marginBottom="23dp"
+        app:layout_constraintDimensionRatio="308:80"
         android:layout_width="0dp"
-        android:layout_height="41dp"/>
+        android:layout_height="wrap_content"/>
     <TextView
         android:id="@+id/likeWoUnread2"
         android:visibility="gone"

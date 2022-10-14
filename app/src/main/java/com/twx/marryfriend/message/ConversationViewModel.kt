@@ -109,10 +109,7 @@ class ConversationViewModel:ViewModel() {
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf(
-            "page" to "1",
-            "size" to "20"
-        ))
+        })
     }
 
     suspend fun getFollowCountAndImg()=suspendCoroutine<Pair<Int,String>?>{ coroutine->
