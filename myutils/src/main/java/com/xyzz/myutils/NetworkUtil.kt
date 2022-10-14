@@ -17,16 +17,16 @@ object NetworkUtil {
         responseListener.add(a)
     }
     fun sendPostSecret(url: String, parameter:Map<String,String>, success: (String) -> Unit, fail: (msg: String) -> Unit, notEncryptionParameter:Map<String,String>?=null): StringRequest {
-        iLog("接口:"+url+"\n加密参数:"+parameter.toString()+"\n未加密参数:"+notEncryptionParameter.toString(),"网络,接口")
+        iLog("接口:"+url+" 加密参数:"+parameter.toString()+" 未加密参数:"+notEncryptionParameter.toString(),"网络,接口")
         val request=object : StringRequest(Method.POST, url, { response ->
-            iLog("${response}","网络,响应")
+            iLog("${response}","网络,响应,${url.takeLast(10)}")
             //456,被封禁
             success.invoke(response)
             responseListener.forEach {
                 it.invoke(response)
             }
         }, {
-            wLog("${it.networkResponse?.statusCode?.toString()?:""}","网络,响应")
+            wLog("${it.networkResponse?.statusCode?.toString()?:""}","网络,响应,${url.takeLast(10)}")
             fail.invoke(it.networkResponse?.statusCode.toString())
         }){
             override fun getParams(): MutableMap<String, String> {
@@ -76,8 +76,8 @@ object NetworkUtil {
 
     private fun getSignature(url: String, parameter:Map<String,String>, t:String):String{
         val stringBuilder=StringBuilder()
-        parameter.values.sorted().forEach {
-            stringBuilder.append(it)
+        parameter.keys.sorted().forEach {
+            stringBuilder.append(parameter[it])
         }
         val d=stringBuilder.toString()
         val timestamp=t

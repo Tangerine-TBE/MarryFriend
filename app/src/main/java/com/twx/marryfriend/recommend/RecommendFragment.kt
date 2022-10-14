@@ -2,12 +2,16 @@ package com.twx.marryfriend.recommend
 
 import android.Manifest
 import android.animation.Animator
+import android.animation.TimeInterpolator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
+import androidx.core.view.forEachIndexed
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -40,8 +44,13 @@ import kotlinx.android.synthetic.main.fragment_recommend.*
 import kotlinx.android.synthetic.main.fragment_recommend.mutualLike
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_recommend_not_content.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
+import kotlin.math.min
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private val recommendAdapter by lazy {
@@ -105,17 +114,16 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 val e=recommendAdapter.getTopItem()
                 if (direction==ItemTouchHelper.LEFT){
                     guideActionCompleteHandler(HomeCardAction.leftSlide)
-                    iLog("不喜欢")
-                    disLike(e)
+                    lifecycleScope.launch {
+                        disLike(e)
+                        recommendAdapter.notifyDataSetChanged()
+                    }
                 }else if (direction==ItemTouchHelper.RIGHT){
                     guideActionCompleteHandler(HomeCardAction.rightSlide)
-                    iLog("喜欢")
-                    like(e)
-                }
-                if (recommendAdapter.getData().isEmpty()){
-                    showView(ViewType.notContent)
-                }else if (cardSwipeView.childCount<=0){
-                    recommendAdapter.notifyDataSetChanged()
+                    lifecycleScope.launch {
+                        like(e)
+                        recommendAdapter.notifyDataSetChanged()
+                    }
                 }
             }
         }
@@ -153,7 +161,17 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
 //        showView(ViewType.content)
 //        showView(ViewType.mutual)
-        Glide.with(myHead).load(UserInfo.getHeadPortrait()).into(myHead)
+//        if (BuildConfig.DEBUG){
+//            lifecycleScope.launch {
+//                delay(1000)
+//                showView(ViewType.mutual)
+//            }
+//        }
+        Glide.with(myHead)
+            .load(UserInfo.getHeadPortrait())
+            .placeholder(UserInfo.getDefHeadImage())
+            .error(UserInfo.getDefHeadImage())
+            .into(myHead)
     }
 
     private fun showFillInOrOneClickHello(){
@@ -216,13 +234,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         viewLifecycleOwner.lifecycleScope.launch(){
             try {
                 val list=recommendViewModel.loadRecommendUserId()
-//                    .let {
-//                        if (BuildConfig.DEBUG){
-//                            it.filter { it!=0&&it!=10 }
-//                        }else{
-//                            it
-//                        }
-//                    }
                 val data=if (list.isEmpty()){
                     emptyList<RecommendBean>()
                 }else{
@@ -269,45 +280,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
     }
 
-    private fun moveAnimationView(view: View, isLike:Boolean, action:()->Unit){
-        val f=if (isLike)
-            1
-        else
-            -1
-        view
-            .animate()
-            ?.alpha(0f)
-            ?.rotation(f*10f)
-            ?.translationX(f*view.width /2f)
-            ?.setDuration(500)
-            ?.setListener(object : Animator.AnimatorListener{
-                override fun onAnimationStart(animation: Animator?) {
-
-                }
-
-                override fun onAnimationEnd(animation: Animator?) {
-                    action.invoke()
-                    lifecycleScope.launch {
-                        delay(300)
-                        view.apply {
-                            this.alpha = 1f
-                            this.rotation = 0f
-                            this.translationX = 0f
-                        }
-                    }
-                }
-
-                override fun onAnimationCancel(animation: Animator?) {
-
-                }
-
-                override fun onAnimationRepeat(animation: Animator?) {
-
-                }
-
-            })
-            ?.start()
-    }
     private fun initListener(){
         recommendSetting.setOnClickListener {
             startActivity(Intent(requireContext(),ILikeActivity::class.java))
@@ -342,10 +314,29 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
         recommendAdapter.superLikeAction={item,view->
             if(!uploadHeadDialog.showUploadHeadDialog()){
-                superLike(item){
-                    moveAnimationView(view,true) {
-                        iLog("超级喜欢")
-                        guideView.guideComplete(HomeCardAction.clickFlower)
+                SendFlowerDialog.sendFlowerTip(requireContext()){
+                    if (view.isEnabled){
+                        lifecycleScope.launch {
+                            val t1=async (Dispatchers.Main){
+                                superLike(item)
+                            }
+                            val t2=async (Dispatchers.Main) {
+                                moveAnimationView(view,true)
+                            }
+                            t1.await()
+                            t2.await()
+                            guideView.guideComplete(HomeCardAction.clickFlower)
+                            delay(50)
+                            view.apply {
+                                this.alpha = 1f
+                                this.rotation = 0f
+                                this.translationX = 0f
+                            }
+                            view.isEnabled=true
+                        }
+                        view.isEnabled=false
+                    }else{
+                        toast("请稍后")
                     }
                 }
             }
@@ -354,9 +345,28 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
-                moveAnimationView(view,true) {
-                    iLog("喜欢")
-                    like(item)
+                iLog("开始执行喜欢")
+                if (view.isEnabled){
+                    lifecycleScope.launch {
+                        val t1=async (Dispatchers.Main){
+                            like(item)
+                        }
+                        val t2=async (Dispatchers.Main) {
+                            moveAnimationView(view,true)
+                        }
+                        t1.await()
+                        t2.await()
+                        delay(50)
+                        view.apply {
+                            this.alpha = 1f
+                            this.rotation = 0f
+                            this.translationX = 0f
+                        }
+                        view.isEnabled=true
+                    }
+                    view.isEnabled=false
+                }else{
+                    toast("请稍后")
                 }
             }
         }
@@ -364,9 +374,27 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             if(uploadHeadDialog.showUploadHeadDialog()){
 
             }else{
-                moveAnimationView(view,false) {
-                    iLog("不喜欢")
-                    disLike(item)
+                if (view.isEnabled){
+                    lifecycleScope.launch {
+                        val t1=async (Dispatchers.Main){
+                            disLike(item)
+                        }
+                        val t2=async (Dispatchers.Main) {
+                            moveAnimationView(view,false)
+                        }
+                        t1.await()
+                        t2.await()
+                        delay(50)
+                        view.apply {
+                            this.alpha = 1f
+                            this.rotation = 0f
+                            this.translationX = 0f
+                        }
+                        view.isEnabled=true
+                    }
+                    view.isEnabled=false
+                }else{
+                    toast("请稍后")
                 }
             }
         }
@@ -402,6 +430,71 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
         LocationUtils.frontBackstageLiveData(this)
     }
+
+    private suspend fun moveAnimationView(view: View, isLike:Boolean)=
+        suspendCoroutine<Unit>{ continuation ->
+            var isEnd=false
+            val f=if (isLike)
+                1
+            else
+                -1
+            view
+                .animate()
+                ?.alpha(0f)
+                ?.rotation(f*10f)
+                ?.translationX(f*view.width /2f)
+                ?.setDuration(500)
+                ?.also {
+                    it.interpolator=object :TimeInterpolator{
+                        override fun getInterpolation(input: Float): Float {
+                            if (cardSwipeView.childCount>=2){
+                                val itemView=cardSwipeView.getChildAt(1)
+                                itemView.rotation=0f
+                                itemView.translationY=-(CardConfig.TRANS_Y_GAP * (1-input))
+                                itemView.scaleX=1 - CardConfig.SCALE_GAP * (1-input)
+                                itemView.scaleY=1 - CardConfig.SCALE_GAP * (1-input)
+                            }
+//                        for (i in min(cardSwipeView.childCount,CardConfig.MAX_SHOW_COUNT)-1 downTo 0 ){
+//                            val itemView=cardSwipeView.getChildAt(1)
+//                            if (itemView==view){
+//                                continue
+//                            }
+//                            itemView.rotation=0f
+//                            itemView.translationY=-(CardConfig.TRANS_Y_GAP * (i-input))
+//                            itemView.scaleX=1 - CardConfig.SCALE_GAP * (i-input)
+//                            itemView.scaleY=1 - CardConfig.SCALE_GAP * (i-input)
+//                        }
+                            return input
+                        }
+                    }
+                }
+                ?.setListener(object : Animator.AnimatorListener{
+                    override fun onAnimationStart(animation: Animator?) {
+
+                    }
+
+                    override fun onAnimationEnd(animation: Animator?) {
+                        if (!isEnd){
+                            isEnd=true
+                            continuation.resume(Unit)
+                        }
+                    }
+
+                    override fun onAnimationCancel(animation: Animator?) {
+                        iLog("动画取消了")
+                        if (!isEnd){
+                            isEnd=true
+                            continuation.resume(Unit)
+                        }
+                    }
+
+                    override fun onAnimationRepeat(animation: Animator?) {
+
+                    }
+
+                })
+                ?.start()
+        }
 
     private fun settingDialog(userItem:RecommendBean){
         followReportDialog.also {
@@ -458,44 +551,39 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     /**
      * 左滑、不喜欢
      */
-    private fun disLike(item: RecommendBean){
+    private suspend fun disLike(item: RecommendBean){
+        iLog("不喜欢")
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
             recommendAdapter.removeItem(item)
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
-            }else if (cardSwipeView.childCount<=0){
-                recommendAdapter.notifyDataSetChanged()
             }
             return
         }
-        lifecycleScope.launch {
 //            loadingDialog.show()
-            val t=recommendViewModel.disLike(item.getId())
+        val t=recommendViewModel.disLike(item.getId())
 //            loadingDialog.dismiss()
 
-            if (t.code==200){
-                recommendAdapter.removeItem(item)
-                if (recommendAdapter.getData().isEmpty()){
-                    showView(ViewType.notContent)
-                }else if (cardSwipeView.childCount<=0){
-                    recommendAdapter.notifyDataSetChanged()
-                }
-            }else{
-                if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
-                    openVip()
-                }
-                recommendAdapter.notifyDataSetChanged()
-                toast(t.msg)
+        if (t.code==200){
+            recommendAdapter.removeItem(item)
+            if (recommendAdapter.getData().isEmpty()){
+                showView(ViewType.notContent)
             }
+        }else{
+            if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
+                openVip()
+            }
+            toast(t.msg)
         }
     }
 
     /**
      * 右滑、喜欢
      */
-    private fun like(item: RecommendBean){
+    private suspend fun like(item: RecommendBean){
+        iLog("喜欢")
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
 
@@ -503,82 +591,66 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
-            }else if (cardSwipeView.childCount<=0){
-                recommendAdapter.notifyDataSetChanged()
             }
             return
         }
-        lifecycleScope.launch {
-//            loadingDialog.show()
-            val t=recommendViewModel.like(item.getId()) {
-                showView(ViewType.mutual)
-                Glide.with(taHead).load(item.getHeadImg()).into(taHead)
-                sendMsg.setOnClickListener {
-                    startActivity(ImChatActivity.getIntent(requireContext(),item.getId().toString()))
-                    showView(ViewType.content)
-                }
+        //            loadingDialog.show()
+        val t=recommendViewModel.like(item.getId()) {
+            showView(ViewType.mutual)
+            Glide.with(taHead)
+                .load(item.getHeadImg())
+                .into(taHead)
+            sendMsg.setOnClickListener {
+                startActivity(ImChatActivity.getIntent(requireContext(),item.getId().toString()))
+                showView(ViewType.content)
             }
+        }
 //            loadingDialog.dismiss()
 
-            if (t.code==200){
-                recommendAdapter.removeItem(item)
-                if (recommendAdapter.getData().isEmpty()){
-                    showView(ViewType.notContent)
-                }else if (cardSwipeView.childCount<=0){
-                    recommendAdapter.notifyDataSetChanged()
-                }
-            }else{
-                if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
-                    openVip()
-                }
-                recommendAdapter.notifyDataSetChanged()
-                toast(t.msg)
+        if (t.code==200){
+            recommendAdapter.removeItem(item)
+            if (recommendAdapter.getData().isEmpty()){
+                showView(ViewType.notContent)
             }
+        }else{
+            if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
+                openVip()
+            }
+            toast(t.msg)
         }
     }
 
     /**
      * 超级喜欢、送花
      */
-    private fun superLike(item: RecommendBean,success: () -> Unit){
+    private suspend fun superLike(item: RecommendBean){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
-            success.invoke()
 
             recommendAdapter.removeItem(item)
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
-            }else if (cardSwipeView.childCount<=0){
-                recommendAdapter.notifyDataSetChanged()
             }
-            success.invoke()
             return
         }
-        SendFlowerDialog.sendFlowerTip(requireContext()){
-            viewLifecycleOwner.lifecycleScope.launch (){
-                loadingDialog.show()
-                recommendViewModel.superLike(item.getId()) {
-                    coinInsufficientDialog.show(item.getHeadImg())
-                }.also {
-                    if (it.code==200){
-                        ImMessageManager.getFlowerMsg(item.getId().toString())?.also {
-                            ImMessageManager.sendMsg(it)
-                        }
-                        recommendAdapter.removeAt(0)
-                        if (recommendAdapter.getData().isEmpty()){
-                            showView(ViewType.notContent)
-                        }else if (cardSwipeView.childCount<=0){
-                            recommendAdapter.notifyDataSetChanged()
-                        }
-                        success.invoke()
-                    }else{
-                        toast(it.msg)
-                    }
+        loadingDialog.show()
+        recommendViewModel.superLike(item.getId()) {
+            coinInsufficientDialog.show(item.getHeadImg())
+        }.also {
+            if (it.code==200){
+                ImMessageManager.getFlowerMsg(item.getId().toString())?.also {
+                    ImMessageManager.sendMsg(it)
                 }
-                loadingDialog.dismiss()
+                recommendAdapter.removeAt(0)
+                if (recommendAdapter.getData().isEmpty()){
+                    showView(ViewType.notContent)
+                }
+            }else{
+                toast(it.msg)
             }
         }
+        loadingDialog.dismiss()
     }
 
     private fun openVip(){

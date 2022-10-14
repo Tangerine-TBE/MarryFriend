@@ -508,7 +508,14 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     }
                 }
             }
+            //底部送花等隐藏
+            bottomActionTip.isVisible=dislike.isVisible||sendFlowers.isVisible||care.isVisible
+            bottomAction.isVisible=bottomActionTip.isVisible
             nestedScrollView.apply {
+                if (!bottomAction.isVisible){
+                    richang.visibility= View.GONE
+                    return@launch
+                }
                 var oldScroll=0
                 var scrollDY=0
                 this.setOnScrollChangeListener (object : NestedScrollView.OnScrollChangeListener{
@@ -533,8 +540,6 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                     }
                 })
             }
-
-            itemInteraction.isVisible=dislike.isVisible||sendFlowers.isVisible||care.isVisible
         }
     }
 

@@ -67,7 +67,9 @@ class LikeViewModel:ViewModel() {
     suspend fun loadLike(page:Int)= suspendCoroutine<ILikeData?> { coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/mePutongXihuanOtherList"
         val map= mapOf(
-            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "page" to page.toString(),
+            "size" to "10"
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -79,13 +81,15 @@ class LikeViewModel:ViewModel() {
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf("page" to page.toString(),"size" to "10"))
+        })
     }
 
     suspend fun loadSuperLike(page:Int)= suspendCoroutine<ILikeData?> { coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/meChaojiXihuanOtherList"
         val map= mapOf(
-            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "page" to page.toString(),
+            "size" to "10"
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -97,13 +101,15 @@ class LikeViewModel:ViewModel() {
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf("page" to page.toString(),"size" to "10"))
+        })
     }
 
     suspend fun loadDisLike(page:Int)= suspendCoroutine<ILikeData?> { coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/unconcernList"
         val map= mapOf(
-            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录")))
+            "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "page" to page.toString(),
+            "size" to "10"
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -115,6 +121,6 @@ class LikeViewModel:ViewModel() {
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf("page" to page.toString(),"size" to "10"))
+        })
     }
 }

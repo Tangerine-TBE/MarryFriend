@@ -96,23 +96,25 @@ object ImMessageManager {
         if (conversationId==MY_HELPER_ID){
             return
         }
+        val securityKey=SECURITY_MESSAGE_KEY+EMClient.getInstance().currentUser+"&"+conversationId//SECURITY_MESSAGE_KEY+conversationId
         val conversation=EMClient.getInstance().chatManager().getConversation(conversationId)
         val lastMsg=conversation?.lastMessage
         if ((conversation?.allMessages?.size?:0)<=1){
             val lastMsgBody=lastMsg?.body
+            //如果是安全提示
             if (lastMsgBody is EMCustomMessageBody&&lastMsgBody.event()==CustomEvent.security.code){
-                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
+                SPUtil.instance.putBoolean(securityKey,true)
                 isSendSecurityMap[conversationId]=true
                 return
             }else{
-                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,false)
+                SPUtil.instance.putBoolean(securityKey,false)
                 isSendSecurityMap[conversationId]=false
             }
         }
 
         val isSendSecurity= isSendSecurityMap.get(conversationId)
         if (isSendSecurity==null){
-            isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(SECURITY_MESSAGE_KEY+conversationId,false)
+            isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(securityKey,false)
         }else if (isSendSecurity==true){
             return
         }
@@ -124,7 +126,7 @@ object ImMessageManager {
                 }?:(System.currentTimeMillis()-60*60*1000)
                 emMessage.msgId=System.currentTimeMillis().toString()
                 ImMessageManager.insertMessage(emMessage)
-                SPUtil.instance.putBoolean(SECURITY_MESSAGE_KEY+conversationId,true)
+                SPUtil.instance.putBoolean(securityKey,true)
                 isSendSecurityMap[conversationId]=true
             }
         }

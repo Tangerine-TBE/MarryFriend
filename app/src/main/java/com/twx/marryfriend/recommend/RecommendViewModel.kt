@@ -3,7 +3,9 @@ package com.twx.marryfriend.recommend
 import android.os.CountDownTimer
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
@@ -15,6 +17,8 @@ import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.NumberFormat
@@ -71,11 +75,11 @@ class RecommendViewModel():ViewModel() {
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
             "user_sex" to UserInfo.getOriginalUserSex().toString())
 
-        LocationUtils.getLocation()?.provinceCode?.also {
-            map["province_code"] = it.toString()
+        LocationUtils.getLocation()?.provinceCode.also {
+            map["province_code"] = it?.toString()?:"0"
         }
-        LocationUtils.getLocation()?.cityCode?.also {
-            map["city_code"] = it.toString()
+        LocationUtils.getLocation()?.cityCode.also {
+            map["city_code"] = it?.toString()?:"0"
         }
         /**
          * {"code":200,"msg":"success","data":{"5":5}}
@@ -174,6 +178,14 @@ class RecommendViewModel():ViewModel() {
     }
 
     suspend fun disLike(guest_uid: Int)=suspendCoroutine<RecommendCall>{ coroutine->
+        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
+            viewModelScope.launch {
+                iLog("不喜欢,未请求接口")
+                delay(700)
+                coroutine.resume(RecommendCall())
+            }
+            return@suspendCoroutine
+        }
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -203,10 +215,14 @@ class RecommendViewModel():ViewModel() {
     suspend fun like(
         guest_uid: Int,
         mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
-//        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
-//            coroutine.resume(RecommendCall())
-//            return@suspendCoroutine
-//        }
+        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
+            viewModelScope.launch {
+                iLog("喜欢,未请求接口")
+                delay(700)
+                coroutine.resume(RecommendCall())
+            }
+            return@suspendCoroutine
+        }
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -274,6 +290,14 @@ class RecommendViewModel():ViewModel() {
     }
 
     suspend fun superLike(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<RecommendCall>{coroutine->
+        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
+            viewModelScope.launch {
+                iLog("超级喜欢,未请求接口")
+                delay(700)
+                coroutine.resume(RecommendCall())
+            }
+            return@suspendCoroutine
+        }
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusChaojiXihuanOther"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),

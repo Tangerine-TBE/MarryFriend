@@ -23,6 +23,7 @@ class SlideCardLayoutManager:RecyclerView.LayoutManager() {
         for (i in bottomPosition downTo  0) {
             // 那View --》 复用
             val view = recycler.getViewForPosition(i)
+            view.rotation=0f
             addView(view)
 
             // onMeasure

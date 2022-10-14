@@ -19,6 +19,8 @@ class MutualLikeViewModel:ViewModel() {
         val url="${Contents.USER_URL}/marryfriend/TrendsNotice/likeEachOtherList"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "page" to "1",
+            "size" to "20"
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
@@ -30,9 +32,6 @@ class MutualLikeViewModel:ViewModel() {
             }
         },{
             coroutine.resumeWithException(Exception(it))
-        }, mapOf(
-            "page" to "1",
-            "size" to "20"
-        ))
+        })
     }
 }
