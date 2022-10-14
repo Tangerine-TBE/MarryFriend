@@ -603,7 +603,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                 override fun onSoftInputChanged(height: Int) {
                     if (height == 0) {
 
-                        ToastUtils.showShort("恢复到添加父评论模式")
+
 
                         eet_emoji_other_edit.hint = "走心,说点好听的"
 
@@ -783,7 +783,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onDoDeleteTrendSuccess(deleteTrendBean: DeleteTrendBean?) {
-        ToastUtils.showShort("删除动态成功，返回至上一界面，删除数据")
 
         val intent = intent
         setResult(RESULT_OK, intent)
@@ -1096,7 +1095,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         if (commentTwoCreateBean != null) {
             when (commentTwoCreateBean.code) {
                 200 -> {
-                    ToastUtils.showShort("重新加载数据")
 
                     when (mCommentOneList[mItem].all) {
                         0 -> {
@@ -1187,7 +1185,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         if (commentOneCreateBean != null) {
             when (commentOneCreateBean.code) {
                 200 -> {
-                    ToastUtils.showShort("本地添加数据")
 
                     val list = CommentOneList(content,
                         "",
@@ -1855,8 +1852,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         firstUid = 0
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "12").toInt()
 
-        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
-
     }
 
     override fun onItemMoreClick(v: View?, positionOne: Int) {
@@ -1907,18 +1902,14 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         firstUid = mCommentOneList[positionOne].list.two_last_uid
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "12").toInt()
 
-        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
-
     }
 
     override fun onChildClick(positionOne: Int, two: Int) {
         // 子评论点击事件
-        ToastUtils.showShort("${positionOne}/${two}")
     }
 
     override fun onChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
-        ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
         startActivity(FriendInfoActivity.getIntent(this,
             mCommentOneList[positionOne].twoList[two].two_last_uid))
     }
@@ -1952,25 +1943,20 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         firstUid = mCommentOneList[positionOne].twoList[two].two_last_uid
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "12").toInt()
 
-        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
-
     }
 
     override fun onChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
-        ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
         startActivity(FriendInfoActivity.getIntent(this,
             mCommentOneList[positionOne].twoList[two].two_first_uid))
     }
 
     override fun onLocalChildClick(positionOne: Int, two: Int) {
         // 子评论点击事件
-        ToastUtils.showShort("${positionOne}/${two}")
     }
 
     override fun onLocalChildAvatarClick(positionOne: Int, two: Int) {
         // 子评论头像点击事件
-        ToastUtils.showShort(" 子评论头像点击 ${positionOne}/${two}")
         startActivity(FriendInfoActivity.getIntent(this,
             mCommentOneList[positionOne].twoLocalList[two].two_last_uid))
     }
@@ -2005,19 +1991,15 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         firstUid = mCommentOneList[positionOne].twoLocalList[two].two_last_uid
         lastUid = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
 
-        ToastUtils.showShort(KeyboardUtils.isSoftInputVisible(this).toString())
-
     }
 
     override fun onLocalChildReplyAvatarClick(positionOne: Int, two: Int) {
         // 子评论回复的用户名点击事件
-        ToastUtils.showShort(" 子评论回复用户名点击 ${positionOne}/${two}")
         startActivity(FriendInfoActivity.getIntent(this,
             mCommentOneList[positionOne].twoLocalList[two].two_first_uid))
     }
 
     override fun onItemLongClick(v: View?, positionOne: Int) {
-        ToastUtils.showShort(positionOne)
         // adapter
 
         if (mCommentOneList[positionOne].list.one_level_uid.toString() == SPStaticUtils.getString(
@@ -2029,7 +2011,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             val trendId = mCommentOneList[positionOne].list.trends_id
             val hostId = mCommentOneList[positionOne].list.host_uid
 
-            ToastUtils.showShort("本人发的")
 
             twoPosition = 0
 
@@ -2049,7 +2030,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onItemChildContentLongClick(v: View?, positionOne: Int) {
-        ToastUtils.showShort("子评论 : $positionOne")
+
         // 父评论附带的那条子评论
         // 分情况
         // 当除了这条没其他数据时，直接删除这个
@@ -2064,7 +2045,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             val trendId = mCommentOneList[positionOne].list.trends_id
             val hostId = mCommentOneList[positionOne].list.id
 
-            ToastUtils.showShort("本人发的")
 
             twoPosition = 0
 
@@ -2092,7 +2072,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                 "13")
         ) {
 
-            ToastUtils.showShort("本人发的")
             val id = mCommentOneList[positionOne].twoList[two].id
             val trendId = mCommentOneList[positionOne].list.trends_id
             val hostId = mCommentOneList[positionOne].list.id
@@ -2123,7 +2102,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                 "13")
         ) {
 
-            ToastUtils.showShort("本人发的")
             val id = mCommentOneList[positionOne].twoLocalList[two].id
             val trendId = mCommentOneList[positionOne].list.trends_id
             val hostId = mCommentOneList[positionOne].list.id
@@ -2171,17 +2149,14 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             focus.setOnClickListener {
                 isBackFresh = true
                 if (haveFocus) {
-                    ToastUtils.showShort("取消关注")
                     doCancelFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
                 } else {
-                    ToastUtils.showShort("关注")
                     doPlusFocus(SPStaticUtils.getString(Constant.USER_ID, "13"), userId)
                 }
                 dismiss()
             }
 
             report.setOnClickListener {
-                ToastUtils.showShort("举报该动态")
                 startActivity(ReportReasonActivity.getIntent(this@DynamicOtherShowActivity,
                     SPStaticUtils.getString(Constant.USER_ID, "13"),
                     userId.toString()))
@@ -2300,7 +2275,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             dismiss()
             if (commentOneDeleteBean != null) {
                 if (commentOneDeleteBean.code == 200) {
-                    ToastUtils.showShort("删除父动态，更新视图")
                     if (mCommentOneList.size > one) {
                         mCommentOneList.removeAt(one)
                         adapter.notifyDataSetChanged()
@@ -2358,13 +2332,11 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
                                         adapter.notifyDataSetChanged()
                                     } else {
-                                        ToastUtils.showShort("未展开，此时不提供删除功能")
                                     }
                                 }
                             }
                         }
                         1 -> {
-                            ToastUtils.showShort("删除子动态，更新视图")
                             if (load) {
                                 load = false
                                 Log.i("guo", "one : $one, two :$twoPosition")
@@ -2402,7 +2374,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
             findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
                 dismiss()
-                ToastUtils.showShort("举报")
             }
 
         }
@@ -2426,7 +2397,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
             findViewById<TextView>(R.id.tv_dialog_like_avatar_jump).setOnClickListener {
                 dismiss()
-                ToastUtils.showShort("跳转到头像界面")
                 startActivity(Intent(context, AvatarToolActivity::class.java))
             }
 

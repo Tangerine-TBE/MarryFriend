@@ -38,8 +38,7 @@ import com.twx.marryfriend.net.impl.doUpdateDemandInfoPresentImpl
 import kotlinx.android.synthetic.main.fragment_target.*
 import java.util.*
 
-class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
-    IDoPlusDemandAddressCallback {
+class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAddressCallback {
 
     private var mAgeMinList: MutableList<Int> = arrayListOf()
     private var mAgeMaxList: MutableList<Int> = arrayListOf()
@@ -154,6 +153,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
     private fun initEvent() {
 
+        showTargetFirstDialog()
+
         baseAdapter.setOnItemClickListener(object : TargetBaseAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 when (position) {
@@ -235,6 +236,88 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
         doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
     }
+
+    // 显示第一个弹窗
+    private fun showTargetFirstDialog() {
+
+
+        if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0) == 0) {
+            // 年龄
+            showAgeDialog()
+        } else {
+            if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0) == 0) {
+                // 身高
+                showHeightDialog()
+            } else {
+                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7) == 7) {
+                    // 月收入
+                    showIncomeDialog()
+                } else {
+                    if (SPStaticUtils.getString(Constant.TA_EDU, "") == "") {
+                        // 学历
+                        showEduDialog()
+                    } else {
+                        if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                            // 婚况
+                            showMarryStateDialog()
+                        } else {
+                            if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                                // 体型
+                                showBodyDialog()
+                            } else {
+                                if (SPStaticUtils.getString(Constant.TA_WORK_PLACE, "") == "") {
+                                    // 工作地区
+                                    showJobDialog()
+                                } else {
+                                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                                        // 有没有孩子
+                                        showHaveChildDialog()
+                                    } else {
+                                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                            // 是否想要孩子
+                                            showWantChildDialog()
+                                        } else {
+                                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                                // 是否吸烟
+                                                showSmokeDialog()
+                                            } else {
+                                                if (SPStaticUtils.getInt(Constant.TA_DRINK,
+                                                        5) == 5
+                                                ) {
+                                                    // 是否喝酒
+                                                    showDrinkDialog()
+                                                } else {
+                                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
+                                                            3) == 3
+                                                    ) {
+                                                        // 有无照片
+                                                        showPhotoDialog()
+                                                    } else {
+                                                        if (SPStaticUtils.getInt(Constant.TA_MARRY,
+                                                                0) == 0
+                                                        ) {
+                                                            // 何时结婚
+                                                            showMarryDialog()
+                                                        } else {
+                                                            updateDateUI()
+                                                            update()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
 
     // 点击选项之后显示下一个弹窗
     private fun showNextDialog(position: Int) {
@@ -729,47 +812,43 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
         age = when (SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)) {
             0 -> "未填写"
             else -> "${
-                SPStaticUtils.getInt(Constant.TA_AGE_MIN,
-                    0)
+                SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)
             }~${SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)}"
         }
 
         height = when (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)) {
             0 -> "未填写"
             else -> "${SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)}~${
-                SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX,
-                    0)
+                SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
             }"
         }
 
         income = when (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 9)) {
             9 -> "未填写"
             0 -> "不限"
-            else ->
-                when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)) {
-                    0 -> {
-                        "${
-                            DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MAX,
-                                7)]
-                        }以下"
-                    }
-                    else ->
-                        if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8) == SPStaticUtils.getInt(
-                                Constant.TA_INCOME_MAX,
-                                8)
-                        ) {
-                            "${
-                                DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
-                                    8)]
-                            }以上"
-                        } else {
-                            "${
-                                DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
-                                    8)]
-                            }~" + DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MAX,
-                                8)]
-                        }
+            else -> when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)) {
+                0 -> {
+                    "${
+                        DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MAX,
+                            7)]
+                    }以下"
                 }
+                else -> if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 8) == SPStaticUtils.getInt(
+                        Constant.TA_INCOME_MAX,
+                        8)
+                ) {
+                    "${
+                        DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
+                            8)]
+                    }以上"
+                } else {
+                    "${
+                        DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MIN,
+                            8)]
+                    }~" + DataProvider.TargetIncomeData[SPStaticUtils.getInt(Constant.TA_INCOME_MAX,
+                        8)]
+                }
+            }
 
         }
 
@@ -1043,23 +1122,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
         val income = incomeList.toString()
 
         val demandInfo =
-            " {\"age_min\":       $ageMin," +
-                    "\"age_max\":       $ageMax," +
-                    "\"min_high\":      $heightMin," +
-                    "\"max_high\":      $heightMax," +
-                    "\"figure_nan\":    $body," +
-                    "\"figure_nv\":     $body," +
-                    "\"salary_range\":  $income," +
-                    "\"education\":     $edu," +
-                    "\"marry_status\":  \"$marryState\"," +
-                    "\"child_had\":     $childHave," +
-                    "\"want_child\":    $childWant," +
-                    "\"is_smoking\":    $smoke," +
-                    "\"drink_wine\":    $drink," +
-                    "\"is_headface\":   $havePhoto," +
-                    "\"marry_time\":    $marryTime," +
-                    "\"buy_car\":       $car," +
-                    "\"buy_house\":     $house}"
+            " {\"age_min\":       $ageMin," + "\"age_max\":       $ageMax," + "\"min_high\":      $heightMin," + "\"max_high\":      $heightMax," + "\"figure_nan\":    $body," + "\"figure_nv\":     $body," + "\"salary_range\":  $income," + "\"education\":     $edu," + "\"marry_status\":  \"$marryState\"," + "\"child_had\":     $childHave," + "\"want_child\":    $childWant," + "\"is_smoking\":    $smoke," + "\"drink_wine\":    $drink," + "\"is_headface\":   $havePhoto," + "\"marry_time\":    $marryTime," + "\"buy_car\":       $car," + "\"buy_house\":     $house}"
 
         return demandInfo
 
@@ -1107,145 +1170,93 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback,
 
     // 年龄弹窗
     private fun showAgeDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(AgeDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(AgeDialog(requireContext())).show()
     }
 
     // 身高弹窗
     private fun showHeightDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HeightDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(HeightDialog(requireContext())).show()
     }
 
     // 月收入弹窗
     private fun showIncomeDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(IncomeDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(IncomeDialog(requireContext())).show()
     }
 
     // 学历弹窗
     private fun showEduDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(EduNewDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(EduNewDialog(requireContext())).show()
     }
 
     // 婚况弹窗
     private fun showMarryStateDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(MarryStateNewDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(MarryStateNewDialog(requireContext())).show()
     }
 
     // 体型弹窗
     private fun showBodyDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(BodyDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(BodyDialog(requireContext())).show()
     }
 
     // 工作地区
     private fun showJobDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(JobDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(JobDialog(requireContext())).show()
     }
 
     // 有没有孩子弹窗
     private fun showHaveChildDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(HaveChildNewDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(HaveChildNewDialog(requireContext())).show()
     }
 
     // 是否想要孩子
     private fun showWantChildDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(WantChildDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(WantChildDialog(requireContext())).show()
     }
 
     // 是否吸烟
     private fun showSmokeDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(SmokeDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(SmokeDialog(requireContext())).show()
     }
 
     // 是否饮酒
     private fun showDrinkDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(DrinkDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(DrinkDialog(requireContext())).show()
     }
 
     // 有无照片
     private fun showPhotoDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(PhotoDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(PhotoDialog(requireContext())).show()
     }
 
     // 何时结婚
     private fun showMarryDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(MarryDialog(requireContext()))
-            .show()
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(MarryDialog(requireContext())).show()
     }
 
 

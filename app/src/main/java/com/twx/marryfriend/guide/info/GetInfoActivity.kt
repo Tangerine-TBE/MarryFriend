@@ -35,6 +35,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     // 是否需要刷新
     private var needRefresh = false
 
+    // 用户昵称
+    private var userNick = ""
+
     // 是否加载城市
     private var isLoadCity = false
 
@@ -70,10 +73,17 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     companion object {
         private const val MODE = "mode"
         private const val REFRESH = "refresh"
-        fun getIntent(context: Context, mode: Int, needRefresh: Boolean? = false): Intent {
+        private const val NICK = "nick"
+        fun getIntent(
+            context: Context,
+            mode: Int,
+            nick: String,
+            needRefresh: Boolean? = false,
+        ): Intent {
             val intent = Intent(context, GetInfoActivity::class.java)
             intent.putExtra(MODE, mode)
             intent.putExtra(REFRESH, needRefresh)
+            intent.putExtra(NICK, nick)
             return intent
         }
     }
@@ -106,6 +116,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
         jumpMode = intent.getIntExtra("mode", 0)
         needRefresh = intent.getBooleanExtra("refresh", false)
+        userNick = intent.getStringExtra("nick").toString()
 
     }
 
@@ -133,22 +144,41 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     override fun initEvent() {
         super.initEvent()
 
-        isCompleteLoading()
 
-        if (!SPStaticUtils.getBoolean(Constant.JOB_HAVE, false)) {
-            val jobMap: MutableMap<String, String> = TreeMap()
-            getJobPresent.getJob(jobMap)
+
+        Log.i("guo", "JOB_HAVE ：${SPStaticUtils.getBoolean(Constant.JOB_HAVE, false)}")
+        Log.i("guo", "CITY_HAVE : ${SPStaticUtils.getBoolean(Constant.CITY_HAVE, false)}")
+        Log.i("guo", "INDUSTRY_HAVE : ${SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)}")
+
+        if (!SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) ||
+            !SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) ||
+            !SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+        ) {
+
+            Log.i("guo", "获取数据")
+
+            if (!SPStaticUtils.getBoolean(Constant.JOB_HAVE, false)) {
+                val jobMap: MutableMap<String, String> = TreeMap()
+                getJobPresent.getJob(jobMap)
+            }
+
+            if (!SPStaticUtils.getBoolean(Constant.CITY_HAVE, false)) {
+                val cityMap: MutableMap<String, String> = TreeMap()
+                getCityPresent.getCity(cityMap)
+            }
+
+            if (!SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)) {
+                val industryMap: MutableMap<String, String> = TreeMap()
+                getIndustryPresent.getIndustry(industryMap)
+            }
+
+        } else {
+
+            Log.i("guo", "直接有数据")
+
+            isCompleteLoading()
         }
 
-        if (!SPStaticUtils.getBoolean(Constant.CITY_HAVE, false)) {
-            val cityMap: MutableMap<String, String> = TreeMap()
-            getCityPresent.getCity(cityMap)
-        }
-
-        if (!SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)) {
-            val industryMap: MutableMap<String, String> = TreeMap()
-            getIndustryPresent.getIndustry(industryMap)
-        }
     }
 
     // 获取 头像 审核的 accessToken
@@ -217,14 +247,42 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                 }
                 1 -> {
 
+                    if (userNick != "") {
+                        // 有用户昵称，
 
-                    SPStaticUtils.put(Constant.BASE_INFO_FINISH, true)
-                    SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
+                        SPStaticUtils.put(Constant.BASE_INFO_FINISH, true)
+                        SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
 
-                    // 直接去首页
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
-                    this.finish()
+                        // 直接去首页
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        this.finish()
+
+                    } else {
+                        // 走注册流程
+                        if (SPStaticUtils.getBoolean(Constant.JOB_HAVE,
+                                false) && SPStaticUtils.getBoolean(Constant.CITY_HAVE,
+                                false) && SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+                        ) {
+                            if (!SPStaticUtils.getBoolean(Constant.BASE_INFO_FINISH, false)) {
+                                val intent = Intent(this, BaseInfoActivity::class.java)
+                                startActivity(intent)
+                                this.finish()
+                            } else {
+                                if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
+                                    val intent = Intent(this, DetailInfoActivity::class.java)
+                                    startActivity(intent)
+                                    this.finish()
+                                } else {
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    startActivity(intent)
+                                    this.finish()
+                                }
+                            }
+                        }
+
+                    }
+
                 }
                 else -> {
                     // 走注册流程

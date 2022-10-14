@@ -197,7 +197,6 @@ public interface Api {
     @POST("/marryfriend/UserCenter/whoDiscussMeList")
     Call<WhoDiscussMeBean> getWhoDiscussMe(@QueryMap Map<String, Object> params);
 
-
     // 获取四个统计数字
     @POST("/marryfriend/UserCenter/getFourTotal")
     Call<FourTotalBean> getFourTotal(@QueryMap Map<String, Object> params);

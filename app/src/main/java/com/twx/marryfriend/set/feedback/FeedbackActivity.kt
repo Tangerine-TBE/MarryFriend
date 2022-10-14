@@ -10,6 +10,7 @@ import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.constant.DataProvider
+import com.twx.marryfriend.message.MyHelperActivity
 import com.twx.marryfriend.set.adapter.FeedbackAdapter
 import kotlinx.android.synthetic.main.activity_feedback.*
 import kotlinx.android.synthetic.main.activity_set_web.*
@@ -46,11 +47,10 @@ class FeedbackActivity : MainBaseViewActivity() {
 
 
         ll_feedback_service.setOnClickListener {
-            ToastUtils.showShort("在线客服")
+            startActivity(MyHelperActivity.getIntent(this))
         }
 
         ll_feedback_feedback.setOnClickListener {
-            ToastUtils.showShort("意见反馈")
             startActivity(Intent(this, SuggestionActivity::class.java))
         }
 

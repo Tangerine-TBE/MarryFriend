@@ -53,8 +53,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
-
-
         <activity
             android:name=".set.black.BlackListActivity"
             android:exported="false" />
@@ -88,9 +86,7 @@
         <activity
             android:name=".push.xiaomi.MfrMessageActivity"
             android:exported="true"
-            android:launchMode="singleTask">
-
-        </activity>
+            android:launchMode="singleTask" />
         <activity
             android:name=".tools.introduce.IntroduceToolActivity"
             android:exported="false" />
@@ -184,8 +180,9 @@
         <activity
             android:name=".login.LoginActivity"
             android:exported="true" />
+
         <activity
-            android:name=".begin.BeginActivity"
+            android:name=".begin.start.StartActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:theme="@style/AppStartTheme">
@@ -197,17 +194,20 @@
         </activity>
 
         <activity
+            android:name=".begin.BeginActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/AppStartTheme">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
+        </activity>
+        <activity
             android:name=".main.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
+            android:launchMode="singleTask" />
         <activity
             android:name=".dynamic.saloon.tip.TipsActivity"
             android:exported="false" />
@@ -278,8 +278,8 @@
         </provider>
 
         <meta-data
-        android:name="UMENG_APPKEY"
-        android:value="61b1a198e014255fcba8a3f5" />
+            android:name="UMENG_APPKEY"
+            android:value="61b1a198e014255fcba8a3f5" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${CHANNEL_VALUE}" />

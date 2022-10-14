@@ -697,6 +697,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                             if (content != "") {
 
                                                 Log.i("guo", "文字 ----图片 ")
+                                                doTextVerify = false
                                                 doTextVerify(content)
                                             } else {
 
@@ -764,6 +765,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                 if (content != "") {
                                     Log.i("guo", "文字 ---- 空")
+                                    doTextVerify = false
                                     doTextVerify(content)
                                 } else {
                                     ToastUtils.showShort("请输入动态内容")
@@ -939,7 +941,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
                                 Log.i("guo", "文字 ----压缩 ")
-
+                                doTextVerify = false
                                 doTextVerify(content)
                             } else {
 
@@ -1050,7 +1052,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                 if (content != "") {
 
                                     Log.i("guo", "文字 ----视频 ")
-
+                                    doTextVerify = false
                                     doTextVerify(content)
                                 } else {
                                     Log.i("guo", "上传 ----视频 ")

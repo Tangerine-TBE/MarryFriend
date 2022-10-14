@@ -81,7 +81,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
 
         //准备进入登录流程
-        MobclickAgent.onEvent(this,"10000_login_process");
+        MobclickAgent.onEvent(this, "10000_login_process");
 
         sdkInit(AUTH_SECRET)
         mUIConfig = BaseUIConfig.init(0, this, mPhoneNumberAuthHelper)
@@ -106,7 +106,10 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             }
         } else {
             // 跳过登录界面
-            startActivity(GetInfoActivity.getIntent(this, 1, true))
+            startActivity(GetInfoActivity.getIntent(this,
+                1,
+                SPStaticUtils.getString(Constant.ME_NAME),
+                true))
 
             this.finish()
 
@@ -120,15 +123,11 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
     private fun showPhoneLoginDialog() {
 
         //不满足一键登录条件,进入验证码登录
-        MobclickAgent.onEvent(this,"10002_goto_sms_login");
+        MobclickAgent.onEvent(this, "10002_goto_sms_login");
 
-        XPopup.Builder(this)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(PhoneLoginDialog(this))
-            .show()
+        XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+            .asCustom(PhoneLoginDialog(this)).show()
     }
 
     fun sdkInit(secretInfo: String?) {
@@ -177,9 +176,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
      * 进入app就需要登录的场景使用
      */
     private fun oneKeyLogin() {
-        mPhoneNumberAuthHelper = PhoneNumberAuthHelper.getInstance(
-            applicationContext, mTokenResultListener
-        )
+        mPhoneNumberAuthHelper =
+            PhoneNumberAuthHelper.getInstance(applicationContext, mTokenResultListener)
         mUIConfig?.configAuthPage()
         getLoginToken(5000)
     }
@@ -191,7 +189,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
     private fun getLoginToken(timeout: Int) {
 
         //满足一键登录条件,弹出一键登录框
-        MobclickAgent.onEvent(this,"10001_quick_login_alert");
+        MobclickAgent.onEvent(this, "10001_quick_login_alert");
 
         mPhoneNumberAuthHelper.getLoginToken(this, timeout)
         showLoadingDialog("正在唤起授权页")
@@ -202,10 +200,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         ExecutorManager.run(Runnable {
 
             val map: MutableMap<String, String> = TreeMap()
-            val unique = Settings.System.getString(
-                application.contentResolver,
-                Settings.Secure.ANDROID_ID
-            )
+            val unique =
+                Settings.System.getString(application.contentResolver, Settings.Secure.ANDROID_ID)
             if (token != null) {
                 map[Contents.ALI_TOKEN] = token
                 map[Contents.EQUIPMENT_NUMBER] = unique
@@ -266,7 +262,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             if (autoLoginBean.code == "200") {
 
                 //点击一键登录,登录成功
-                MobclickAgent.onEvent(this,"10003_quick_login_success");
+                MobclickAgent.onEvent(this, "10003_quick_login_success");
 
                 hideLoadingDialog()
 
@@ -276,13 +272,15 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
                 SpLoginUtil.saveUserInfo(autoLoginBean)
 
-                startActivity(GetInfoActivity.getIntent(this, autoLoginBean.data.kind_type))
+                startActivity(GetInfoActivity.getIntent(this,
+                    autoLoginBean.data.kind_type,
+                    autoLoginBean.data.nick))
                 this.finish()
 
             } else {
 
                 //点击一键登录,登录失败
-                MobclickAgent.onEvent(this,"10004_quick_login_fail");
+                MobclickAgent.onEvent(this, "10004_quick_login_fail");
 
                 ToastUtils.showShort(autoLoginBean.msg)
             }
@@ -293,7 +291,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
     override fun onDoAutoLoginError() {
 
         //点击一键登录,登录失败
-        MobclickAgent.onEvent(this,"10004_quick_login_fail");
+        MobclickAgent.onEvent(this, "10004_quick_login_fail");
 
     }
 
@@ -336,7 +334,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 if (agreePermission) {
 
                     //一键登录页面点击其他手机号登录
-                    MobclickAgent.onEvent(context,"10005_quick_login_otherphone");
+                    MobclickAgent.onEvent(context, "10005_quick_login_otherphone");
 
                     val intent = Intent(this@BeginActivity, LoginActivity::class.java)
                     startActivity(intent)

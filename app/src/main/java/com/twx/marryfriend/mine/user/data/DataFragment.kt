@@ -480,7 +480,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 } else {
 
-                    Log.i("guo", "播放")
+                    Log.i("guo", "播放  : $videoUrl")
 
                     playVoice(videoUrl, {
                         //playAnim
@@ -1827,8 +1827,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             }
         }
 
-        Log.i("guo","baseSize:$baseSize")
-        Log.i("guo","moreSize:$moreSize")
+        Log.i("guo", "baseSize:$baseSize")
+        Log.i("guo", "moreSize:$moreSize")
 
         var progress = 0
 
@@ -5417,17 +5417,19 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopVoice()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-
         doUpdateMoreInfoPresent.unregisterCallback(this)
         doUpdateBaseInfoPresent.unregisterCallback(this)
         doUploadAvatarPresent.unregisterCallback(this)
         doFaceDetectPresent.unregisterCallback(this)
         updateProportionPresent.unregisterCallback(this)
         doUpdateGreetPresent.unregisterCallback(this)
-
-        stopVoice()
 
     }
 

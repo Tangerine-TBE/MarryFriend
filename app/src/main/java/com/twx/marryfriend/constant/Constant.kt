@@ -19,6 +19,10 @@ object Constant {
     const val BACKGROUND_PERMISSION_TIP = "background_permisssion_tip"
 
 
+    // 是否第一次启动app
+    const val FIRST_START = "first_start"
+
+
     // 用户id
     const val USER_ID = "user_id"
 
