@@ -12,6 +12,7 @@ import com.google.gson.Gson
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ImChatActivity
@@ -125,7 +126,13 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
                         toast("喜欢成功")
                     }else{
                         if (t.code== RecommendCall.RECOMMEND_NOT_HAVE){
-                            startActivity(IntentManager.getVipIntent(this@SearchResultActivity, vipGif = VipGifEnum.MoreView))
+                            if (UserInfo.isSuperVip()){
+                                toast("今日推荐嘉宾次数已用完")
+                            }else if (UserInfo.isVip()){
+                                startActivity(IntentManager.getSuperVipIntent(this@SearchResultActivity, sVipGifEnum = SVipGifEnum.MoreView))
+                            }else{
+                                startActivity(IntentManager.getVipIntent(this@SearchResultActivity, vipGif = VipGifEnum.MoreView))
+                            }
                         }
                         toast(t.msg)
                     }

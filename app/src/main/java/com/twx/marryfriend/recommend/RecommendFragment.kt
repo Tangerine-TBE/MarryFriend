@@ -115,14 +115,18 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 if (direction==ItemTouchHelper.LEFT){
                     guideActionCompleteHandler(HomeCardAction.leftSlide)
                     lifecycleScope.launch {
+                        cardCallback.swipeEnabled=false
                         disLike(e)
                         recommendAdapter.notifyDataSetChanged()
+                        cardCallback.swipeEnabled=true
                     }
                 }else if (direction==ItemTouchHelper.RIGHT){
                     guideActionCompleteHandler(HomeCardAction.rightSlide)
                     lifecycleScope.launch {
+                        cardCallback.swipeEnabled=false
                         like(e)
                         recommendAdapter.notifyDataSetChanged()
+                        cardCallback.swipeEnabled=true
                     }
                 }
             }
@@ -626,7 +630,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private suspend fun superLike(item: RecommendBean){
         if (RecommendGuideView.isShowGuide()){
             iLog("引导期间")
-
             recommendAdapter.removeItem(item)
             recommendAdapter.addItem(item)
             if (recommendAdapter.getData().isEmpty()){

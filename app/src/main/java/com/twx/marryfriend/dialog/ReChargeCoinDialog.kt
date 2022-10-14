@@ -70,7 +70,12 @@ class ReChargeCoinDialog(private val fragmentActivity: FragmentActivity):Dialog(
         fragmentActivity.lifecycleScope.launch {
             loadingDialog.show()
             val a1=async {
-                coinViewModel.getCoin()
+                try {
+                    coinViewModel.getCoin()
+                }catch (e:Exception){
+                    toast(context,"获取金币失败")
+                    0
+                }
             }
             val a2=async {
                 coinViewModel.getCoinPrice()

@@ -98,33 +98,23 @@ object ImMessageManager {
         }
         val securityKey=SECURITY_MESSAGE_KEY+EMClient.getInstance().currentUser+"&"+conversationId//SECURITY_MESSAGE_KEY+conversationId
         val conversation=EMClient.getInstance().chatManager().getConversation(conversationId)
-        val lastMsg=conversation?.lastMessage
-        if ((conversation?.allMessages?.size?:0)<=1){
-            val lastMsgBody=lastMsg?.body
-            //如果是安全提示
-            if (lastMsgBody is EMCustomMessageBody&&lastMsgBody.event()==CustomEvent.security.code){
-                SPUtil.instance.putBoolean(securityKey,true)
-                isSendSecurityMap[conversationId]=true
-                return
-            }else{
-                SPUtil.instance.putBoolean(securityKey,false)
-                isSendSecurityMap[conversationId]=false
+        val allMessages=conversation?.allMessages
+        val firstMst=allMessages?.firstOrNull()
+        if (firstMst==null || allMessages.all { it.isUnread }){//如果本地一条已读消息都没有
+            SPUtil.instance.putBoolean(securityKey,false)
+            isSendSecurityMap[conversationId]=false
+        }else{
+            if (!isSendSecurityMap.keys.contains(conversationId)){
+                isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(securityKey,false)
             }
         }
-
         val isSendSecurity= isSendSecurityMap.get(conversationId)
-        if (isSendSecurity==null){
-            isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(securityKey,false)
-        }else if (isSendSecurity==true){
-            return
-        }
 
         if (isSendSecurity!=true){
             ImMessageManager.getCustomMessage(conversationId, CustomEvent.security)?.also { emMessage ->
-                emMessage.msgTime=lastMsg?.msgTime?.let {
-                    it-60*60*1000
-                }?:(System.currentTimeMillis()-60*60*1000)
-                emMessage.msgId=System.currentTimeMillis().toString()
+                emMessage.msgTime=(firstMst?.msgTime?:System.currentTimeMillis())
+                    .let { it-60L*60L*1000 }//减一个时间让下一条消息显示时间
+                emMessage.msgId=emMessage.msgTime.toString()+conversationId
                 ImMessageManager.insertMessage(emMessage)
                 SPUtil.instance.putBoolean(securityKey,true)
                 isSendSecurityMap[conversationId]=true

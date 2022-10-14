@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import com.kingja.loadsir.core.LoadSir
 import com.message.ImInit
+import com.message.ImLoginHelper
 import com.message.ImUserManager
 import com.twx.marryfriend.base.BaseApplication
 import com.twx.marryfriend.base.BaseConstant
@@ -42,6 +43,11 @@ class AppApplication : BaseApplication() {
                     longToast("执行退出登录")
                     return@observeForever
                 }
+                ImLoginHelper.logout({
+
+                },{code,msg->
+
+                })
                 SpUtil.deleteUserInfo()
                 MyUtils.getLastResumedActivityLiveData().value.also { activity ->
                     if (activity is BeginActivity){

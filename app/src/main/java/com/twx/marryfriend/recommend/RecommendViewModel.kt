@@ -115,8 +115,11 @@ class RecommendViewModel():ViewModel() {
     }
 
     suspend fun loadRecommendUserInfo(idArray: List<Int>)=suspendCoroutine<List<RecommendBean>>{ coroutine->
+        if (idArray.isEmpty()){
+            coroutine.resume(emptyList())
+            return@suspendCoroutine
+        }
         ImUserInfoHelper.addFriendInfo(idArray.map { it.toString() })
-
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachFive"
         val map= mapOf(
             "user_id" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -146,7 +149,7 @@ class RecommendViewModel():ViewModel() {
                 coroutine.resume(recommendData)
             }catch (e:Exception){
                 eLog(e.stackTraceToString())
-                coroutine.resumeWithException(Exception("转换失败eachFive:${response}"))
+                coroutine.resumeWithException(Exception("转换失败:${response}"))
             }
         },{
             coroutine.resumeWithException(Exception(it))

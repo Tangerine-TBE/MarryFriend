@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.view.Gravity
 import android.view.WindowManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.recommend.widget.RecommendGuideView
 import com.xyzz.myutils.SPUtil
 import kotlinx.android.synthetic.main.dialog_send_flower.*
 
@@ -13,6 +14,10 @@ class SendFlowerDialog private constructor(context: Context,continueAction:()->U
     companion object{
         private const val IS_AGREE_KEY="send_flower_not_tip_k"
         fun sendFlowerTip(context: Context,continueAction:()->Unit){
+            if (RecommendGuideView.isShowGuide()){
+                continueAction.invoke()
+                return
+            }
             if (SPUtil.instance.getBoolean(IS_AGREE_KEY)){
                 continueAction.invoke()
             }else{
