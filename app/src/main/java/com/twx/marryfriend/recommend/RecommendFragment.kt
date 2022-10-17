@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
 import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -264,12 +265,22 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             try {
                 val lastDynamic=recommendViewModel.loadLaseDynamic()
                 if(lastDynamic==null){
-                    lastDynamicView.visibility=View.GONE
+                    lastTextDynamicView.isVisible=false
+                    lastDynamicView.isVisible=false
                 }else{
-                    Glide.with(lastDynamicImage).load(lastDynamic?.image_url.split(",").firstOrNull()).placeholder(R.mipmap.ic_launcher).into(lastDynamicImage)
-                    lastDynamicTitle.text=lastDynamic?.label
-                    lastDynamicDes/*.setExpandableText(lastDynamic?.text_content?:"", 30, "查看更多>", "收起")*/
-                        .text=lastDynamic?.text_content
+                    lastTextDynamicView.isVisible=lastDynamic.image_url.isBlank()
+                    lastDynamicView.isVisible= lastDynamic.image_url.isNotBlank()
+
+                    if (lastDynamic.image_url.isBlank()){
+                        lastTextDynamic.text=lastDynamic?.text_content
+                    }else{
+                        Glide.with(lastDynamicImage).load(lastDynamic.image_url.split(",").firstOrNull()).placeholder(R.mipmap.ic_launcher).into(lastDynamicImage)
+                        lastDynamicDes/*.setExpandableText(lastDynamic?.text_content?:"", 30, "查看更多>", "收起")*/
+                            .text=lastDynamic?.text_content
+                    }
+                    lastTextDynamicView.setOnClickListener {
+                        lastDynamicView.performClick()
+                    }
                     lastDynamicView.setOnClickListener {
                         val activity=requireActivity()
                         if (activity is MainActivity){
