@@ -4027,16 +4027,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
 
                 if (SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000 < 2) {
-                    Log.i("guo", "不让    ${
-                        SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
-                    }")
                     ToastUtils.showShort("录音时长需大于2s")
                     isNeedUpdate = false
                     dismiss()
                 } else {
-                    Log.i("guo", "让    ${
-                        SPStaticUtils.getString(Constant.ME_VOICE_LONG, "0").toFloat() / 1000
-                    }")
 
                     Thread {
 
@@ -4045,13 +4039,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                         // bucketName 为文件夹名 ，使用用户id来进行命名
                         // key值为保存文件名，试用固定的几种格式来命名
 
+                        val name = TimeUtils.getNowMills()
+
                         val putObjectFromFileResponse = client.putObject("user${
                             SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", FileUtils.getFileName(recordPath), file)
+                        }", "${name}.mp3", file)
 
                         val mVoiceUrl = client.generatePresignedUrl("user${
                             SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", FileUtils.getFileName(recordPath), -1).toString()
+                        }", "${name}.mp3", -1).toString()
 
                         Log.i("guo", mVoiceUrl)
 

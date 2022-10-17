@@ -537,7 +537,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
                 override fun dealWithCustomAction(context: Context, uMessage: UMessage) {
                     super.dealWithCustomAction(context, uMessage)
-                    Log.i("guo", "custom: ${uMessage.custom}")
+
+                    Log.i("guo", "customUmengPush: ${uMessage}")
+
+//                    Log.i("guo", "customUmengPush: ${uMessage.custom}")
                     when (uMessage.custom) {
                         "shenhe_tongzhi" -> {
                             Log.i("guo", "审核通知，跳小秘书")
