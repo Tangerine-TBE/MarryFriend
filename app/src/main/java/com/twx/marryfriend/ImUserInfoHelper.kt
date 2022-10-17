@@ -127,7 +127,7 @@ object ImUserInfoHelper {
                     }
                     CustomEvent.yuying_fail -> {
                         GlobalScope.launch(Dispatchers.Main) {
-                            view.context.startActivity(IntentManager.getUpFillInVoiceIntent(view.context))
+                            view.context.startActivity(IntentManager.getUpFillInVoiceIntent(view.context,true))
                         }
                     }
                     CustomEvent.shiming_pass -> {

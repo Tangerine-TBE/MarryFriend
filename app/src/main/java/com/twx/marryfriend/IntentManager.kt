@@ -126,8 +126,8 @@ object IntentManager {
 //        return null
 //    }
 
-    fun getUpFillInVoiceIntent(context: Context):Intent{//上传语音
-        val intent=Intent(context, VoiceActivity::class.java)
+    fun getUpFillInVoiceIntent(context: Context,isClose:Boolean=true):Intent{//上传语音
+        val intent=VoiceActivity.getInt(context,isClose)
         return intent
     }
 

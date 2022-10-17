@@ -12,6 +12,7 @@ import com.twx.marryfriend.bean.InterdictionBean
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.utils.SpUtil
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.eLog
@@ -27,17 +28,33 @@ object UserInfo :ILoginListener{
                     iLog("收到小秘书消息")
                     val body=it.body
                     if (body is EMCustomMessageBody){
-                        if (body.event()==CustomEvent.interdi_pass.code){
-                            iLog("收到封禁消息，${body.params}")
-                            val interdictionBean=InterdictionBean().apply {
-                                this.blacklist_close_time=body.params.get("expire")
-                                this.blacklist_permanent=body.params.get("permanent")?.toIntOrNull()?:0
-                                this.blacklist_status=body.params.get("blacklist_status")?.toIntOrNull()?:0
+                        val event=body.event()
+                        val params=body.params
+                        iLog("参数，${params}")
+                        when(event){
+                            CustomEvent.interdi_pass.code->{
+                                iLog("收到封禁消息")
+                                val interdictionBean=InterdictionBean().apply {
+                                    this.blacklist_close_time=params.get("expire")
+                                    this.blacklist_permanent=params.get("permanent")?.toIntOrNull()?:0
+                                    this.blacklist_status=params.get("blacklist_status")?.toIntOrNull()?:0
+                                }
+                                InterdictionBean.putInterdictionState(interdictionBean)
                             }
-                            InterdictionBean.putInterdictionState(interdictionBean)
-                        }else if (body.event()==CustomEvent.interdi_fail.code){
-                            iLog("收到解封消息")
-                            InterdictionBean.putInterdictionState(null)
+                            CustomEvent.interdi_fail.code->{
+                                iLog("收到解封消息")
+                                InterdictionBean.putInterdictionState(null)
+                            }
+                            CustomEvent.touxiang_fail.code->{
+                                iLog("头像审核不通过")
+                                val status=params.get("hreaStatus")?.toIntOrNull()
+                                val hreaUrl=params.get("hreaUrl")
+                                if (status==null||hreaUrl==null){
+                                    SpUtil.updateAvatar()
+                                }else{
+                                    SpUtil.updateAvatar(hreaUrl,status)
+                                }
+                            }
                         }
                     }
                 }
@@ -272,7 +289,7 @@ object UserInfo :ILoginListener{
             return
         }
         if(!UserInfo.isFillInVoice()){//语音
-            action.invoke(arrayOf(Permission.RECORD_AUDIO, Permission.MANAGE_EXTERNAL_STORAGE),R.mipmap.ic_item_up_fill_in_voice to IntentManager.getUpFillInVoiceIntent(context))
+            action.invoke(arrayOf(Permission.RECORD_AUDIO, Permission.MANAGE_EXTERNAL_STORAGE),R.mipmap.ic_item_up_fill_in_voice to IntentManager.getUpFillInVoiceIntent(context,true))
             return
         }else{
             action.invoke(null,null)
@@ -306,7 +323,7 @@ object UserInfo :ILoginListener{
             return
         }
         if(!UserInfo.isFillInVoice()){//语音
-            action.invoke(arrayOf(Permission.RECORD_AUDIO, Permission.MANAGE_EXTERNAL_STORAGE),R.mipmap.ic_item_up_fill_in_voice_l to IntentManager.getUpFillInVoiceIntent(context))
+            action.invoke(arrayOf(Permission.RECORD_AUDIO, Permission.MANAGE_EXTERNAL_STORAGE),R.mipmap.ic_item_up_fill_in_voice_l to IntentManager.getUpFillInVoiceIntent(context,true))
             return
         }else{
              action.invoke(null,null)
