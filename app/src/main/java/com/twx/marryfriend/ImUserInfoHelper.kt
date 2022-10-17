@@ -227,7 +227,6 @@ object ImUserInfoHelper {
     }
 
     private fun login(userId:String){
-        iLog("登录成功后设置信息")
         ImLoginHelper.login(userId,{easeUser->
             iLog("登录成功，开始刷新会话列表")
             MyHelperAdapterDelegate.sexAction={

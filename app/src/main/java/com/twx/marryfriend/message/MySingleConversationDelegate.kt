@@ -90,19 +90,6 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             holder.itemView.background = ColorDrawable(Color.WHITE)
         }
         val username = item.conversationId()
-        val defaultAvatar=UserInfo.getReversedDefHeadImage()
-
-        holder.messageHead.setImageResource(defaultAvatar)
-        holder.messageUserNickname.text = username
-
-        EaseIM.getInstance().conversationInfoProvider?.getDefaultTypeAvatar(item.type.name)?.also {
-            //设置头像
-            Glide.with(holder.mContext)
-                .load(it)
-                .error(defaultAvatar)
-                .into(holder.messageHead)
-        }
-
         val userProvider = EaseIM.getInstance().userProvider
         val user = userProvider.getUser(username)
         val ext=user.getUserExt()
@@ -118,16 +105,19 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             holder.notVipShowView.visibility=View.VISIBLE
         }
 
-        if (!TextUtils.isEmpty(user.nickname)) {
-            holder.messageUserNickname.text = user.nickname
+        holder.messageUserNickname.text = user.nickname.let {
+            if (it.isNullOrBlank()){
+                username
+            }else{
+                it
+            }
         }
-        if (!TextUtils.isEmpty(user.avatar)) {
-            val drawable = holder.messageHead.drawable
-            Glide.with(holder.mContext)
-                .load(user.avatar)
-                .error(drawable)
-                .into(holder.messageHead)
-        }
+        val defaultAvatar=UserInfo.getReversedDefHeadImage()
+        Glide.with(holder.mContext)
+            .load(user.avatar)
+            .placeholder(defaultAvatar)
+            .error(defaultAvatar)
+            .into(holder.messageHead)
         (ext?:ImUserInfoService.Ext()).also {
             if (it?.isMutualLike!=true&&it?.isFlower!=true){
                 holder.messageMutualLikeIcon.visibility=View.GONE
