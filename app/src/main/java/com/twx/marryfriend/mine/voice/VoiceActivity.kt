@@ -1,5 +1,7 @@
 package com.twx.marryfriend.mine.voice
 
+import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -33,6 +35,9 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
     // 录音文件路径
     private var recordPath = ""
 
+    // 录音结束之后是否结束此界面
+    private var close = false
+
     // 录音工具
     private lateinit var audioRecorder: AudioRecorder
 
@@ -42,10 +47,22 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
+    companion object {
+        private const val CLOSE = "isClose"
+        fun getInt(context: Context, close: Boolean? = false): Intent {
+            val intent = Intent(context, VoiceActivity::class.java)
+            intent.putExtra(CLOSE, close)
+            return intent
+        }
+
+    }
+
     override fun getLayoutView(): Int = R.layout.activity_voice
 
     override fun initView() {
         super.initView()
+
+        close = intent.getBooleanExtra("isClose", false)
 
         doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
         doUpdateGreetPresent.registerCallback(this)
@@ -177,13 +194,11 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
                 // key值为保存文件名，试用固定的几种格式来命名
 
                 val putObjectFromFileResponse = client.putObject("user${
-                    SPStaticUtils.getString(Constant.USER_ID,
-                        "default")
+                    SPStaticUtils.getString(Constant.USER_ID, "default")
                 }", FileUtils.getFileName(recordPath), file)
 
                 val mVoiceUrl = client.generatePresignedUrl("user${
-                    SPStaticUtils.getString(Constant.USER_ID,
-                        "default")
+                    SPStaticUtils.getString(Constant.USER_ID, "default")
                 }", FileUtils.getFileName(recordPath), -1).toString()
 
                 Log.i("guo", mVoiceUrl)
@@ -213,11 +228,7 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
         Log.i("guo", "voice_long : $voiceLong")
 
         val greetInfo =
-            " {\"user_sex\":                    $sex, " +
-                    "\"voice_url\":           \"$voiceUrl\"," +
-                    "\"voice_long\":          \"$voiceLong\"," +
-                    "\"voice_name\":          \"$voiceName\"," +
-                    " \"zhaohuyu_content\":   \"$greet\"}"
+            " {\"user_sex\":                    $sex, " + "\"voice_url\":           \"$voiceUrl\"," + "\"voice_long\":          \"$voiceLong\"," + "\"voice_name\":          \"$voiceName\"," + " \"zhaohuyu_content\":   \"$greet\"}"
 
         return greetInfo
 
@@ -232,11 +243,23 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
     }
 
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
-        ToastUtils.showShort("上传成功")
+        if (updateGreetInfoBean != null) {
+            if (updateGreetInfoBean.code == 200) {
+
+                ToastUtils.showShort("上传成功")
+
+                if (close) {
+                    this.finish()
+                }
+            } else {
+                ToastUtils.showShort(updateGreetInfoBean.msg)
+            }
+        }
+
     }
 
     override fun onDoUpdateGreetInfoError() {
-
+        ToastUtils.showShort("上传失败，请稍后再试")
     }
 
     override fun onDestroy() {

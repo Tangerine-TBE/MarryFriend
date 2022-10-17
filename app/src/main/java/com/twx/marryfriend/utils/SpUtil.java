@@ -67,6 +67,27 @@ public class SpUtil {
         SPStaticUtils.put(Constant.COIN_SUM, coin);
     }
 
+    public static void updateAvatar() {
+        SPStaticUtils.put(Constant.ME_AVATAR, "");
+        SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "");
+        SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "");
+    }
+
+    public static void updateAvatar(String avatarUrl, Integer avatarState) {
+
+        if (avatarState == 0) {
+            SPStaticUtils.put(Constant.ME_AVATAR, "");
+            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, avatarUrl);
+            SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "");
+        } else {
+            SPStaticUtils.put(Constant.ME_AVATAR, avatarUrl);
+            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, "");
+            SPStaticUtils.put(Constant.ME_AVATAR_FAIL, "");
+        }
+
+    }
+
+
     // 删除本地存储信息
     public static void deleteUserInfo() {
         SPStaticUtils.clear();

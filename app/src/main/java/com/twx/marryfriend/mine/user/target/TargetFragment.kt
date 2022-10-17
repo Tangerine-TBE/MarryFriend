@@ -257,7 +257,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                         // 学历
                         showEduDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                        if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
                             // 婚况
                             showMarryStateDialog()
                         } else {
@@ -335,7 +335,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                             // 学历
                             showEduDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_MARRY_STATE, 4) == 4) {
+                            if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
                                 // 婚况
                                 showMarryStateDialog()
                             } else {
