@@ -1102,7 +1102,13 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         val edu = SPStaticUtils.getString(Constant.TA_EDU, "").split(",").toString()
         val marryState = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "0").split(",").toString()
         val body = SPStaticUtils.getInt(Constant.TA_BODY, 0)
-        val childHave = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "0").split(",").toString()
+
+        val childHave = if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "0").contains("[")) {
+            SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "0")
+        } else {
+            SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "0").split(",").toString()
+        }
+
         val childWant = SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 0)
         val smoke = SPStaticUtils.getInt(Constant.TA_SMOKE, 0)
         val drink = SPStaticUtils.getInt(Constant.TA_DRINK, 0)
@@ -1121,8 +1127,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         }
         val income = incomeList.toString()
 
+
+        Log.i("guo", "TA_HAVE_CHILD: ${SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "0")}")
+        Log.i("guo", "childHave: $childHave")
+
         val demandInfo =
-            " {\"age_min\":       $ageMin," + "\"age_max\":       $ageMax," + "\"min_high\":      $heightMin," + "\"max_high\":      $heightMax," + "\"figure_nan\":    $body," + "\"figure_nv\":     $body," + "\"salary_range\":  $income," + "\"education\":     $edu," + "\"marry_status\":  \"$marryState\"," + "\"child_had\":     $childHave," + "\"want_child\":    $childWant," + "\"is_smoking\":    $smoke," + "\"drink_wine\":    $drink," + "\"is_headface\":   $havePhoto," + "\"marry_time\":    $marryTime," + "\"buy_car\":       $car," + "\"buy_house\":     $house}"
+            " {\"age_min\":       $ageMin," + "\"age_max\":       $ageMax," + "\"min_high\":      $heightMin," + "\"max_high\":      $heightMax," + "\"figure_nan\":    $body," + "\"figure_nv\":     $body," + "\"salary_range\":  $income," + "\"education\":     $edu," + "\"marry_status\":  \"$marryState\"," + "\"child_had\": $childHave," + "\"want_child\":    $childWant," + "\"is_smoking\":    $smoke," + "\"drink_wine\":    $drink," + "\"is_headface\":   $havePhoto," + "\"marry_time\":    $marryTime," + "\"buy_car\":       $car," + "\"buy_house\":     $house}"
 
         return demandInfo
 
@@ -2955,6 +2965,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
 
                 SPStaticUtils.put(Constant.TA_HAVE_CHILD, text)
+
+                Log.i("guo", "text : $text ")
 
                 isNeedJump = true
                 dismiss()

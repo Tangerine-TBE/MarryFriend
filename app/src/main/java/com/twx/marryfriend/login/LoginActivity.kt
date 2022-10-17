@@ -416,15 +416,12 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 MobclickAgent.onEvent(this, "10010_sms_login_success");
 
                 // 存储一下资料
-                SpUtil.storeVipInfo(phoneLoginBean.data.close_time_low,
-                    phoneLoginBean.data.close_time_high)
+                SpUtil.storeVipInfo(phoneLoginBean.data.close_time_low, phoneLoginBean.data.close_time_high)
 
 
                 SpLoginUtil.saveUserInfo(phoneLoginBean)
 
-                startActivity(GetInfoActivity.getIntent(this,
-                    phoneLoginBean.data.kind_type,
-                    phoneLoginBean.data.nick))
+                startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type, phoneLoginBean.data.nick))
                 this.finish()
 
             } else {

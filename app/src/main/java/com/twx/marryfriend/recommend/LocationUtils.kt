@@ -1,6 +1,7 @@
 package com.twx.marryfriend.recommend
 
 import android.Manifest
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
@@ -8,9 +9,11 @@ import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
 import com.baidu.location.LocationClientOption
+import com.blankj.utilcode.util.SPStaticUtils
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.twx.marryfriend.UserInfo
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.getCityData
 import com.xyzz.myutils.LifecycleCallbacks
@@ -100,7 +103,7 @@ object LocationUtils {
         mLocationClient.registerLocationListener(object :
             BDAbstractLocationListener() {
             override fun onReceiveLocation(location: BDLocation) {
-                iLog(location.addrStr,"定位到了")
+                iLog(location.addrStr, "定位到了")
                 if (location.addrStr == null) {
                     locationLiveData.value = null
                     return
@@ -153,4 +156,6 @@ object LocationUtils {
         s = ((s * 10000).roundToInt() / 10000).toDouble()
         return s
     }
+
+
 }

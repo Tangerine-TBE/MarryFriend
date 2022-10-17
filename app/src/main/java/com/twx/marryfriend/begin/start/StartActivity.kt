@@ -48,6 +48,7 @@ class StartActivity : MainBaseViewActivity() {
         if (!SPStaticUtils.getBoolean(Constant.FIRST_START, true)) {
 
             startActivity(Intent(this, BeginActivity::class.java))
+            this.finish()
 
         } else {
 

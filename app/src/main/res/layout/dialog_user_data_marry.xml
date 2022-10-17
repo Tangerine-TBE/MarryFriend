@@ -21,6 +21,7 @@
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/iv_user_data_marry_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -29,139 +30,60 @@
 
     </RelativeLayout>
 
-
-    <RelativeLayout
+    <TextView
+        android:id="@+id/tv_user_data_marry_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/shape_bg_dialog_choose_check">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="认同闪婚"
-            android:textColor="#FF4444"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="15dp"
-            android:src="@drawable/ic_dialog_choose_check" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="一年内"
-            android:textColor="#101010"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="15dp"
-            android:src="@drawable/ic_dialog_choose_check"
-            android:visibility="invisible" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="两年内"
-            android:textColor="#101010"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="15dp"
-            android:src="@drawable/ic_dialog_choose_check"
-            android:visibility="invisible" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="三年内"
-            android:textColor="#101010"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="15dp"
-            android:src="@drawable/ic_dialog_choose_check"
-            android:visibility="invisible" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/shape_bg_dialog_choose_uncheck">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="时机成熟就结婚"
-            android:textColor="#101010"
-            android:textSize="17sp" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_marginVertical="10dp"
-            android:layout_marginEnd="15dp"
-            android:src="@drawable/ic_dialog_choose_check"
-            android:visibility="invisible" />
-
-    </RelativeLayout>
-
+        android:background="@drawable/shape_bg_dialog_choose_check"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="半年"
+        android:textColor="#FF4444"
+        android:textSize="17sp" />
 
     <TextView
+        android:id="@+id/tv_user_data_marry_two"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="一年内"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_user_data_marry_three"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="两年内"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_user_data_marry_four"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/shape_bg_dialog_choose_uncheck"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="恋爱后再考虑"
+        android:textColor="#101010"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_user_data_marry_skip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

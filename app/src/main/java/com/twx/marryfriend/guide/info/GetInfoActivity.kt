@@ -144,8 +144,6 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     override fun initEvent() {
         super.initEvent()
 
-
-
         Log.i("guo", "JOB_HAVE ：${SPStaticUtils.getBoolean(Constant.JOB_HAVE, false)}")
         Log.i("guo", "CITY_HAVE : ${SPStaticUtils.getBoolean(Constant.CITY_HAVE, false)}")
         Log.i("guo", "INDUSTRY_HAVE : ${SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)}")
@@ -233,6 +231,10 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                             startActivity(intent)
                             this.finish()
                         } else {
+
+                            // 有基础数据，即可作为已登录（防止登录进来，不输入昵称数据就杀掉app）
+                            SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
+
                             if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
                                 val intent = Intent(this, DetailInfoActivity::class.java)
                                 startActivity(intent)
@@ -249,6 +251,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
                     if (userNick != "") {
                         // 有用户昵称，
+
+                        // 有基础数据，即可作为已登录（防止登录进来，不输入昵称数据就杀掉app）
+                        SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
 
                         SPStaticUtils.put(Constant.BASE_INFO_FINISH, true)
                         SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
@@ -269,6 +274,10 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                                 startActivity(intent)
                                 this.finish()
                             } else {
+
+                                // 有基础数据，即可作为已登录（防止登录进来，不输入昵称数据就杀掉app）
+                                SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
+
                                 if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
                                     val intent = Intent(this, DetailInfoActivity::class.java)
                                     startActivity(intent)
@@ -295,6 +304,10 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
                             startActivity(intent)
                             this.finish()
                         } else {
+
+                            // 有基础数据，即可作为已登录（防止登录进来，不输入昵称数据就杀掉app）
+                            SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
+
                             if (!SPStaticUtils.getBoolean(Constant.DETAIL_INFO_FINISH, false)) {
                                 val intent = Intent(this, DetailInfoActivity::class.java)
                                 startActivity(intent)

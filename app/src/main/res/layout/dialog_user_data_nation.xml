@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/shape_bg_dialog_bottom"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:text="你的星座"
+            android:textColor="#404040"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_user_data_nation_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="21dp"
+            android:src="@mipmap/icon_dialog_close" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/wp_user_data_nation"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            app:wheel_item_space="80dp"
+            app:wheel_item_text_size="17sp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_user_data_nation_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_bg_common_next"
+        android:gravity="center"
+        android:paddingVertical="20dp"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/tv_user_data_nation_skip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="18dp"
+        android:text="跳过"
+        android:textColor="#9A9A9A"
+        android:textSize="17sp" />
+
+</LinearLayout>

@@ -169,36 +169,6 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
                     if (haveName) {
                         // 已经填写昵称
 
-//                        for (i in 0.until(banTextList.size)) {
-//                            val code = banTextList[i]
-//
-//                            if (name.contains(code)) {
-//                                haveBanText = true
-//                            }
-//                        }
-//
-//                        if (haveBanText) {
-//
-//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                            haveName = false
-//                            tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//
-//                            et_guide_name_name.setText("")
-//
-//                            haveBanText = false
-//
-//                        } else {
-//                            tv_guide_base_previous.visibility = View.VISIBLE
-//                            tv_guide_base_tip.visibility = View.VISIBLE
-//                            vf_guide_base_container.showNext()
-//                            if (chooseSex && chooseAge && chooseHeight) {
-//                                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-//                            } else {
-//                                tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//                            }
-//                        }
-
-
                         //输入昵称,点击下一步
                         MobclickAgent.onEvent(this, "10014_nickname_next");
 
@@ -473,6 +443,8 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
+
+        SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
 
         val intent = Intent(this, DetailInfoActivity::class.java)
         startActivity(intent)

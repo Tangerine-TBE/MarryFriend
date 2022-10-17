@@ -14,8 +14,9 @@ object SpLoginUtil {
 
     fun saveUserInfo(loginBean: PhoneLoginBean) {
 
+// 有基础数据，即可作为已登录（防止登录进来，不输入昵称数据就杀掉app）
+//        SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
 
-        SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
         val id = loginBean.data.user_id.toString()
         SPStaticUtils.put(Constant.USER_ID, id)
         SPStaticUtils.put(Constant.USER_ACCOUNT, loginBean.data.user_mobile)
@@ -428,7 +429,9 @@ object SpLoginUtil {
     fun saveUserInfo(autoLoginBean: AutoLoginBean) {
 
 
-        SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
+        // 有基础数据，即可作为已登录（防止登录进来，不输入昵称数据就杀掉app）
+//        SPStaticUtils.put(Constant.USER_IS_LOGIN, true)
+
         val id = autoLoginBean.data.user_id.toString()
         SPStaticUtils.put(Constant.USER_ID, id)
         SPStaticUtils.put(Constant.USER_ACCOUNT, autoLoginBean.data.user_mobile)

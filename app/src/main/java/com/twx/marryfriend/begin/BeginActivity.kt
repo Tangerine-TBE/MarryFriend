@@ -108,8 +108,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             // 跳过登录界面
             startActivity(GetInfoActivity.getIntent(this,
                 1,
-                SPStaticUtils.getString(Constant.ME_NAME),
-                true))
+                SPStaticUtils.getString(Constant.ME_NAME), true))
 
             this.finish()
 
