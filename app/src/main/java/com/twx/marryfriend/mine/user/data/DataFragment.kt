@@ -1630,6 +1630,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         var weight = ""
         var body = ""
 
+
+
+
+
+
+
+
         nick = when (SPStaticUtils.getString(Constant.ME_NAME, "")) {
             "" -> "未填写"
             else -> SPStaticUtils.getString(Constant.ME_NAME, "")
@@ -1756,7 +1763,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         baseInfoList.clear()
         moreInfoList.clear()
-
 
 
         baseInfoList.add(nick)

@@ -72,7 +72,6 @@ class StartActivity : MainBaseViewActivity() {
         super.initEvent()
 
 
-
     }
 
     // 上传头像
@@ -95,9 +94,9 @@ class StartActivity : MainBaseViewActivity() {
                 SPStaticUtils.put(Constant.FIRST_START, false)
 
                 startActivity(Intent(this@StartActivity, BeginActivity::class.java))
+                this@StartActivity.finish()
 
             }
-
 
         }
 

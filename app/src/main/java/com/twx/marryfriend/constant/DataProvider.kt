@@ -18,7 +18,7 @@ object DataProvider {
         "月收入",
         "工作地区",
         "学历",
-        "婚姻",
+        "婚姻状况",
         "恋爱目标",
     )
 
@@ -35,6 +35,23 @@ object DataProvider {
         "是否喝酒",
         "民族",
         "何时结婚",
+    )
+
+    val dataMoreData1 = arrayListOf(
+
+        "星座",
+        "民族",
+        "职业",
+        "家乡",
+        "体重",
+        "体型",
+        "购房情况",
+        "购车情况",
+        "是否吸烟",
+        "是否喝酒",
+        "何时结婚",
+        "有没有孩子",
+        "是否想要孩子",
     )
 
     val targetBaseData = arrayListOf(
