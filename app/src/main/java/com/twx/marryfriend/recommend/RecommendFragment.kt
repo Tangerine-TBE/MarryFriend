@@ -95,6 +95,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private val uploadHeadDialog by lazy {
         UploadHeadDialog(requireContext())
     }
+    private var preUserVip=UserInfo.getUserVipLevel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -541,6 +542,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 
             it.setReportId (userItem.getId())
         }.show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (preUserVip!=UserInfo.getUserVipLevel()) {
+            preUserVip=UserInfo.getUserVipLevel()
+            loadData()
+        }
     }
 
     override fun onResume() {

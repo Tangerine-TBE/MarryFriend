@@ -8,15 +8,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="60dp"
-        app:layout_constraintWidth_percent="0.8499"
-        app:layout_constraintDimensionRatio="318:169"
+        android:layout_marginTop="96dp"
+        app:layout_constraintWidth_percent="0.46"
+        app:layout_constraintDimensionRatio="172:129"
         android:src="@mipmap/ic_love_empty_data"
         android:layout_width="0dp"
         android:layout_height="0dp"/>
     <androidx.appcompat.widget.LinearLayoutCompat
         app:layout_constraintTop_toBottomOf="@id/loveNotData"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -24,21 +24,24 @@
         <TextView
             android:text="暂时没有收到喜欢"
             android:textColor="#FF404040"
-            android:textSize="22sp"
+            android:textSize="17sp"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
             android:text="你会在推荐中看到喜欢你的人"
             android:textColor="#FF9A9A9A"
-            android:textSize="17sp"
-            android:layout_marginTop="18dp"
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:includeFontPadding="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
         <TextView
             android:text="开通特权可以揭秘他是谁，立刻配对聊天"
             android:textColor="#FF9A9A9A"
-            android:textSize="17sp"
-            android:layout_marginTop="18dp"
+            android:textSize="15sp"
+            android:layout_marginTop="4dp"
+            android:includeFontPadding="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </androidx.appcompat.widget.LinearLayoutCompat>

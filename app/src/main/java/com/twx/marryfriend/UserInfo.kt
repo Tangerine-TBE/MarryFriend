@@ -113,9 +113,9 @@ object UserInfo :ILoginListener{
 //            return "2"//3,4,6,11,16//
 //        }
 
-        if (BuildConfig.DEBUG&&isTestDv()){
-            return "134"
-        }
+//        if (BuildConfig.DEBUG&&isTestDv()){
+//            return "134"
+//        }
         return SPStaticUtils.getString(Constant.USER_ID, null)
     }
 

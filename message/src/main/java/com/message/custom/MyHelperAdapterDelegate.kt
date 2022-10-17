@@ -175,6 +175,7 @@ class MyHelperAdapterDelegate: EaseMessageAdapterDelegate<EMMessage, EaseChatRow
                         goneLine()
                     }
                     CustomEvent.dongtai_fail -> {
+                        defHad=R.mipmap.ic_my_helper_dynamic
                         Glide.with(helperTipIcon).load(img)
                             .placeholder(defHad)
                             .error(defHad)
