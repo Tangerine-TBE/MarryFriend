@@ -307,15 +307,13 @@
             android:value="105580857" />
 
 
-
-
         <!-- 小米推送兼容-->
         <receiver
             android:name="org.android.agoo.xiaomi.MiPushBroadcastReceiver"
-            tools:node="remove"/>
+            tools:node="remove" />
         <receiver
             android:name=".push.mfr.MyXMPushMessageReceiver"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
             </intent-filter>
