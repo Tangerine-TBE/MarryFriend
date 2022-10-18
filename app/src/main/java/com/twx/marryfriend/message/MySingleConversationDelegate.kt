@@ -57,7 +57,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             }else{
                 val t=EaseCommonUtils.getMessageDigest(lastMessage, holder.mContext)
                 if (lastMessage.direct() == EMMessage.Direct.SEND && lastMessage.status() == EMMessage.Status.FAIL) {
-                    holder.msg_state.setVisibility(View.VISIBLE)
+                    holder.msg_state.visibility = View.VISIBLE
                 } else {
                     holder.msg_state.visibility = View.GONE
                 }
@@ -70,6 +70,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
             holder.apply {
                 messageHead.setImageResource(R.mipmap.ic_launcher)
                 messageUserNickname.text="恋爱小管家"
+                lastMsgView.visibility=View.VISIBLE
 
                 isMessageRealName.visibility=View.GONE
                 msgLock.visibility=View.GONE

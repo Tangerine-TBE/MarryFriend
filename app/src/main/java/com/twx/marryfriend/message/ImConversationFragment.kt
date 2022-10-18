@@ -3,6 +3,7 @@ package com.twx.marryfriend.message
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -47,7 +48,7 @@ class ImConversationFragment: ConversationListFragment() {
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         llRoot.addView(LayoutInflater.from(requireContext()).inflate(R.layout.fragment_im_message,llRoot,false), 0)
-
+        conversationListLayout.setBackgroundColor(Color.parseColor("#FFF5F5F5"))
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
         conversationListLayout.setCustomSort(object :EaseConversationPresenterImpl.ISortList{
             override fun sort(
