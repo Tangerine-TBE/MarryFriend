@@ -211,7 +211,6 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
         }
 
         tv_normal_pay.setOnClickListener {
-            ToastUtils.showShort("${mPay}渠道支付${mVipPrice}元购买${mVipMode}月会员")
             if (mPay == "WX") {
                 ToastUtils.showShort("暂不支持微信支付")
             } else {

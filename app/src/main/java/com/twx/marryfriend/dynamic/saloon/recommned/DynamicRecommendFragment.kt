@@ -213,7 +213,6 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         adapter.setOnAvatarClickListener(object : SaloonAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
-                ToastUtils.showShort("头像,进入资料详情界面")
 
                 for (i in 0.until(mDiyList.size)) {
                     mDiyList[i].anim = false

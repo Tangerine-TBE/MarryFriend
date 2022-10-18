@@ -22,28 +22,37 @@ import kotlinx.android.synthetic.main.dialog_one_click_hello.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OneClickHelloDialog constructor(context: Context,private val data:List<OneClickHelloItemBean>,private val sendAction:(List<OneClickHelloItemBean>?)->Unit):Dialog(context) {
-    companion object{
-        private const val ONE_CLICK_HELLO="one_click_hello"
-        fun isSendHello():Boolean{
-            val date=SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
-            return !SPStaticUtils.getBoolean(ONE_CLICK_HELLO+"_"+date,false)
+class OneClickHelloDialog constructor(
+    context: Context,
+    private val data: List<OneClickHelloItemBean>,
+    private val sendAction: (List<OneClickHelloItemBean>?) -> Unit,
+) : Dialog(context) {
+    companion object {
+        private const val ONE_CLICK_HELLO = "one_click_hello"
+        fun isSendHello(): Boolean {
+            val date = SimpleDateFormat("yyyy-MM-dd",
+                Locale.CHINA).format(Date(System.currentTimeMillis()))
+            return !SPStaticUtils.getBoolean(ONE_CLICK_HELLO + "_" + date, false)
         }
 
-        fun onSendHello(){
-            val date=SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
-            SPStaticUtils.put(ONE_CLICK_HELLO+"_"+date,true)
+        fun onSendHello() {
+            val date = SimpleDateFormat("yyyy-MM-dd",
+                Locale.CHINA).format(Date(System.currentTimeMillis()))
+            SPStaticUtils.put(ONE_CLICK_HELLO + "_" + date, true)
         }
     }
 
     init {
         window?.decorView?.setBackgroundColor(Color.TRANSPARENT)
-        window?.decorView?.setPadding(0,0,0,0)
-        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        window?.decorView?.setPadding(0, 0, 0, 0)
+        window?.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT)
         setContentView(R.layout.dialog_one_click_hello)
-        Glide.with(one_click_heart).load(R.drawable.ic_one_click_heart).placeholder(R.drawable.ic_one_click_heart).into(one_click_heart)
+        Glide.with(one_click_heart).load(R.drawable.ic_one_click_heart)
+            .placeholder(R.drawable.ic_one_click_heart).into(one_click_heart)
     }
-    private var resultList:List<OneClickHelloItemBean>?=null
+
+    private var resultList: List<OneClickHelloItemBean>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,15 +61,15 @@ class OneClickHelloDialog constructor(context: Context,private val data:List<One
 //        one_click_recycler_view.adapter=OneClickHelloAdapter(data){
 //            resultList=it
 //        }
-        initView(data){
-            resultList=it
+        initView(data) {
+            resultList = it
         }
         one_click_close.setOnClickListener {
             dismiss()
         }
         one_click_send.setOnClickListener {
-            if (resultList.isNullOrEmpty()){
-                toast(context,"您还未选择用户")
+            if (resultList.isNullOrEmpty()) {
+                toast(context, "您还未选择用户")
                 return@setOnClickListener
             }
             sendAction.invoke(resultList)
@@ -74,36 +83,50 @@ class OneClickHelloDialog constructor(context: Context,private val data:List<One
         }
     }
 
-    private fun initView(data: List<OneClickHelloItemBean>,choiceCall:(List<OneClickHelloItemBean>)->Unit){
-        val choiceData=ArrayList<OneClickHelloItemBean>(data)
+    private fun initView(
+        data: List<OneClickHelloItemBean>,
+        choiceCall: (List<OneClickHelloItemBean>) -> Unit,
+    ) {
+        val choiceData = ArrayList<OneClickHelloItemBean>(data)
         choiceCall.invoke(data)
 
-        val users= arrayOf(user1,user2,user3,
-            user4,user5,user6,
-            user7,user8,user9)
-        val imgs=arrayOf(one_click_user_img,one_click_user_img2,one_click_user_img3,
-            one_click_user_img4,one_click_user_img5,one_click_user_img6,
-            one_click_user_img7,one_click_user_img8,one_click_user_img9)
-        val nicknames=arrayOf(nickname1,nickname2,nickname3,
-            nickname4,nickname5,nickname6,
-            nickname7,nickname8,nickname9)
+        val users = arrayOf(user1, user2, user3, user4, user5, user6, user7, user8, user9)
+        val imgs = arrayOf(one_click_user_img,
+            one_click_user_img2,
+            one_click_user_img3,
+            one_click_user_img4,
+            one_click_user_img5,
+            one_click_user_img6,
+            one_click_user_img7,
+            one_click_user_img8,
+            one_click_user_img9)
+        val nicknames = arrayOf(nickname1,
+            nickname2,
+            nickname3,
+            nickname4,
+            nickname5,
+            nickname6,
+            nickname7,
+            nickname8,
+            nickname9)
         users.forEach {
-            it.isSelected=true
+            it.isSelected = true
         }
         users.slice(data.size until users.size).forEach {
-            it.visibility= View.GONE
+            it.visibility = View.GONE
         }
         data.forEachIndexed { index, item ->
-            if (index<users.size){
+            if (index < users.size) {
                 imgs[index].also {
-                    Glide.with(it).load(item.image_url).placeholder(UserInfo.getReversedDefHelloHeadImage()).into(it)
+                    Glide.with(it).load(item.image_url)
+                        .placeholder(UserInfo.getReversedDefHelloHeadImage()).into(it)
                 }
-                nicknames[index].text=item.nick?:""
+                nicknames[index].text = item.nick ?: ""
                 users[index].setOnClickListener {
-                    it.isSelected=!it.isSelected
-                    if (it.isSelected){
+                    it.isSelected = !it.isSelected
+                    if (it.isSelected) {
                         choiceData.add(item)
-                    }else{
+                    } else {
                         choiceData.remove(item)
                     }
                     choiceCall.invoke(choiceData)

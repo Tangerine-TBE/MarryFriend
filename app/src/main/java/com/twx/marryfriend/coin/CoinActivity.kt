@@ -179,7 +179,6 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
             //点击立即购买
             MobclickAgent.onEvent(this, "70005_gold_coin_buy");
 
-            ToastUtils.showShort("使用${mPay}方式支付${mPrice}元购买套餐${mMode}")
             doAliPay()
         }
 

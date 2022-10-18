@@ -40,8 +40,8 @@ import kotlinx.android.synthetic.main.fragment_mine.*
 import java.util.*
 
 
-class MyDynamicActivity : MainBaseViewActivity(),
-    IGetMyTrendsListCallback, IDoDeleteTrendCallback, MyDynamicAdapter.OnItemClickListener {
+class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback, IDoDeleteTrendCallback,
+    MyDynamicAdapter.OnItemClickListener {
 
     // 大图展示时进入时应该展示点击的那张图片
     private var imageIndex = 0
@@ -71,41 +71,31 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                Glide.with(this)
-                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                Glide.with(this).load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                     .placeholder(R.drawable.ic_mine_male_default)
-                    .error(R.drawable.ic_mine_male_default)
-                    .into(iv_dynamic_mine_avatar)
+                    .error(R.drawable.ic_mine_male_default).into(iv_dynamic_mine_avatar)
             } else {
-                Glide.with(this)
-                    .load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
+                Glide.with(this).load(SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, ""))
                     .placeholder(R.drawable.ic_mine_female_default)
-                    .error(R.drawable.ic_mine_female_default)
-                    .into(iv_dynamic_mine_avatar)
+                    .error(R.drawable.ic_mine_female_default).into(iv_dynamic_mine_avatar)
             }
         } else {
             if (SPStaticUtils.getString(Constant.ME_AVATAR, "") != "") {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                    Glide.with(this)
-                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                    Glide.with(this).load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_dynamic_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_dynamic_mine_avatar)
                 } else {
-                    Glide.with(this)
-                        .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
+                    Glide.with(this).load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
                         .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default)
-                        .into(iv_dynamic_mine_avatar)
+                        .error(R.drawable.ic_mine_male_default).into(iv_dynamic_mine_avatar)
                 }
             } else {
                 if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-                    Glide.with(this)
-                        .load(R.drawable.ic_mine_male_default)
+                    Glide.with(this).load(R.drawable.ic_mine_male_default)
                         .into(iv_dynamic_mine_avatar)
                 } else {
-                    Glide.with(this)
-                        .load(R.drawable.ic_mine_female_default)
+                    Glide.with(this).load(R.drawable.ic_mine_female_default)
                         .into(iv_dynamic_mine_avatar)
                 }
             }
@@ -141,22 +131,20 @@ class MyDynamicActivity : MainBaseViewActivity(),
     private fun initEmojiCompat() {
         val config: EmojiCompat.Config
         // Use a downloadable font for EmojiCompat
-        val fontRequest = FontRequest(
-            "com.google.android.gms.fonts",
+        val fontRequest = FontRequest("com.google.android.gms.fonts",
             "com.google.android.gms",
             "Noto Color Emoji Compat",
             R.array.com_google_android_gms_fonts_certs)
         config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
 
-        config.setReplaceAll(true)
-            .registerInitCallback(object : EmojiCompat.InitCallback() {
-                override fun onInitialized() {
-                }
+        config.setReplaceAll(true).registerInitCallback(object : EmojiCompat.InitCallback() {
+            override fun onInitialized() {
+            }
 
-                override fun onFailed(@Nullable throwable: Throwable?) {
-                    Log.e("guo", "EmojiCompat initialization failed", throwable)
-                }
-            })
+            override fun onFailed(@Nullable throwable: Throwable?) {
+                Log.e("guo", "EmojiCompat initialization failed", throwable)
+            }
+        })
         EmojiCompat.init(config)
     }
 
@@ -398,7 +386,8 @@ class MyDynamicActivity : MainBaseViewActivity(),
         adapter.setOnVideoClickListener(object : MyDynamicAdapter.OnVideoClickListener {
             override fun onVideoClick(v: View?, position: Int) {
                 startActivity(VideoPreviewActivity.getIntent(this@MyDynamicActivity,
-                    trendList[position].video_url, ""))
+                    trendList[position].video_url,
+                    ""))
             }
         })
 
@@ -579,14 +568,26 @@ class MyDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onItemClick(v: View?, position: Int) {
-        if (trendList[position].audit_status == 1) {
-            startActivityForResult(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
-                trendList[position].id,
-                SPStaticUtils.getString(Constant.USER_ID, "13").toInt()), 1)
 
-        } else {
-            ToastUtils.showShort("此动态正在审核中")
+
+        when (trendList[position].audit_status) {
+            0 -> {
+                ToastUtils.showShort("此动态正在审核中")
+            }
+            1 -> {
+                startActivityForResult(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                    trendList[position].id,
+                    SPStaticUtils.getString(Constant.USER_ID, "13").toInt()), 1)
+            }
+            2 -> {
+                startActivityForResult(DynamicOtherShowActivity.getIntent(this@MyDynamicActivity,
+                    trendList[position].id,
+                    SPStaticUtils.getString(Constant.USER_ID, "13").toInt(), 1),
+                    1)
+            }
+
         }
+
     }
 
     override fun onTextClick(v: View?, position: Int) {
@@ -604,13 +605,10 @@ class MyDynamicActivity : MainBaseViewActivity(),
 
         deletePosition = position
 
-        XPopup.Builder(this@MyDynamicActivity)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true)
+        XPopup.Builder(this@MyDynamicActivity).dismissOnTouchOutside(false)
+            .dismissOnBackPressed(false).isDestroyOnDismiss(true)
             .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-            .asCustom(DynamicEditDialog(this@MyDynamicActivity, position))
-            .show()
+            .asCustom(DynamicEditDialog(this@MyDynamicActivity, position)).show()
     }
 
     override fun onDestroy() {

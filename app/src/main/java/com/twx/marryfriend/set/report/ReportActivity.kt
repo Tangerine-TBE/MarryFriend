@@ -10,10 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ThreadUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.luck.picture.lib.animators.AnimationType
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.SelectMimeType
@@ -250,16 +247,18 @@ class ReportActivity : MainBaseViewActivity(), IDoReportOtherCallback,
 
                                 for (i in 0.until(mChooseList.size)) {
 
+                                    val coverName = TimeUtils.getNowMills()
+
                                     val putObjectFromFileResponse = client.putObject("user${
                                         SPStaticUtils.getString(Constant.USER_ID, "default")
                                     }",
-                                        "${FileUtils.getFileNameNoExtension(mChooseList[i])}.jpg",
+                                        "${coverName}.jpg",
                                         File(mChooseList[i]))
 
                                     mList.add(0, client.generatePresignedUrl("user${
                                         SPStaticUtils.getString(Constant.USER_ID, "default")
                                     }",
-                                        "${FileUtils.getFileNameNoExtension(mChooseList[i])}.jpg",
+                                        "${coverName}.jpg",
                                         -1)
                                         .toString())
 

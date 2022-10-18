@@ -62,6 +62,8 @@ import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
+import com.twx.marryfriend.utils.TimeUtil
+import com.twx.marryfriend.utils.TimeUtil.onShowMyData
 import com.twx.marryfriend.utils.VideoUtil
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.xyzz.myutils.show.iLog
@@ -404,7 +406,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private fun initEvent() {
 
-        showFirstDialog()
+        if (TimeUtil.isShowMyData()) {
+            TimeUtil.onShowMyData()
+            showFirstDialog()
+        }
 
         iv_user_data_avatar.setOnClickListener {
 
@@ -2939,7 +2944,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 昵称
     private fun showNameDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(NameDialog(requireContext())).show()
     }
@@ -2956,11 +2961,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 //            .show()
 
         if (SPStaticUtils.getBoolean(Constant.IS_IDENTITY_VERIFY, false)) {
-            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
                 .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
                 .asCustom(SexVerifyDialog(requireContext())).show()
         } else {
-            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+            XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
                 .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
                 .asCustom(SexNonVerifyDialog(requireContext())).show()
         }
@@ -2969,49 +2974,49 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 生日
     private fun showBirthDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(BirthDialog(requireContext())).show()
     }
 
     // 身高
     private fun showHeightDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(HeightDialog(requireContext())).show()
     }
 
     // 月收入
     private fun showIncomeDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(IncomeDialog(requireContext())).show()
     }
 
     // 工作地区
     private fun showWorkPlaceDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(WorkPlaceDialog(requireContext())).show()
     }
 
     // 学历
     private fun showEduDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(EduDialog(requireContext())).show()
     }
 
     // 婚况
     private fun showMarryStateDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(MarryStateDialog(requireContext())).show()
     }
 
     // 恋爱目标
     private fun showTargetDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(TargetDialog(requireContext())).show()
     }
@@ -3019,91 +3024,91 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 星座
     private fun showConstellationDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(ConstellationDialog(requireContext())).show()
     }
 
     // 民族
     private fun showNationDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(NationDialog(requireContext())).show()
     }
 
     // 是否抽烟
     private fun showSmokeDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(SmokeDialog(requireContext())).show()
     }
 
     // 是否喝酒
     private fun showDrinkDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(DrinkDialog(requireContext())).show()
     }
 
     // 何时结婚
     private fun showMarryDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(MarryDialog(requireContext())).show()
     }
 
     // 有没有孩子
     private fun showHaveChildDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(HaveChildDialog(requireContext())).show()
     }
 
     // 想不想要孩子
     private fun showWantChildDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(WantChildDialog(requireContext())).show()
     }
 
     // 职业
     private fun showJobDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(JobDialog(requireContext())).show()
     }
 
     // 购房情况
     private fun showHouseDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(HouseDialog(requireContext())).show()
     }
 
     // 购车情况
     private fun showCarDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(CarDialog(requireContext())).show()
     }
 
     // 籍贯
     private fun showHomeDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(HomeDialog(requireContext())).show()
     }
 
     // 体重
     private fun showWeightDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(WeightDialog(requireContext())).show()
     }
 
     // 体型
     private fun showBodyDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(BodyDialog(requireContext())).show()
     }
@@ -3514,15 +3519,18 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 // bucketName 为文件夹名 ，使用用户id来进行命名
                 // key值为保存文件名，试用固定的几种格式来命名
 
+                val span = TimeUtils.getNowMills()
+                val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+
                 val putObjectFromFileResponse = client.putObject("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", FileUtils.getFileName(mPhotoPath), file)
+                }", path, file)
 
-                Log.i("guo", FileUtils.getFileName(mPhotoPath))
+                Log.i("guo", path)
 
                 mPhotoUrl = client.generatePresignedUrl("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", FileUtils.getFileName(mPhotoPath), -1).toString()
+                }", path, -1).toString()
 
                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 

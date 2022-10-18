@@ -275,8 +275,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
             override fun onDisplayImg(context: Context?, data: String?, imageView: ImageView?) {
 
-                ToastUtils.showShort(data)
-
                 if (imageView != null) {
 
                     Glide.with(context!!).load(data).diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -543,7 +541,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         // 相机
         iv_send_camera.setOnClickListener {
-            ToastUtils.showShort("打开相机")
 
             XXPermissions.with(this@DynamicSendActivity).permission(Permission.CAMERA)
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
@@ -626,6 +623,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                             // 还需要上传图片
 
+                            Log.i("guo","start : ${TimeUtils.getNowDate()}")
+
                             if (mDataList.isNotEmpty()) {
                                 // 有图片文字数据
 
@@ -700,6 +699,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                                 doTextVerify = false
                                                 doTextVerify(content)
                                             } else {
+
+                                                Log.i("guo","end : ${TimeUtils.getNowDate()}")
+                                                Log.i("guo","start --- UPLOAD : ${TimeUtils.getNowDate()}")
 
                                                 Log.i("guo", "上传 ----图片 ")
                                                 uploadTrend()
@@ -853,6 +855,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         val id = SPStaticUtils.getString(Constant.USER_ID, "13")
 
+        val local = if (position == "不显示位置") {
+            ""
+        } else {
+            position
+        }
+
         val trendInfo = " {\"user_id\":              $id, " +                // 用户id
                 "\"trends_type\":  \"$trendsType\"," +      // 动态类型
                 "\"text_content\": \"$content\"," +          // 文字内容
@@ -862,7 +870,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                 "\"label\":        \"$label\"," +            // 储备字段，暂时不用
                 "\"jingdu\":       \"$jingdu\"," +             // 经度
                 "\"weidu\":        \"$weidu\"," +              // 纬度
-                "\"position\":     \"$position\"}"           // 定位
+                "\"position\":     \"$local\"}"           // 定位
 
 
         Log.i("guo", "trendInfo :$trendInfo")
@@ -1231,6 +1239,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         if (!doUploadTrend) {
             doUploadTrend = true
 
+            Log.i("guo","end --- UPLOAD : ${TimeUtils.getNowDate()}")
+
             Log.i("guo", "onDoUploadTrendSuccess")
 
             ll_send_loading.visibility = View.GONE
@@ -1400,8 +1410,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
             photo.setOnClickListener {
 
-                ToastUtils.showShort("打开相机")
-
                 XXPermissions.with(this@DynamicSendActivity).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                     .request(object : OnPermissionCallback {
@@ -1451,8 +1459,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
             }
 
             video.setOnClickListener {
-
-                ToastUtils.showShort("打开相机,录制视频")
 
                 XXPermissions.with(this@DynamicSendActivity).permission(Permission.CAMERA)
                     .permission(Permission.MANAGE_EXTERNAL_STORAGE)

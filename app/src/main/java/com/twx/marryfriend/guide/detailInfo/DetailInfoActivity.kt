@@ -967,14 +967,16 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             // bucketName 为文件夹名 ，使用用户id来进行命名
                             // key值为保存文件名，试用固定的几种格式来命名
 
+                            val avatarName = TimeUtils.getNowMills()
+
                             val putObjectFromFileResponse = client.putObject("user${
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", FileUtils.getFileName(mPhotoPath), file)
+                            }", "${avatarName}.jpg", file)
 
 
                             mPhotoUrl = client.generatePresignedUrl("user${
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", FileUtils.getFileName(mPhotoPath), -1).toString()
+                            }", "${avatarName}.jpg", -1).toString()
 
                             SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
@@ -1947,21 +1949,25 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE_AUDIT, "0")
 
                         mLifeFirstState = "0"
-                        tv_guide_life_pic_one_audit.visibility = View.VISIBLE
+                        tv_guide_life_pic_one_audit?.visibility = View.VISIBLE
 
-                        nsv_guide_life_default.visibility = View.GONE
-                        nsv_guide_life_pic.visibility = View.VISIBLE
+                        nsv_guide_life_default?.visibility = View.GONE
+                        nsv_guide_life_pic?.visibility = View.VISIBLE
 
-                        rl_guide_life_pic_one.visibility = View.VISIBLE
-                        rl_guide_life_pic_more.visibility = View.VISIBLE
+                        rl_guide_life_pic_one?.visibility = View.VISIBLE
+                        rl_guide_life_pic_more?.visibility = View.VISIBLE
 
 
-                        Glide.with(this).load(mLifeFirstUrl).into(iv_guide_life_pic_one)
+                        if (iv_guide_life_pic_one != null) {
+                            Glide.with(this).load(mLifeFirstUrl).into(iv_guide_life_pic_one)
+                        }
 
                         haveFirstPic = true
 
-                        tv_guide_life_pic_one.text = mLifeFirstText
-                        iv_guide_life_pic_one_icon.visibility = View.GONE
+                        if (mLifeFirstText != "") {
+                            tv_guide_life_pic_one?.text = mLifeFirstText
+                            iv_guide_life_pic_one_icon?.visibility = View.GONE
+                        }
 
                         tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next)
 
@@ -1981,17 +1987,22 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO_AUDIT, "0")
 
                         mLifeSecondState = "0"
-                        tv_guide_life_pic_two_audit.visibility = View.VISIBLE
+                        tv_guide_life_pic_two_audit?.visibility = View.VISIBLE
 
-                        rl_guide_life_pic_two.visibility = View.VISIBLE
+                        rl_guide_life_pic_two?.visibility = View.VISIBLE
 
-                        Glide.with(this).load(mLifeSecondUrl).into(iv_guide_life_pic_two)
+                        if (iv_guide_life_pic_two != null) {
+                            Glide.with(this).load(mLifeSecondUrl).into(iv_guide_life_pic_two)
+                        }
+
 
                         haveSecondPic = true
 
 
-                        tv_guide_life_pic_two.text = mLifeSecondText
-                        iv_guide_life_pic_two_icon.visibility = View.GONE
+                        if (mLifeSecondText != "") {
+                            tv_guide_life_pic_two?.text = mLifeSecondText
+                            iv_guide_life_pic_two_icon?.visibility = View.GONE
+                        }
 
 
                     }
@@ -2010,17 +2021,25 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE_AUDIT, "0")
 
                         mLifeThirdState = "0"
-                        tv_guide_life_pic_three_audit.visibility = View.VISIBLE
+                        tv_guide_life_pic_three_audit?.visibility = View.VISIBLE
 
-                        rl_guide_life_pic_three.visibility = View.VISIBLE
+                        rl_guide_life_pic_three?.visibility = View.VISIBLE
 
-                        Glide.with(this).load(mLifeThirdUrl).into(iv_guide_life_pic_three)
+                        if (iv_guide_life_pic_three != null) {
+                            Glide.with(this).load(mLifeThirdUrl).into(iv_guide_life_pic_three)
+
+
+                        }
+
 
                         haveThirdPic = true
 
 
-                        tv_guide_life_pic_three.text = mLifeThirdText
-                        iv_guide_life_pic_three_icon.visibility = View.GONE
+                        if (mLifeThirdText != "") {
+                            tv_guide_life_pic_three?.text = mLifeThirdText
+                            iv_guide_life_pic_three_icon?.visibility = View.GONE
+                        }
+
 
                     }
                 }
@@ -2038,17 +2057,19 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR_AUDIT, "0")
 
                         mLifeFourState = "0"
-                        tv_life_photo_pic_four_audit.visibility = View.VISIBLE
+                        tv_guide_life_pic_four_audit?.visibility = View.VISIBLE
 
-                        rl_life_photo_pic_four.visibility = View.VISIBLE
+                        rl_guide_life_pic_four?.visibility = View.VISIBLE
 
-                        Glide.with(this).load(mLifeFourUrl).into(iv_life_photo_pic_four)
+                        if (iv_guide_life_pic_four != null) {
+                            Glide.with(this).load(mLifeFourUrl).into(iv_guide_life_pic_four)
+                        }
 
                         haveFourPic = true
 
                         if (mLifeFourText != "") {
-                            tv_life_photo_pic_four.text = mLifeFourText
-                            iv_life_photo_pic_four_icon.visibility = View.GONE
+                            tv_guide_life_pic_four?.text = mLifeFourText
+                            iv_guide_life_pic_four_icon?.visibility = View.GONE
                         }
 
                     }
@@ -2067,18 +2088,21 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "0")
 
                         mLifeFiveState = "0"
-                        tv_life_photo_pic_five_audit.visibility = View.VISIBLE
+                        tv_guide_life_pic_five_audit?.visibility = View.VISIBLE
 
-                        rl_life_photo_pic_five.visibility = View.VISIBLE
-                        rl_life_photo_pic_more.visibility = View.GONE
+                        rl_guide_life_pic_five?.visibility = View.VISIBLE
+                        rl_guide_life_pic_more?.visibility = View.GONE
 
-                        Glide.with(this).load(mLifeFiveUrl).into(iv_life_photo_pic_five)
+                        if (iv_guide_life_pic_five != null) {
+                            Glide.with(this).load(mLifeFiveUrl).into(iv_guide_life_pic_five)
+                        }
+
 
                         haveFivePic = true
 
                         if (mLifeFiveText != "") {
-                            tv_life_photo_pic_five.text = mLifeFiveText
-                            iv_life_photo_pic_five_icon.visibility = View.GONE
+                            tv_guide_life_pic_five?.text = mLifeFiveText
+                            iv_guide_life_pic_five_icon?.visibility = View.GONE
                         }
 
                     }
@@ -2266,8 +2290,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             if (haveFivePic) {
                                 // 1、2、3、4、5 删除第五张 第五张、第四张、第三张、第二张依次往前移动（先移动靠前的）
 
-                                rl_life_photo_pic_five.visibility = View.GONE
-                                rl_life_photo_pic_more.visibility = View.VISIBLE
+                                rl_guide_life_pic_five?.visibility = View.GONE
+                                rl_guide_life_pic_more?.visibility = View.VISIBLE
 
                                 // 移动第二张
 
@@ -2277,8 +2301,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeFirstState = mLifeSecondState
 
                                 Glide.with(applicationContext).load(mLifeFirstUrl)
-                                    .into(iv_life_photo_pic_one)
-                                tv_life_photo_pic_one.text = mLifeFirstText
+                                    .into(iv_guide_life_pic_one)
+                                tv_guide_life_pic_one?.text = mLifeFirstText
 
                                 // 移动第三张
 
@@ -2288,8 +2312,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeSecondState = mLifeThirdState
 
                                 Glide.with(applicationContext).load(mLifeSecondUrl)
-                                    .into(iv_life_photo_pic_two)
-                                tv_life_photo_pic_two.text = mLifeSecondText
+                                    .into(iv_guide_life_pic_two)
+                                tv_guide_life_pic_two?.text = mLifeSecondText
 
                                 // 移动第四张
 
@@ -2299,8 +2323,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeThirdState = mLifeFourState
 
                                 Glide.with(applicationContext).load(mLifeThirdUrl)
-                                    .into(iv_life_photo_pic_three)
-                                tv_life_photo_pic_three.text = mLifeThirdText
+                                    .into(iv_guide_life_pic_three)
+                                tv_guide_life_pic_three?.text = mLifeThirdText
 
 
                                 // 移动第五张
@@ -2311,15 +2335,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeFourState = mLifeFiveState
 
                                 Glide.with(applicationContext).load(mLifeFourUrl)
-                                    .into(iv_life_photo_pic_four)
-                                tv_life_photo_pic_four.text = mLifeFourText
+                                    .into(iv_guide_life_pic_four)
+                                tv_guide_life_pic_four?.text = mLifeFourText
 
                                 haveFivePic = false
                                 mLifeFiveUrl = ""
                                 mLifeFiveText = ""
 
-                                iv_life_photo_pic_five_icon.visibility = View.VISIBLE
-                                tv_life_photo_pic_five.text = "添加描述"
+                                iv_guide_life_pic_five_icon?.visibility = View.VISIBLE
+                                tv_guide_life_pic_five?.text = "添加描述"
 
                                 // 更新存储数据
 
@@ -2357,7 +2381,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             } else {
                                 // 1、2、3、4 删除第四张  第三张、第三张、第四张顺延
 
-                                rl_life_photo_pic_four.visibility = View.GONE
+
+                                rl_guide_life_pic_four?.visibility = View.GONE
+
 
                                 // 移动第二张
 
@@ -2367,8 +2393,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeFirstState = mLifeSecondState
 
                                 Glide.with(applicationContext).load(mLifeFirstUrl)
-                                    .into(iv_life_photo_pic_one)
-                                tv_life_photo_pic_one.text = mLifeFirstText
+                                    .into(iv_guide_life_pic_one)
+                                tv_guide_life_pic_one?.text = mLifeFirstText
 
                                 // 移动第三张
 
@@ -2378,8 +2404,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeSecondState = mLifeThirdState
 
                                 Glide.with(applicationContext).load(mLifeSecondUrl)
-                                    .into(iv_life_photo_pic_two)
-                                tv_life_photo_pic_two.text = mLifeSecondText
+                                    .into(iv_guide_life_pic_two)
+                                tv_guide_life_pic_two?.text = mLifeSecondText
 
                                 // 移动第四张
 
@@ -2389,15 +2415,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                                 mLifeThirdState = mLifeFourState
 
                                 Glide.with(applicationContext).load(mLifeThirdUrl)
-                                    .into(iv_life_photo_pic_three)
-                                tv_life_photo_pic_three.text = mLifeThirdText
+                                    .into(iv_guide_life_pic_three)
+                                tv_guide_life_pic_three?.text = mLifeThirdText
 
                                 haveFourPic = false
                                 mLifeFourUrl = ""
                                 mLifeFourText = ""
 
-                                iv_life_photo_pic_four_icon.visibility = View.VISIBLE
-                                tv_life_photo_pic_four.text = "添加描述"
+                                iv_guide_life_pic_four_icon?.visibility = View.VISIBLE
+                                tv_guide_life_pic_four?.text = "添加描述"
 
                                 // 更新存储数据
 
@@ -2430,7 +2456,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         } else {
                             // 1、2、3，删除第3张 第3张 第二张 顺延
-                            rl_life_photo_pic_three.visibility = View.GONE
+
+                            rl_guide_life_pic_three?.visibility = View.GONE
+
 
                             // 移动第二张
 
@@ -2440,8 +2468,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeFirstState = mLifeSecondState
 
                             Glide.with(applicationContext).load(mLifeFirstUrl)
-                                .into(iv_life_photo_pic_one)
-                            tv_life_photo_pic_one.text = mLifeFirstText
+                                .into(iv_guide_life_pic_one)
+                            tv_guide_life_pic_one?.text = mLifeFirstText
 
                             // 移动第三张
 
@@ -2451,15 +2479,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeSecondState = mLifeThirdState
 
                             Glide.with(applicationContext).load(mLifeSecondUrl)
-                                .into(iv_life_photo_pic_two)
-                            tv_life_photo_pic_two.text = mLifeSecondText
+                                .into(iv_guide_life_pic_two)
+                            tv_guide_life_pic_two?.text = mLifeSecondText
 
                             haveThirdPic = false
                             mLifeThirdUrl = ""
                             mLifeThirdText = ""
 
-                            iv_life_photo_pic_three_icon.visibility = View.VISIBLE
-                            tv_life_photo_pic_three.text = "添加描述"
+                            iv_guide_life_pic_three_icon?.visibility = View.VISIBLE
+                            tv_guide_life_pic_three?.text = "添加描述"
 
                             // 更新存储数据
 
@@ -2484,7 +2512,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         // 1、2 删除第二张 第二张顺延到第一张
 
-                        rl_life_photo_pic_two.visibility = View.GONE
+
+                        rl_guide_life_pic_two?.visibility = View.GONE
+
+
 
                         mLifeFirstUrl = mLifeSecondUrl
                         mLifeFirstText = mLifeSecondText
@@ -2492,15 +2523,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         mLifeFirstState = mLifeSecondState
 
                         Glide.with(applicationContext).load(mLifeFirstUrl)
-                            .into(iv_life_photo_pic_one)
-                        tv_life_photo_pic_one.text = mLifeFirstText
+                            .into(iv_guide_life_pic_one)
+                        tv_guide_life_pic_one?.text = mLifeFirstText
 
                         haveSecondPic = false
                         mLifeSecondUrl = ""
                         mLifeSecondText = ""
 
-                        iv_life_photo_pic_two_icon.visibility = View.VISIBLE
-                        tv_life_photo_pic_two.text = "添加描述"
+                        iv_guide_life_pic_two_icon?.visibility = View.VISIBLE
+                        tv_guide_life_pic_two?.text = "添加描述"
 
                         // 更新存储数据
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, mLifeFirstUrl)
@@ -2518,18 +2549,18 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 } else {
                     // 只有一张图 直接删除
 
-                    rl_life_photo_pic_one.visibility = View.GONE
-                    rl_life_photo_pic_more.visibility = View.GONE
-                    nsv_life_photo_pic.visibility = View.GONE
+                    rl_guide_life_pic_one?.visibility = View.GONE
+                    rl_guide_life_pic_more?.visibility = View.GONE
+                    nsv_life_photo_pic?.visibility = View.GONE
 
-                    nsv_life_photo_default.visibility = View.VISIBLE
+                    nsv_life_photo_default?.visibility = View.VISIBLE
 
                     haveFirstPic = false
                     mLifeFirstUrl = ""
                     mLifeFirstText = ""
 
-                    iv_life_photo_pic_one_icon.visibility = View.VISIBLE
-                    tv_life_photo_pic_one.text = "添加描述"
+                    iv_guide_life_pic_one_icon?.visibility = View.VISIBLE
+                    tv_guide_life_pic_one?.text = "添加描述"
 
                     // 更新存储数据
                     SPStaticUtils.put(Constant.ME_LIFE_PHOTO_ONE, "")
@@ -2548,8 +2579,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (haveFivePic) {
                             // 1、2、3、4、5 删除第五张 第五张、第四张、第三张依次往前移动（先移动靠前的）
 
-                            rl_life_photo_pic_five.visibility = View.GONE
-                            rl_life_photo_pic_more.visibility = View.VISIBLE
+                            rl_guide_life_pic_five?.visibility = View.GONE
+                            rl_guide_life_pic_more?.visibility = View.VISIBLE
 
                             // 移动第三张
 
@@ -2559,8 +2590,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeSecondState = mLifeThirdState
 
                             Glide.with(applicationContext).load(mLifeSecondUrl)
-                                .into(iv_life_photo_pic_two)
-                            tv_life_photo_pic_two.text = mLifeSecondText
+                                .into(iv_guide_life_pic_two)
+                            tv_guide_life_pic_two?.text = mLifeSecondText
 
                             // 移动第四张
 
@@ -2570,8 +2601,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeThirdState = mLifeFourState
 
                             Glide.with(applicationContext).load(mLifeThirdUrl)
-                                .into(iv_life_photo_pic_three)
-                            tv_life_photo_pic_three.text = mLifeThirdText
+                                .into(iv_guide_life_pic_three)
+                            tv_guide_life_pic_three?.text = mLifeThirdText
 
 
                             // 移动第五张
@@ -2582,15 +2613,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeFourState = mLifeFiveState
 
                             Glide.with(applicationContext).load(mLifeFourUrl)
-                                .into(iv_life_photo_pic_four)
-                            tv_life_photo_pic_four.text = mLifeFourText
+                                .into(iv_guide_life_pic_four)
+                            tv_guide_life_pic_four?.text = mLifeFourText
 
                             haveFivePic = false
                             mLifeFiveUrl = ""
                             mLifeFiveText = ""
 
-                            iv_life_photo_pic_five_icon.visibility = View.VISIBLE
-                            tv_life_photo_pic_five.text = "添加描述"
+                            iv_guide_life_pic_five_icon?.visibility = View.VISIBLE
+                            tv_guide_life_pic_five?.text = "添加描述"
 
                             // 更新存储数据
                             SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
@@ -2620,7 +2651,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         } else {
                             // 1、2、3、4 删除第四张  第三张、第四张顺延
 
-                            rl_life_photo_pic_four.visibility = View.GONE
+                            rl_guide_life_pic_four?.visibility = View.GONE
 
                             // 移动第三张
 
@@ -2630,8 +2661,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeSecondState = mLifeThirdState
 
                             Glide.with(applicationContext).load(mLifeSecondUrl)
-                                .into(iv_life_photo_pic_two)
-                            tv_life_photo_pic_two.text = mLifeSecondText
+                                .into(iv_guide_life_pic_two)
+                            tv_guide_life_pic_two?.text = mLifeSecondText
 
                             // 移动第四张
 
@@ -2641,15 +2672,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             mLifeThirdState = mLifeFourState
 
                             Glide.with(applicationContext).load(mLifeThirdUrl)
-                                .into(iv_life_photo_pic_three)
-                            tv_life_photo_pic_three.text = mLifeThirdText
+                                .into(iv_guide_life_pic_three)
+                            tv_guide_life_pic_three?.text = mLifeThirdText
 
                             haveFourPic = false
                             mLifeFourUrl = ""
                             mLifeFourText = ""
 
-                            iv_life_photo_pic_four_icon.visibility = View.VISIBLE
-                            tv_life_photo_pic_four.text = "添加描述"
+                            iv_guide_life_pic_four_icon?.visibility = View.VISIBLE
+                            tv_guide_life_pic_four?.text = "添加描述"
 
                             // 更新存储数据
                             SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
@@ -2674,7 +2705,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     } else {
                         // 1、2、3，删除第3张 第3张顺延到第二张
-                        rl_life_photo_pic_three.visibility = View.GONE
+                        rl_guide_life_pic_three?.visibility = View.GONE
 
                         mLifeSecondUrl = mLifeThirdUrl
                         mLifeSecondText = mLifeThirdText
@@ -2682,15 +2713,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         mLifeSecondState = mLifeThirdState
 
                         Glide.with(applicationContext).load(mLifeSecondUrl)
-                            .into(iv_life_photo_pic_two)
-                        tv_life_photo_pic_two.text = mLifeSecondText
+                            .into(iv_guide_life_pic_two)
+                        tv_guide_life_pic_two?.text = mLifeSecondText
 
                         haveThirdPic = false
                         mLifeThirdUrl = ""
                         mLifeThirdText = ""
 
-                        iv_life_photo_pic_three_icon.visibility = View.VISIBLE
-                        tv_life_photo_pic_three.text = "添加描述"
+                        iv_guide_life_pic_three_icon?.visibility = View.VISIBLE
+                        tv_guide_life_pic_three?.text = "添加描述"
 
                         // 更新存储数据
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, mLifeSecondUrl)
@@ -2708,14 +2739,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 } else {
                     // 1、2 直接删除即可
 
-                    rl_life_photo_pic_two.visibility = View.GONE
+                    rl_guide_life_pic_two?.visibility = View.GONE
 
                     haveSecondPic = false
                     mLifeSecondUrl = ""
                     mLifeSecondText = ""
 
-                    iv_life_photo_pic_two_icon.visibility = View.VISIBLE
-                    tv_life_photo_pic_two.text = "添加描述"
+                    iv_guide_life_pic_two_icon?.visibility = View.VISIBLE
+                    tv_guide_life_pic_two?.text = "添加描述"
 
                     // 更新存储数据
                     SPStaticUtils.put(Constant.ME_LIFE_PHOTO_TWO, "")
@@ -2731,8 +2762,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (haveFivePic) {
                         // 1、2、3、4、5 删除第五张 第五张、第四章依次往前移动（先移动靠前的）
 
-                        rl_life_photo_pic_five.visibility = View.GONE
-                        rl_life_photo_pic_more.visibility = View.VISIBLE
+                        rl_guide_life_pic_five?.visibility = View.GONE
+                        rl_guide_life_pic_more?.visibility = View.VISIBLE
 
                         // 移动第四张
 
@@ -2742,8 +2773,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         mLifeThirdState = mLifeFourState
 
                         Glide.with(applicationContext).load(mLifeThirdUrl)
-                            .into(iv_life_photo_pic_three)
-                        tv_life_photo_pic_three.text = mLifeThirdText
+                            .into(iv_guide_life_pic_three)
+                        tv_guide_life_pic_three?.text = mLifeThirdText
 
                         // 移动第五张
 
@@ -2753,15 +2784,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         mLifeFourState = mLifeFiveState
 
                         Glide.with(applicationContext).load(mLifeFourUrl)
-                            .into(iv_life_photo_pic_four)
-                        tv_life_photo_pic_four.text = mLifeFourText
+                            .into(iv_guide_life_pic_four)
+                        tv_guide_life_pic_four?.text = mLifeFourText
 
                         haveFivePic = false
                         mLifeFiveUrl = ""
                         mLifeFiveText = ""
 
-                        iv_life_photo_pic_five_icon.visibility = View.VISIBLE
-                        tv_life_photo_pic_five.text = "添加描述"
+                        iv_guide_life_pic_five_icon?.visibility = View.VISIBLE
+                        tv_guide_life_pic_five?.text = "添加描述"
 
                         // 更新存储数据
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, mLifeThirdUrl)
@@ -2784,7 +2815,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     } else {
                         // 1、2、3、4 删除第四张
 
-                        rl_life_photo_pic_four.visibility = View.GONE
+                        rl_guide_life_pic_four?.visibility = View.GONE
 
                         mLifeThirdUrl = mLifeFourUrl
                         mLifeThirdText = mLifeFourText
@@ -2792,15 +2823,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         mLifeThirdState = mLifeFourState
 
                         Glide.with(applicationContext).load(mLifeThirdUrl)
-                            .into(iv_life_photo_pic_three)
-                        tv_life_photo_pic_three.text = mLifeThirdText
+                            .into(iv_guide_life_pic_three)
+                        tv_guide_life_pic_three?.text = mLifeThirdText
 
                         haveFourPic = false
                         mLifeFourUrl = ""
                         mLifeFourText = ""
 
-                        iv_life_photo_pic_four_icon.visibility = View.VISIBLE
-                        tv_life_photo_pic_four.text = "添加描述"
+                        iv_guide_life_pic_four_icon?.visibility = View.VISIBLE
+                        tv_guide_life_pic_four?.text = "添加描述"
 
                         // 更新存储数据
                         SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, mLifeThirdUrl)
@@ -2817,14 +2848,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 } else {
                     // 1、2、3，直接删除第三张
-                    rl_life_photo_pic_three.visibility = View.GONE
+                    rl_guide_life_pic_three?.visibility = View.GONE
 
                     haveThirdPic = false
                     mLifeThirdUrl = ""
                     mLifeThirdText = ""
 
-                    iv_life_photo_pic_three_icon.visibility = View.VISIBLE
-                    tv_life_photo_pic_three.text = "添加描述"
+                    iv_guide_life_pic_three_icon?.visibility = View.VISIBLE
+                    tv_guide_life_pic_three?.text = "添加描述"
 
                     // 更新存储数据
                     SPStaticUtils.put(Constant.ME_LIFE_PHOTO_THREE, "")
@@ -2838,23 +2869,23 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 if (haveFivePic) {
                     // 有第五张图
 
-                    rl_life_photo_pic_five.visibility = View.GONE
-                    rl_life_photo_pic_more.visibility = View.VISIBLE
+                    rl_guide_life_pic_five?.visibility = View.GONE
+                    rl_guide_life_pic_more?.visibility = View.VISIBLE
 
                     mLifeFourUrl = mLifeFiveUrl
                     mLifeFourText = mLifeFiveText
                     mLifeFourId = mLifeFiveId
                     mLifeFourState = mLifeFiveState
 
-                    Glide.with(applicationContext).load(mLifeFourUrl).into(iv_life_photo_pic_four)
-                    tv_life_photo_pic_four.text = mLifeFourText
+                    Glide.with(applicationContext).load(mLifeFourUrl).into(iv_guide_life_pic_four)
+                    tv_guide_life_pic_four?.text = mLifeFourText
 
                     haveFivePic = false
                     mLifeFiveUrl = ""
                     mLifeFiveText = ""
 
-                    iv_life_photo_pic_five_icon.visibility = View.VISIBLE
-                    tv_life_photo_pic_five.text = "添加描述"
+                    iv_guide_life_pic_five_icon?.visibility = View.VISIBLE
+                    tv_guide_life_pic_five?.text = "添加描述"
 
                     // 更新存储数据
                     SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR, mLifeFourUrl)
@@ -2870,14 +2901,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 } else {
                     // 没有第五张图
 
-                    rl_life_photo_pic_four.visibility = View.GONE
+                    rl_guide_life_pic_four?.visibility = View.GONE
 
                     haveFourPic = false
                     mLifeFourUrl = ""
                     mLifeFourText = ""
 
-                    iv_life_photo_pic_four_icon.visibility = View.VISIBLE
-                    tv_life_photo_pic_four.text = "添加描述"
+                    iv_guide_life_pic_four_icon?.visibility = View.VISIBLE
+                    tv_guide_life_pic_four?.text = "添加描述"
 
                     // 更新存储数据
                     SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FOUR, "")
@@ -2890,15 +2921,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             }
             "five" -> {
 
-                rl_life_photo_pic_five.visibility = View.GONE
-                rl_life_photo_pic_more.visibility = View.VISIBLE
+                rl_guide_life_pic_five?.visibility = View.GONE
+                rl_guide_life_pic_more?.visibility = View.VISIBLE
 
                 haveFivePic = false
                 mLifeFiveUrl = ""
                 mLifeFiveText = ""
 
-                iv_life_photo_pic_five_icon.visibility = View.VISIBLE
-                tv_life_photo_pic_five.text = "添加描述"
+                iv_guide_life_pic_five_icon?.visibility = View.VISIBLE
+                tv_guide_life_pic_five?.text = "添加描述"
 
                 // 更新存储数据
                 SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE, "")
@@ -2907,7 +2938,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 SPStaticUtils.put(Constant.ME_LIFE_PHOTO_FIVE_AUDIT, "")
             }
         }
-        ll_guide_life_loading.visibility = View.GONE
+        ll_guide_life_loading?.visibility = View.GONE
     }
 
     override fun onDoDeletePhotoError() {
@@ -3151,15 +3182,18 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     // bucketName 为文件夹名 ，使用用户id来进行命名
                     // key值为保存文件名，试用固定的几种格式来命名
 
+
+                    val faceName = TimeUtils.getNowMills()
+
                     val putObjectFromFileResponse = client.putObject("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(mPhotoPath), file)
+                    }", "${faceName}.jpg", file)
 
                     Log.i("guo", FileUtils.getFileName(mPhotoPath))
 
                     mPhotoUrl = client.generatePresignedUrl("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(mPhotoPath), -1).toString()
+                    }", "${faceName}.jpg", -1).toString()
 
 
                     Log.i("guo", mPhotoUrl)

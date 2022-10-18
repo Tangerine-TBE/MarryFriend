@@ -238,7 +238,8 @@
             android:exported="true" />
         <activity
             android:name=".friend.FriendInfoActivity"
-            android:exported="true" /> <!-- 联通电信授权页 -->
+            android:exported="true" />
+        <!-- 联通电信授权页 -->
         <activity android:name=".search.SearchParamActivity" />
         <activity android:name=".search.AccurateSearchActivity" />
         <activity android:name=".search.SearchResultActivity" />
@@ -252,18 +253,36 @@
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:launchMode="singleTop" /> <!-- 协议页面webview -->
+            android:launchMode="singleTop" />
+        <!-- 协议页面webview -->
         <activity
             android:name="com.mobile.auth.gatewayauth.activity.AuthWebVeiwActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:launchMode="singleTop"
-            android:screenOrientation="behind" /> <!-- 移动授权页 -->
+            android:screenOrientation="behind" />
+        <!-- 移动授权页 -->
         <activity
             android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:launchMode="singleTop" />
+
+
+        <!-- 推送点击跳转界面 -->
+        <activity
+            android:name=".push.mfr.MfrMessageActivity2"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="${applicationId}"
+                    android:path="/thirdpush"
+                    android:scheme="agoo" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -305,6 +324,26 @@
         <meta-data
             android:name="com.vivo.push.app_id"
             android:value="105580857" />
+
+
+        <!-- 厂商通道 Android 12 兼容 Start -->
+        <service
+            android:name="com.heytap.msp.push.service.DataMessageCallbackService"
+            android:exported="true" />
+        <service
+            android:name="com.heytap.msp.push.service.CompatibleDataMessageCallbackService"
+            android:exported="true" />
+        <service
+            android:name="com.xiaomi.mipush.sdk.MessageHandleService"
+            android:exported="false" />
+        <service
+            android:name="com.xiaomi.push.service.XMPushService"
+            android:exported="false" />
+
+        <!--        <receiver-->
+        <!--            android:name="org.android.agoo.vivo.PushMessageReceiverImpl"-->
+        <!--            android:exported="false" />-->
+        <!-- 厂商通道 Android 12 兼容 End -->
 
 
         <!-- 小米推送兼容-->

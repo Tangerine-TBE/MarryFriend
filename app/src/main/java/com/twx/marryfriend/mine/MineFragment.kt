@@ -1549,14 +1549,17 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                     // bucketName 为文件夹名 ，使用用户id来进行命名
                     // key值为保存文件名，试用固定的几种格式来命名
 
+                    val span = TimeUtils.getNowMills()
+                    val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+
                     val putObjectFromFileResponse =
                         client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}",
-                            FileUtils.getFileName(mPhotoPath),
+                            path,
                             file)
 
                     mPhotoUrl = client.generatePresignedUrl("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(mPhotoPath), -1).toString()
+                    }", path, -1).toString()
 
                     SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
@@ -2380,13 +2383,16 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                     // bucketName 为文件夹名 ，使用用户id来进行命名
                     // key值为保存文件名，试用固定的几种格式来命名
 
+                    val span = TimeUtils.getNowMills()
+                    val path = "${FileUtils.getFileNameNoExtension(recordPath)}_${span}.mp3"
+
                     val putObjectFromFileResponse = client.putObject("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(recordPath), file)
+                    }", path, file)
 
                     val mVoiceUrl = client.generatePresignedUrl("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(recordPath), -1).toString()
+                    }", path, -1).toString()
 
                     Log.i("guo", mVoiceUrl)
 

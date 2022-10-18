@@ -15,10 +15,7 @@ import androidx.core.content.FileProvider
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.ImageUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
@@ -148,17 +145,12 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
             animationStyle.setActivityExitAnimation(R.anim.ps_anim_down_out)
             selectorStyle.windowAnimationStyle = animationStyle
 
-            PictureSelector.create(this)
-                .openGallery(SelectMimeType.TYPE_IMAGE)
+            PictureSelector.create(this).openGallery(SelectMimeType.TYPE_IMAGE)
                 .setImageEngine(GlideEngine.createGlideEngine())
                 .setSelectionMode(SelectModeConfig.SINGLE)
-                .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                .setImageSpanCount(3)
-                .isDisplayCamera(true)
-                .isPreviewImage(true)
-                .isEmptyResultReturn(true)
-                .setLanguage(LanguageConfig.CHINESE)
-                .setSelectorUIStyle(selectorStyle)
+                .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                .isDisplayCamera(true).isPreviewImage(true).isEmptyResultReturn(true)
+                .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                 .forResult(object : OnResultCallbackListener<LocalMedia> {
                     override fun onResult(result: ArrayList<LocalMedia>?) {
 
@@ -179,8 +171,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
         tv_avatar_camera.setOnClickListener {
             ToastUtils.showShort("打开相机")
 
-            XXPermissions.with(this)
-                .permission(Permission.CAMERA)
+            XXPermissions.with(this).permission(Permission.CAMERA)
                 .permission(Permission.MANAGE_EXTERNAL_STORAGE)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(
@@ -246,8 +237,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
             UCrop.of<Any>(source, it) // 长宽比
                 .withAspectRatio(1f, 1f) // 图片大小
                 .withMaxResultSize(512, 512) // 配置参数
-                .withOptions(options)
-                .start(this)
+                .withOptions(options).start(this)
         }
 
     }
@@ -425,19 +415,19 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
                     // bucketName 为文件夹名 ，使用用户id来进行命名
                     // key值为保存文件名，试用固定的几种格式来命名
 
+                    val span = TimeUtils.getNowMills()
+                    val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+
                     val putObjectFromFileResponse =
-                        avatarClient.putObject("user" +
-                                "${SPStaticUtils.getString(Constant.USER_ID, "default")}",
-                            FileUtils.getFileName(mPhotoPath), file)
+                        avatarClient.putObject("user" + SPStaticUtils.getString(Constant.USER_ID,
+                            "default"), path, file)
 
                     mPhotoUrl = avatarClient.generatePresignedUrl("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }",
-                        FileUtils.getFileName(mPhotoPath), -1).toString()
+                    }", path, -1).toString()
 
                     // 这个时候应该上传
-                    doUploadAvatar(
-                        mPhotoUrl,
+                    doUploadAvatar(mPhotoUrl,
                         FileUtils.getFileExtension(mPhotoPath),
                         FileUtils.getFileNameNoExtension(mPhotoPath))
 

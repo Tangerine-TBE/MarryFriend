@@ -1,7 +1,9 @@
 package com.twx.marryfriend.utils
 
 import android.util.Log
+import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.TimeUtils
+import com.twx.marryfriend.dialog.OneClickHelloDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -53,22 +55,14 @@ object TimeUtil {
 
             if (day - nowDay == -1) {
                 // 是昨天
-                convertTime = "昨天" +
-                        "${hours}: " +
-                        "$min"
+                convertTime = "昨天" + "${hours}: " + "$min"
             } else {
                 convertTime =
-                    "${TimeUtils.getValueByCalendarField(originalTime, Calendar.YEAR)}年" +
-                            "${
-                                TimeUtils.getValueByCalendarField(originalTime,
-                                    Calendar.MONTH) + 1
-                            }月" +
-                            "${
-                                TimeUtils.getValueByCalendarField(originalTime,
-                                    Calendar.DAY_OF_MONTH)
-                            }日" +
-                            "${hours}: " +
-                            "$min"
+                    "${TimeUtils.getValueByCalendarField(originalTime, Calendar.YEAR)}年" + "${
+                        TimeUtils.getValueByCalendarField(originalTime, Calendar.MONTH) + 1
+                    }月" + "${
+                        TimeUtils.getValueByCalendarField(originalTime, Calendar.DAY_OF_MONTH)
+                    }日" + "${hours}: " + "$min"
             }
         }
         return convertTime
@@ -186,5 +180,32 @@ object TimeUtil {
         }
     }
 
+
+    /**
+     * 判断今天是否显示过我的资料弹窗
+     */
+    fun isShowMyData(): Boolean {
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
+        return !SPStaticUtils.getBoolean("MY_DATA_$date", false)
+    }
+
+    fun onShowMyData() {
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
+        SPStaticUtils.put("MY_DATA_$date", true)
+    }
+
+    /**
+     * 判断今天是否显示过我的择偶条件弹窗
+     */
+    fun isShowMyTarget(): Boolean {
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
+        return !SPStaticUtils.getBoolean("MY_TARGET_$date", false)
+    }
+
+    fun onShowMyTarget() {
+        val date =
+            SimpleDateFormat("yyyy-MM-dd", Locale.CHINA).format(Date(System.currentTimeMillis()))
+        SPStaticUtils.put("MY_TARGET_$date", true)
+    }
 
 }

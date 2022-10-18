@@ -1481,17 +1481,19 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                     // bucketName 为文件夹名 ，使用用户id来进行命名
                     // key值为保存文件名，试用固定的几种格式来命名
 
+                    val span = TimeUtils.getNowMills()
+                    val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+
                     val putObjectFromFileResponse = client.putObject("user${
                         SPStaticUtils.getString(Constant.USER_ID,
                             "default")
-                    }",
-                        FileUtils.getFileName(mPhotoPath), file)
+                    }", path, file)
 
-                    Log.i("guo", FileUtils.getFileName(mPhotoPath))
+                    Log.i("guo", path)
 
                     mPhotoUrl = client.generatePresignedUrl("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", FileUtils.getFileName(mPhotoPath), -1).toString()
+                    }", path, -1).toString()
 
                     Log.i("guo", mPhotoUrl)
 
@@ -1702,7 +1704,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                             all: Boolean,
                         ) {
 
-                            if (all){
+                            if (all) {
                                 val tempPhotoFile: File = File(mTempPhotoPath)
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                                 // 如果在Android7.0以上,使用FileProvider获取Uri
@@ -1710,14 +1712,16 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                                     intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                                     val authority = context.packageName.toString() + ".fileProvider"
                                     val contentUri: Uri =
-                                        FileProvider.getUriForFile(context, authority, tempPhotoFile)
+                                        FileProvider.getUriForFile(context,
+                                            authority,
+                                            tempPhotoFile)
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
                                 } else {
                                     intent.putExtra(MediaStore.EXTRA_OUTPUT,
                                         Uri.fromFile(tempPhotoFile))
                                 }
                                 startActivityForResult(intent, 1)
-                            }else{
+                            } else {
                                 ToastUtils.showShort("请授予应用相关权限")
                             }
 

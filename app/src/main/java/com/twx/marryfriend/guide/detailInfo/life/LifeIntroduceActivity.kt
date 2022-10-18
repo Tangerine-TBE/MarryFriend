@@ -244,13 +244,14 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
                         // 时间戳，防止重复上传时传不上去
                         val span = TimeUtils.getNowMills()
+                        val path = "${FileUtils.getFileNameNoExtension(picPath)}_${span}.jpg"
 
                         val putObjectFromFileResponse = client.putObject("user${name}",
-                            "${FileUtils.getFileName(picPath)}_${span}",
+                            path,
                             File(mPhotoPath))
 
                         picUrl = client.generatePresignedUrl("user${name}",
-                            "${FileUtils.getFileName(picPath)}_${span}", -1).toString()
+                            path, -1).toString()
 
                         Log.i("guo", "mLifeSecondUrl :$picUrl")
 

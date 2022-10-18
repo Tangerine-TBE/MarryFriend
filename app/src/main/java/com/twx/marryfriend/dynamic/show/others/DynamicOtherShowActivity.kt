@@ -57,6 +57,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     private var userId = 0
 
+    private var dynamicMode = 0
+
     // 此条动态是否是本人
     private var isMine = false
 
@@ -159,11 +161,13 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         private val TREND_ID = "trendId"
         private val USER_ID = "usersId"
+        private val DYNAMIC_MODE = "dynamicMode"
 
-        fun getIntent(context: Context, trendId: Int, userId: Int): Intent {
+        fun getIntent(context: Context, trendId: Int, userId: Int, mode: Int? = 0): Intent {
             val intent = Intent(context, DynamicOtherShowActivity::class.java)
             intent.putExtra(TREND_ID, trendId)
             intent.putExtra(USER_ID, userId)
+            intent.putExtra(DYNAMIC_MODE, mode)
             return intent
         }
 
@@ -176,6 +180,8 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         trendId = intent.getIntExtra("trendId", 0)
         userId = intent.getIntExtra("usersId", 0)
+
+        dynamicMode = intent.getIntExtra("dynamicMode",0)
 
         // 判断是否是我的动态，是我的动态就修改一下相关的逻辑
         isMine = userId.toString() == SPStaticUtils.getString(Constant.USER_ID, "13")
@@ -209,6 +215,17 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         doDeleteTrendPresent = doDeleteTrendPresentImpl.getsInstance()
         doDeleteTrendPresent.registerCallback(this)
+
+
+        if (dynamicMode == 1){
+            ll_dynamic_other_show_like.visibility = View.GONE
+            ll_dynamic_other_show_comment.visibility = View.GONE
+            ll_dynamic_other_show_bottom.visibility = View.GONE
+        }else {
+            ll_dynamic_other_show_like.visibility = View.VISIBLE
+            ll_dynamic_other_show_comment.visibility = View.VISIBLE
+            ll_dynamic_other_show_bottom.visibility = View.VISIBLE
+        }
 
 
         if (SPStaticUtils.getBoolean(Constant.HIDE_REPORT_TIP, false)) {
@@ -602,7 +619,6 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             object : KeyboardUtils.OnSoftInputChangedListener {
                 override fun onSoftInputChanged(height: Int) {
                     if (height == 0) {
-
 
 
                         eet_emoji_other_edit.hint = "走心,说点好听的"

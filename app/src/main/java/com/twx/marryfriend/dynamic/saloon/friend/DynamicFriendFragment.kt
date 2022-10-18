@@ -155,17 +155,14 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
 
         mFocusAdapter.setOnAvatarClickListener(object : SaloonFocusAdapter.OnAvatarClickListener {
             override fun onAvatarClick(v: View?, position: Int) {
-                ToastUtils.showShort("头像,进入资料详情界面")
 
                 for (i in 0.until(mFocusDiyList.size)) {
                     mFocusDiyList[i].anim = false
                 }
                 mFocusAdapter.notifyDataSetChanged()
 
-                startActivity(FriendInfoActivity.getIntent(
-                    requireContext(),
-                    mFocusTrendList[position].user_id.toInt()
-                ))
+                startActivity(FriendInfoActivity.getIntent(requireContext(),
+                    mFocusTrendList[position].user_id.toInt()))
 
             }
         })
@@ -190,10 +187,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 } else {
 
                     startActivity(context?.let {
-                        ImChatActivity.getIntent(
-                            it,
-                            mFocusTrendList[position].user_id
-                        )
+                        ImChatActivity.getIntent(it, mFocusTrendList[position].user_id)
                     })
                 }
             }
@@ -240,9 +234,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -266,9 +258,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -292,9 +282,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -318,9 +306,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -344,9 +330,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -371,9 +355,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -397,9 +379,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
             }
         })
@@ -423,9 +403,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
 
             }
@@ -450,9 +428,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        mFocusImageIndex)
+                    ImagePreviewActivity.getIntent(it, images, mFocusImageIndex)
                 })
 
             }
@@ -492,13 +468,10 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                     }
 
                 } else {
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(AvatarDialog(requireContext()))
-                        .show()
+                        .asCustom(AvatarDialog(requireContext())).show()
                 }
             }
         })
@@ -620,7 +593,9 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
                         val like = trendFocusBean.data.list[i].guest_uid != null
 
                         mFocusDiyList.add(LikeBean(trendFocusBean.data.list[i].id,
-                            focus, like, trendFocusBean.data.list[i].like_count))
+                            focus,
+                            like,
+                            trendFocusBean.data.list[i].like_count))
 
                     }
 

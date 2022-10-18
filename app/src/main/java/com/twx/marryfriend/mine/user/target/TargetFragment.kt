@@ -35,6 +35,7 @@ import com.twx.marryfriend.net.callback.IDoUpdateDemandInfoCallback
 import com.twx.marryfriend.net.impl.doGetDemandAddressPresentImpl
 import com.twx.marryfriend.net.impl.doPlusDemandAddressPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateDemandInfoPresentImpl
+import com.twx.marryfriend.utils.TimeUtil
 import kotlinx.android.synthetic.main.fragment_target.*
 import java.util.*
 
@@ -153,7 +154,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
     private fun initEvent() {
 
-        showTargetFirstDialog()
+        if (TimeUtil.isShowMyTarget()) {
+            TimeUtil.onShowMyTarget()
+            showTargetFirstDialog()
+        }
 
         baseAdapter.setOnItemClickListener(object : TargetBaseAdapter.OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
@@ -240,7 +244,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     // 显示第一个弹窗
     private fun showTargetFirstDialog() {
 
-
         if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0) == 0) {
             // 年龄
             showAgeDialog()
@@ -314,7 +317,6 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
         }
-
 
     }
 
@@ -1180,92 +1182,95 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
     // 年龄弹窗
     private fun showAgeDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(AgeDialog(requireContext())).show()
     }
 
     // 身高弹窗
     private fun showHeightDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(HeightDialog(requireContext())).show()
     }
 
     // 月收入弹窗
     private fun showIncomeDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(IncomeDialog(requireContext())).show()
     }
 
     // 学历弹窗
     private fun showEduDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(EduNewDialog(requireContext())).show()
     }
 
     // 婚况弹窗
     private fun showMarryStateDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(MarryStateNewDialog(requireContext())).show()
     }
 
     // 体型弹窗
     private fun showBodyDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(BodyDialog(requireContext())).show()
     }
 
     // 工作地区
     private fun showJobDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(JobDialog(requireContext())).show()
     }
 
     // 有没有孩子弹窗
     private fun showHaveChildDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(HaveChildNewDialog(requireContext())).show()
     }
 
     // 是否想要孩子
     private fun showWantChildDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(WantChildDialog(requireContext())).show()
     }
 
     // 是否吸烟
     private fun showSmokeDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(SmokeDialog(requireContext())).show()
     }
 
     // 是否饮酒
     private fun showDrinkDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(DrinkDialog(requireContext())).show()
     }
 
     // 有无照片
     private fun showPhotoDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
             .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(PhotoDialog(requireContext())).show()
     }
 
     // 何时结婚
     private fun showMarryDialog() {
-        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
-            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+        XPopup.Builder(context)
+            .dismissOnTouchOutside(false)
+            .dismissOnBackPressed(true)
+            .isDestroyOnDismiss(true)
+            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(MarryDialog(requireContext())).show()
     }
 

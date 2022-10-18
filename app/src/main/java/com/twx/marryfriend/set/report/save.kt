@@ -50,8 +50,7 @@ class save {
 
 
     class ReportActivity : MainBaseViewActivity(), IDoTextVerifyCallback, IDoLifeFaceDetectCallback,
-        IDoReportOtherCallback,
-        ReportDataAdapter.OnItemClickListener {
+        IDoReportOtherCallback, ReportDataAdapter.OnItemClickListener {
 
         private var hostId = ""
 
@@ -267,19 +266,13 @@ class save {
 
                 val maxSize = 10 - mList.size
 
-                PictureSelector.create(this)
-                    .openGallery(SelectMimeType.TYPE_IMAGE)
+                PictureSelector.create(this).openGallery(SelectMimeType.TYPE_IMAGE)
                     .setImageEngine(GlideEngine.createGlideEngine())
                     .setSelectionMode(SelectModeConfig.MULTIPLE)
-                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                    .setImageSpanCount(3)
-                    .setMaxSelectNum(maxSize)
-                    .setMinSelectNum(1)
-                    .isDisplayCamera(true)
-                    .isPreviewImage(true)
-                    .isEmptyResultReturn(true)
-                    .setLanguage(LanguageConfig.CHINESE)
-                    .setSelectorUIStyle(selectorStyle)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                    .setMaxSelectNum(maxSize).setMinSelectNum(1).isDisplayCamera(true)
+                    .isPreviewImage(true).isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                         override fun onResult(result: ArrayList<LocalMedia>?) {
 
@@ -390,16 +383,17 @@ class save {
 
                         Thread {
 
+                            val span = TimeUtils.getNowMills()
+                            val path =
+                                "${FileUtils.getFileNameNoExtension(mChooseList[i])}_${span}.jpg"
+
                             val putObjectFromFileResponse = client.putObject("user${
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }",
-                                "${FileUtils.getFileNameNoExtension(mChooseList[i])}.jpg",
-                                File(mChooseList[i]))
+                            }", path, File(mChooseList[i]))
 
                             mList.add(0, client.generatePresignedUrl("user${
                                 SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${FileUtils.getFileNameNoExtension(mChooseList[i])}.jpg", -1)
-                                .toString())
+                            }", path, -1).toString())
 
                             ThreadUtils.runOnUiThread {
 
