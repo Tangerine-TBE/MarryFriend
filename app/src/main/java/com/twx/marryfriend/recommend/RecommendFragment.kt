@@ -256,11 +256,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }catch (e:Exception){
                 wLog(e.stackTraceToString())
                 swipeRefreshLayout.isRefreshing=false
-                showView(ViewType.notContent)
                 toast(e.message)
-                if (BuildConfig.DEBUG) {
-                    loadService?.showSuccess()
-                }
+                loadService?.showSuccess()
+                showView(ViewType.notContent)
             }
             try {
                 val lastDynamic=recommendViewModel.loadLaseDynamic()

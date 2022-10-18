@@ -3,7 +3,7 @@ package com.twx.marryfriend.constant
 object Contents {
 
     // 域名
-    const val USER_URL = "http://test.aisou.club"//http://aijiaou.com/
+    const val USER_URL = "http://test.aisou.club"//http://test.aisou.club   //http://api.aijiaou.com
 
     //  百度api所需的 Access Token 所需域名
     const val BAIDU_API_URL = "https://aip.baidubce.com"
