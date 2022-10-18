@@ -53,7 +53,7 @@ data class Base(
     var like_uid: Int? = null//我是否喜欢他
     var super_uid: Int? = null
     var focus_uid: Int? = null
-    var ta_like_wo:Int?=null
+    var ta_like_wo: Int? = null
 }
 
 data class Demand(

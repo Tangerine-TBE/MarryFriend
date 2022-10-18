@@ -106,7 +106,7 @@ class DynamicFragment : Fragment() {
 
         recommendFragment.view?.findViewById<RecyclerView>(R.id.rv_dynamic_recommend_container)
             ?.setOnClickListener {
-                ToastUtils.showShort("123456")
+                
             }
 
         //设置 分割线

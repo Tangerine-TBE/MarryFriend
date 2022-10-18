@@ -69,6 +69,7 @@ object DataProvider {
 
 
     val EduData = arrayListOf(
+        "",
         "大专以下",
         "大专",
         "本科",

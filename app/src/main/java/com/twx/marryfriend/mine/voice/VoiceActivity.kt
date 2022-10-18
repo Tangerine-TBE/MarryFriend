@@ -13,7 +13,11 @@ import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
 import com.blankj.utilcode.util.FileUtils
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.hjq.permissions.OnPermissionCallback
+import com.hjq.permissions.Permission
+import com.hjq.permissions.XXPermissions
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.UpdateGreetInfoBean
@@ -99,74 +103,89 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
         ll_voice_button.setOnClickListener {
 
-            ToastUtils.showShort("123")
+            XXPermissions.with(this).permission(Permission.RECORD_AUDIO)
+                .permission(Permission.MANAGE_EXTERNAL_STORAGE)
+                .request(object : OnPermissionCallback {
+                    override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
+                        if (all) {
+                            when (recordMode) {
+                                "start" -> {
+                                    tv_voice_button.text = "点击结束"
+                                    recordMode = "stop"
 
-            when (recordMode) {
-                "start" -> {
-                    tv_voice_button.text = "点击结束"
-                    recordMode = "stop"
+                                    iv_voice_state.setImageResource(R.drawable.ic_record_start)
+                                    iv_voice_state.visibility = View.GONE
+                                    avv_voice_state.visibility = View.VISIBLE
 
-                    iv_voice_state.setImageResource(R.drawable.ic_record_start)
-                    iv_voice_state.visibility = View.GONE
-                    avv_voice_state.visibility = View.VISIBLE
+                                    FileUtils.delete(recordPath)
 
-                    FileUtils.delete(recordPath)
+                                    // 计时器
+                                    voice_timer.base = SystemClock.elapsedRealtime() //计时器清零
+                                    val hour =
+                                        (SystemClock.elapsedRealtime() - voice_timer.base) / 1000 / 3600
+                                    voice_timer.format = "0$hour:%s"
+                                    voice_timer.start()
 
-                    // 计时器
-                    voice_timer.base = SystemClock.elapsedRealtime() //计时器清零
-                    val hour = (SystemClock.elapsedRealtime() - voice_timer.base) / 1000 / 3600
-                    voice_timer.format = "0$hour:%s"
-                    voice_timer.start()
+                                    // 录音
+                                    audioRecorder.createDefaultAudio("record", this@VoiceActivity)
+                                    audioRecorder.startRecord(null)
+                                }
+                                "stop" -> {
 
-                    // 录音
-                    audioRecorder.createDefaultAudio("record", this)
-                    audioRecorder.startRecord(null)
-                }
-                "stop" -> {
+                                    Log.i("guo",
+                                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
 
-                    Log.i("guo",
-                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+                                    // 存储录音文件的长度
+                                    SPStaticUtils.put(Constant.ME_VOICE_LONG,
+                                        (SystemClock.elapsedRealtime() - voice_timer.base).toString())
+                                    SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
 
-                    // 存储录音文件的长度
-                    SPStaticUtils.put(Constant.ME_VOICE_LONG,
-                        (SystemClock.elapsedRealtime() - voice_timer.base).toString())
-                    SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+                                    tv_voice_button.text = "点击播放"
+                                    ll_voice_delete.visibility = View.VISIBLE
+                                    ll_voice_confirm.visibility = View.VISIBLE
+                                    recordMode = "listen"
+                                    iv_voice_state.visibility = View.VISIBLE
+                                    avv_voice_state.visibility = View.GONE
+                                    iv_voice_state.setImageResource(R.drawable.ic_record_play)
 
-                    tv_voice_button.text = "点击播放"
-                    ll_voice_delete.visibility = View.VISIBLE
-                    ll_voice_confirm.visibility = View.VISIBLE
-                    recordMode = "listen"
-                    iv_voice_state.visibility = View.VISIBLE
-                    avv_voice_state.visibility = View.GONE
-                    iv_voice_state.setImageResource(R.drawable.ic_record_play)
+                                    voice_timer.stop()
 
-                    voice_timer.stop()
+                                    audioRecorder.stopRecord()
+                                }
+                                "listen" -> {
+                                    ToastUtils.showShort("播放录音")
+                                    tv_voice_button.text = "播放结束"
+                                    iv_voice_state.visibility = View.GONE
+                                    avv_voice_state.visibility = View.VISIBLE
+                                    recordMode = "listenStop"
 
-                    audioRecorder.stopRecord()
-                }
-                "listen" -> {
-                    ToastUtils.showShort("播放录音")
-                    tv_voice_button.text = "播放结束"
-                    iv_voice_state.visibility = View.GONE
-                    avv_voice_state.visibility = View.VISIBLE
-                    recordMode = "listenStop"
+                                    mediaPlayer.reset()
+                                    mediaPlayer.setDataSource(recordPath);
+                                    mediaPlayer.prepare();
+                                    mediaPlayer.start();
+                                }
+                                "listenStop" -> {
+                                    ToastUtils.showShort("结束播放录音")
+                                    tv_voice_button.text = "点击播放"
+                                    recordMode = "listen"
+                                    iv_voice_state.visibility = View.VISIBLE
+                                    avv_voice_state.visibility = View.GONE
 
-                    mediaPlayer.reset()
-                    mediaPlayer.setDataSource(recordPath);
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                }
-                "listenStop" -> {
-                    ToastUtils.showShort("结束播放录音")
-                    tv_voice_button.text = "点击播放"
-                    recordMode = "listen"
-                    iv_voice_state.visibility = View.VISIBLE
-                    avv_voice_state.visibility = View.GONE
+                                    mediaPlayer.stop()
+                                }
 
-                    mediaPlayer.stop()
-                }
+                            }
+                        } else {
+                            ToastUtils.showShort("请授予用户相应权限")
+                        }
+                    }
 
-            }
+                    override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
+                        super.onDenied(permissions, never)
+                        ToastUtils.showShort("请授予用户相应权限")
+                    }
+
+                })
 
         }
 
@@ -193,13 +212,15 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
                 // bucketName 为文件夹名 ，使用用户id来进行命名
                 // key值为保存文件名，试用固定的几种格式来命名
 
+                val name = TimeUtils.getNowMills()
+
                 val putObjectFromFileResponse = client.putObject("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", FileUtils.getFileName(recordPath), file)
+                }", "${name}.mp3", file)
 
                 val mVoiceUrl = client.generatePresignedUrl("user${
                     SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", FileUtils.getFileName(recordPath), -1).toString()
+                }", "${name}.mp3", -1).toString()
 
                 Log.i("guo", mVoiceUrl)
 

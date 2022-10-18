@@ -195,9 +195,7 @@
 
         <activity
             android:name=".begin.BeginActivity"
-            android:exported="true"
-            android:launchMode="singleTask"
-            android:theme="@style/AppStartTheme">
+            android:exported="true">
             <!--            <intent-filter>-->
             <!--                <action android:name="android.intent.action.MAIN" />-->
 
@@ -307,6 +305,30 @@
         <meta-data
             android:name="com.vivo.push.app_id"
             android:value="105580857" />
+
+
+
+
+        <!-- 小米推送兼容-->
+        <receiver
+            android:name="org.android.agoo.xiaomi.MiPushBroadcastReceiver"
+            tools:node="remove"/>
+        <receiver
+            android:name=".push.mfr.MyXMPushMessageReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.MESSAGE_ARRIVED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.xiaomi.mipush.ERROR" />
+            </intent-filter>
+        </receiver>
+        <!-- 小米推送兼容 -->
+
+
     </application>
 
 </manifest>
