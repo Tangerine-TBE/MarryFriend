@@ -93,23 +93,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun getLayoutView(): Int = R.layout.activity_main
 
-    override fun onResume() {
-        super.onResume()
-        if (!isFirst){
-            lifecycleScope.launch {
-                likeWoUnread.isVisible=false
-                try {
-                    val c=recommendViewModel.likeWoUnread()
-                    likeWoUnread2.isVisible=c>0
-                    likeWoUnread2.text="${c}"
-                }catch (e:Exception){
-                    iLog(e.stackTraceToString())
-                }
-            }
-        }
-        isFirst=false
-    }
-
     override fun initView() {
         super.initView()
 
@@ -166,11 +149,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         super.initPresent()
 
         // 判断通知权限是否打开
-
-        Log.i("guo", "notification : ${NotificationUtil.isNotifyEnabled(this)}")
-
-
-
         if (SPStaticUtils.getBoolean(Constant.NOTICE_PERMISSION_TIP, true)) {
             if (!NotificationUtil.isNotifyEnabled(this)) {
 
@@ -243,7 +221,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         }
 
     }
-
 
     // 动态列表界面添加动态数据
     fun addDynamicFragment(trendSaloonList: TrendSaloonList?) {
@@ -405,6 +382,22 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         EmojiCompat.init(config)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!isFirst){
+            lifecycleScope.launch {
+                likeWoUnread.isVisible=false
+                try {
+                    val c=recommendViewModel.likeWoUnread()
+                    likeWoUnread2.isVisible=c>0
+                    likeWoUnread2.text="${c}"
+                }catch (e:Exception){
+                    iLog(e.stackTraceToString())
+                }
+            }
+        }
+        isFirst=false
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -464,8 +457,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
         //获取推送实例
         val pushAgent = PushAgent.getInstance(context)
-
-
 
         //推送设置
         pushSetting(context)

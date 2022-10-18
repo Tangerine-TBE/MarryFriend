@@ -90,8 +90,10 @@ class DemoHelper private constructor() {
             EMClient.getInstance().setDebugMode(BuildConfig.DEBUG)
             // set Call options
             setCallOptions(context)
+
             //初始化推送
             initPush(context)
+
             //注册call Receiver
             //initReceiver(context);
             //初始化ease ui相关
@@ -241,7 +243,7 @@ class DemoHelper private constructor() {
     fun getConversation(
         username: String?,
         type: EMConversationType?,
-        createIfNotExists: Boolean
+        createIfNotExists: Boolean,
     ): EMConversation {
         return chatManager.getConversation(username, type, createIfNotExists)
     }
@@ -311,27 +313,27 @@ class DemoHelper private constructor() {
                 }
             })
             .setUserProvider { id ->
-                val userInfo=ImUserInfoService.getUser(id)
+                val userInfo = ImUserInfoService.getUser(id)
                 EaseUser(id).also { easeUser ->
-                    easeUser.ext=ImUserInfoService.getExtStr(id)
+                    easeUser.ext = ImUserInfoService.getExtStr(id)
                     userInfo?.avatar?.also {
-                        easeUser.avatar=it
+                        easeUser.avatar = it
                     }
                     userInfo?.nickname?.also {
-                        easeUser.nickname=it
+                        easeUser.nickname = it
                     }
                 }
             }
             .setAvatarOptions(avatarOptions).userProvider = EaseUserProfileProvider { username ->
             val user = EaseUser(username)
             ImUserInfoService.getUserNickName(username)?.also {
-                user.nickname =it
+                user.nickname = it
             }
             ImUserInfoService.getUserAvatar(username)?.also {
-                user.avatar =it
+                user.avatar = it
             }
             ImUserInfoService.getExtStr(username)?.also {
-                user.ext=it
+                user.ext = it
             }
             //最后返回构建的 EaseUser 对象
             user
@@ -399,7 +401,8 @@ class DemoHelper private constructor() {
         builder.enableVivoPush() // 需要在AndroidManifest.xml中配置appId和appKey
             .enableMeiZuPush("149579", "e1bccfc8ccde4d23acc9aa979ab5e3cb")//已配
             .enableMiPush("2882303761520176390", "fMX8N2t7qtx+q80Ei0PVQQ==")//已配
-            .enableOppoPush("ddfbd322e5f84b9f9518011417970964", "0dd23bca2294417ea0f49d822dc8df29")//已配
+            .enableOppoPush("ddfbd322e5f84b9f9518011417970964",
+                "0dd23bca2294417ea0f49d822dc8df29")//已配
             .enableHWPush() // 需要在AndroidManifest.xml中配置appId
             .enableFCM("782795210914")
         options.pushConfig = builder.build()
@@ -464,7 +467,7 @@ class DemoHelper private constructor() {
 
                 override fun isSupportPush(
                     pushType: EMPushType,
-                    pushConfig: EMPushConfig
+                    pushConfig: EMPushConfig,
                 ): Boolean {
                     // 由外部实现代码判断设备是否支持FCM推送
                     if (pushType == EMPushType.FCM) {
@@ -771,7 +774,7 @@ class DemoHelper private constructor() {
                 callType: EaseCallType,
                 channelName: String,
                 reason: EaseCallEndReason,
-                callTime: Long
+                callTime: Long,
             ) {
                 EMLog.d(
                     TAG,
@@ -789,7 +792,7 @@ class DemoHelper private constructor() {
                 userId: String,
                 channelName: String,
                 appKey: String,
-                callback: EaseCallKitTokenCallback
+                callback: EaseCallKitTokenCallback,
             ) {
                 EMLog.d(
                     TAG,
@@ -811,7 +814,7 @@ class DemoHelper private constructor() {
             override fun onReceivedCall(
                 callType: EaseCallType,
                 fromUserId: String,
-                ext: JSONObject
+                ext: JSONObject,
             ) {
                 //收到接听电话
                 EMLog.d(TAG, "onRecivedCall" + callType.name + " fromUserId:" + fromUserId)
@@ -831,7 +834,7 @@ class DemoHelper private constructor() {
                 channelName: String,
                 userName: String,
                 uid: Int,
-                callback: EaseGetUserAccountCallback
+                callback: EaseGetUserAccountCallback,
             ) {
                 if (userName == null || userName === "") {
                     var url = uIdUrl
@@ -994,6 +997,7 @@ class DemoHelper private constructor() {
 
     companion object {
         private val TAG = DemoHelper::class.java.simpleName
+
         @JvmStatic
         val instance by lazy {
             DemoHelper()

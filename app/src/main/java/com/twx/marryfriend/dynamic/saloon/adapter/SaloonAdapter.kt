@@ -381,6 +381,7 @@ class SaloonAdapter(
 
         val city = mList[position].work_city_str
 
+
         val edu = EduData[mList[position].education]
 
         val job = if (mList[position].industry_str == "") {
