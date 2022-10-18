@@ -92,8 +92,12 @@ class PicturePreviewView @JvmOverloads constructor(context: Context,attrs: Attri
                 addView(previewView6)
                 findViewById<Group>(R.id.img456Group).visibility= View.VISIBLE
                 previewView6.children.filterIsInstance<ImageView>().forEachIndexed { index, t ->
-                    preImageViews.add(t)
-                    Glide.with(t).load(imageList[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
+                    if (index<imageList.size){
+                        preImageViews.add(t)
+                        Glide.with(t).load(imageList[index]).placeholder(R.drawable.ic_small_default_pic).into(t)
+                    }else{
+                        t.setImageBitmap(null)
+                    }
                 }
             }
         }
