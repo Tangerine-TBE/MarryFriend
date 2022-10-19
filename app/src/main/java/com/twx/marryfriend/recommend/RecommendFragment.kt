@@ -9,9 +9,6 @@ import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.view.forEach
-import androidx.core.view.forEachIndexed
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -51,7 +48,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.min
 
 class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private val recommendAdapter by lazy {
@@ -595,7 +591,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }else{
             if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
-                openVip()
+                notMore()
             }
             toast(t.msg)
         }
@@ -636,7 +632,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }else{
             if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
-                openVip()
+                notMore()
             }
             toast(t.msg)
         }
@@ -674,14 +670,10 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.dismiss()
     }
 
-    private fun openVip(){
+    private fun notMore(){
+        recommendAdapter.cleanData()
         if (UserInfo.isSuperVip()){
-            recommendAdapter.cleanData()
             showView(ViewType.notContent)
-//            val activity=requireActivity()
-//            if (activity is MainActivity){
-//                activity.addDynamicFragment(null)
-//            }
         }else{
             if (UserInfo.isVip()){
                 startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
@@ -731,7 +723,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     moreContent.text="查看更多嘉宾"
                     moreContent.setOnClickListener {
                         iLog("查看更多嘉宾")
-                        openVip()
+                        notMore()
                     }
                 }
 
