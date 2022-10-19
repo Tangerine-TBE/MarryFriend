@@ -126,17 +126,13 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
 
         if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
-            Glide.with(this)
-                .load(SPStaticUtils.getString(Constant.ME_AVATAR))
-                .error(R.drawable.ic_mine_male_default)
-                .placeholder(R.drawable.ic_mine_male_default)
+            Glide.with(this).load(SPStaticUtils.getString(Constant.ME_AVATAR))
+                .error(R.drawable.ic_mine_male_default).placeholder(R.drawable.ic_mine_male_default)
                 .into(riv_vip_avatar)
         } else {
-            Glide.with(this)
-                .load(SPStaticUtils.getString(Constant.ME_AVATAR))
+            Glide.with(this).load(SPStaticUtils.getString(Constant.ME_AVATAR))
                 .error(R.drawable.ic_mine_female_default)
-                .placeholder(R.drawable.ic_mine_female_default)
-                .into(riv_vip_avatar)
+                .placeholder(R.drawable.ic_mine_female_default).into(riv_vip_avatar)
         }
 
         tv_vip_name.text = SPStaticUtils.getString(Constant.ME_NAME, "default")
@@ -358,20 +354,16 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         val photo = previewOtherBean.data.photos_info
 
         if (base.user_sex == 1) {
-            Glide.with(applicationContext)
-                .load(base.image_url)
-                .error(R.drawable.ic_mine_male_default)
-                .placeholder(R.drawable.ic_mine_male_default)
+            Glide.with(applicationContext).load(base.image_url)
+                .error(R.drawable.ic_mine_male_default).placeholder(R.drawable.ic_mine_male_default)
                 .into(riv_vip_dialog_avatar)
 
             tv_vip_dialog_dynamic_buy.text = "购买会员，查看他的消息"
 
         } else {
-            Glide.with(applicationContext)
-                .load(base.image_url)
+            Glide.with(applicationContext).load(base.image_url)
                 .error(R.drawable.ic_mine_female_default)
-                .placeholder(R.drawable.ic_mine_female_default)
-                .into(riv_vip_dialog_avatar)
+                .placeholder(R.drawable.ic_mine_female_default).into(riv_vip_dialog_avatar)
 
             tv_vip_dialog_dynamic_buy.text = "购买会员，查看她的消息"
 
@@ -380,8 +372,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
         tv_vip_dialog_nick.text = base.nick
 
         tv_vip_dialog_detail.text =
-            "${base.work_city_str} ${base.age}岁" +
-                    " ${base.occupation_str} ${DataProvider.IncomeData[base.salary_range]} ${base.height}cm"
+            "${base.work_city_str} ${base.age}岁" + " ${base.occupation_str} ${DataProvider.IncomeData[base.salary_range]} ${base.height}cm"
 
 
         if (base.identity_status == 1) {
@@ -459,10 +450,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
                     rv_vip_dialog_dynamic_container.visibility = View.GONE
                     fl_vip_dialog_dynamic_video.visibility = View.VISIBLE
 
-                    Glide.with(applicationContext)
-                        .load(trends.video_url)
-                        .error(R.drawable.ic_pic_default)
-                        .placeholder(R.drawable.ic_pic_default)
+                    Glide.with(applicationContext).load(trends.video_url)
+                        .error(R.drawable.ic_pic_default).placeholder(R.drawable.ic_pic_default)
                         .into(iv_vip_dialog_dynamic_video)
                 }
                 3 -> {

@@ -262,7 +262,8 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
     private fun doAliPay() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.BUY_ORDER_NUMBER] = getOrder("VIP", mVipMode, mPay)
-        map[Contents.FEE] = mVipPrice
+//        map[Contents.FEE] = mVipPrice
+        map[Contents.FEE] = 0.01.toString()
         map[Contents.BODY] = "会员"
         map[Contents.USER_SYSTEM] = "1"
         doAliPayPresent.doAliPay(map)
@@ -301,10 +302,9 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
         try {
             val packageManager: PackageManager = requireActivity().packageManager
             //注意此处为ApplicationInfo 而不是 ActivityInfo,因为友盟设置的meta-data是在application标签中，而不是某activity标签中，所以用ApplicationInfo
-            val applicationInfo: ApplicationInfo = packageManager.getApplicationInfo(
-                requireActivity().packageName,
-                PackageManager.GET_META_DATA
-            )
+            val applicationInfo: ApplicationInfo =
+                packageManager.getApplicationInfo(requireActivity().packageName,
+                    PackageManager.GET_META_DATA)
             if (applicationInfo.metaData != null) {
                 channelName =
                     java.lang.String.valueOf(applicationInfo.metaData.get("UMENG_CHANNEL"))

@@ -75,7 +75,6 @@ import com.twx.marryfriend.view.DoubleSlideSeekBar
 import com.umeng.analytics.MobclickAgent
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
-import kotlinx.android.synthetic.main.activity_life_photo.*
 import kotlinx.android.synthetic.main.layout_guide_step_address.*
 import kotlinx.android.synthetic.main.layout_guide_step_edu.*
 import kotlinx.android.synthetic.main.layout_guide_step_hobby.*
@@ -2302,7 +2301,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeFirstUrl)
                                     .into(iv_guide_life_pic_one)
-                                tv_guide_life_pic_one?.text = mLifeFirstText
+                                if (mLifeFirstText != "") {
+                                    tv_guide_life_pic_one?.text = mLifeFirstText
+                                } else {
+                                    tv_guide_life_pic_one?.text = "添加描述"
+                                }
+
 
                                 // 移动第三张
 
@@ -2313,7 +2317,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeSecondUrl)
                                     .into(iv_guide_life_pic_two)
-                                tv_guide_life_pic_two?.text = mLifeSecondText
+                                if (mLifeSecondText != "") {
+                                    tv_guide_life_pic_two?.text = mLifeSecondText
+                                } else {
+                                    tv_guide_life_pic_two?.text = "添加描述"
+                                }
+
 
                                 // 移动第四张
 
@@ -2324,7 +2333,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeThirdUrl)
                                     .into(iv_guide_life_pic_three)
-                                tv_guide_life_pic_three?.text = mLifeThirdText
+
+                                if (mLifeThirdText != "") {
+                                    tv_guide_life_pic_three?.text = mLifeThirdText
+                                } else {
+                                    tv_guide_life_pic_three?.text = "添加描述"
+                                }
 
 
                                 // 移动第五张
@@ -2336,7 +2350,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeFourUrl)
                                     .into(iv_guide_life_pic_four)
-                                tv_guide_life_pic_four?.text = mLifeFourText
+
+                                if (mLifeFourText != "") {
+                                    tv_guide_life_pic_four?.text = mLifeFourText
+                                } else {
+                                    tv_guide_life_pic_four?.text = "添加描述"
+                                }
+
 
                                 haveFivePic = false
                                 mLifeFiveUrl = ""
@@ -2394,7 +2414,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeFirstUrl)
                                     .into(iv_guide_life_pic_one)
-                                tv_guide_life_pic_one?.text = mLifeFirstText
+                                if (mLifeFirstText != "") {
+                                    tv_guide_life_pic_one?.text = mLifeFirstText
+                                } else {
+                                    tv_guide_life_pic_one?.text = "添加描述"
+                                }
+
 
                                 // 移动第三张
 
@@ -2405,7 +2430,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeSecondUrl)
                                     .into(iv_guide_life_pic_two)
-                                tv_guide_life_pic_two?.text = mLifeSecondText
+                                if (mLifeSecondText != "") {
+                                    tv_guide_life_pic_two?.text = mLifeSecondText
+                                } else {
+                                    tv_guide_life_pic_two?.text = "添加描述"
+                                }
+
 
                                 // 移动第四张
 
@@ -2416,7 +2446,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 Glide.with(applicationContext).load(mLifeThirdUrl)
                                     .into(iv_guide_life_pic_three)
-                                tv_guide_life_pic_three?.text = mLifeThirdText
+                                if (mLifeThirdText != "") {
+                                    tv_guide_life_pic_three?.text = mLifeThirdText
+                                } else {
+                                    tv_guide_life_pic_three?.text = "添加描述"
+                                }
+
 
                                 haveFourPic = false
                                 mLifeFourUrl = ""
@@ -2469,7 +2504,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeFirstUrl)
                                 .into(iv_guide_life_pic_one)
-                            tv_guide_life_pic_one?.text = mLifeFirstText
+                            if (mLifeFirstText != "") {
+                                tv_guide_life_pic_one?.text = mLifeFirstText
+                            } else {
+                                tv_guide_life_pic_one?.text = "添加描述"
+                            }
+
 
                             // 移动第三张
 
@@ -2480,7 +2520,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeSecondUrl)
                                 .into(iv_guide_life_pic_two)
-                            tv_guide_life_pic_two?.text = mLifeSecondText
+                            if (mLifeSecondText != "") {
+                                tv_guide_life_pic_two?.text = mLifeSecondText
+                            } else {
+                                tv_guide_life_pic_two?.text = "添加描述"
+                            }
+
 
                             haveThirdPic = false
                             mLifeThirdUrl = ""
@@ -2524,7 +2569,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         Glide.with(applicationContext).load(mLifeFirstUrl)
                             .into(iv_guide_life_pic_one)
-                        tv_guide_life_pic_one?.text = mLifeFirstText
+                        if (mLifeFirstText != "") {
+                            tv_guide_life_pic_one?.text = mLifeFirstText
+                        } else {
+                            tv_guide_life_pic_one?.text = "添加描述"
+                        }
+
 
                         haveSecondPic = false
                         mLifeSecondUrl = ""
@@ -2550,10 +2600,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     // 只有一张图 直接删除
 
                     rl_guide_life_pic_one?.visibility = View.GONE
-                    rl_guide_life_pic_more?.visibility = View.GONE
-                    nsv_life_photo_pic?.visibility = View.GONE
+                    rl_guide_life_pic_more?.visibility = View.VISIBLE
+                    nsv_guide_life_pic?.visibility = View.GONE
 
-                    nsv_life_photo_default?.visibility = View.VISIBLE
+                    nsv_guide_life_default?.visibility = View.VISIBLE
 
                     haveFirstPic = false
                     mLifeFirstUrl = ""
@@ -2591,7 +2641,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeSecondUrl)
                                 .into(iv_guide_life_pic_two)
-                            tv_guide_life_pic_two?.text = mLifeSecondText
+                            if (mLifeSecondText != "") {
+                                tv_guide_life_pic_two?.text = mLifeSecondText
+                            } else {
+                                tv_guide_life_pic_two?.text = "添加描述"
+                            }
+
 
                             // 移动第四张
 
@@ -2602,7 +2657,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeThirdUrl)
                                 .into(iv_guide_life_pic_three)
-                            tv_guide_life_pic_three?.text = mLifeThirdText
+                            if (mLifeThirdText != "") {
+                                tv_guide_life_pic_three?.text = mLifeThirdText
+                            } else {
+                                tv_guide_life_pic_three?.text = "添加描述"
+                            }
 
 
                             // 移动第五张
@@ -2614,7 +2673,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeFourUrl)
                                 .into(iv_guide_life_pic_four)
-                            tv_guide_life_pic_four?.text = mLifeFourText
+                            if (mLifeFourText != "") {
+                                tv_guide_life_pic_four?.text = mLifeFourText
+                            } else {
+                                tv_guide_life_pic_four?.text = "添加描述"
+                            }
+
 
                             haveFivePic = false
                             mLifeFiveUrl = ""
@@ -2662,7 +2726,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeSecondUrl)
                                 .into(iv_guide_life_pic_two)
-                            tv_guide_life_pic_two?.text = mLifeSecondText
+                            if (mLifeSecondText != "") {
+                                tv_guide_life_pic_two?.text = mLifeSecondText
+                            } else {
+                                tv_guide_life_pic_two?.text = "添加描述"
+                            }
+
 
                             // 移动第四张
 
@@ -2673,7 +2742,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             Glide.with(applicationContext).load(mLifeThirdUrl)
                                 .into(iv_guide_life_pic_three)
-                            tv_guide_life_pic_three?.text = mLifeThirdText
+                            if (mLifeThirdText != "") {
+                                tv_guide_life_pic_three?.text = mLifeThirdText
+                            } else {
+                                tv_guide_life_pic_three?.text = "添加描述"
+                            }
+
 
                             haveFourPic = false
                             mLifeFourUrl = ""
@@ -2714,7 +2788,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         Glide.with(applicationContext).load(mLifeSecondUrl)
                             .into(iv_guide_life_pic_two)
-                        tv_guide_life_pic_two?.text = mLifeSecondText
+                        if (mLifeSecondText != "") {
+                            tv_guide_life_pic_two?.text = mLifeSecondText
+                        } else {
+                            tv_guide_life_pic_two?.text = "添加描述"
+                        }
+
 
                         haveThirdPic = false
                         mLifeThirdUrl = ""
@@ -2774,7 +2853,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         Glide.with(applicationContext).load(mLifeThirdUrl)
                             .into(iv_guide_life_pic_three)
-                        tv_guide_life_pic_three?.text = mLifeThirdText
+                        if (mLifeThirdText != "") {
+                            tv_guide_life_pic_three?.text = mLifeThirdText
+                        } else {
+                            tv_guide_life_pic_three?.text = "添加描述"
+                        }
+
 
                         // 移动第五张
 
@@ -2785,7 +2869,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         Glide.with(applicationContext).load(mLifeFourUrl)
                             .into(iv_guide_life_pic_four)
-                        tv_guide_life_pic_four?.text = mLifeFourText
+                        if (mLifeFourText != "") {
+                            tv_guide_life_pic_four?.text = mLifeFourText
+                        } else {
+                            tv_guide_life_pic_four?.text = "添加描述"
+                        }
+
 
                         haveFivePic = false
                         mLifeFiveUrl = ""
@@ -2824,7 +2913,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         Glide.with(applicationContext).load(mLifeThirdUrl)
                             .into(iv_guide_life_pic_three)
-                        tv_guide_life_pic_three?.text = mLifeThirdText
+                        if (mLifeThirdText != "") {
+                            tv_guide_life_pic_three?.text = mLifeThirdText
+                        } else {
+                            tv_guide_life_pic_three?.text = "添加描述"
+                        }
+
 
                         haveFourPic = false
                         mLifeFourUrl = ""
@@ -2878,7 +2972,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     mLifeFourState = mLifeFiveState
 
                     Glide.with(applicationContext).load(mLifeFourUrl).into(iv_guide_life_pic_four)
-                    tv_guide_life_pic_four?.text = mLifeFourText
+                    if (mLifeFourText != "") {
+                        tv_guide_life_pic_four?.text = mLifeFourText
+                    } else {
+                        tv_guide_life_pic_four?.text = "添加描述"
+                    }
+
 
                     haveFivePic = false
                     mLifeFiveUrl = ""

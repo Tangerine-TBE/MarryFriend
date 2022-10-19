@@ -86,7 +86,20 @@
         <activity
             android:name=".push.xiaomi.MfrMessageActivity"
             android:exported="true"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="${applicationId}"
+                    android:path="/thirdpush"
+                    android:scheme="agoo" />
+            </intent-filter>
+
+        </activity>
         <activity
             android:name=".tools.introduce.IntroduceToolActivity"
             android:exported="false" />
@@ -272,11 +285,14 @@
         <!-- 推送点击跳转界面 -->
         <activity
             android:name=".push.mfr.MfrMessageActivity2"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="${applicationId}"
                     android:path="/thirdpush"
@@ -307,13 +323,17 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" /> <!-- 华为应用推送的AppID -->
+            android:process=":remote" />
+
+        <!-- 华为应用推送的AppID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="appid=106852163" />
+
         <meta-data
             android:name="push_kit_auto_init_enabled"
-            android:value="true" /> <!-- 荣耀应用推送的AppID -->
+            android:value="true" />
+        <!-- 荣耀应用推送的AppID -->
         <!-- <meta-data -->
         <!-- android:name="com.hihonor.push.app_id" -->
         <!-- android:value="xxx" /> -->
@@ -365,6 +385,52 @@
         </receiver>
         <!-- 小米推送兼容 -->
 
+        <!-- 华为推送兼容 -->
+        <service
+            android:name="org.android.agoo.huawei.HuaweiRcvService"
+            tools:node="remove" />
+        <service
+            android:name=".push.mfr.MyHmsMessageService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- 华为推送兼容 -->
+
+        <!-- 魅族推送兼容-->
+        <receiver
+            android:name=".push.mfr.MyMzPushMessageReceiver"
+            tools:node="remove">
+            <intent-filter>
+                <!-- 接收push消息 -->
+                <action android:name="com.meizu.flyme.push.intent.MESSAGE" />
+                <!-- 接收register消息 -->
+                <action android:name="com.meizu.flyme.push.intent.REGISTER.FEEDBACK" />
+                <!-- 接收unregister消息-->
+                <action android:name="com.meizu.flyme.push.intent.UNREGISTER.FEEDBACK" />
+                <!-- 兼容低版本Flyme3推送服务配置 -->
+                <action android:name="com.meizu.c2dm.intent.REGISTRATION" />
+                <action android:name="com.meizu.c2dm.intent.RECEIVE" />
+
+                <category android:name="${applicationId}" />
+            </intent-filter>
+        </receiver>
+        <!-- 魅族推送兼容 -->
+
+
+        <!-- vivo推送兼容-->
+        <receiver
+            android:name="org.android.agoo.vivo.PushMessageReceiverImpl"
+            tools:node="remove" />
+        <receiver
+            android:name=".push.mfr.MyVivoReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.vivo.pushclient.action.RECEIVE" />
+            </intent-filter>
+        </receiver>
+        <!-- vivo推送兼容 -->
 
     </application>
 

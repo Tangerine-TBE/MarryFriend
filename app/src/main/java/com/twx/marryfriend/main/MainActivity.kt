@@ -29,15 +29,12 @@ import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
-import com.message.ImInit
 import com.message.ImMessageManager
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
-import com.twx.marryfriend.base.BaseConstant
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
-import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
@@ -54,11 +51,11 @@ import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
 import com.twx.marryfriend.push.help.PushConstants
+import com.twx.marryfriend.push.mfr.MyOppoPushCompat
 import com.twx.marryfriend.recommend.RecommendFragment
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.utils.BackgroundPopUtils
 import com.twx.marryfriend.utils.NotificationUtil
-import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.PushAgent
@@ -66,18 +63,20 @@ import com.umeng.message.UmengMessageHandler
 import com.umeng.message.UmengNotificationClickHandler
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
-import com.xyzz.myutils.MyUtils
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
+import org.android.agoo.huawei.HuaWeiRegister
+import org.android.agoo.mezu.MeizuRegister
+import org.android.agoo.vivo.VivoRegister
 import org.android.agoo.xiaomi.MiPushRegistar
 import java.util.*
 
 class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
-    private var isFirst=true
+    private var isFirst = true
     private var recommend: RecommendFragment? = null
     private var love: LoveFragment? = null
     private var dynamic: DynamicFragment? = null
@@ -85,8 +84,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     private var mine: MineFragment? = null
     private var currentFragment: Fragment? = null
     private val recommendViewModel by lazy {
-        ViewModelProvider(this)
-            .get(RecommendViewModel::class.java)
+        ViewModelProvider(this).get(RecommendViewModel::class.java)
     }
 
     private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
@@ -97,12 +95,12 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         super.initView()
 
         lifecycleScope.launch {
-            likeWoUnread2.isVisible=false
+            likeWoUnread2.isVisible = false
             try {
-                val c=recommendViewModel.likeWoUnread()
-                likeWoUnread.isVisible=c>0
-                likeWoUnread.text="又有${c}个人喜欢你了"
-            }catch (e:Exception){
+                val c = recommendViewModel.likeWoUnread()
+                likeWoUnread.isVisible = c > 0
+                likeWoUnread.text = "又有${c}个人喜欢你了"
+            } catch (e: Exception) {
                 iLog(e.stackTraceToString())
             }
         }
@@ -127,10 +125,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             if (currentFragment == conversationListFragment) {
                 return@observe
             }
-            val unread=ImMessageManager.getAllUnreadMessage()
-            if (unread<=0){
+            val unread = ImMessageManager.getAllUnreadMessage()
+            if (unread <= 0) {
                 messageNumNew.visibility = View.GONE
-            }else{
+            } else {
                 messageNumNew.visibility = View.VISIBLE
                 messageNumNew.text = unread.toString()
             }
@@ -153,13 +151,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             if (!NotificationUtil.isNotifyEnabled(this)) {
 
                 SPStaticUtils.put(Constant.NOTICE_PERMISSION_TIP, false)
-                XPopup.Builder(this)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(NotificationDialog(this))
-                    .show()
+                XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(NotificationDialog(this)).show()
 
             }
         } else if (SPStaticUtils.getBoolean(Constant.BACKGROUND_PERMISSION_TIP, true)) {
@@ -167,13 +161,9 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             if (!BackgroundPopUtils.isVivoBgStartPermissionAllowed(this)) {
 
                 SPStaticUtils.put(Constant.BACKGROUND_PERMISSION_TIP, false)
-                XPopup.Builder(this)
-                    .dismissOnTouchOutside(false)
-                    .dismissOnBackPressed(false)
-                    .isDestroyOnDismiss(true)
-                    .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                    .asCustom(PopDialog(this))
-                    .show()
+                XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                    .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                    .asCustom(PopDialog(this)).show()
 
             }
 
@@ -196,11 +186,11 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
         rb_main_love.setOnClickListener {
             lifecycleScope.launch {
-                likeWoUnread.isVisible=false
-                likeWoUnread2.isVisible=false
+                likeWoUnread.isVisible = false
+                likeWoUnread2.isVisible = false
                 try {
                     recommendViewModel.likeWoUnread(true)
-                }catch (e:Exception){
+                } catch (e: Exception) {
                     wLog(e.stackTraceToString())
                 }
             }
@@ -237,7 +227,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         transaction.show(dynamic!!)
         transaction.commit()
 
-        if (trendSaloonList!=null) {
+        if (trendSaloonList != null) {
             dynamic!!.addData(trendSaloonList)
         }
 
@@ -363,40 +353,38 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     private fun initEmojiCompat() {
         val config: EmojiCompat.Config
         // Use a downloadable font for EmojiCompat
-        val fontRequest = FontRequest(
-            "com.google.android.gms.fonts",
+        val fontRequest = FontRequest("com.google.android.gms.fonts",
             "com.google.android.gms",
             "Noto Color Emoji Compat",
             R.array.com_google_android_gms_fonts_certs)
         config = FontRequestEmojiCompatConfig(applicationContext, fontRequest)
 
-        config.setReplaceAll(true)
-            .registerInitCallback(object : EmojiCompat.InitCallback() {
-                override fun onInitialized() {
-                }
+        config.setReplaceAll(true).registerInitCallback(object : EmojiCompat.InitCallback() {
+            override fun onInitialized() {
+            }
 
-                override fun onFailed(@Nullable throwable: Throwable?) {
-                    Log.e("guo", "EmojiCompat initialization failed", throwable)
-                }
-            })
+            override fun onFailed(@Nullable throwable: Throwable?) {
+                Log.e("guo", "EmojiCompat initialization failed", throwable)
+            }
+        })
         EmojiCompat.init(config)
     }
 
     override fun onResume() {
         super.onResume()
-        if (!isFirst){
+        if (!isFirst) {
             lifecycleScope.launch {
-                likeWoUnread.isVisible=false
+                likeWoUnread.isVisible = false
                 try {
-                    val c=recommendViewModel.likeWoUnread()
-                    likeWoUnread2.isVisible=c>0
-                    likeWoUnread2.text="${c}"
-                }catch (e:Exception){
+                    val c = recommendViewModel.likeWoUnread()
+                    likeWoUnread2.isVisible = c > 0
+                    likeWoUnread2.text = "${c}"
+                } catch (e: Exception) {
                     iLog(e.stackTraceToString())
                 }
             }
         }
-        isFirst=false
+        isFirst = false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -452,8 +440,11 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
      * 参数五：Push推送业务的secret，填写Umeng Message Secret对应信息
      * */
     fun initPush(context: Context) {
-        UMConfigure.init(context, PushConstants.APP_KEY, PushConstants.CHANNEL,
-            UMConfigure.DEVICE_TYPE_PHONE, PushConstants.MESSAGE_SECRET)
+        UMConfigure.init(context,
+            PushConstants.APP_KEY,
+            PushConstants.CHANNEL,
+            UMConfigure.DEVICE_TYPE_PHONE,
+            PushConstants.MESSAGE_SECRET)
 
         //获取推送实例
         val pushAgent = PushAgent.getInstance(context)
@@ -583,11 +574,26 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
      * 注册设备推送通道（小米、华为等设备的推送）
      */
     private fun registerDeviceChannel(context: Context) {
-        Log.i("MiPushBroadcastReceive","注册")
+        Log.i("PushMessageReceiver", "注册")
         MiPushRegistar.register(context, PushConstants.MI_ID, PushConstants.MI_KEY)
-//        VivoRegister.register(context)
-//        OppoRegister.register(context, PushConstants.OPPO_KEY, PushConstants.OPPO_SECRET)
-//        HuaWeiRegister.register(context.applicationContext)
+
+        //OPPO推送：填写您在OPPO后台APP对应的app key和secret
+        MyOppoPushCompat.register(context,
+            "ddfbd322e5f84b9f9518011417970964",
+            "0dd23bca2294417ea0f49d822dc8df29")
+
+        //华为推送：注意华为推送的初始化参数在AndroidManifest.xml中配置
+        HuaWeiRegister.register(context.applicationContext)
+
+        //魅族推送：填写您在魅族后台APP对应的app id和key
+        MeizuRegister.register(context, "149579", "e1bccfc8ccde4d23acc9aa979ab5e3cb")
+
+        //vivo推送：注意vivo推送的初始化参数在AndroidManifest.xml中配置
+        VivoRegister.register(context)
+
+        //荣耀推送：注意荣耀推送的初始化参数在AndroidManifest.xml中配置
+//        HonorRegister.register(context)
+
     }
 
 
