@@ -270,7 +270,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
         ll_vip_super_loading?.visibility = View.VISIBLE
     }
 
-    private fun doUpdate() {
+    private fun doSVipUpdate() {
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
         doRefreshSelfPresent.doSVipRefreshSelf(map)
@@ -349,11 +349,11 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
             val result: Map<String, String> = alipay.payV2(orderInfo, true)
             val msg = Message()
             msg.obj = result
-            mHandler.sendMessage(msg);
+            mSVipHandler.sendMessage(msg);
         }.start()
     }
 
-    private val mHandler: Handler = object : Handler() {
+    private val mSVipHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
 //            val result = Result(msg.obj)
             val result = PayResult(msg.obj as MutableMap<String, String>?)
@@ -365,7 +365,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
                     MobclickAgent.onEvent(mContext, "60016_open_super_member_success");
 
                     ToastUtils.showShort("用户支付成功")
-                    doUpdate()
+                    doSVipUpdate()
                 }
                 "6001" -> {
 
@@ -431,6 +431,9 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
                 // 刷新视图
                 if (isAdded) {
+
+                    Log.i("guo", "fragment updateTopView(1)")
+
                     val activity = requireActivity() as VipActivity
                     activity.updateTopView(1)
                 }

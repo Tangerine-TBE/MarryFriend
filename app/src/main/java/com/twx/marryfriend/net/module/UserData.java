@@ -967,6 +967,18 @@ public class UserData {
         mApi.doRefreshSelf(map1).enqueue(callback);
     }
 
+    // 刷新超级会员
+    public void doSVipRefreshSelf(Map<String, String> map, Callback<RefreshSelfBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByKey(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_REFRESH_SELF + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_REFRESH_SELF, currentTimeMillis, random, checkCode, map);
+        mApi.doRefreshSelf(map1).enqueue(callback);
+    }
+
 
     // 上传用户反馈
     public void doUploadFeedback(Map<String, String> map, Callback<UploadFeedbackBean> callback) {

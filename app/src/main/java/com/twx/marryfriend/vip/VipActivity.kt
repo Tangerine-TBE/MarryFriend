@@ -6,10 +6,11 @@ import android.graphics.Color
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
 import com.twx.marryfriend.R
@@ -295,6 +296,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             tv_vip_super.setTextColor(Color.parseColor("#FF4444"))
             tv_vip_normal.setTextColor(Color.parseColor("#101010"))
 
+            Log.i("guo", " updateTopView(1)")
+
             updateTopView(1)
 
             nvp_vip_container.currentItem = 1
@@ -320,9 +323,21 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
                     tv_vip_level.text = "您还不是会员"
                     tv_vip_time.visibility = View.GONE
                 } else {
-                    tv_vip_level.text = "您已经是普通会员"
-                    tv_vip_time.visibility = View.VISIBLE
-                    tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_LOW)
+
+                    // 判断是不是普通会员
+                    if (TimeUtils.getTimeSpan(TimeUtils.getNowString(),
+                            SPStaticUtils.getString(Constant.CLOSE_TIME_LOW),
+                            TimeConstants.SEC) < 0
+                    ) {
+                        // 是普通会员
+                        tv_vip_level.text = "您已经是普通会员"
+                        tv_vip_time.visibility = View.VISIBLE
+                        tv_vip_time.text = SPStaticUtils.getString(Constant.CLOSE_TIME_LOW)
+                    } else {
+                        tv_vip_level.text = "您还不是普通会员"
+                        tv_vip_time.visibility = View.GONE
+                    }
+
                 }
 
             }
@@ -524,6 +539,8 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             if (refreshSelfBean.code == 200) {
 
                 SpUtil.refreshUserInfo(refreshSelfBean)
+
+                Log.i("guo", "onDoRefreshSelfSuccess: ")
 
                 updateTopView(mode)
 

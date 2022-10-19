@@ -607,6 +607,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
             content = UnicodeUtils.newLineText(et_send_content.text.toString().trim { it <= ' ' })
 
+
             if (mDataList.isNotEmpty() || content != "") {
 
                 // 此时需要验证是否实名认证
@@ -847,6 +848,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         doUploadTrend = false
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_INFO] = getUploadTrendInfo()
+
+        Log.i("guo","trendInfo : ${getUploadTrendInfo()}")
+
         doUploadTrendPresent.doUploadTrend(map)
 
     }

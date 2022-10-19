@@ -1553,9 +1553,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                     val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
 
                     val putObjectFromFileResponse =
-                        client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}",
-                            path,
-                            file)
+                        client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}", path, file)
 
                     mPhotoUrl = client.generatePresignedUrl("user${
                         SPStaticUtils.getString(Constant.USER_ID, "default")

@@ -41,7 +41,7 @@ public class doSVipRefreshSelfPresentImpl implements IDoSVipRefreshSelfPresent {
     @Override
     public void doSVipRefreshSelf(Map<String, String> info) {
         handlerLoading();
-        mUserData.doRefreshSelf(info, new Callback<RefreshSelfBean>() {
+        mUserData.doSVipRefreshSelf(info, new Callback<RefreshSelfBean>() {
 
             private RefreshSelfBean mBody;
 
