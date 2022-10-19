@@ -91,7 +91,7 @@ class RecommendViewModel():ViewModel() {
                 try {
                     val data=jsonObject.getJSONObject("data")
                     data.keys().forEach {
-                        idList.add(it.toInt())
+                        idList.add(data.getInt(it))
                     }
                 }catch (e:Exception){
                     jsonObject.getJSONArray("data").also {
