@@ -1,6 +1,7 @@
 package com.hyphenate.easeim;
 
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.huawei.agconnect.config.AGConnectServicesConfig;
@@ -38,7 +39,7 @@ public class HMSPushHelper {
      *
      * 4、服务端识别token过期后刷新token，以onNewToken接口返回。
      */
-    public void getHMSToken(Activity activity){
+    public void getHMSToken(Context activity){
         // 判断是否启用FCM推送
         if (EMClient.getInstance().isFCMAvailable()) {
             return;
