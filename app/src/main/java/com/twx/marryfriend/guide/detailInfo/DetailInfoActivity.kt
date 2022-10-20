@@ -1279,14 +1279,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_one.setOnClickListener {
             // 第一张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-            intent.putExtra("path", mLifeFirstUrl)
-
-
             Log.i("guo", "mLifeFirstUrl : $mLifeFirstUrl")
 
-            intent.putExtra("introduce", mLifeFirstText)
-            startActivityForResult(intent, 111)
+            startActivityForResult( LifeIntroduceActivity.getIntent(this,mLifeFirstUrl,mLifeFirstText,1,mLifeFirstId), 111)
+
         }
 
         iv_guide_life_pic_one_delete.setOnClickListener {
@@ -1302,10 +1298,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_two.setOnClickListener {
             // 第二张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-            intent.putExtra("path", mLifeSecondPath)
-            intent.putExtra("introduce", mLifeSecondText)
-            startActivityForResult(intent, 222)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeSecondPath,mLifeSecondText,1,mLifeSecondId), 222)
         }
 
         iv_guide_life_pic_two_delete.setOnClickListener {
@@ -1321,10 +1314,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_three.setOnClickListener {
             // 第三张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-            intent.putExtra("path", mLifeThirdPath)
-            intent.putExtra("introduce", mLifeThirdText)
-            startActivityForResult(intent, 333)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeThirdPath,mLifeThirdText,1,mLifeThirdId), 333)
         }
 
         iv_guide_life_pic_three_delete.setOnClickListener {
@@ -1338,11 +1328,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_four.setOnClickListener {
             // 第四张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-
-            intent.putExtra("path", mLifeFourPath)
-            intent.putExtra("introduce", mLifeFourText)
-            startActivityForResult(intent, 444)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFourPath,mLifeFourText,1,mLifeFourId), 444)
 
         }
 
@@ -1358,11 +1344,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_five.setOnClickListener {
             // 第五张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-
-            intent.putExtra("path", mLifeFivePath)
-            intent.putExtra("introduce", mLifeFiveText)
-            startActivityForResult(intent, 555)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFivePath,mLifeFiveText,1,mLifeFiveId), 555)
 
         }
 
@@ -1900,36 +1882,22 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                         if (mLifeFirstUrl == "") {
 
-                            val intent = Intent(this, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 111)
+
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 111)
 
                         } else if (mLifeSecondUrl == "") {
 
-                            val intent = Intent(this, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 222)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 222)
 
                         } else if (mLifeThirdUrl == "") {
 
-                            val intent = Intent(this, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 333)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 333)
                         } else if (mLifeFourUrl == "") {
 
-                            val intent = Intent(this, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 444)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 444)
                         } else if (mLifeFiveUrl == "") {
 
-                            val intent = Intent(this, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 555)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 555)
                         }
                     }
                 }
@@ -3229,10 +3197,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             XXPermissions.with(this).permission(Permission.CAMERA)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent =
-                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        val intent = Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
                         startActivity(intent)
-                        this@DetailInfoActivity.finish()
                     }
 
                     override fun onDenied(permissions: MutableList<String>?, never: Boolean) {
@@ -4396,43 +4362,23 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             if (mLifeFirstUrl == "") {
 
-                                val intent = Intent(this@DetailInfoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 111)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 111)
 
                             } else if (mLifeSecondUrl == "") {
 
-                                val intent = Intent(this@DetailInfoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 222)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 222)
 
                             } else if (mLifeThirdUrl == "") {
 
-                                val intent = Intent(this@DetailInfoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 333)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 333)
 
                             } else if (mLifeFourUrl == "") {
 
-                                val intent = Intent(this@DetailInfoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 444)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 444)
 
                             } else if (mLifeFiveUrl == "") {
 
-                                val intent = Intent(this@DetailInfoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 555)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 555)
 
                             }
 

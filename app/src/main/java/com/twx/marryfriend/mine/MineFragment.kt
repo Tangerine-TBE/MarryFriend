@@ -188,6 +188,8 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
         tv_mine_uid.text = "用户ID：${SPStaticUtils.getString(Constant.USER_ID, "")}"
 
+        Log.i("hip","avatar : ${SPStaticUtils.getString(Constant.ME_AVATAR, "")}")
+
         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 Glide.with(requireContext())
@@ -215,8 +217,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                 } else {
                     Glide.with(requireContext())
                         .load(SPStaticUtils.getString(Constant.ME_AVATAR, ""))
-                        .placeholder(R.drawable.ic_mine_male_default)
-                        .error(R.drawable.ic_mine_male_default).into(iv_mine_avatar)
+                        .placeholder(R.drawable.ic_mine_female_default)
+                        .error(R.drawable.ic_mine_female_default)
+                        .into(iv_mine_avatar)
                 }
 
                 tv_mine_avatar_check.visibility = View.GONE
@@ -258,7 +261,6 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                     iv_mine_avatar_fail.visibility = View.GONE
 
                 }
-
 
                 tv_mine_avatar_check.visibility = View.GONE
             }

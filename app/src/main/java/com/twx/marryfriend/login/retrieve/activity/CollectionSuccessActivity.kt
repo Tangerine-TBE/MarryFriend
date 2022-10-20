@@ -139,9 +139,9 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
 
         SPStaticUtils.put(Constant.ME_BIRTH,
-            "${identityCode.substring(6, 10).toInt()}" +
-                    "-${identityCode.substring(10, 12).toInt()}" +
-                    "-${identityCode.substring(12, 14).toInt()}")
+            "${identityCode.substring(6, 10).toInt()}" + "-${
+                identityCode.substring(10, 12).toInt()
+            }" + "-${identityCode.substring(12, 14).toInt()}")
 
 
         val verifyInfoMap: MutableMap<String, String> = TreeMap()
@@ -210,27 +210,26 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
         val ta = SPStaticUtils.getString(Constant.ME_TA, "")
 
-        val baseInfo =
-            " {\"school_name\":       \"$school\"," +         // 学校名字
-                    "\"age\":            \"$age\"," +                // 用户年龄
-                    "\"birthday\":      \"$birthday\"," +       // 出生年月日
-                    "\"education\":         $edu," +                // 学历
-                    "\"industry_num\":      $industryCode," +       // 行业编码
-                    "\"industry_str\":      \"$industryName\"," +       // 行业名字
-                    "\"occupation_num\":    $occupationCode," +     // 岗位编码
-                    "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
-                    "\"work_province_num\": \"$workProvinceCode\"," +           // 工作省份编码
-                    "\"work_province_str\": \"$workProvinceName\"," +           // 工作省份名字
-                    "\"work_city_num\":     \"$workCityCode\"," +           // 工作城市编码
-                    "\"work_city_str\":     \"$workCityName\"," +           // 工作城市名字
-                    "\"hometown_province_num\": \"$homeProvinceCode\"," +           // 家乡省份编码
-                    "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
-                    "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
-                    "\"hometown_city_str\":     \"$homeCityName\"," +           // 家乡城市名字
-                    "\"salary_range\":      $income," +             // 月薪范围
-                    "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
-                    "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
-                    " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
+        val baseInfo = " {\"school_name\":       \"$school\"," +         // 学校名字
+                "\"age\":            \"$age\"," +                // 用户年龄
+                "\"birthday\":      \"$birthday\"," +       // 出生年月日
+                "\"education\":         $edu," +                // 学历
+                "\"industry_num\":      $industryCode," +       // 行业编码
+                "\"industry_str\":      \"$industryName\"," +       // 行业名字
+                "\"occupation_num\":    $occupationCode," +     // 岗位编码
+                "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
+                "\"work_province_num\": \"$workProvinceCode\"," +           // 工作省份编码
+                "\"work_province_str\": \"$workProvinceName\"," +           // 工作省份名字
+                "\"work_city_num\":     \"$workCityCode\"," +           // 工作城市编码
+                "\"work_city_str\":     \"$workCityName\"," +           // 工作城市名字
+                "\"hometown_province_num\": \"$homeProvinceCode\"," +           // 家乡省份编码
+                "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
+                "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
+                "\"hometown_city_str\":     \"$homeCityName\"," +           // 家乡城市名字
+                "\"salary_range\":      $income," +             // 月薪范围
+                "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
+                "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
+                " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
 
         return baseInfo
     }
@@ -266,7 +265,9 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            this.finish()
+
+            ActivityUtils.finishAllActivities()
+//            this.finish()
 
         }
     }

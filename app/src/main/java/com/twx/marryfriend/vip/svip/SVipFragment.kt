@@ -28,14 +28,8 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.dynamic.saloon.tip.comment.CommentFragment
-import com.twx.marryfriend.net.callback.vip.IDoAliPayCallback
-import com.twx.marryfriend.net.callback.vip.IDoRefreshSelfCallback
-import com.twx.marryfriend.net.callback.vip.IDoSVipRefreshSelfCallback
-import com.twx.marryfriend.net.callback.vip.IGetVipPriceCallback
-import com.twx.marryfriend.net.impl.vip.doAliPayPresentImpl
-import com.twx.marryfriend.net.impl.vip.doRefreshSelfPresentImpl
-import com.twx.marryfriend.net.impl.vip.doSVipRefreshSelfPresentImpl
-import com.twx.marryfriend.net.impl.vip.getVipPricePresentImpl
+import com.twx.marryfriend.net.callback.vip.*
+import com.twx.marryfriend.net.impl.vip.*
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.utils.weight.CustomScrollView
 import com.twx.marryfriend.vip.VipActivity
@@ -50,7 +44,7 @@ import kotlinx.android.synthetic.main.fragment_normal.*
 import kotlinx.android.synthetic.main.fragment_super.*
 import java.util.*
 
-class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
+class SVipFragment : Fragment(), IDoSVipAliPayCallback, IDoSVipRefreshSelfCallback {
 
 
     private val mode = "svip"
@@ -69,7 +63,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
     private lateinit var adapter: ToolAdapter
 
-    private lateinit var doAliPayPresent: doAliPayPresentImpl
+    private lateinit var doSVipAliPayPresent: doSVipAliPayPresentImpl
 
     private lateinit var doRefreshSelfPresent: doSVipRefreshSelfPresentImpl
 
@@ -99,8 +93,8 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
     private fun initView() {
 
-        doAliPayPresent = doAliPayPresentImpl.getsInstance()
-        doAliPayPresent.registerCallback(this)
+        doSVipAliPayPresent = doSVipAliPayPresentImpl.getsInstance()
+        doSVipAliPayPresent.registerCallback(this)
 
         doRefreshSelfPresent = doSVipRefreshSelfPresentImpl.getsInstance()
         doRefreshSelfPresent.registerCallback(this)
@@ -266,7 +260,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
         map[Contents.FEE] = 0.01.toString()
         map[Contents.BODY] = "会员"
         map[Contents.USER_SYSTEM] = "1"
-        doAliPayPresent.doAliPay(map)
+        doSVipAliPayPresent.doSVipAliPay(map)
         ll_vip_super_loading?.visibility = View.VISIBLE
     }
 
@@ -344,6 +338,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
     }
 
     private fun toBuy(orderInfo: String, activity: VipActivity) {
+
         Thread {
             val alipay = PayTask(activity)
             val result: Map<String, String> = alipay.payV2(orderInfo, true)
@@ -365,6 +360,7 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
                     MobclickAgent.onEvent(mContext, "60016_open_super_member_success");
 
                     ToastUtils.showShort("用户支付成功")
+
                     doSVipUpdate()
                 }
                 "6001" -> {
@@ -421,6 +417,25 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
     }
 
+    override fun onDoSVipAliPaySuccess(aliPayBean: AliPayBean?) {
+        if (mode == "svip") {
+            if (aliPayBean != null) {
+                if (aliPayBean.code == "200") {
+                    if (isAdded) {
+                        toBuy(aliPayBean.data.str, requireActivity() as VipActivity)
+                    }
+                } else {
+                    ll_vip_super_loading?.visibility = View.GONE
+                    ToastUtils.showShort("支付信息拉起失败，请稍后重试")
+                }
+            }
+        }
+    }
+
+    override fun onDoSVipAliPayError() {
+        ll_vip_super_loading?.visibility = View.GONE
+    }
+
     override fun onDoSVipRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
 
         ll_vip_super_loading?.visibility = View.GONE
@@ -431,8 +446,6 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
 
                 // 刷新视图
                 if (isAdded) {
-
-                    Log.i("guo", "fragment updateTopView(1)")
 
                     val activity = requireActivity() as VipActivity
                     activity.updateTopView(1)
@@ -448,29 +461,11 @@ class SVipFragment : Fragment(), IDoAliPayCallback, IDoSVipRefreshSelfCallback {
         ll_vip_super_loading?.visibility = View.GONE
     }
 
-    override fun onDoAliPaySuccess(aliPayBean: AliPayBean?) {
-        if (mode == "svip") {
-            if (aliPayBean != null) {
-                if (aliPayBean.code == "200") {
-                    if (isAdded) {
-                        toBuy(aliPayBean.data.str, requireActivity() as VipActivity)
-                    }
-                } else {
-                    ll_vip_super_loading?.visibility = View.GONE
-                    ToastUtils.showShort("支付信息拉起失败，请稍后重试")
-                }
-            }
-        }
-    }
-
-    override fun onDoAliPayError() {
-        ll_vip_super_loading?.visibility = View.GONE
-    }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        doAliPayPresent.unregisterCallback(this)
+        doSVipAliPayPresent.unregisterCallback(this)
 
         doRefreshSelfPresent.unregisterCallback(this)
 

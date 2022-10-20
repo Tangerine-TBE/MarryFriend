@@ -1,5 +1,7 @@
 package com.twx.marryfriend.guide.detailInfo.life
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -18,13 +20,17 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.FaceDetectBean
 import com.twx.marryfriend.bean.TextVerifyBean
 import com.twx.marryfriend.bean.UploadPhotoBean
+import com.twx.marryfriend.bean.vip.UpdateDescribeBean
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
+import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.net.callback.IDoLifeFaceDetectCallback
 import com.twx.marryfriend.net.callback.IDoTextVerifyCallback
+import com.twx.marryfriend.net.callback.IDoUpdateDescribeCallback
 import com.twx.marryfriend.net.callback.IDoUploadPhotoCallback
 import com.twx.marryfriend.net.impl.doLifeFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
+import com.twx.marryfriend.net.impl.doUpdateDescribePresentImpl
 import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.TimeUtil
@@ -36,42 +42,74 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class LifeIntroduceActivity : MainBaseViewActivity(),
-    IDoTextVerifyCallback, IDoLifeFaceDetectCallback, IDoUploadPhotoCallback {
+class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
+    IDoUpdateDescribeCallback {
 
     private var picPath = ""
     private var introduce = ""
     private var picUrl = ""
 
-    private var haveUpload = false
 
-    private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
-    private lateinit var doFaceDetectPresent: doLifeFaceDetectPresentImpl
+    private var mode = 0
+    private var photoId = ""
+
+
     private lateinit var doUploadPhotoPresent: doUploadPhotoPresentImpl
+    private lateinit var doUpdateDescribePresent: doUpdateDescribePresentImpl
 
     private lateinit var client: BosClient
+
+    /**
+     * path ：图片url
+     * introduce：图片描述
+     * mode ：模式选择，0：上传新的生活照；1：更新生活照的描述
+     * photoId ： 生活照id
+     * */
+    companion object {
+        private const val PATH = "path"
+        private const val INTRODUCE = "introduce"
+        private const val MODE = "mode"
+        private const val PHOTO_ID = "photo_Id"
+
+        fun getIntent(
+            context: Context,
+            path: String,
+            introduce: String,
+            mode: Int? = 0,
+            photoId: String? = "",
+        ): Intent {
+            val intent = Intent(context, LifeIntroduceActivity::class.java)
+            intent.putExtra(PATH, path)
+            intent.putExtra(INTRODUCE, introduce)
+            intent.putExtra(MODE, mode)
+            intent.putExtra(PHOTO_ID, photoId)
+            return intent
+        }
+
+    }
 
     override fun getLayoutView(): Int = R.layout.activity_life_introduce
 
     override fun initView() {
         super.initView()
 
-        doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
-        doTextVerifyPresent.registerCallback(this)
+        picPath = intent.getStringExtra("path").toString()
+        introduce = intent.getStringExtra("introduce").toString()
 
-        doFaceDetectPresent = doLifeFaceDetectPresentImpl.getsInstance()
-        doFaceDetectPresent.registerCallback(this)
+        mode = intent.getIntExtra("mode", 0)
+        photoId = intent.getStringExtra("photo_Id").toString()
 
         doUploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         doUploadPhotoPresent.registerCallback(this)
 
-        picPath = intent.getStringExtra("path").toString()
-        introduce = intent.getStringExtra("introduce").toString()
+        doUpdateDescribePresent = doUpdateDescribePresentImpl.getsInstance()
+        doUpdateDescribePresent.registerCallback(this)
+
+
 
         Log.i("guo", "picPath : $picPath")
 
-        Glide.with(this)
-            .load(picPath)
+        Glide.with(this).load(picPath)
 //            .apply(requestOptions)
             .into(iv_life_introduce_container)
 
@@ -112,123 +150,36 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
             Log.i("guo", "doTextVerify")
 
-            if (introduce.isNotEmpty()) {
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                map[Contents.TEXT] = introduce
-                doTextVerifyPresent.doTextVerify(map)
 
-            } else {
+            when (mode) {
+                0 -> {
+                    // 上传新的生活照
 
-                Log.i("guo", "doFaceDetect")
+//                    if (introduce.isNotEmpty()) {
+//                        val map: MutableMap<String, String> = TreeMap()
+//                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+//                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+//                        map[Contents.TEXT] = introduce
+//                        doTextVerifyPresent.doTextVerify(map)
+//
+//                    } else {
+//                        haveUpload = false
+//                        doFaceDetect()
+//                    }
 
-                haveUpload = false
-                doFaceDetect()
-            }
-
-        }
-
-        ll_life_introduce_loading.setOnClickListener {
-
-        }
-
-    }
-
-    // 生活照 百度云审核
-    private fun doFaceDetect() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
-        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-        map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(picPath))
-        doFaceDetectPresent.doLifeFaceDetect(map)
-    }
-
-    // 上传生活照
-    private fun uploadPhoto(imageUrl: String, fileType: String, fileName: String, content: String) {
-
-        val map: MutableMap<String, String> = TreeMap()
-
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.IMAGE_URL] = imageUrl
-        map[Contents.FILE_TYPE] = fileType
-        map[Contents.FILE_NAME] = fileName
-        map[Contents.CONTENT] = content
-
-        doUploadPhotoPresent.doUploadPhoto(map)
-    }
-
-
-    // 将图片转换成Base64编码的字符串
-    private fun bitmapToBase64(bitmap: Bitmap?): String {
-        var result: String = ""
-        var baos: ByteArrayOutputStream? = null
-        try {
-            if (bitmap != null) {
-                baos = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                baos.flush()
-                baos.close()
-                val bitmapBytes = baos.toByteArray()
-                result =
-                    android.util.Base64.encodeToString(bitmapBytes, android.util.Base64.NO_WRAP)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                if (baos != null) {
-                    baos.flush()
-                    baos.close()
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-        return result
-    }
-
-
-    override fun onLoading() {
-
-    }
-
-    override fun onError() {
-
-    }
-
-    override fun onDoLifeFaceDetectSuccess(faceDetectBean: FaceDetectBean?) {
-
-        if (faceDetectBean != null) {
-            if (faceDetectBean.conclusion != "合规") {
-                ll_life_introduce_loading.visibility = View.GONE
-                ToastUtils.showShort("图片审核失败，请稍后再试")
-            } else {
-                // 图片合规，开始进行上传
-
-                Log.i("guo", "图片合规，开始进行上传")
-
-                if (!haveUpload) {
-
-                    Log.i("guo", "haveUpload")
-
-                    haveUpload = true
+                    Log.i("guo", "图片合规，开始进行上传")
 
                     Thread {
 
                         val file = File(picPath)
 
-                        val bitmap =
-                            BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)
-                                ?.let {
-                                    BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(
-                                        file), it)
-                                }
+                        val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                            BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(file), it)
+                        }
 
-                        val mPhotoPath =
-                            this.externalCacheDir.toString() + File.separator + "${
-                                FileUtils.getFileNameNoExtension(picPath)
-                            }.png"
+                        val mPhotoPath = this.externalCacheDir.toString() + File.separator + "${
+                            FileUtils.getFileNameNoExtension(picPath)
+                        }.png"
 
                         if (bitmap != null) {
                             BitmapUtil.saveBitmap(bitmap, mPhotoPath)
@@ -246,12 +197,10 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                         val span = TimeUtils.getNowMills()
                         val path = "${FileUtils.getFileNameNoExtension(picPath)}_${span}.jpg"
 
-                        val putObjectFromFileResponse = client.putObject("user${name}",
-                            path,
-                            File(mPhotoPath))
+                        val putObjectFromFileResponse =
+                            client.putObject("user${name}", path, File(mPhotoPath))
 
-                        picUrl = client.generatePresignedUrl("user${name}",
-                            path, -1).toString()
+                        picUrl = client.generatePresignedUrl("user${name}", path, -1).toString()
 
                         Log.i("guo", "mLifeSecondUrl :$picUrl")
 
@@ -262,23 +211,96 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
                     }.start()
 
-                }
 
+                }
+                1 -> {
+                    // 修改生活照描述
+
+                    Log.i("guo", "开始进行修改")
+
+                    if (introduce.isNotEmpty()) {
+                        updateDescribe(photoId, introduce)
+                    } else {
+                        ToastUtils.showShort("请输入生活照描述")
+                    }
+
+                }
+            }
+
+
+        }
+
+        ll_life_introduce_loading.setOnClickListener {
+
+        }
+
+    }
+
+
+    // 上传生活照
+    private fun uploadPhoto(imageUrl: String, fileType: String, fileName: String, content: String) {
+
+        val map: MutableMap<String, String> = TreeMap()
+
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = imageUrl
+        map[Contents.FILE_TYPE] = fileType
+        map[Contents.FILE_NAME] = fileName
+        map[Contents.CONTENT] = content
+
+        doUploadPhotoPresent.doUploadPhoto(map)
+    }
+
+    // 更新生活照描述
+    private fun updateDescribe(photoId: String, content: String) {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.PHOTO_ID] = photoId
+        map[Contents.CONTENT] = content
+        doUpdateDescribePresent.doUpdateDescribe(map)
+    }
+
+
+    override fun onLoading() {
+
+    }
+
+    override fun onError() {
+
+    }
+
+    override fun onDoUpdateDescribeSuccess(updateDescribeBean: UpdateDescribeBean?) {
+        ll_life_introduce_loading.visibility = View.GONE
+
+        if (updateDescribeBean != null) {
+            if (updateDescribeBean.code == 200) {
+                // 需要返回给前一个界面的值
+                val intent = intent
+                intent.putExtra("path", picPath)
+                intent.putExtra("url", picUrl)
+                intent.putExtra("id", updateDescribeBean.data[0].toString())
+                intent.putExtra("text", introduce)
+                setResult(RESULT_OK, intent)
+                finish()
+            } else {
+                ToastUtils.showShort(updateDescribeBean.msg)
             }
         }
 
     }
 
-    override fun onDoLifeFaceDetectError() {
+    override fun onDoUpdateDescribeError() {
         ll_life_introduce_loading.visibility = View.GONE
+        ToastUtils.showShort("修改描述失败，请稍后再试")
     }
 
     override fun onDoUploadPhotoSuccess(uploadPhotoBean: UploadPhotoBean?) {
         ll_life_introduce_loading.visibility = View.GONE
+
+
         // 上传成功,带数据返回上一页
         if (uploadPhotoBean != null) {
             if (uploadPhotoBean.code == 200) {
-                ToastUtils.showShort("上传成功")
 
                 // 需要返回给前一个界面的值
                 val intent = intent
@@ -290,7 +312,6 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
                 finish()
 
             } else {
-                ll_life_introduce_loading.visibility = View.GONE
                 ToastUtils.showShort(uploadPhotoBean.msg)
             }
         }
@@ -299,37 +320,16 @@ class LifeIntroduceActivity : MainBaseViewActivity(),
 
     override fun onDoUploadPhotoError() {
         ll_life_introduce_loading.visibility = View.GONE
-    }
-
-    override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
-
-        if (textVerifyBean.conclusion == "合规") {
-            // 进行图片审核
-            haveUpload = false
-            doFaceDetect()
-        } else {
-            if (textVerifyBean.error_msg != null) {
-                ToastUtils.showShort(textVerifyBean.error_msg)
-            } else {
-                ToastUtils.showShort(textVerifyBean.data[0].msg)
-            }
-            et_life_introduce_introduce.setText("")
-        }
+        ToastUtils.showShort("生活照上传失败，请稍后再试")
 
     }
 
-
-    override fun onDoTextVerifyError() {
-        ll_life_introduce_loading.visibility = View.GONE
-        ToastUtils.showShort("网络出现故障，无法完成文字校验，请稍后再试")
-    }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        doTextVerifyPresent.unregisterCallback(this)
-        doFaceDetectPresent.unregisterCallback(this)
         doUploadPhotoPresent.unregisterCallback(this)
+        doUpdateDescribePresent.unregisterCallback(this)
 
     }
 

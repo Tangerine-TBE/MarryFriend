@@ -140,9 +140,17 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 //输入手机号码,获取验证码
                 MobclickAgent.onEvent(this, "10007_get_verification_code");
 
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.Mobile] = phone
-                getVerifyCodePresent.getVerifyCode(map)
+//                val map: MutableMap<String, String> = TreeMap()
+//                map[Contents.Mobile] = phone
+//                getVerifyCodePresent.getVerifyCode(map)
+
+                tv_code_phone.text = phone
+
+                ll_login_phone.visibility = View.GONE
+                ll_login_code.visibility = View.VISIBLE
+                startCurrentDownTimer()
+                isPhone = false
+
 
             } else {
                 ToastUtils.showShort("请输入正确手机号")

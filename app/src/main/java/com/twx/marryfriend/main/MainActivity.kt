@@ -139,8 +139,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     override fun initLoadData() {
         super.initLoadData()
 
-        getToken()
-
     }
 
     override fun initPresent() {
@@ -233,34 +231,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     }
 
-    private fun getToken() {
-        // 创建一个新线程
-        object : Thread() {
-            override fun run() {
-                try {
-                    // 从agconnect-services.json文件中读取APP_ID
-                    val appId = "106852163"
-
-                    // 输入token标识"HCM"
-                    val tokenScope = "HCM"
-                    val token =
-                        HmsInstanceId.getInstance(this@MainActivity).getToken(appId, tokenScope)
-
-                    // 判断token是否为空
-                    if (!TextUtils.isEmpty(token)) {
-                        Log.e("guo", "get token success, $token")
-                        sendRegTokenToServer(token)
-                    }
-
-                } catch (e: ApiException) {
-                    Log.e("guo", "get token failed, $e")
-                }
-            }
-        }.start()
-    }
-
-    private fun sendRegTokenToServer(token: String?) {
-    }
 
     private fun updateToken(token: String) {
         val map: MutableMap<String, String> = TreeMap()
