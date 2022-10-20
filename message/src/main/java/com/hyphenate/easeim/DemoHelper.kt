@@ -57,6 +57,7 @@ import com.hyphenate.push.PushListener
 import com.hyphenate.util.EMLog
 import com.message.ImUserInfoService
 import com.message.custom.*
+import com.xyzz.myutils.show.iLog
 import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -138,14 +139,6 @@ class DemoHelper private constructor() {
     private fun initSDK(context: Application): Boolean {
         // 根据项目需求对SDK进行配置
         val options = initChatOptions(context)
-        //配置自定义的rest server和im server
-//        options.setRestServer("a1-hsb.easemob.com");
-//        options.setIMServer("106.75.100.247");
-//        options.setImPort(6717);
-
-//        options.setRestServer("a41.easemob.com");
-//        options.setIMServer("msync-im-41-tls-test.easemob.com");
-//        options.setImPort(6717);
 
         // 初始化SDK
         isSDKInit = EaseIM.getInstance().init(context, options)
@@ -396,44 +389,19 @@ class DemoHelper private constructor() {
         options.fpaEnable = true
         /**
          * NOTE:你需要设置自己申请的账号来使用三方推送功能，详见集成文档
+         * OPPO、小米、魅族、华为、VIVO
+         * 设备token tag：[EMPushHelper] onReceiveToken
          */
         val builder = EMPushConfig.Builder(context)
-        builder.enableVivoPush() // 需要在AndroidManifest.xml中配置appId和appKey
+        builder
+            .enableVivoPush() //证书名称 :105580857,证书标识:960e2f91dfe9777d8ff73287ac7bb08e 需要在AndroidManifest.xml中配置appId和appKey
             .enableMeiZuPush("149579", "e1bccfc8ccde4d23acc9aa979ab5e3cb")//已配
             .enableMiPush("2882303761520176390", "fMX8N2t7qtx+q80Ei0PVQQ==")//已配
             .enableOppoPush("ddfbd322e5f84b9f9518011417970964",
                 "0dd23bca2294417ea0f49d822dc8df29")//已配
             .enableHWPush() // 需要在AndroidManifest.xml中配置appId
-            .enableFCM("782795210914")
+//            .enableFCM("782795210914")
         options.pushConfig = builder.build()
-
-        //set custom servers, commonly used in private deployment
-        if (demoModel!!.isCustomSetEnable) {
-            if (demoModel!!.isCustomServerEnable && demoModel!!.restServer != null && demoModel!!.imServer != null) {
-                // 设置rest server地址
-                options.restServer = demoModel!!.restServer
-                // 设置im server地址
-                options.setIMServer(demoModel!!.imServer)
-                //如果im server地址中包含端口号
-                if (demoModel!!.imServer.contains(":")) {
-                    options.setIMServer(demoModel!!.imServer.split(":".toRegex()).toTypedArray()[0])
-                    // 设置im server 端口号，默认443
-                    options.imPort =
-                        Integer.valueOf(demoModel!!.imServer.split(":".toRegex()).toTypedArray()[1])
-                } else {
-                    //如果不包含端口号
-                    if (demoModel!!.imServerPort != 0) {
-                        options.imPort = demoModel!!.imServerPort
-                    }
-                }
-            }
-        }
-        if (demoModel!!.isCustomAppkeyEnabled && !TextUtils.isEmpty(demoModel!!.cutomAppkey)) {
-            // 设置appkey
-            options.appKey = demoModel!!.cutomAppkey
-        }
-        val imServer = options.imServer
-        val restServer = options.restServer
 
         // 设置是否允许聊天室owner离开并删除会话记录，意味着owner再不会受到任何消息
         options.allowChatroomOwnerLeave(demoModel!!.isChatroomOwnerLeaveAllowed)
@@ -454,7 +422,7 @@ class DemoHelper private constructor() {
         context.registerReceiver(headsetReceiver, headsetFilter)
     }
 
-    fun initPush(context: Context?) {
+    private fun initPush(context: Context?) {
         if (EaseIM.getInstance().isMainProcess(context)) {
             //OPPO SDK升级到2.1.0后需要进行初始化
             HeytapPushManager.init(context, true)
@@ -462,7 +430,7 @@ class DemoHelper private constructor() {
             EMPushHelper.getInstance().setPushListener(object : PushListener() {
                 override fun onError(pushType: EMPushType, errorCode: Long) {
                     // TODO: 返回的errorCode仅9xx为环信内部错误，可从EMError中查询，其他错误请根据pushType去相应第三方推送网站查询。
-                    EMLog.e("PushClient", "Push client occur a error: $pushType - $errorCode")
+                    iLog("Push client occur a error:$pushType - $errorCode","推送")
                 }
 
                 override fun isSupportPush(

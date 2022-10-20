@@ -585,13 +585,14 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //            loadingDialog.dismiss()
 
         if (t.code==200){
+            notData()
             recommendAdapter.removeItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
             }
         }else{
             if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
-                notMore()
+                notData()
             }
             toast(t.msg)
         }
@@ -632,7 +633,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }
         }else{
             if (t.code==RecommendCall.RECOMMEND_NOT_HAVE){
-                notMore()
+                notData()
             }
             toast(t.msg)
         }
@@ -670,17 +671,9 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         loadingDialog.dismiss()
     }
 
-    private fun notMore(){
+    private fun notData(){
         recommendAdapter.cleanData()
-        if (UserInfo.isSuperVip()){
-            showView(ViewType.notContent)
-        }else{
-            if (UserInfo.isVip()){
-                startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
-            }else{
-                startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
-            }
-        }
+        showView(ViewType.notContent)
     }
 
     enum class ViewType{
@@ -711,22 +704,27 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                             toast("查看更多")
                         }
                     }
-                    val success=recommendViewModel.startCountDownTimer {
-                        loadData()
-                    }
-                    if (success){
-                        recommendViewModel.countDownTimerLiveData.observe(viewLifecycleOwner){
-                            recomendTime.text=it
-                        }
-                    }
                 }else{
                     moreContent.text="查看更多嘉宾"
                     moreContent.setOnClickListener {
                         iLog("查看更多嘉宾")
-                        notMore()
+                        if (UserInfo.isVip()){
+                            startActivity(IntentManager.getSuperVipIntent(requireContext(), sVipGifEnum = SVipGifEnum.MoreView))
+                        }else{
+                            startActivity(IntentManager.getVipIntent(requireContext(), vipGif = VipGifEnum.MoreView))
+                        }
                     }
                 }
-
+                val success=recommendViewModel.startCountDownTimer {
+                    loadData()
+                }
+                if (success){
+                    recommendViewModel.countDownTimerLiveData.observe(viewLifecycleOwner){
+                        recomendTime.text=it
+                    }
+                }else{
+                    recomendTime.text="明天中午12点整"
+                }
                 guideView.onDataChange(false)
                 cardSwipeView.visibility=View.GONE
                 mutualLike.visibility=View.GONE

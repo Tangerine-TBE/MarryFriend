@@ -138,8 +138,7 @@ object UserInfo :ILoginListener{
 
     fun isTestDv():Boolean{
         val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
-        return BuildConfig.DEBUG&&
-            (phone=="15270318482"||phone=="17370452215")
+        return (phone=="15270318482"||phone=="17370452215")
     }
 
     fun getImgHead():String{
@@ -156,16 +155,16 @@ object UserInfo :ILoginListener{
     }
 
     fun isVip():Boolean{
-        if (BuildConfig.DEBUG){
-            iLog("DEBUG,默认成为会员")
+        if (BuildConfig.DEBUG&&isTestDv()){
+            iLog("默认成为会员")
             return true
         }
         return getUserVipLevel()>0
     }
 
     fun isSuperVip():Boolean{
-        if (BuildConfig.DEBUG){
-            iLog("DEBUG,默认成为超级会员")
+        if (BuildConfig.DEBUG&&isTestDv()){
+            iLog("默认成为会员")
             return true
         }
         return getUserVipLevel()>1
