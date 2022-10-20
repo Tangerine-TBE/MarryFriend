@@ -4,6 +4,7 @@ import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hyphenate.chat.EMMessage
+import com.hyphenate.easeim.HMSPushHelper
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.hyphenate.easeim.section.base.WebViewActivity
 import com.hyphenate.easeui.utils.EaseUserUtils
@@ -12,6 +13,7 @@ import com.message.chat.CustomEvent
 import com.message.custom.IImEventListener
 import com.message.custom.ImCustomEventListenerManager
 import com.message.custom.MyHelperAdapterDelegate
+import com.twx.marryfriend.base.BaseConstant
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.message.ConversationViewModel
@@ -228,6 +230,8 @@ object ImUserInfoHelper {
 
     private fun login(userId:String){
         ImLoginHelper.login(userId,{easeUser->
+            // 获取华为 HMS 推送 token
+            HMSPushHelper.getInstance().getHMSToken(BaseConstant.application)
             iLog("登录成功，开始刷新会话列表")
             MyHelperAdapterDelegate.sexAction={
                 UserInfo.getOriginalUserSex()
