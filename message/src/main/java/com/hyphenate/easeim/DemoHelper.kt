@@ -396,9 +396,10 @@ class DemoHelper private constructor() {
         options.fpaEnable = true
         /**
          * NOTE:你需要设置自己申请的账号来使用三方推送功能，详见集成文档
+         * OPPO、小米、魅族、华为、VIVO
          */
         val builder = EMPushConfig.Builder(context)
-        builder.enableVivoPush() // 需要在AndroidManifest.xml中配置appId和appKey
+        builder.enableVivoPush() //证书名称 :105580857,证书标识:960e2f91dfe9777d8ff73287ac7bb08e 需要在AndroidManifest.xml中配置appId和appKey
             .enableMeiZuPush("149579", "e1bccfc8ccde4d23acc9aa979ab5e3cb")//已配
             .enableMiPush("2882303761520176390", "fMX8N2t7qtx+q80Ei0PVQQ==")//已配
             .enableOppoPush("ddfbd322e5f84b9f9518011417970964",

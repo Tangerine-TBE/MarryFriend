@@ -40,7 +40,7 @@ android {
 
         minSdk rootProject.ext.version.minSdkVersion
         targetSdk rootProject.ext.version.targetSdkVersion
-        versionCode 10010
+        versionCode 1
         versionName "1.0.0"
         flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

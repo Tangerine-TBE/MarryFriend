@@ -25,7 +25,6 @@ import com.message.ImMessageManager
 import com.message.ImUserInfoService
 import com.twx.marryfriend.*
 import com.twx.marryfriend.base.BaseViewHolder
-import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
@@ -163,7 +162,7 @@ class ImConversationFragment: ConversationListFragment() {
     private fun refreshMutualLike(){
         iLog("加载一下")
         lifecycleScope.launch {
-            loadingDialog.show()
+//            loadingDialog.show()
             try {
                 val mutualLike=viewModel.getMutualLike()
                 mutualLikeView.visibility=if (!mutualLike.list.isNullOrEmpty()){
@@ -191,7 +190,7 @@ class ImConversationFragment: ConversationListFragment() {
             }catch (e:Exception){
                 eLog(e.stackTraceToString())
             }
-            loadingDialog.dismiss()
+//            loadingDialog.dismiss()
         }
     }
 

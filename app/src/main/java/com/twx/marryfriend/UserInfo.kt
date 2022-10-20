@@ -156,18 +156,18 @@ object UserInfo :ILoginListener{
     }
 
     fun isVip():Boolean{
-        if (BuildConfig.DEBUG){
-            iLog("DEBUG,默认成为会员")
-            return true
-        }
+//        if (BuildConfig.DEBUG){
+//            iLog("DEBUG,默认成为会员")
+//            return true
+//        }
         return getUserVipLevel()>0
     }
 
     fun isSuperVip():Boolean{
-        if (BuildConfig.DEBUG){
-            iLog("DEBUG,默认成为超级会员")
-            return true
-        }
+//        if (BuildConfig.DEBUG){
+//            iLog("DEBUG,默认成为超级会员")
+//            return true
+//        }
         return getUserVipLevel()>1
     }
     fun getHeadPortrait():String{
