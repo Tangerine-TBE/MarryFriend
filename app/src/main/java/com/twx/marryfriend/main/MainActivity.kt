@@ -47,6 +47,7 @@ import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.like.RecentLikeActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
+import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
@@ -180,6 +181,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
         rb_main_recommend.setOnClickListener {
             initRecommendFragment()
+
+//            startActivity(VoiceActivity.getInt(this, false))
+
+
         }
 
         rb_main_love.setOnClickListener {

@@ -73,6 +73,7 @@ import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
 import java.io.File
+import java.net.UnknownHostException
 import java.util.*
 
 class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoTextVerifyCallback {
@@ -624,7 +625,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                             // 还需要上传图片
 
-                            Log.i("guo","start : ${TimeUtils.getNowDate()}")
+                            Log.i("guo", "start : ${TimeUtils.getNowDate()}")
 
                             if (mDataList.isNotEmpty()) {
                                 // 有图片文字数据
@@ -701,8 +702,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                                 doTextVerify(content)
                                             } else {
 
-                                                Log.i("guo","end : ${TimeUtils.getNowDate()}")
-                                                Log.i("guo","start --- UPLOAD : ${TimeUtils.getNowDate()}")
+                                                Log.i("guo", "end : ${TimeUtils.getNowDate()}")
+                                                Log.i("guo",
+                                                    "start --- UPLOAD : ${TimeUtils.getNowDate()}")
 
                                                 Log.i("guo", "上传 ----图片 ")
                                                 uploadTrend()
@@ -714,47 +716,58 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                     2 -> {
 
-                                        val mWatermarkPath =
-                                            this.externalCacheDir.toString() + File.separator + "watermark.png"
+                                        try {
 
-                                        FileUtils.delete(mWatermarkPath)
+                                            val mWatermarkPath =
+                                                this.externalCacheDir.toString() + File.separator + "watermark.png"
 
-                                        val bitmap = ImageUtils.getBitmap(R.mipmap.watermark)
+                                            FileUtils.delete(mWatermarkPath)
 
-                                        if (bitmap != null) {
-                                            BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
+                                            val bitmap = ImageUtils.getBitmap(R.mipmap.watermark)
+
+                                            if (bitmap != null) {
+                                                BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
+                                            }
+
+                                            val coverPath = getVideoCover(mDataList[0], this)
+
+
+                                            Thread {
+
+                                                val coverName = TimeUtils.getNowMills()
+
+                                                val putObjectFromFileResponse =
+                                                    client.putObject("user${
+                                                        SPStaticUtils.getString(Constant.USER_ID,
+                                                            "default")
+                                                    }", "${coverName}.jpg", File(coverPath))
+
+
+                                                coverUrl = client.generatePresignedUrl("user${
+                                                    SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default")
+                                                }", "${coverName}.jpg", -1).toString()
+
+                                                Log.i("guo", "coverUrl : $coverUrl")
+
+                                            }.start()
+
+
+                                            val targetWaterMarkPath =
+                                                externalCacheDir.toString() + File.separator + "water" + FileUtils.getFileNameNoExtension(
+                                                    mDataList[0]) + ".mp4"
+
+                                            addVideoWaterMark(mDataList[0],
+                                                mWatermarkPath,
+                                                targetWaterMarkPath)
+
+                                        } catch (e: com.baidubce.BceClientException) {
+                                            e.printStackTrace()
+                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                        } catch (e: UnknownHostException) {
+                                            e.printStackTrace()
+                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                         }
-
-                                        val coverPath = getVideoCover(mDataList[0], this)
-
-
-
-                                        Thread {
-
-                                            val coverName = TimeUtils.getNowMills()
-
-                                            val putObjectFromFileResponse = client.putObject("user${
-                                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                                            }", "${coverName}.jpg", File(coverPath))
-
-
-                                            coverUrl = client.generatePresignedUrl("user${
-                                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                                            }", "${coverName}.jpg", -1).toString()
-
-                                            Log.i("guo", "coverUrl : $coverUrl")
-
-                                        }.start()
-
-
-                                        val targetWaterMarkPath =
-                                            externalCacheDir.toString() + File.separator + "water" + FileUtils.getFileNameNoExtension(
-                                                mDataList[0]) + ".mp4"
-
-                                        addVideoWaterMark(mDataList[0],
-                                            mWatermarkPath,
-                                            targetWaterMarkPath)
-
 
                                     }
                                 }
@@ -849,7 +862,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_INFO] = getUploadTrendInfo()
 
-        Log.i("guo","trendInfo : ${getUploadTrendInfo()}")
+        Log.i("guo", "trendInfo : ${getUploadTrendInfo()}")
 
         doUploadTrendPresent.doUploadTrend(map)
 
@@ -1243,7 +1256,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         if (!doUploadTrend) {
             doUploadTrend = true
 
-            Log.i("guo","end --- UPLOAD : ${TimeUtils.getNowDate()}")
+            Log.i("guo", "end --- UPLOAD : ${TimeUtils.getNowDate()}")
 
             Log.i("guo", "onDoUploadTrendSuccess")
 

@@ -667,10 +667,15 @@ class SaloonAdapter(
         }
 
         if (mList[position].position != "" && mList[position].position != "未知") {
+            holder.local.visibility = View.VISIBLE
             holder.location.text = mList[position].position
         } else {
             holder.local.visibility = View.GONE
         }
+
+
+
+
 
         val timeSECSpan = TimeUtils.getTimeSpan(TimeUtils.getNowString(),
             mList[position].create_time,

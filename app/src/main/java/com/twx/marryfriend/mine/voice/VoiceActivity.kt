@@ -121,8 +121,7 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
                                     // 计时器
                                     voice_timer.base = SystemClock.elapsedRealtime() //计时器清零
-                                    val hour =
-                                        (SystemClock.elapsedRealtime() - voice_timer.base) / 1000 / 3600
+                                    val hour = (SystemClock.elapsedRealtime() - voice_timer.base) / 1000 / 3600
                                     voice_timer.format = "0$hour:%s"
                                     voice_timer.start()
 
@@ -132,8 +131,7 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
                                 }
                                 "stop" -> {
 
-                                    Log.i("guo",
-                                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+                                    Log.i("guo", "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
 
                                     // 存储录音文件的长度
                                     SPStaticUtils.put(Constant.ME_VOICE_LONG,

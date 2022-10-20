@@ -1544,31 +1544,46 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                 FileUtils.delete(mPhotoPath)
                 bitmap?.let { saveBitmap(it, mPhotoPath) }
 
-                Thread {
+                try {
 
-                    //上传Object
-                    val file = File(mPhotoPath)
-                    // bucketName 为文件夹名 ，使用用户id来进行命名
-                    // key值为保存文件名，试用固定的几种格式来命名
+                    if (File(mPhotoPath).exists()){
 
-                    val span = TimeUtils.getNowMills()
-                    val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+                        Thread {
 
-                    val putObjectFromFileResponse =
-                        client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}", path, file)
+                            //上传Object
+                            val file = File(mPhotoPath)
+                            // bucketName 为文件夹名 ，使用用户id来进行命名
+                            // key值为保存文件名，试用固定的几种格式来命名
 
-                    mPhotoUrl = client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", path, -1).toString()
+                            val span = TimeUtils.getNowMills()
+                            val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
 
-                    SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+                            val putObjectFromFileResponse =
+                                client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}", path, file)
 
-                    ThreadUtils.runOnUiThread {
-                        getDialogOrder()
+                            mPhotoUrl = client.generatePresignedUrl("user${
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }", path, -1).toString()
+
+                            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+
+                            ThreadUtils.runOnUiThread {
+                                getDialogOrder()
+                            }
+
+                        }.start()
+
+                    }else{
+                        ToastUtils.showShort("文件读取失败，请稍后再试")
                     }
 
-                }.start()
-
+                }catch (e: com.baidubce.BceClientException){
+                    e.printStackTrace()
+                    ToastUtils.showShort("文件读取失败，请稍后再试")
+                }catch (e:FileNotFoundException){
+                    e.printStackTrace()
+                    ToastUtils.showShort("文件读取失败，请稍后再试")
+                }
 
             } else {
 
