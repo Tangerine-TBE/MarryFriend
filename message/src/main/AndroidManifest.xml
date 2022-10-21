@@ -193,15 +193,6 @@
         <meta-data
             android:name="com.vivo.push.app_id"
             android:value="105580857" />
-
-        <receiver
-            android:name=".common.receiver.VivoMsgReceiver"
-            android:exported="true">
-            <intent-filter>
-                <!-- 接收 push 消息 -->
-                <action android:name="com.vivo.pushclient.action.RECEIVE" />
-            </intent-filter>
-        </receiver>
         <!-- VIVO推送配置 end -->
 
         <!-- MEIZU推送配置 start -->
@@ -285,20 +276,6 @@
                 <action android:name="com.xiaomi.push.PING_TIMER" />
             </intent-filter>
 
-        </receiver>
-
-        <receiver
-            android:name=".common.receiver.MiMsgReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.xiaomi.mipush.MESSAGE_ARRIVED" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="com.xiaomi.mipush.ERROR" />
-            </intent-filter>
         </receiver>
         <!-- Mi推送配置 end-->
 

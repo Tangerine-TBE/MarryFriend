@@ -201,42 +201,12 @@ object ImMessageManager {
         return EMClient.getInstance()?.chatManager()?.unreadMessageCount?:0
     }
 
-    fun markAllMsgAsRead(username: String){
-        val conversation = EMClient.getInstance().chatManager().getConversation(username)
-        //指定会话消息未读数清零
-        conversation.markAllMessagesAsRead()
-//        //把一条消息置为已读
-//        conversation.markMessageAsRead(messageId)
-//        //所有未读消息数清零
-//        EMClient.getInstance().chatManager().markAllConversationsAsRead()
-    }
-
     fun ackConversationRead(conversationId:String){
         try {
             EMClient.getInstance().chatManager().ackConversationRead(conversationId)
         } catch (e: HyphenateException) {
             e.printStackTrace()
         }
-    }
-
-    fun sendReadAck(message: EMMessage) {
-        //是接收的消息，未发送过read ack消息且是单聊
-        if (message.direct() == EMMessage.Direct.RECEIVE && !message.isAcked && message.chatType == EMMessage.ChatType.Chat) {
-//            val type = message.type
-            //视频，语音及文件需要点击后再发送,这个可以根据需求进行调整
-//            if (type == EMMessage.Type.VIDEO || type == EMMessage.Type.VOICE || type == EMMessage.Type.FILE) {
-//                return
-//            }
-            try {
-                EMClient.getInstance().chatManager().ackMessageRead(message.from, message.msgId)
-            } catch (e: HyphenateException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun updateMessage(msg:EMMessage){
-        EMClient.getInstance().chatManager().updateMessage(msg)
     }
 
     fun getFlowerMsg(username: String):EMMessage?{

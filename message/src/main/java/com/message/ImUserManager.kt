@@ -1,23 +1,22 @@
 package com.message
 
 import android.app.Application
+import androidx.lifecycle.MutableLiveData
 import com.hyphenate.EMCallBack
 import com.hyphenate.EMConnectionListener
 import com.hyphenate.EMError
 import com.hyphenate.chat.BuildConfig
 import com.hyphenate.chat.EMClient
 import com.hyphenate.chat.EMOptions
-import com.xyzz.myutils.show.eLog
+import com.hyphenate.exceptions.HyphenateException
 import com.xyzz.myutils.show.iLog
+import com.xyzz.myutils.show.wLog
 import com.xyzz.myutils.toMd5
-
 
 //https://docs-im.easemob.com/im/android/basics/message
 //https://docs-im.easemob.com/ccim/android/easeimkit
 object ImUserManager {
-    fun init(application: Application){
-
-        return
+    private fun init(application: Application){
         val options = EMOptions()
 // 默认添加好友时，是不需要验证的，改成需要验证
         options.acceptInvitationAlways = false
@@ -30,14 +29,16 @@ object ImUserManager {
 //在做打包混淆时，关闭debug模式，避免消耗不必要的资源
         EMClient.getInstance().setDebugMode(BuildConfig.DEBUG)
     }
-
+    val userNameState by lazy {
+        MutableLiveData<String?>()
+    }
     /**
      * 监听用户连接状态
      */
     private val connectionListener by lazy {
         object : EMConnectionListener{
             override fun onConnected() {
-//                ImInit.imLoginState.postValue(true)
+//                userNameState.postValue(true)
                 iLog("用户连接")
             }
 
@@ -46,20 +47,20 @@ object ImUserManager {
                 when (errorCode) {
                     EMError.USER_REMOVED -> {
                         iLog("账号被后台删除")
-                        ImInit.imLoginState.postValue(null)
+                        userNameState.postValue(null)
                     }
                     EMError.USER_LOGIN_ANOTHER_DEVICE -> {
                         iLog("异地登录")
-                        ImInit.imLoginState.postValue(null)
+                        userNameState.postValue(null)
                     }
                     EMError.SERVER_SERVICE_RESTRICTED -> {
-                        ImInit.imLoginState.postValue(null)
+                        userNameState.postValue(null)
                     }
                     EMError.USER_KICKED_BY_CHANGE_PASSWORD -> {
-                        ImInit.imLoginState.postValue(null)
+                        userNameState.postValue(null)
                     }
                     EMError.USER_KICKED_BY_OTHER_DEVICE -> {
-                        ImInit.imLoginState.postValue(null)
+                        userNameState.postValue(null)
                     }
                 }
             }
@@ -80,8 +81,22 @@ object ImUserManager {
         iLog("注册成功")
     }
 
-     private fun login(userName:String,password:String,success: () -> Unit,fail: (code: Int, message: String) -> Unit){
+    fun login(userName:String,success: () -> Unit,fail: (code: Int, message: String) -> Unit){
+        val password="${userName}~!@#\$%^&*()_+".toMd5()
+        if (EMClient.getInstance().currentUser.isNullOrBlank()){
+            try {
+                createAccount(userName, password)
+            }catch (e: HyphenateException){
+                wLog(e.stackTraceToString(),"创建用户失败")
+            }
+        }
         iLog("用户:${userName},正在登录")
+        if (EMClient.getInstance().isLoggedIn){
+            iLog("用户已经登录，直接返回登录")
+            success.invoke()
+            onLoginSuccess()
+            return
+        }
         EMClient.getInstance().login(userName, password, object : EMCallBack {
             //回调
             override fun onSuccess() {
@@ -97,7 +112,7 @@ object ImUserManager {
                 when(code){
                     200->{
                         iLog("用户已经登录,code:${code},msg:${message}")
-                        onLoginSuccess()
+//                        onLoginSuccess()
                     }
                     305->{
                         iLog("用户被封禁,code:${code},msg:${message}")
@@ -110,15 +125,17 @@ object ImUserManager {
                         iLog("登录失败,code:${code},msg:${message}")
                     }
                 }
+                fail.invoke(code, message)
             }
         })
     }
 
-    private fun logout(success:()->Unit,fail:(code: Int, message: String)->Unit){
+    fun logout(success:()->Unit,fail:(code: Int, message: String)->Unit){
         iLog("退出当前账户")
         EMClient.getInstance().logout(true, object : EMCallBack {
             override fun onSuccess() {
                 iLog("退出当前账户成功")
+                userNameState.postValue(null)
                 success.invoke()
             }
 
@@ -134,8 +151,10 @@ object ImUserManager {
     }
 
     private fun onLoginSuccess(){
+        userNameState.postValue(EMClient.getInstance().currentUser)
+        ImMessageManager.startMessageListener()
+        ImUserManager.connectionListener()
         EMClient.getInstance().groupManager().loadAllGroups()
         EMClient.getInstance().chatManager().loadAllConversations()
-        ImMessageManager.startMessageListener()
     }
 }

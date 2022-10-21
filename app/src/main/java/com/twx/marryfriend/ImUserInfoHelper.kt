@@ -1,31 +1,17 @@
 package com.twx.marryfriend
 
-import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.hyphenate.chat.EMMessage
-import com.hyphenate.easeim.HMSPushHelper
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
-import com.hyphenate.easeim.section.base.WebViewActivity
-import com.hyphenate.easeui.utils.EaseUserUtils
-import com.message.*
-import com.message.chat.CustomEvent
-import com.message.custom.IImEventListener
-import com.message.custom.ImCustomEventListenerManager
-import com.message.custom.MyHelperAdapterDelegate
-import com.twx.marryfriend.base.BaseConstant
-import com.twx.marryfriend.bean.Sex
-import com.twx.marryfriend.bean.vip.SVipGifEnum
+import com.message.ImMessageManager
+import com.message.ImUserInfoService
 import com.twx.marryfriend.message.ConversationViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog
-import com.xyzz.myutils.show.toast
 import com.xyzz.myutils.show.wLog
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 object ImUserInfoHelper {
     val observableNewMessage by lazy {
@@ -59,7 +45,7 @@ object ImUserInfoHelper {
     /**
      * 我们用户登录后环信消息相关的初始化
      */
-    fun init(){
+    fun initUserInfo(){
         val userId=UserInfo.getUserId()
         ImUserInfoService.setUserInfo(ImUserInfoService.ImUserInfo(userId?:return,UserInfo.getNickname(),UserInfo.getImgHead()))
         GlobalScope.launch {
@@ -87,92 +73,7 @@ object ImUserInfoHelper {
             result?.also {
                 ImUserInfoService.setUserInfo(*it.toTypedArray())
             }
-            withContext(Dispatchers.Main){
-                login(userId)
-            }
         }
-        ImCustomEventListenerManager.addListener(object :IImEventListener{
-            override fun click(view: View, event: CustomEvent, emMessage: EMMessage) {
-                when(event){
-                    CustomEvent.flower -> {
-
-                    }
-                    CustomEvent.security -> {
-                        WebViewActivity.actionStart(view.context,"http://test.aisou.club/userManual/fraud.html")
-                    }
-                    CustomEvent.openSuperVip -> {
-                        view.context.startActivity(IntentManager.getSuperVipIntent(view.context, sVipGifEnum = SVipGifEnum.TopMessage))
-                    }
-                    CustomEvent.upload_head -> {
-                        view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))
-                    }
-                    CustomEvent.dazhaohu_str -> {
-                        view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
-                    }
-                    CustomEvent.greetext_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.greetext_fail -> {
-                        view.context.startActivity(IntentManager.getUpFillInGreetIntent(view.context))
-                    }
-                    CustomEvent.putong_xihuan -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.touxiang_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.touxiang_fail -> {
-                        view.context.startActivity(IntentManager.getUpHeadImageIntent(view.context))
-                    }
-                    CustomEvent.yuying_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.yuying_fail -> {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            view.context.startActivity(IntentManager.getUpFillInVoiceIntent(view.context,true))
-                        }
-                    }
-                    CustomEvent.shiming_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.shiming_fail -> {
-                        view.context.startActivity(IntentManager.getUpRealNameIntent(view.context))
-                    }
-                    CustomEvent.xiangce_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.xiangce_fail -> {
-                        view.context.toast(event.title)
-//                        view.context.startActivity(IntentManager.getUpRealNameIntent(view.context))
-                    }
-                    CustomEvent.shenghuo_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.shenghuo_fail -> {
-                        view.context.startActivity(IntentManager.getUpLifeIntent(view.context))
-                    }
-                    CustomEvent.dongtai_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.dongtai_fail -> {
-                        view.context.startActivity(IntentManager.getDynamicIntent(view.context))
-                    }
-                    CustomEvent.jubao_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.jubao_fail -> {//举报
-                        view.context.toast(event.title)
-//                        view.context.startActivity(IntentManager.getReportIntent(view.context))
-                    }
-                    CustomEvent.interdi_pass -> {
-                        view.context.toast(event.title)
-                    }
-                    CustomEvent.HELPER_VIP_EXPIRE -> {
-                        view.context.startActivity(IntentManager.getVipIntent(view.context))
-                    }
-                }
-            }
-        })
 
         ImMessageManager.newMessageLiveData.observeForever { list ->
             iLog("准备获取用户资料")
@@ -229,20 +130,20 @@ object ImUserInfoHelper {
     }
 
     private fun login(userId:String){
-        ImLoginHelper.login(userId,{easeUser->
-            // 获取华为 HMS 推送 token
-            HMSPushHelper.getInstance().getHMSToken(BaseConstant.application)
-            iLog("登录成功，开始刷新会话列表")
-            MyHelperAdapterDelegate.sexAction={
-                UserInfo.getOriginalUserSex()
-            }
-            ImInit.imLoginState.value=userId
-            EaseUserUtils.setManDefHead(Sex.male.smallHead)
-            EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
-            EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
-            ImUserManager.connectionListener()
-        },{code,message->
-            iLog("登录失败,code=${code},message=${message}")
-        })
+//        ImLoginHelper.login(userId,{easeUser->
+//            // 获取华为 HMS 推送 token
+//            HMSPushHelper.getInstance().getHMSToken(BaseConstant.application)
+//            iLog("登录成功，开始刷新会话列表")
+//            MyHelperAdapterDelegate.sexAction={
+//                UserInfo.getOriginalUserSex()
+//            }
+//            ImInit.imLoginState.value=userId
+//            EaseUserUtils.setManDefHead(Sex.male.smallHead)
+//            EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
+//            EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
+//            ImUserManager.connectionListener()
+//        },{code,message->
+//            iLog("登录失败,code=${code},message=${message}")
+//        })
     }
 }
