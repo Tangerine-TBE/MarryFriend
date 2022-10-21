@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -40,6 +42,7 @@ import kotlinx.android.synthetic.main.layout_guide_step_name.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.net.UnknownHostException
 import java.util.*
 
 class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
@@ -179,46 +182,64 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
 
                     Thread {
 
-                        val file = File(picPath)
+                        try {
 
-                        val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
-                            BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(file), it)
-                        }
+                            val file = File(picPath)
 
-                        val mPhotoPath = this.externalCacheDir.toString() + File.separator + "${
-                            FileUtils.getFileNameNoExtension(picPath)
-                        }.png"
+                            val bitmap =
+                                BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                                    BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(file), it)
+                                }
 
-                        if (bitmap != null) {
-                            BitmapUtil.saveBitmap(bitmap, mPhotoPath)
-                        }
+                            val mPhotoPath = this.externalCacheDir.toString() + File.separator + "${
+                                FileUtils.getFileNameNoExtension(picPath)
+                            }.png"
 
-
-                        val name =
-                            if (SPStaticUtils.getString(Constant.USER_ID, "default").length == 1) {
-                                "0${SPStaticUtils.getString(Constant.USER_ID, "default")}"
-                            } else {
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            if (bitmap != null) {
+                                BitmapUtil.saveBitmap(bitmap, mPhotoPath)
                             }
 
-                        // 时间戳，防止重复上传时传不上去
-                        val span = TimeUtils.getNowMills()
-                        val path = "${FileUtils.getFileNameNoExtension(picPath)}_${span}.jpg"
 
-                        val putObjectFromFileResponse =
-                            client.putObject("user${name}", path, File(mPhotoPath))
+                            val name =
+                                if (SPStaticUtils.getString(Constant.USER_ID,
+                                        "default").length == 1
+                                ) {
+                                    "0${SPStaticUtils.getString(Constant.USER_ID, "default")}"
+                                } else {
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }
 
-                        picUrl = client.generatePresignedUrl("user${name}", path, -1).toString()
+                            // 时间戳，防止重复上传时传不上去
+                            val span = TimeUtils.getNowMills()
+                            val path = "${FileUtils.getFileNameNoExtension(picPath)}_${span}.jpg"
 
-                        Log.i("guo", "mLifeSecondUrl :$picUrl")
+                            val putObjectFromFileResponse =
+                                client.putObject("user${name}", path, File(mPhotoPath))
 
-                        uploadPhoto(picUrl,
-                            FileUtils.getFileNameNoExtension(picPath),
-                            FileUtils.getFileExtension(picPath),
-                            introduce)
+                            picUrl = client.generatePresignedUrl("user${name}", path, -1).toString()
+
+                            Log.i("guo", "mLifeSecondUrl :$picUrl")
+
+                            uploadPhoto(picUrl,
+                                FileUtils.getFileNameNoExtension(picPath),
+                                FileUtils.getFileExtension(picPath),
+                                introduce)
+
+                        } catch (e: BceClientException) {
+                            e.printStackTrace()
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        } catch (e: BceServiceException) {
+                            Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                            Log.i("guo", "Error RequestId: " + e.requestId);
+                            Log.i("guo", "Error StatusCode: " + e.statusCode);
+                            Log.i("guo", "Error ErrorType: " + e.errorType);
+                        } catch (e: UnknownHostException) {
+                            Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            e.printStackTrace()
+                        }
 
                     }.start()
-
 
                 }
                 1 -> {

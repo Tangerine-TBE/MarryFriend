@@ -3,6 +3,7 @@ package com.twx.marryfriend.guide.info
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ThreadUtils
@@ -120,7 +121,12 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         userNick = intent.getStringExtra("nick").toString()
 
 
-//        ImUserManager.login(SPStaticUtils.getString(Constant.USER_ID))
+        ImUserManager.login(SPStaticUtils.getString(Constant.USER_ID), {
+
+        }, { code, message ->
+            ToastUtils.showShort("数据登录失败，请重试")
+            AppUtils.exitApp()
+        })
 
     }
 
@@ -152,9 +158,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         Log.i("guo", "CITY_HAVE : ${SPStaticUtils.getBoolean(Constant.CITY_HAVE, false)}")
         Log.i("guo", "INDUSTRY_HAVE : ${SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)}")
 
-        if (!SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) ||
-            !SPStaticUtils.getBoolean(Constant.CITY_HAVE, false) ||
-            !SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
+        if (!SPStaticUtils.getBoolean(Constant.JOB_HAVE, false) || !SPStaticUtils.getBoolean(
+                Constant.CITY_HAVE,
+                false) || !SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)
         ) {
 
             Log.i("guo", "获取数据")

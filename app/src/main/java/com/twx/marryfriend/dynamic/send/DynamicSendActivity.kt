@@ -767,8 +767,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                                 Log.i("guo", "Error StatusCode: " + e.statusCode);
                                                 Log.i("guo", "Error ErrorType: " + e.errorType);
                                             } catch (e: UnknownHostException) {
-                                                e.printStackTrace()
+                                                Log.i("guo","网络请求错误，请检查网络后稍后重试")
                                                 ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                e.printStackTrace()
                                             }
 
                                         }.start()
@@ -955,37 +956,55 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                         val xlist: MutableList<String> = arrayListOf()
 
                         Thread {
-                            val name = TimeUtils.getNowMills()
 
-                            val file = File(targetPath)
-                            val putObjectFromFileResponse = client.putObject("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${name}.mp4", file)
+                            try {
 
-                            val mLifeFirstUrl = client.generatePresignedUrl("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${name}.mp4", -1).toString()
+                                val name = TimeUtils.getNowMills()
 
-                            xlist.add(mLifeFirstUrl)
+                                val file = File(targetPath)
+                                val putObjectFromFileResponse = client.putObject("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${name}.mp4", file)
 
+                                val mLifeFirstUrl = client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${name}.mp4", -1).toString()
 
-                            val x = xlist.toString().replace("[", "")
-
-                            videoUrl = x.replace("]", "")
+                                xlist.add(mLifeFirstUrl)
 
 
-                            if (content != "") {
+                                val x = xlist.toString().replace("[", "")
+
+                                videoUrl = x.replace("]", "")
 
 
-                                Log.i("guo", "文字 ----压缩 ")
-                                doTextVerify = false
-                                doTextVerify(content)
-                            } else {
+                                if (content != "") {
 
-                                Log.i("guo", "上传 ----压缩 ")
 
-                                uploadTrend()
+                                    Log.i("guo", "文字 ----压缩 ")
+                                    doTextVerify = false
+                                    doTextVerify(content)
+                                } else {
+
+                                    Log.i("guo", "上传 ----压缩 ")
+
+                                    uploadTrend()
+                                }
+
+                            } catch (e: BceClientException) {
+                                e.printStackTrace()
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            } catch (e: BceServiceException) {
+                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                            } catch (e: UnknownHostException) {
+                                Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                e.printStackTrace()
                             }
+
 
                         }.start()
 
@@ -1067,33 +1086,50 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                             val xlist: MutableList<String> = arrayListOf()
 
                             Thread {
-                                val name = TimeUtils.getNowMills()
 
-                                val file = File(targetPath)
-                                val putObjectFromFileResponse = client.putObject("user${
-                                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                                }", "${name}.mp4", file)
+                                try {
 
-                                val mLifeFirstUrl = client.generatePresignedUrl("user${
-                                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                                }", "${name}.mp4", -1).toString()
+                                    val name = TimeUtils.getNowMills()
 
-                                xlist.add(mLifeFirstUrl)
+                                    val file = File(targetPath)
+                                    val putObjectFromFileResponse = client.putObject("user${
+                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                    }", "${name}.mp4", file)
 
+                                    val mLifeFirstUrl = client.generatePresignedUrl("user${
+                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                    }", "${name}.mp4", -1).toString()
 
-                                val x = xlist.toString().replace("[", "")
-
-                                videoUrl = x.replace("]", "")
+                                    xlist.add(mLifeFirstUrl)
 
 
-                                if (content != "") {
+                                    val x = xlist.toString().replace("[", "")
 
-                                    Log.i("guo", "文字 ----视频 ")
-                                    doTextVerify = false
-                                    doTextVerify(content)
-                                } else {
-                                    Log.i("guo", "上传 ----视频 ")
-                                    uploadTrend()
+                                    videoUrl = x.replace("]", "")
+
+
+                                    if (content != "") {
+
+                                        Log.i("guo", "文字 ----视频 ")
+                                        doTextVerify = false
+                                        doTextVerify(content)
+                                    } else {
+                                        Log.i("guo", "上传 ----视频 ")
+                                        uploadTrend()
+                                    }
+
+                                } catch (e: BceClientException) {
+                                    e.printStackTrace()
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                } catch (e: BceServiceException) {
+                                    Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                    Log.i("guo", "Error RequestId: " + e.requestId);
+                                    Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                    Log.i("guo", "Error ErrorType: " + e.errorType);
+                                } catch (e: UnknownHostException) {
+                                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    e.printStackTrace()
                                 }
 
                             }.start()

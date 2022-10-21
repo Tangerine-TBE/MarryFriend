@@ -23,6 +23,8 @@ import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -78,6 +80,7 @@ import com.twx.marryfriend.vip.VipActivity
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.fragment_mine.*
 import java.io.*
+import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -1558,25 +1561,41 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                         Thread {
 
-                            //上传Object
-                            val file = File(mPhotoPath)
-                            // bucketName 为文件夹名 ，使用用户id来进行命名
-                            // key值为保存文件名，试用固定的几种格式来命名
+                            try {
 
-                            val span = TimeUtils.getNowMills()
-                            val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+                                //上传Object
+                                val file = File(mPhotoPath)
+                                // bucketName 为文件夹名 ，使用用户id来进行命名
+                                // key值为保存文件名，试用固定的几种格式来命名
 
-                            val putObjectFromFileResponse =
-                                client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}", path, file)
+                                val span = TimeUtils.getNowMills()
+                                val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
 
-                            mPhotoUrl = client.generatePresignedUrl("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", path, -1).toString()
+                                val putObjectFromFileResponse =
+                                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}", path, file)
 
-                            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+                                mPhotoUrl = client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", path, -1).toString()
 
-                            ThreadUtils.runOnUiThread {
-                                getDialogOrder()
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+
+                                ThreadUtils.runOnUiThread {
+                                    getDialogOrder()
+                                }
+
+                            } catch (e: BceClientException) {
+                                e.printStackTrace()
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            } catch (e: BceServiceException) {
+                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                            } catch (e: UnknownHostException) {
+                                Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                e.printStackTrace()
                             }
 
                         }.start()

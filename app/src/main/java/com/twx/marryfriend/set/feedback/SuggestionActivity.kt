@@ -8,6 +8,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -42,6 +44,7 @@ import kotlinx.android.synthetic.main.activity_suggestion.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.net.UnknownHostException
 import java.util.*
 
 class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
@@ -269,42 +272,59 @@ class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
 
                             Thread {
 
-                                for (i in 0.until(mChooseList.size)) {
+                                try {
 
-                                    val span = TimeUtils.getNowMills()
-                                    val path =
-                                        "${FileUtils.getFileNameNoExtension(mChooseList[i])}_${span}.jpg"
 
-                                    val putObjectFromFileResponse = client.putObject("user${
-                                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }", path, File(mChooseList[i]))
+                                    for (i in 0.until(mChooseList.size)) {
 
-                                    mList.add(0, client.generatePresignedUrl("user${
-                                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }", path, -1).toString())
+                                        val span = TimeUtils.getNowMills()
+                                        val path =
+                                            "${FileUtils.getFileNameNoExtension(mChooseList[i])}_${span}.jpg"
 
-                                }
+                                        val putObjectFromFileResponse = client.putObject("user${
+                                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                                        }", path, File(mChooseList[i]))
 
-                                ThreadUtils.runOnUiThread {
+                                        mList.add(0, client.generatePresignedUrl("user${
+                                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                                        }", path, -1).toString())
 
-                                    Log.i("guo", "size : ${mList.size}")
-
-                                    tv_suggestion_photo_size.text = "${mList.size}/9张"
-
-                                    if (suggestion != "" || mList.isNotEmpty()) {
-                                        iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit)
-                                    } else {
-                                        iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit_non)
                                     }
 
-                                    if (mList.size < 9) {
-                                        mList.add("add")
+                                    ThreadUtils.runOnUiThread {
+
+                                        Log.i("guo", "size : ${mList.size}")
+
+                                        tv_suggestion_photo_size.text = "${mList.size}/9张"
+
+                                        if (suggestion != "" || mList.isNotEmpty()) {
+                                            iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit)
+                                        } else {
+                                            iv_suggestion_commit.setImageResource(R.mipmap.icon_report_commit_non)
+                                        }
+
+                                        if (mList.size < 9) {
+                                            mList.add("add")
+                                        }
+
+                                        ll_suggestion_load.visibility = View.GONE
+
+                                        adapter.notifyDataSetChanged()
+
                                     }
 
-                                    ll_suggestion_load.visibility = View.GONE
-
-                                    adapter.notifyDataSetChanged()
-
+                                } catch (e: BceClientException) {
+                                    e.printStackTrace()
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                } catch (e: BceServiceException) {
+                                    Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                    Log.i("guo", "Error RequestId: " + e.requestId);
+                                    Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                    Log.i("guo", "Error ErrorType: " + e.errorType);
+                                } catch (e: UnknownHostException) {
+                                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    e.printStackTrace()
                                 }
 
                             }.start()

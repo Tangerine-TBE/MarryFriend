@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -28,6 +30,7 @@ import com.twx.marryfriend.net.callback.IDoUpdateGreetInfoCallback
 import com.twx.marryfriend.net.impl.doUpdateGreetInfoPresentImpl
 import kotlinx.android.synthetic.main.activity_voice.*
 import java.io.File
+import java.net.UnknownHostException
 import java.util.*
 
 class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
@@ -213,29 +216,47 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
             Thread {
 
-                //上传Object
-                val file = File(recordPath)
-                // bucketName 为文件夹名 ，使用用户id来进行命名
-                // key值为保存文件名，试用固定的几种格式来命名
+                try {
 
-                val name = TimeUtils.getNowMills()
+                    //上传Object
+                    val file = File(recordPath)
+                    // bucketName 为文件夹名 ，使用用户id来进行命名
+                    // key值为保存文件名，试用固定的几种格式来命名
 
-                val putObjectFromFileResponse = client.putObject("user${
-                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", "${name}.mp3", file)
+                    val name = TimeUtils.getNowMills()
 
-                val mVoiceUrl = client.generatePresignedUrl("user${
-                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", "${name}.mp3", -1).toString()
+                    val putObjectFromFileResponse = client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", "${name}.mp3", file)
 
-                Log.i("guo", mVoiceUrl)
+                    val mVoiceUrl = client.generatePresignedUrl("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", "${name}.mp3", -1).toString()
 
-                SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+                    Log.i("guo", mVoiceUrl)
 
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                map[Contents.GREET_UPDATE] = getGreetInfo()
-                doUpdateGreetPresent.doUpdateGreetInfo(map)
+                    SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                    map[Contents.GREET_UPDATE] = getGreetInfo()
+                    doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+                } catch (e: BceClientException) {
+                    e.printStackTrace()
+                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                } catch (e: BceServiceException) {
+                    Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                    Log.i("guo", "Error RequestId: " + e.requestId);
+                    Log.i("guo", "Error StatusCode: " + e.statusCode);
+                    Log.i("guo", "Error ErrorType: " + e.errorType);
+                } catch (e: UnknownHostException) {
+                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    e.printStackTrace()
+                }
+
+
 
             }.start()
 

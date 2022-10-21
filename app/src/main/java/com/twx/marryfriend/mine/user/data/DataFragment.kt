@@ -23,6 +23,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aigestudio.wheelpicker.WheelPicker
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -72,6 +74,7 @@ import kotlinx.android.synthetic.main.activity_dynamic_send.*
 import kotlinx.android.synthetic.main.activity_friend_info.*
 import kotlinx.android.synthetic.main.fragment_data.*
 import java.io.*
+import java.net.UnknownHostException
 import java.util.*
 import kotlin.math.log
 
@@ -3522,31 +3525,47 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             Thread {
 
-                //上传Object
-                val file = File(mPhotoPath)
-                // bucketName 为文件夹名 ，使用用户id来进行命名
-                // key值为保存文件名，试用固定的几种格式来命名
+                try {
 
-                val span = TimeUtils.getNowMills()
-                val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+                    //上传Object
+                    val file = File(mPhotoPath)
+                    // bucketName 为文件夹名 ，使用用户id来进行命名
+                    // key值为保存文件名，试用固定的几种格式来命名
 
-                val putObjectFromFileResponse = client.putObject("user${
-                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", path, file)
+                    val span = TimeUtils.getNowMills()
+                    val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
 
-                Log.i("guo", path)
+                    val putObjectFromFileResponse = client.putObject("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", path, file)
 
-                mPhotoUrl = client.generatePresignedUrl("user${
-                    SPStaticUtils.getString(Constant.USER_ID, "default")
-                }", path, -1).toString()
+                    Log.i("guo", path)
 
-                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+                    mPhotoUrl = client.generatePresignedUrl("user${
+                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                    }", path, -1).toString()
 
-                Log.i("guo", mPhotoUrl)
+                    SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
 
-                updateAvatar(mPhotoUrl,
-                    FileUtils.getFileExtension(mPhotoPath),
-                    FileUtils.getFileNameNoExtension(mPhotoPath))
+                    Log.i("guo", mPhotoUrl)
+
+                    updateAvatar(mPhotoUrl,
+                        FileUtils.getFileExtension(mPhotoPath),
+                        FileUtils.getFileNameNoExtension(mPhotoPath))
+
+                } catch (e: BceClientException) {
+                    e.printStackTrace()
+                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                } catch (e: BceServiceException) {
+                    Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                    Log.i("guo", "Error RequestId: " + e.requestId);
+                    Log.i("guo", "Error StatusCode: " + e.statusCode);
+                    Log.i("guo", "Error ErrorType: " + e.errorType);
+                } catch (e: UnknownHostException) {
+                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    e.printStackTrace()
+                }
 
             }.start()
 
@@ -4050,29 +4069,45 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                     Thread {
 
-                        //上传Object
-                        val file = File(recordPath)
-                        // bucketName 为文件夹名 ，使用用户id来进行命名
-                        // key值为保存文件名，试用固定的几种格式来命名
+                        try {
 
-                        val name = TimeUtils.getNowMills()
+                            //上传Object
+                            val file = File(recordPath)
+                            // bucketName 为文件夹名 ，使用用户id来进行命名
+                            // key值为保存文件名，试用固定的几种格式来命名
 
-                        val putObjectFromFileResponse = client.putObject("user${
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", "${name}.mp3", file)
+                            val name = TimeUtils.getNowMills()
 
-                        val mVoiceUrl = client.generatePresignedUrl("user${
-                            SPStaticUtils.getString(Constant.USER_ID, "default")
-                        }", "${name}.mp3", -1).toString()
+                            val putObjectFromFileResponse = client.putObject("user${
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }", "${name}.mp3", file)
 
-                        Log.i("guo", mVoiceUrl)
+                            val mVoiceUrl = client.generatePresignedUrl("user${
+                                SPStaticUtils.getString(Constant.USER_ID, "default")
+                            }", "${name}.mp3", -1).toString()
 
-                        SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+                            Log.i("guo", mVoiceUrl)
 
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                        map[Contents.GREET_UPDATE] = getGreetInfo()
-                        doUpdateGreetPresent.doUpdateGreetInfo(map)
+                            SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                            map[Contents.GREET_UPDATE] = getGreetInfo()
+                            doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+                        } catch (e: BceClientException) {
+                            e.printStackTrace()
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        } catch (e: BceServiceException) {
+                            Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                            Log.i("guo", "Error RequestId: " + e.requestId);
+                            Log.i("guo", "Error StatusCode: " + e.statusCode);
+                            Log.i("guo", "Error ErrorType: " + e.errorType);
+                        } catch (e: UnknownHostException) {
+                            Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            e.printStackTrace()
+                        }
 
                     }.start()
 

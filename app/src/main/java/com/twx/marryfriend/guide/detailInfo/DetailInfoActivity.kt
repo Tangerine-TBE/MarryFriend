@@ -29,6 +29,8 @@ import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
 import com.baidu.location.LocationClientOption
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -86,6 +88,7 @@ import kotlinx.android.synthetic.main.layout_guide_step_mine.*
 import kotlinx.android.synthetic.main.layout_guide_step_photo.*
 import kotlinx.android.synthetic.main.layout_guide_step_target.*
 import java.io.*
+import java.net.UnknownHostException
 import java.util.*
 import kotlin.math.log
 
@@ -969,23 +972,38 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         // 上传头像
                         Thread {
 
-                            //上传Object
-                            val file = File(mPhotoPath)
-                            // bucketName 为文件夹名 ，使用用户id来进行命名
-                            // key值为保存文件名，试用固定的几种格式来命名
+                            try {
 
-                            val avatarName = TimeUtils.getNowMills()
+                                //上传Object
+                                val file = File(mPhotoPath)
+                                // bucketName 为文件夹名 ，使用用户id来进行命名
+                                // key值为保存文件名，试用固定的几种格式来命名
 
-                            val putObjectFromFileResponse = client.putObject("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${avatarName}.jpg", file)
+                                val avatarName = TimeUtils.getNowMills()
 
+                                val putObjectFromFileResponse = client.putObject("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${avatarName}.jpg", file)
 
-                            mPhotoUrl = client.generatePresignedUrl("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", "${avatarName}.jpg", -1).toString()
+                                mPhotoUrl = client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${avatarName}.jpg", -1).toString()
 
-                            SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+
+                            } catch (e: BceClientException) {
+                                e.printStackTrace()
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            } catch (e: BceServiceException) {
+                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                            } catch (e: UnknownHostException) {
+                                Log.i("guo", "网络请求错误，请检查网络后稍后重试")
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                e.printStackTrace()
+                            }
 
                         }.start()
 
@@ -1289,7 +1307,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
             Log.i("guo", "mLifeFirstUrl : $mLifeFirstUrl")
 
-            startActivityForResult( LifeIntroduceActivity.getIntent(this,mLifeFirstUrl,mLifeFirstText,1,mLifeFirstId), 111)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeFirstUrl,
+                mLifeFirstText,
+                1,
+                mLifeFirstId), 111)
 
         }
 
@@ -1306,7 +1328,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_two.setOnClickListener {
             // 第二张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeSecondPath,mLifeSecondText,1,mLifeSecondId), 222)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeSecondPath,
+                mLifeSecondText,
+                1,
+                mLifeSecondId), 222)
         }
 
         iv_guide_life_pic_two_delete.setOnClickListener {
@@ -1322,7 +1348,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_three.setOnClickListener {
             // 第三张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeThirdPath,mLifeThirdText,1,mLifeThirdId), 333)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeThirdPath,
+                mLifeThirdText,
+                1,
+                mLifeThirdId), 333)
         }
 
         iv_guide_life_pic_three_delete.setOnClickListener {
@@ -1336,7 +1366,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_four.setOnClickListener {
             // 第四张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFourPath,mLifeFourText,1,mLifeFourId), 444)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeFourPath,
+                mLifeFourText,
+                1,
+                mLifeFourId), 444)
 
         }
 
@@ -1352,7 +1386,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         rl_guide_life_pic_five.setOnClickListener {
             // 第五张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFivePath,mLifeFiveText,1,mLifeFiveId), 555)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeFivePath,
+                mLifeFiveText,
+                1,
+                mLifeFiveId), 555)
 
         }
 
@@ -1894,21 +1932,31 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (mLifeFirstUrl == "") {
 
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 111)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                                lifeChoosePath,
+                                ""), 111)
 
                         } else if (mLifeSecondUrl == "") {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 222)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                                lifeChoosePath,
+                                ""), 222)
 
                         } else if (mLifeThirdUrl == "") {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 333)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                                lifeChoosePath,
+                                ""), 333)
                         } else if (mLifeFourUrl == "") {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 444)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                                lifeChoosePath,
+                                ""), 444)
                         } else if (mLifeFiveUrl == "") {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 555)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                                lifeChoosePath,
+                                ""), 555)
                         }
                     }
                 }
@@ -2222,6 +2270,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     override fun onError() {
 
+        Log.i("guo", "onError")
+        ThreadUtils.runOnUiThread {
+            ToastUtils.showShort("网络请求失败，请检查网络")
+        }
+
     }
 
     override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
@@ -2253,6 +2306,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     override fun onDoUploadAvatarError() {
         Log.i("guo", "error")
+        ThreadUtils.runOnUiThread {
+            ToastUtils.showShort("网络请求失败，请检查网络")
+        }
         ll_guide_detail_loading.visibility = View.GONE
     }
 
@@ -3208,7 +3264,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             XXPermissions.with(this).permission(Permission.CAMERA)
                 .request(object : OnPermissionCallback {
                     override fun onGranted(permissions: MutableList<String>?, all: Boolean) {
-                        val intent = Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
+                        val intent =
+                            Intent(this@DetailInfoActivity, FaceLivenessExpActivity::class.java)
                         startActivity(intent)
                     }
 
@@ -3253,30 +3310,50 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                 Thread {
 
-                    //上传Object
-                    val file = File(mPhotoPath)
-                    // bucketName 为文件夹名 ，使用用户id来进行命名
-                    // key值为保存文件名，试用固定的几种格式来命名
+                    try {
+
+                        //上传Object
+                        val file = File(mPhotoPath)
+                        // bucketName 为文件夹名 ，使用用户id来进行命名
+                        // key值为保存文件名，试用固定的几种格式来命名
 
 
-                    val faceName = TimeUtils.getNowMills()
+                        val faceName = TimeUtils.getNowMills()
 
-                    val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", "${faceName}.jpg", file)
+                        val putObjectFromFileResponse = client.putObject("user${
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                        }", "${faceName}.jpg", file)
 
-                    Log.i("guo", FileUtils.getFileName(mPhotoPath))
+                        Log.i("guo", FileUtils.getFileName(mPhotoPath))
 
-                    mPhotoUrl = client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", "${faceName}.jpg", -1).toString()
+                        mPhotoUrl = client.generatePresignedUrl("user${
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                        }", "${faceName}.jpg", -1).toString()
 
 
-                    Log.i("guo", mPhotoUrl)
+                        Log.i("guo", mPhotoUrl)
 
-                    updateAvatar(mPhotoUrl,
-                        FileUtils.getFileExtension(mPhotoPath),
-                        FileUtils.getFileNameNoExtension(mPhotoPath))
+                        updateAvatar(mPhotoUrl,
+                            FileUtils.getFileExtension(mPhotoPath),
+                            FileUtils.getFileNameNoExtension(mPhotoPath))
+
+                    } catch (e: BceClientException) {
+                        e.printStackTrace()
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    } catch (e: BceServiceException) {
+                        Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                        Log.i("guo", "Error RequestId: " + e.requestId);
+                        Log.i("guo", "Error StatusCode: " + e.statusCode);
+                        Log.i("guo", "Error ErrorType: " + e.errorType);
+                    } catch (e: UnknownHostException) {
+                        Log.i("guo", "网络请求错误，请检查网络后稍后重试")
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        e.printStackTrace()
+                    } catch (e: IOException) {
+                        Log.i("guo", "网络请求错误，请检查网络后稍后重试")
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        e.printStackTrace();
+                    }
 
                 }.start()
 
@@ -4373,23 +4450,33 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             if (mLifeFirstUrl == "") {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 111)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                    lifeChoosePath,
+                                    ""), 111)
 
                             } else if (mLifeSecondUrl == "") {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 222)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                    lifeChoosePath,
+                                    ""), 222)
 
                             } else if (mLifeThirdUrl == "") {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 333)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                    lifeChoosePath,
+                                    ""), 333)
 
                             } else if (mLifeFourUrl == "") {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 444)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                    lifeChoosePath,
+                                    ""), 444)
 
                             } else if (mLifeFiveUrl == "") {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,lifeChoosePath,""), 555)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                    lifeChoosePath,
+                                    ""), 555)
 
                             }
 
