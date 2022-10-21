@@ -24,14 +24,14 @@ import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.huawei.hms.aaid.HmsInstanceId
 import com.huawei.hms.common.ApiException
-import com.hyphenate.easeim.common.livedatas.LiveDataBus
-import com.hyphenate.easeim.common.model.ChatInfoBean
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.message.ImMessageManager
+import com.message.ImUserManager
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.TrendSaloonList
 import com.twx.marryfriend.bean.vip.UpdateTokenBean
@@ -40,7 +40,6 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.likeme.LoveFragment
-import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
 import com.twx.marryfriend.message.MyHelperActivity
 import com.twx.marryfriend.mine.MineFragment
@@ -127,9 +126,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         doUpdateTokenPresent.registerCallback(this)
 
         initEmojiCompat()
-        ImUserInfoHelper.init()
         initRecommendFragment()
-
         initPush(applicationContext)
 
 
@@ -238,13 +235,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     override fun initEvent() {
         super.initEvent()
-        LiveDataBus.get().with("huanXin_push", ChatInfoBean::class.java).observeForever {
-            Log.i("guo", "LiveDataBus 接收信息");
-            startActivity(ImChatActivity.getIntent(this, it.targetId))
-        }
-
-//        LiveDataBus.get().with("huanXin_push", ChatInfoBean::class.java).removeObserver()
-
         rb_main_recommend.setOnClickListener {
             initRecommendFragment()
 
@@ -278,7 +268,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         rb_main_mine.setOnClickListener {
             initMineFragment()
         }
-
     }
 
     // 动态列表界面添加动态数据

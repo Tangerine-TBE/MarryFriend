@@ -371,7 +371,7 @@
             android:name="org.android.agoo.xiaomi.MiPushBroadcastReceiver"
             tools:node="remove" />
         <receiver
-            android:name=".push.mfr.MyXMPushMessageReceiver"
+            android:name="com.twx.marryfriend.push.MiPushMessageReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.xiaomi.mipush.RECEIVE_MESSAGE" />
@@ -424,9 +424,10 @@
             android:name="org.android.agoo.vivo.PushMessageReceiverImpl"
             tools:node="remove" />
         <receiver
-            android:name=".push.mfr.MyVivoReceiver"
-            android:exported="false">
+            android:name="com.twx.marryfriend.push.VivoMsgReceiver"
+            android:exported="true">
             <intent-filter>
+                <!-- 接收 push 消息 -->
                 <action android:name="com.vivo.pushclient.action.RECEIVE" />
             </intent-filter>
         </receiver>

@@ -76,7 +76,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
                 msgLock.visibility=View.GONE
                 vipIdentification.visibility=View.GONE
                 vipIdentification2.visibility=View.GONE
-                messageCount.visibility=View.GONE
+//                messageCount.visibility=View.GONE
                 messageMutualLikeIcon.visibility=View.GONE
                 notVipShowView.visibility=View.GONE
                 superVipHead.visibility=View.GONE
@@ -153,6 +153,7 @@ class MySingleConversationDelegate: EaseAdapterDelegate<EaseConversationInfo, My
 
     private fun showUnreadNum(holder:ViewHolder, unreadMsgCount: Int) {
         if (unreadMsgCount > 0) {
+            holder.messageCount.visibility = View.VISIBLE
             holder.messageCount.setText(handleBigNum(unreadMsgCount))
         } else {
             holder.messageCount.visibility = View.GONE

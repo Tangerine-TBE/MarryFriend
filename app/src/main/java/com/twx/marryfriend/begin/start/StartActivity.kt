@@ -32,6 +32,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
+import com.twx.marryfriend.push.PushManager
 import com.twx.marryfriend.utils.GlideEngine
 import kotlinx.android.synthetic.main.activity_start.*
 import java.io.File
@@ -44,7 +45,7 @@ class StartActivity : MainBaseViewActivity() {
 
     override fun initView() {
         super.initView()
-
+        PushManager.onNotificationMessageClicked(this,intent.extras)
         if (!SPStaticUtils.getBoolean(Constant.FIRST_START, true)) {
 
             startActivity(Intent(this, BeginActivity::class.java))

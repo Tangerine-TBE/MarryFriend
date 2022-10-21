@@ -85,10 +85,14 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
             .into(myHead)
         searchResultAdapter.chatAction={
             val userid=it.user_id
-            if(it.isSendMsg()){
-                startActivity(ImChatActivity.getIntent(this,userid.toString(),it.isRealName()))
+            if (userid?.toString()==UserInfo.getUserId()){
+                toast("不能和自己聊天")
             }else{
-                startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Message))
+                if(it.isSendMsg()){
+                    startActivity(ImChatActivity.getIntent(this,userid.toString(),it.isRealName()))
+                }else{
+                    startActivity(IntentManager.getVipIntent(this, vipGif = VipGifEnum.Message))
+                }
             }
         }
         closeMutual.setOnClickListener {
@@ -98,6 +102,10 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         }
         searchResultAdapter.likeAction={item,view->
             lifecycleScope.launch {
+                if (item.user_id?.toString()==UserInfo.getUserId()){
+                    toast("不能喜欢自己")
+                    return@launch
+                }
                 recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空")) {
                     if (this@SearchResultActivity.viewSwitch.currentView != mutualView) {
                         viewSwitch.showNext()
