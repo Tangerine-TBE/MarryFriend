@@ -48,7 +48,14 @@ class ImMiMsgReceiver : EMMiMsgReceiver() {
     override fun onNotificationMessageClicked(context: Context, miPushMessage: MiPushMessage) {
         val extStr = miPushMessage.content
         iLog(extStr,"收到小米推送点击")
-        PushManager.onNotificationMessageClicked(context,extStr)
-        //handle
+        try {
+            val extras = JSONObject(extStr)
+            val t = extras.getString("t")
+            val f = extras.getString("f")
+            PushManager.onNotificationMessageClicked(context, t, f)
+        }catch (e:Exception){
+            PushManager.onNotificationMessageClicked(context)
+            wLog(e.stackTraceToString())
+        }
     }
 }

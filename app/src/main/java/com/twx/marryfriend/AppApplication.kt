@@ -51,7 +51,6 @@ class AppApplication : BaseApplication() {
 //            .addCallback(CustomCallback())
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
                 .commit()
-            ImInit.init(this)
             ImUserManager.userNameState.observeForever{ imId ->
                 if (imId!=UserInfo.getUserId()){
                     if (BuildConfig.DEBUG){

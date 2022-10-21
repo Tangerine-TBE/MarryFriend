@@ -11,6 +11,18 @@ class ImVivoMsgReceiver : EMVivoMsgReceiver() {
         super.onNotificationMessageClicked(context, message)
         val map: Map<String, String> = message.params
         iLog("${map}","收到vivo推送点击")
-        PushManager.onNotificationMessageClicked(context,message)
+
+        if (!map.isEmpty()) {
+            val t = map["t"]
+            val f = map["f"]
+//            val m = map["m"]
+//            val g = map["g"]
+//            val e: Any? = map["e"]
+            if (t==null||f==null){
+                PushManager.onNotificationMessageClicked(context)
+            }else{
+                PushManager.onNotificationMessageClicked(context,t,f)
+            }
+        }
     }
 }
