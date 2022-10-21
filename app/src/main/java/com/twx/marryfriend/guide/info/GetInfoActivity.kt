@@ -7,6 +7,7 @@ import com.blankj.utilcode.util.GsonUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
+import com.message.ImUserManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.*
@@ -117,6 +118,9 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
         jumpMode = intent.getIntExtra("mode", 0)
         needRefresh = intent.getBooleanExtra("refresh", false)
         userNick = intent.getStringExtra("nick").toString()
+
+
+//        ImUserManager.login(SPStaticUtils.getString(Constant.USER_ID))
 
     }
 
