@@ -633,10 +633,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
         // 设置HTTP最大连接数为10
         config.maxConnections = 10
-
         // 设置TCP连接超时为5000毫秒
         config.connectionTimeoutInMillis = 15000
-
         // 设置Socket传输数据超时的时间为2000毫秒
         config.socketTimeoutInMillis = 15000
 
