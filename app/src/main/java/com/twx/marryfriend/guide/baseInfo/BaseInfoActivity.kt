@@ -24,6 +24,7 @@ import com.twx.marryfriend.net.callback.IGetAccessTokenCallback
 import com.twx.marryfriend.net.impl.doFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.doUpdateBaseInfoPresentImpl
+import com.twx.marryfriend.net.impl.getAccessTokenPresentImpl
 import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_base_info.*
 import kotlinx.android.synthetic.main.layout_guide_step_name.*
@@ -34,7 +35,8 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoTextVerifyCallback {
+class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoTextVerifyCallback,
+    IGetAccessTokenCallback {
 
     private var mStepOne: StepOne? = null
     private var mStepTwo: StepTwo? = null
@@ -77,6 +79,8 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
     private lateinit var updateBaseInfoPresent: doUpdateBaseInfoPresentImpl
     private lateinit var doTextVerifyPresent: doTextVerifyPresentImpl
 
+    private lateinit var getAccessTokenPresent: getAccessTokenPresentImpl
+
     override fun getLayoutView(): Int = R.layout.activity_base_info
 
     override fun initView() {
@@ -87,6 +91,9 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
         doTextVerifyPresent = doTextVerifyPresentImpl.getsInstance()
         doTextVerifyPresent.registerCallback(this)
+
+        getAccessTokenPresent = getAccessTokenPresentImpl.getsInstance()
+        getAccessTokenPresent.registerCallback(this)
 
         //进入填写昵称页面
         MobclickAgent.onEvent(this, "10012_nickname");
@@ -244,37 +251,37 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
         // -------------------  姓名界面  -----------------
 
-        (mStepOne!!.findViewById(R.id.et_guide_name_name) as EditText).addTextChangedListener(
-            object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?, start: Int,
-                    count: Int, after: Int,
-                ) {
+        (mStepOne!!.findViewById(R.id.et_guide_name_name) as EditText).addTextChangedListener(object :
+            TextWatcher {
+            override fun beforeTextChanged(
+                s: CharSequence?, start: Int,
+                count: Int, after: Int,
+            ) {
+            }
+
+            override fun onTextChanged(
+                s: CharSequence?, start: Int,
+                before: Int, count: Int,
+            ) {
+            }
+
+            override fun afterTextChanged(s: Editable) {
+
+                name = s.toString()
+
+                (mStepOne!!.findViewById(R.id.tv_guide_name_name_sum) as TextView).text =
+                    (8 - s.length).toString()
+
+                if (s.isEmpty()) {
+                    haveName = false
+                    tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                } else {
+                    haveName = true
+                    tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
                 }
 
-                override fun onTextChanged(
-                    s: CharSequence?, start: Int,
-                    before: Int, count: Int,
-                ) {
-                }
-
-                override fun afterTextChanged(s: Editable) {
-
-                    name = s.toString()
-
-                    (mStepOne!!.findViewById(R.id.tv_guide_name_name_sum) as TextView).text =
-                        (8 - s.length).toString()
-
-                    if (s.isEmpty()) {
-                        haveName = false
-                        tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                    } else {
-                        haveName = true
-                        tv_guide_base_next.setBackgroundResource(R.drawable.shape_bg_common_next)
-                    }
-
-                }
-            })
+            }
+        })
 
 
         // -------------------  资本资料界面  -----------------
@@ -373,6 +380,16 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
         return null
     }
 
+    // 获取 头像 审核的 accessToken
+    private fun getAccessToken() {
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.GRANT_TYPE] = "client_credentials"
+        map[Contents.CLIENT_ID] = "jjKDyljlCOX3TcEcnXidYCcU"
+        map[Contents.CLIENT_SECRET] = "GQcKzFuA87uEQZhIDnlcxTpkjT2oLxdX"
+        getAccessTokenPresent.getAccessToken(map)
+
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             AppUtils.exitApp()
@@ -398,6 +415,16 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
     }
 
+    override fun onGetAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
+        if (accessTokenBean != null) {
+            SPStaticUtils.put(Constant.ACCESS_TOKEN, accessTokenBean.access_token)
+        }
+    }
+
+    override fun onGetAccessTokenFail() {
+
+    }
+
     override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {
 
         if (isTextVerify) {
@@ -420,6 +447,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
             } else {
 
+
                 if (textVerifyBean.error_msg != null) {
                     ToastUtils.showShort(textVerifyBean.error_msg)
                 } else {
@@ -431,6 +459,11 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
                 et_guide_name_name.setText("")
 
                 haveBanText = false
+
+
+                ToastUtils.showShort("再次请求token数据")
+
+                getAccessToken()
 
             }
         }

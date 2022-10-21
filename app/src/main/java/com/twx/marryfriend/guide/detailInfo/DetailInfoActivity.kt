@@ -59,7 +59,6 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
-import com.twx.marryfriend.guide.detailInfo.artificial.IdentityActivity
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
 import com.twx.marryfriend.guide.detailInfo.search.SchoolSearchActivity
 import com.twx.marryfriend.guide.detailInfo.step.*
@@ -73,7 +72,6 @@ import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
-import com.twx.marryfriend.view.DoubleSlideSeekBar
 import com.umeng.analytics.MobclickAgent
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
@@ -90,7 +88,6 @@ import kotlinx.android.synthetic.main.layout_guide_step_target.*
 import java.io.*
 import java.net.UnknownHostException
 import java.util.*
-import kotlin.math.log
 
 
 class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJobCallback,
@@ -2306,9 +2303,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     override fun onDoUploadAvatarError() {
         Log.i("guo", "error")
-        ThreadUtils.runOnUiThread {
-            ToastUtils.showShort("网络请求失败，请检查网络")
-        }
+        ToastUtils.showShort("网络请求失败，请检查网络")
         ll_guide_detail_loading.visibility = View.GONE
     }
 

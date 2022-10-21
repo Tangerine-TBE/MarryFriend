@@ -1,5 +1,6 @@
 package com.twx.marryfriend.net.impl;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.twx.marryfriend.bean.AccessTokenBean;
 import com.twx.marryfriend.net.callback.IGetAccessTokenCallback;
 import com.twx.marryfriend.net.callback.IGetIdAccessTokenCallback;
@@ -59,6 +60,9 @@ public class getIdAccessTokenPresentImpl implements IGetIdAccessTokenPresent {
 
             @Override
             public void onFailure(Call<AccessTokenBean> call, Throwable t) {
+
+                ToastUtils.showShort("网络请求失败，请检查网络");
+
                 for (IGetIdAccessTokenCallback callback : mCallback) {
                     callback.onGetIdAccessTokenFail();
                 }

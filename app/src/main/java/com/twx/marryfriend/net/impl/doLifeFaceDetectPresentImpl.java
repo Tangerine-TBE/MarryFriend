@@ -2,6 +2,7 @@ package com.twx.marryfriend.net.impl;
 
 import android.util.Log;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.twx.marryfriend.bean.FaceDetectBean;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.net.callback.IDoLifeFaceDetectCallback;
@@ -63,6 +64,9 @@ public class doLifeFaceDetectPresentImpl implements IDoLifeFaceDetectPresent {
 
             @Override
             public void onFailure(Call<FaceDetectBean> call, Throwable t) {
+
+                ToastUtils.showShort("网络请求失败，请检查网络");
+
                 Log.i("guo", "error :" + t);
                 for (IDoLifeFaceDetectCallback callback : mCallback) {
                     callback.onDoLifeFaceDetectError();

@@ -1,5 +1,6 @@
 package com.twx.marryfriend.net.impl;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.twx.marryfriend.bean.FaceVerifyBean;
 import com.twx.marryfriend.net.callback.IDoFaceVerifyCallback;
 import com.twx.marryfriend.net.module.UserData;
@@ -57,6 +58,9 @@ public class doFaceVerifyPresentImpl implements IDoFaceVerifyPresent {
 
             @Override
             public void onFailure(Call<FaceVerifyBean> call, Throwable t) {
+
+                ToastUtils.showShort("网络请求失败，请检查网络");
+
                 for (IDoFaceVerifyCallback callback : mCallback) {
                     callback.onDoFaceVerifyError();
                 }
