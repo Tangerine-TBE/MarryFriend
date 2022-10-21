@@ -16,16 +16,28 @@ public class RetrofitManager {
 
     private static RetrofitManager sInstance;
 
-    public Retrofit getRetrofitUser() { return mRetrofitUser; }
+    public Retrofit getRetrofitUser() {
+        return mRetrofitUser;
+    }
+
     private final Retrofit mRetrofitUser;
 
-    public Retrofit getBaiduRetrofitUser() { return mBaiduRetrofit; }
+    public Retrofit getBaiduRetrofitUser() {
+        return mBaiduRetrofit;
+    }
+
     private final Retrofit mBaiduRetrofit;
 
-    public Retrofit getGaodeMapRetrofitUser() { return mGaodeMapRetrofit; }
+    public Retrofit getGaodeMapRetrofitUser() {
+        return mGaodeMapRetrofit;
+    }
+
     private final Retrofit mGaodeMapRetrofit;
 
-    public Retrofit getBaiduMapRetrofitUser() { return mBaiduMapRetrofit; }
+    public Retrofit getBaiduMapRetrofitUser() {
+        return mBaiduMapRetrofit;
+    }
+
     private final Retrofit mBaiduMapRetrofit;
 
 
@@ -38,45 +50,26 @@ public class RetrofitManager {
 
     private RetrofitManager() {
 
-        mRetrofitUser = new Retrofit.Builder()
-                .baseUrl(Contents.USER_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(getClient().build())
-                .build();
+        mRetrofitUser = new Retrofit.Builder().baseUrl(Contents.USER_URL).addConverterFactory(GsonConverterFactory.create()).client(getClient().build()).build();
 
-        mBaiduRetrofit = new Retrofit.Builder()
-                .baseUrl(Contents.BAIDU_API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(getClient().build())
-                .build();
+        mBaiduRetrofit = new Retrofit.Builder().baseUrl(Contents.BAIDU_API_URL).addConverterFactory(GsonConverterFactory.create()).client(getClient().build()).build();
 
-        mGaodeMapRetrofit = new Retrofit.Builder()
-                .baseUrl(Contents.GAODE_MAP_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(getClient().build())
-                .build();
+        mGaodeMapRetrofit = new Retrofit.Builder().baseUrl(Contents.GAODE_MAP_URL).addConverterFactory(GsonConverterFactory.create()).client(getClient().build()).build();
 
-        mBaiduMapRetrofit = new Retrofit.Builder()
-                .baseUrl(Contents.BAIDU_MAP_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(getClient().build())
-                .build();
+        mBaiduMapRetrofit = new Retrofit.Builder().baseUrl(Contents.BAIDU_MAP_URL).addConverterFactory(GsonConverterFactory.create()).client(getClient().build()).build();
 
     }
 
-    private OkHttpClient.Builder getClient(){
+    private OkHttpClient.Builder getClient() {
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        httpClientBuilder.connectTimeout(20, TimeUnit.SECONDS);
+        httpClientBuilder.connectTimeout(15, TimeUnit.SECONDS);
+        httpClientBuilder.readTimeout(15, TimeUnit.SECONDS);
+        httpClientBuilder.writeTimeout(15, TimeUnit.SECONDS);
+
         //add log record
         if (AppUtils.isAppDebug()) {
             //打印网络请求日志
-            LoggingInterceptor httpLoggingInterceptor = new LoggingInterceptor.Builder()
-                    .loggable(BuildConfig.DEBUG)
-                    .setLevel(Level.BASIC)
-                    .log(Platform.INFO)
-                    .request("请求")
-                    .response("响应")
-                    .build();
+            LoggingInterceptor httpLoggingInterceptor = new LoggingInterceptor.Builder().loggable(BuildConfig.DEBUG).setLevel(Level.BASIC).log(Platform.INFO).request("请求").response("响应").build();
             httpClientBuilder.addInterceptor(httpLoggingInterceptor);
         }
         return httpClientBuilder;

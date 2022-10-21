@@ -12,7 +12,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,6 +22,8 @@ import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
 import com.baidu.location.LocationClientOption
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -199,6 +200,16 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         super.initPresent()
 
         val config: BosClientConfiguration = BosClientConfiguration()
+
+        // 设置HTTP最大连接数为10
+        config.maxConnections = 10
+
+        // 设置TCP连接超时为5000毫秒
+        config.connectionTimeoutInMillis = 15000
+
+        // 设置Socket传输数据超时的时间为2000毫秒
+        config.socketTimeoutInMillis = 15000
+
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
         config.endpoint = "http://adrmf.gz.bcebos.com"
@@ -716,23 +727,22 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                     2 -> {
 
-                                        try {
+                                        val mWatermarkPath =
+                                            this.externalCacheDir.toString() + File.separator + "watermark.png"
 
-                                            val mWatermarkPath =
-                                                this.externalCacheDir.toString() + File.separator + "watermark.png"
+                                        FileUtils.delete(mWatermarkPath)
 
-                                            FileUtils.delete(mWatermarkPath)
+                                        val bitmap = ImageUtils.getBitmap(R.mipmap.watermark)
 
-                                            val bitmap = ImageUtils.getBitmap(R.mipmap.watermark)
+                                        if (bitmap != null) {
+                                            BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
+                                        }
 
-                                            if (bitmap != null) {
-                                                BitmapUtil.saveBitmap(bitmap, mWatermarkPath)
-                                            }
+                                        val coverPath = getVideoCover(mDataList[0], this)
 
-                                            val coverPath = getVideoCover(mDataList[0], this)
+                                        Thread {
 
-
-                                            Thread {
+                                            try {
 
                                                 val coverName = TimeUtils.getNowMills()
 
@@ -750,25 +760,29 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                                 Log.i("guo", "coverUrl : $coverUrl")
 
-                                            }.start()
+                                            } catch (e: BceClientException) {
+                                                e.printStackTrace()
+                                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                            } catch (e: BceServiceException) {
+                                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                                            } catch (e: UnknownHostException) {
+                                                e.printStackTrace()
+                                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                            }
+
+                                        }.start()
 
 
-                                            val targetWaterMarkPath =
-                                                externalCacheDir.toString() + File.separator + "water" + FileUtils.getFileNameNoExtension(
-                                                    mDataList[0]) + ".mp4"
+                                        val targetWaterMarkPath =
+                                            externalCacheDir.toString() + File.separator + "water" + FileUtils.getFileNameNoExtension(
+                                                mDataList[0]) + ".mp4"
 
-                                            addVideoWaterMark(mDataList[0],
-                                                mWatermarkPath,
-                                                targetWaterMarkPath)
-
-                                        } catch (e: com.baidubce.BceClientException) {
-                                            e.printStackTrace()
-                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
-                                        } catch (e: UnknownHostException) {
-                                            e.printStackTrace()
-                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
-                                        }
-
+                                        addVideoWaterMark(mDataList[0],
+                                            mWatermarkPath,
+                                            targetWaterMarkPath)
                                     }
                                 }
 
