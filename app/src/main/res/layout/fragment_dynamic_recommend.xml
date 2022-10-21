@@ -49,12 +49,19 @@
 
             </RelativeLayout>
 
-            <com.twx.marryfriend.view.SmartRecyclerview
-                android:id="@+id/rv_dynamic_recommend_container"
+            <RelativeLayout
+                android:layout_height="match_parent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:paddingBottom="50dp" />
+                android:descendantFocusability="blocksDescendants">
+
+                <com.twx.marryfriend.view.SmartRecyclerview
+                    android:id="@+id/rv_dynamic_recommend_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:paddingBottom="50dp" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 

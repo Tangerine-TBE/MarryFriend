@@ -46,6 +46,7 @@ import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.like.RecentLikeActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
+import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
@@ -86,9 +87,26 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         ViewModelProvider(this).get(RecommendViewModel::class.java)
     }
 
+
+    private var isJump = false
+    private var custom = ""
+
     private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_main
+
+    companion object {
+        private const val ISJUMP = "isJump"
+        private const val CUSTOM = "custom"
+
+        fun getIntent(context: Context, isJump: Boolean? = false, custom: String? = ""): Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(ISJUMP, isJump)
+            intent.putExtra(CUSTOM, custom)
+            return intent
+        }
+
+    }
 
     override fun initView() {
         super.initView()
@@ -131,12 +149,59 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             }
         }
 
+
+        isJump = intent.getBooleanExtra("isJump", false)
+        custom = intent.getStringExtra("custom").toString()
+
+        if (isJump) {
+            when (custom) {
+                "shenhe_tongzhi" -> {
+                    Log.i("guo", "审核通知，跳小秘书");
+                    startActivity(MyHelperActivity.getIntent(this))
+                }
+                "ta_gang_xihuan_ni" -> {
+                    Log.i("guo", "它刚喜欢你 通知")
+                    startActivity(Intent(this, ILikeActivity::class.java))
+                }
+                "pinglun_dongtai" -> {
+                    Log.i("guo", "评论动态")
+                    startActivity(Intent(this, RecentCommentActivity::class.java))
+                }
+                "dianzan_dongtai" -> {
+                    Log.i("guo", "点赞动态")
+                    startActivity(Intent(this, RecentLikeActivity::class.java))
+                }
+                "kanle_nide_ziliao" -> {
+                    Log.i("guo", "看了你的资料")
+                    startActivity(Intent(this, RecentViewActivity::class.java))
+                }
+                "nixihuande_shangxian" -> {
+                    Log.i("guo", "你喜欢的人 上线了")
+                    startActivity(Intent(this, ILikeActivity::class.java))
+                }
+                "xianghu_xihuan_shangxian" -> {
+                    Log.i("guo", "相互喜欢的 上线了")
+                    startActivity(Intent(this, MutualLikeActivity::class.java))
+                }
+                "dianji_xianghu_xihuan" -> {
+                    Log.i("guo", "点击相互喜欢 通知")
+                    startActivity(Intent(this, MutualLikeActivity::class.java))
+                }
+                "shoudao_liwu_tongzhi" -> {
+                    Log.i("guo", "收到礼物通知")
+                    ToastUtils.showShort("跳转至送礼界面")
+                }
+                else -> {
+                    Log.i("guo", "无动作，跳转至首页界面")
+                    startActivity(Intent(this, MainActivity::class.java))
+                }
+            }
+        }
+
     }
 
     override fun initLoadData() {
         super.initLoadData()
-
-        getToken()
 
     }
 
@@ -172,6 +237,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         super.initEvent()
         rb_main_recommend.setOnClickListener {
             initRecommendFragment()
+
+//            startActivity(VoiceActivity.getInt(this, false))
+
+
         }
 
         rb_main_love.setOnClickListener {
@@ -222,34 +291,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     }
 
-    private fun getToken() {
-        // 创建一个新线程
-        object : Thread() {
-            override fun run() {
-                try {
-                    // 从agconnect-services.json文件中读取APP_ID
-                    val appId = "106852163"
-
-                    // 输入token标识"HCM"
-                    val tokenScope = "HCM"
-                    val token =
-                        HmsInstanceId.getInstance(this@MainActivity).getToken(appId, tokenScope)
-
-                    // 判断token是否为空
-                    if (!TextUtils.isEmpty(token)) {
-                        Log.e("guo", "get token success, $token")
-                        sendRegTokenToServer(token)
-                    }
-
-                } catch (e: ApiException) {
-                    Log.e("guo", "get token failed, $e")
-                }
-            }
-        }.start()
-    }
-
-    private fun sendRegTokenToServer(token: String?) {
-    }
 
     private fun updateToken(token: String) {
         val map: MutableMap<String, String> = TreeMap()

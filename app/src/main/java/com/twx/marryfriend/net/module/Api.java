@@ -73,6 +73,7 @@ import com.twx.marryfriend.bean.vip.GetPushSetBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdateDescribeBean;
 import com.twx.marryfriend.bean.vip.UpdatePushSetBean;
 import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
@@ -137,6 +138,9 @@ public interface Api {
     @POST("/marryfriend/LoginRegister/getFive")
     Call<FiveInfoBean> getFiveInfo(@QueryMap Map<String, Object> params);
 
+    // 修改某张生活照的描述
+    @POST("/marryfriend/LoginRegister/updateDescribe")
+    Call<UpdateDescribeBean> doUpdateDescribe(@QueryMap Map<String, Object> params);
 
     // 查看列表(头像,三张,相册)
     @POST("/marryfriend/LoginRegister/photoList")

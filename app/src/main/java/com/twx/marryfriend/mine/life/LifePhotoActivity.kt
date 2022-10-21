@@ -73,10 +73,6 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
     // 是通过相机选择生活照，还是通过相册选择
     private var isCamera = true
 
-    // 临时图片文件路径
-    private var mTempLifePath = ""
-
-
     // 第一张我的生活照
     private var mLifeFirstPath = ""
 
@@ -181,9 +177,6 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
         doDeletePhotoPresent = doDeletePhotoPresentImpl.getsInstance()
         doDeletePhotoPresent.registerCallback(this)
 
-        mTempLifePath =
-            Environment.getExternalStorageDirectory().toString() + File.separator + "life.jpeg"
-
         updateExistDate()
 
 
@@ -217,25 +210,17 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
         }
 
         ll_life_photo_default.setOnClickListener {
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeGuidDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeGuidDialog(this)).show()
 
         }
 
         rl_life_photo_pic_more.setOnClickListener {
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeGuidDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeGuidDialog(this)).show()
 
         }
 
@@ -244,13 +229,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             lifeDeleteMode = "one"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
         }
 
         rl_life_photo_pic_one.setOnClickListener {
@@ -258,13 +239,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             // 这个地方做个判断，要是有url，就传入url，若是没有，就正常流程，包装点进预览有数据
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
+            Log.i("guo","第一张图片Id ： $mLifeFirstId")
 
-            Log.i("guo", "lifeChoosePath : $mLifeFirstPath")
-
-            intent.putExtra("path", mLifeFirstPath)
-            intent.putExtra("introduce", mLifeFirstText)
-            startActivityForResult(intent, 111)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFirstPath,mLifeFirstText,1,mLifeFirstId), 111)
 
         }
 
@@ -273,26 +250,16 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             lifeDeleteMode = "two"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
 
         }
 
         rl_life_photo_pic_two.setOnClickListener {
             // 第二张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-
-            Log.i("guo", "lifeChoosePath : $mLifeSecondPath")
-
-            intent.putExtra("path", mLifeSecondPath)
-            intent.putExtra("introduce", mLifeSecondText)
-            startActivityForResult(intent, 222)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeSecondPath,mLifeSecondText,1,mLifeSecondId), 222)
 
         }
 
@@ -300,26 +267,16 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             lifeDeleteMode = "three"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
 
         }
 
         rl_life_photo_pic_three.setOnClickListener {
             // 第三张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-
-            Log.i("guo", "lifeChoosePath : $mLifeThirdPath")
-
-            intent.putExtra("path", mLifeThirdPath)
-            intent.putExtra("introduce", mLifeThirdText)
-            startActivityForResult(intent, 333)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeThirdPath,mLifeThirdText,1,mLifeThirdId), 333)
 
         }
 
@@ -330,25 +287,15 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             lifeDeleteMode = "four"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
         }
 
         rl_life_photo_pic_four.setOnClickListener {
             // 第四张图片的描述
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-
-            Log.i("guo", "lifeChoosePath : $mLifeFourPath")
-
-            intent.putExtra("path", mLifeFourPath)
-            intent.putExtra("introduce", mLifeFourText)
-            startActivityForResult(intent, 444)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFourPath,mLifeFourText,1,mLifeFourId), 444)
 
         }
 
@@ -358,13 +305,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             lifeDeleteMode = "five"
 
-            XPopup.Builder(this)
-                .dismissOnTouchOutside(false)
-                .dismissOnBackPressed(false)
-                .isDestroyOnDismiss(true)
-                .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                .asCustom(LifeDeleteDialog(this))
-                .show()
+            XPopup.Builder(this).dismissOnTouchOutside(false).dismissOnBackPressed(false)
+                .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                .asCustom(LifeDeleteDialog(this)).show()
         }
 
         rl_life_photo_pic_five.setOnClickListener {
@@ -372,13 +315,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             // 这个地方做个判断，要是有url，就传入url，若是没有，就正常流程，包装点进预览有数据
 
-            val intent = Intent(this, LifeIntroduceActivity::class.java)
-
-            Log.i("guo", "lifeChoosePath : $mLifeFivePath")
-
-            intent.putExtra("path", mLifeFivePath)
-            intent.putExtra("introduce", mLifeFiveText)
-            startActivityForResult(intent, 555)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFivePath,mLifeFiveText,1,mLifeFiveId), 555)
 
         }
 
@@ -594,33 +531,32 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                         lifeBitmap = bitmap
 
+                        val mTempLifePath = Environment.getExternalStorageDirectory()
+                            .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
+
                         ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
 
                         lifeChoosePath = mTempLifePath
 
                         if (!haveFirstPic) {
 
-                            val intent =
-                                Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 111)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 111)
 
                         } else if (!haveSecondPic) {
 
-                            val intent =
-                                Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 222)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 222)
 
                         } else if (!haveThirdPic) {
 
-                            val intent =
-                                Intent(this@LifePhotoActivity, LifeIntroduceActivity::class.java)
-                            intent.putExtra("path", lifeChoosePath)
-                            intent.putExtra("introduce", "")
-                            startActivityForResult(intent, 333)
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 333)
+
+                        } else if (!haveFourPic) {
+
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 444)
+
+                        } else if (!haveFivePic) {
+
+                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 555)
 
                         }
 
@@ -819,21 +755,18 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                 dismiss()
 
                 XXPermissions.with(this@LifePhotoActivity)
-                    .permission(Permission.MANAGE_EXTERNAL_STORAGE)
-                    .permission(Permission.CAMERA)
+                    .permission(Permission.MANAGE_EXTERNAL_STORAGE).permission(Permission.CAMERA)
                     .request(object : OnPermissionCallback {
                         override fun onGranted(
                             permissions: MutableList<String>?,
                             all: Boolean,
                         ) {
-
                             if (all) {
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
                                 startActivityForResult(intent, 3)
                             } else {
                                 ToastUtils.showShort("请授予应用所需相关权限")
                             }
-
                         }
 
                         override fun onDenied(
@@ -863,13 +796,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                     .openGallery(SelectMimeType.TYPE_IMAGE)
                     .setImageEngine(GlideEngine.createGlideEngine())
                     .setSelectionMode(SelectModeConfig.SINGLE)
-                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION)
-                    .setImageSpanCount(3)
-                    .isDisplayCamera(true)
-                    .isPreviewImage(true)
-                    .isEmptyResultReturn(true)
-                    .setLanguage(LanguageConfig.CHINESE)
-                    .setSelectorUIStyle(selectorStyle)
+                    .setRecyclerAnimationMode(AnimationType.ALPHA_IN_ANIMATION).setImageSpanCount(3)
+                    .isDisplayCamera(true).isPreviewImage(true).isEmptyResultReturn(true)
+                    .setLanguage(LanguageConfig.CHINESE).setSelectorUIStyle(selectorStyle)
                     .forResult(object : OnResultCallbackListener<LocalMedia> {
                         override fun onResult(result: ArrayList<LocalMedia>) {
 
@@ -878,43 +807,23 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                             if (!haveFirstPic) {
 
-                                val intent = Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 111)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 111)
 
                             } else if (!haveSecondPic) {
 
-                                val intent = Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 222)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 222)
 
                             } else if (!haveThirdPic) {
 
-                                val intent = Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 333)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 333)
 
                             } else if (!haveFourPic) {
 
-                                val intent = Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 444)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 444)
 
                             } else if (!haveFivePic) {
 
-                                val intent = Intent(this@LifePhotoActivity,
-                                    LifeIntroduceActivity::class.java)
-                                intent.putExtra("path", lifeChoosePath)
-                                intent.putExtra("introduce", "")
-                                startActivityForResult(intent, 555)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 555)
 
                             }
 

@@ -250,8 +250,10 @@ class SaloonAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.layout_dynamic_other, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.layout_dynamic_other, parent, false)
+
+
+
         mContext = parent.context
         view.setOnClickListener(this)
         return ViewHolder(view)
@@ -664,11 +666,16 @@ class SaloonAdapter(
             }
         }
 
-        if (mList[position].position != "") {
+        if (mList[position].position != "" && mList[position].position != "未知") {
+            holder.local.visibility = View.VISIBLE
             holder.location.text = mList[position].position
         } else {
             holder.local.visibility = View.GONE
         }
+
+
+
+
 
         val timeSECSpan = TimeUtils.getTimeSpan(TimeUtils.getNowString(),
             mList[position].create_time,

@@ -296,7 +296,6 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             tv_vip_super.setTextColor(Color.parseColor("#FF4444"))
             tv_vip_normal.setTextColor(Color.parseColor("#101010"))
 
-            Log.i("guo", " updateTopView(1)")
 
             updateTopView(1)
 

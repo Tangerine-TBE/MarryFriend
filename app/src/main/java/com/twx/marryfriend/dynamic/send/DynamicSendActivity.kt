@@ -12,7 +12,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -23,6 +22,8 @@ import com.baidu.location.BDAbstractLocationListener
 import com.baidu.location.BDLocation
 import com.baidu.location.LocationClient
 import com.baidu.location.LocationClientOption
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -73,6 +74,7 @@ import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
 import java.io.File
+import java.net.UnknownHostException
 import java.util.*
 
 class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoTextVerifyCallback {
@@ -198,6 +200,16 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         super.initPresent()
 
         val config: BosClientConfiguration = BosClientConfiguration()
+
+        // 设置HTTP最大连接数为10
+        config.maxConnections = 10
+
+        // 设置TCP连接超时为5000毫秒
+        config.connectionTimeoutInMillis = 15000
+
+        // 设置Socket传输数据超时的时间为2000毫秒
+        config.socketTimeoutInMillis = 15000
+
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
         config.endpoint = "http://adrmf.gz.bcebos.com"
@@ -624,7 +636,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                             // 还需要上传图片
 
-                            Log.i("guo","start : ${TimeUtils.getNowDate()}")
+                            Log.i("guo", "start : ${TimeUtils.getNowDate()}")
 
                             if (mDataList.isNotEmpty()) {
                                 // 有图片文字数据
@@ -701,8 +713,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                                 doTextVerify(content)
                                             } else {
 
-                                                Log.i("guo","end : ${TimeUtils.getNowDate()}")
-                                                Log.i("guo","start --- UPLOAD : ${TimeUtils.getNowDate()}")
+                                                Log.i("guo", "end : ${TimeUtils.getNowDate()}")
+                                                Log.i("guo",
+                                                    "start --- UPLOAD : ${TimeUtils.getNowDate()}")
 
                                                 Log.i("guo", "上传 ----图片 ")
                                                 uploadTrend()
@@ -727,22 +740,38 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                         val coverPath = getVideoCover(mDataList[0], this)
 
-
-
                                         Thread {
 
-                                            val coverName = TimeUtils.getNowMills()
+                                            try {
 
-                                            val putObjectFromFileResponse = client.putObject("user${
-                                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                                            }", "${coverName}.jpg", File(coverPath))
+                                                val coverName = TimeUtils.getNowMills()
+
+                                                val putObjectFromFileResponse =
+                                                    client.putObject("user${
+                                                        SPStaticUtils.getString(Constant.USER_ID,
+                                                            "default")
+                                                    }", "${coverName}.jpg", File(coverPath))
 
 
-                                            coverUrl = client.generatePresignedUrl("user${
-                                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                                            }", "${coverName}.jpg", -1).toString()
+                                                coverUrl = client.generatePresignedUrl("user${
+                                                    SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default")
+                                                }", "${coverName}.jpg", -1).toString()
 
-                                            Log.i("guo", "coverUrl : $coverUrl")
+                                                Log.i("guo", "coverUrl : $coverUrl")
+
+                                            } catch (e: BceClientException) {
+                                                e.printStackTrace()
+                                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                            } catch (e: BceServiceException) {
+                                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                                            } catch (e: UnknownHostException) {
+                                                e.printStackTrace()
+                                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                            }
 
                                         }.start()
 
@@ -754,8 +783,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                         addVideoWaterMark(mDataList[0],
                                             mWatermarkPath,
                                             targetWaterMarkPath)
-
-
                                     }
                                 }
 
@@ -849,7 +876,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.TREND_INFO] = getUploadTrendInfo()
 
-        Log.i("guo","trendInfo : ${getUploadTrendInfo()}")
+        Log.i("guo", "trendInfo : ${getUploadTrendInfo()}")
 
         doUploadTrendPresent.doUploadTrend(map)
 
@@ -1243,7 +1270,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         if (!doUploadTrend) {
             doUploadTrend = true
 
-            Log.i("guo","end --- UPLOAD : ${TimeUtils.getNowDate()}")
+            Log.i("guo", "end --- UPLOAD : ${TimeUtils.getNowDate()}")
 
             Log.i("guo", "onDoUploadTrendSuccess")
 

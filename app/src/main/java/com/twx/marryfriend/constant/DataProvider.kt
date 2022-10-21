@@ -80,8 +80,8 @@ object DataProvider {
 
 
     val IncomeData = arrayListOf(
-        "1.5k及以下",
-        "2.5k-8k",
+        "5k及以下",
+        "5k-8k",
         "8k-12k",
         "12k-16k",
         "16k-20k",

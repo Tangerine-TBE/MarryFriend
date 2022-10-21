@@ -74,6 +74,7 @@ import com.twx.marryfriend.bean.vip.GetPushSetBean;
 import com.twx.marryfriend.bean.vip.PreviewOtherBean;
 import com.twx.marryfriend.bean.vip.RefreshSelfBean;
 import com.twx.marryfriend.bean.vip.ReportOtherBean;
+import com.twx.marryfriend.bean.vip.UpdateDescribeBean;
 import com.twx.marryfriend.bean.vip.UpdatePushSetBean;
 import com.twx.marryfriend.bean.vip.UpdateTokenBean;
 import com.twx.marryfriend.bean.vip.UploadFeedbackBean;
@@ -274,6 +275,17 @@ public class UserData {
         mApi.getFiveInfo(map1).enqueue(callback);
     }
 
+    // 修改某张生活照的描述
+    public void doUpdateDescribe(Map<String, String> map, Callback<UpdateDescribeBean> callback) {
+        // 获取随机数
+        int random = 523146;
+        //获取时间戳
+        long currentTimeMillis = System.currentTimeMillis();
+        String value = SortMapUtil.sortMapByKey(map);
+        String checkCode = Md5Util.md5(Contents.TOKEN + currentTimeMillis + random + Contents.DO_UPDATE_DESCRIBE + value);
+        Map<String, Object> map1 = ApiMapUtil.setMapValues(Contents.DO_UPDATE_DESCRIBE, currentTimeMillis, random, checkCode, map);
+        mApi.doUpdateDescribe(map1).enqueue(callback);
+    }
 
     //查看列表(头像,三张,相册)
     public void getPhotoList(Map<String, String> map, Callback<PhotoListBean> callback) {

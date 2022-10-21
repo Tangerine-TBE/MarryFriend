@@ -1,5 +1,10 @@
 package com.twx.marryfriend.constant
 
+import com.twx.marryfriend.bean.vip.UpdateDescribeBean
+import retrofit2.Call
+import retrofit2.http.POST
+import retrofit2.http.QueryMap
+
 object Contents {
 
 
@@ -64,6 +69,9 @@ object Contents {
 
     // 五个一起获取
     const val GET_FIVE_INFO = "LoginRegister/getFive"
+
+    // 修改某张生活照的描述
+    const val DO_UPDATE_DESCRIBE = "LoginRegister/updateDescribe"
 
     //查看列表(头像,三张,相册)
     const val PHOTO_LIST = "LoginRegister/photoList"
@@ -335,6 +343,8 @@ object Contents {
     const val CONTENT = "content"
     const val KIND = "kind"
 
+    // 更新生活照描述
+    const val PHOTO_ID = "photo_id"
 
     // 更新资料完善度
     //    const val USER_ID = "user_id"

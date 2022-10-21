@@ -23,8 +23,7 @@ import java.util.*
 class SaloonFocusAdapter(
     private val mList: MutableList<TrendFocusList>,
     private val mDiyList: MutableList<LikeBean>,
-) :
-    RecyclerView.Adapter<SaloonFocusAdapter.ViewHolder>(), View.OnClickListener {
+) : RecyclerView.Adapter<SaloonFocusAdapter.ViewHolder>(), View.OnClickListener {
 
     private lateinit var mContext: Context
 
@@ -240,9 +239,8 @@ class SaloonFocusAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.layout_dynamic_other, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.layout_dynamic_other, parent, false)
         mContext = parent.context
         view.setOnClickListener(this)
         return ViewHolder(view)
@@ -324,17 +322,13 @@ class SaloonFocusAdapter(
     private fun initPic(holder: ViewHolder, position: Int) {
 
         if (mList[position].user_sex == 1) {
-            Glide.with(mContext)
-                .load(mList[position].headface)
-                .error(R.drawable.ic_mine_male_default)
-                .placeholder(R.drawable.ic_mine_male_default)
+            Glide.with(mContext).load(mList[position].headface)
+                .error(R.drawable.ic_mine_male_default).placeholder(R.drawable.ic_mine_male_default)
                 .into(holder.avatar)
         } else {
-            Glide.with(mContext)
-                .load(mList[position].headface)
+            Glide.with(mContext).load(mList[position].headface)
                 .error(R.drawable.ic_mine_female_default)
-                .placeholder(R.drawable.ic_mine_female_default)
-                .into(holder.avatar)
+                .placeholder(R.drawable.ic_mine_female_default).into(holder.avatar)
         }
 
 
@@ -376,11 +370,9 @@ class SaloonFocusAdapter(
 
 
         if (mList[position].identity_status == 1) {
-            Glide.with(mContext).load(R.mipmap.icon_identify_success)
-                .into(holder.identity)
+            Glide.with(mContext).load(R.mipmap.icon_identify_success).into(holder.identity)
         } else {
-            Glide.with(mContext).load(R.mipmap.icon_identify_non)
-                .into(holder.identity)
+            Glide.with(mContext).load(R.mipmap.icon_identify_non).into(holder.identity)
         }
 
         if (mList[position].real_face == 1) {
@@ -660,10 +652,8 @@ class SaloonFocusAdapter(
             if (mList[position].video_url != "") {
                 // 有视频信息
                 holder.llVideo.visibility = View.VISIBLE
-                Glide.with(mContext)
-                    .load(mList[position].video_url)
-                    .error(R.drawable.ic_video_default)
-                    .placeholder(R.drawable.ic_video_default)
+                Glide.with(mContext).load(mList[position].video_url)
+                    .error(R.drawable.ic_video_default).placeholder(R.drawable.ic_video_default)
                     .into(holder.video)
                 holder.llOne.visibility = View.GONE
                 holder.llTwo.visibility = View.GONE
@@ -678,7 +668,8 @@ class SaloonFocusAdapter(
 
         }
 
-        if (mList[position].position != "") {
+        if (mList[position].position != "" && mList[position].position != "未知") {
+            holder.local.visibility = View.VISIBLE
             holder.location.text = mList[position].position
         } else {
             holder.local.visibility = View.GONE
@@ -706,9 +697,8 @@ class SaloonFocusAdapter(
                     holder.time.text = "${timeHOURSpan}小时前"
                 } else {
                     if (timeHOURSpan < 48) {
-                        val day =
-                            TimeUtils.getValueByCalendarField(mList[position].create_time,
-                                Calendar.DAY_OF_YEAR)
+                        val day = TimeUtils.getValueByCalendarField(mList[position].create_time,
+                            Calendar.DAY_OF_YEAR)
                         val nowDay = TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
                             Calendar.DAY_OF_YEAR)
 

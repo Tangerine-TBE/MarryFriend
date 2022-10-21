@@ -219,10 +219,8 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
                 adapter.notifyDataSetChanged()
 
-                startActivity(FriendInfoActivity.getIntent(
-                    requireContext(),
-                    mTrendList[position].user_id.toInt()
-                ))
+                startActivity(FriendInfoActivity.getIntent(requireContext(),
+                    mTrendList[position].user_id.toInt()))
 
             }
         })
@@ -279,9 +277,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -305,9 +301,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -331,9 +325,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -363,9 +355,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -396,9 +386,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -422,9 +410,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -448,9 +434,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -474,9 +458,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -500,9 +482,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                 }
 
                 startActivity(context?.let {
-                    ImagePreviewActivity.getIntent(it,
-                        images,
-                        imageIndex)
+                    ImagePreviewActivity.getIntent(it, images, imageIndex)
                 })
             }
         })
@@ -542,13 +522,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                             SPStaticUtils.getString(Constant.USER_ID, "13"))
                     }
                 } else {
-                    XPopup.Builder(context)
-                        .dismissOnTouchOutside(false)
-                        .dismissOnBackPressed(false)
+                    XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(false)
                         .isDestroyOnDismiss(true)
                         .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
-                        .asCustom(AvatarDialog(requireContext()))
-                        .show()
+                        .asCustom(AvatarDialog(requireContext())).show()
                 }
             }
         })
@@ -582,10 +559,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                     } else {
 
                         startActivity(context?.let {
-                            ImChatActivity.getIntent(
-                                it,
-                                mTrendList[position].user_id
-                            )
+                            ImChatActivity.getIntent(it, mTrendList[position].user_id)
                         })
                     }
                 }
@@ -614,29 +588,27 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
         val like = trendSaloonList.guest_uid != null
 
-        val diy = LikeBean(
-            trendSaloonList.user_id.toInt(),
-            focus,
-            like,
-            trendSaloonList.like_count)
+        val diy = LikeBean(trendSaloonList.user_id.toInt(), focus, like, trendSaloonList.like_count)
 
         val mDeleteList = arrayListOf<Int>()
 
-        if (mTrendList.isNotEmpty()){
-            if (mTrendList.contains(trendSaloonList)){
-                for (i in 0.until(mTrendList.size)){
-                    if (mTrendList[i] == trendSaloonList){
-                        Log.i("guo","元素位置为 ：$i")
-                        mDeleteList.add(i)
-                    }
+        if (mTrendList.isNotEmpty()) {
+            for (i in 0.until(mTrendList.size)) {
+                if (mTrendList[i].id == trendSaloonList.id) {
+                    Log.i("guo", "元素位置为 ：$i")
+                    mDeleteList.add(i)
                 }
             }
         }
 
-        for (j in 0.until(mDeleteList.size)){
-            mTrendList.removeAt(j)
-            mDiyList.removeAt(j)
+
+        if (mDeleteList.isNotEmpty()) {
+            for (j in 0.until(mDeleteList.size)) {
+                mTrendList.removeAt(j)
+                mDiyList.removeAt(j)
+            }
         }
+
 
         mTrendList.add(0, trendSaloonList)
         mDiyList.add(0, diy)
@@ -853,12 +825,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
                         val like = trendSaloonBean.data.list[i].guest_uid != null
 
-                        mDiyList.add(
-                            LikeBean(
-                                trendSaloonBean.data.list[i].user_id.toInt(),
-                                focus,
-                                like,
-                                trendSaloonBean.data.list[i].like_count))
+                        mDiyList.add(LikeBean(trendSaloonBean.data.list[i].user_id.toInt(),
+                            focus,
+                            like,
+                            trendSaloonBean.data.list[i].like_count))
 
                     }
 
