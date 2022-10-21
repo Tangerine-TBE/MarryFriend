@@ -52,7 +52,7 @@ object ImUserInfoHelper {
             iLog("首次启动设置环信用户信息")
             val conversations=try {
                 val s=messageViewModel.getAllConversations()
-                iLog("通过接口获取环信用户信息,${s?.map { it.nickname }}")
+                iLog("通过接口获取环信用户信息,${s?.map { it.nick }}")
                 if (!s.isNullOrEmpty()){
                     iLog("环信用户信息存入缓存")
                     SPUtil.instance.putString(IM_USER_INFO_K,gson.toJson(s))
@@ -67,8 +67,8 @@ object ImUserInfoHelper {
             }
 
             val result= conversations?.map {
-                ImUserInfoService.ImUserInfo(it.conversationId,it.nickname,it.userImage,
-                    ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation,it.education,it.isMutualLike,it.isFlower))
+                ImUserInfoService.ImUserInfo(it.conversationId,it.nick,it.image_url,
+                    ImUserInfoService.Ext(it.age,it.isRealName,it.isVip,it.isSuperVip,it.location,it.occupation_str,it.education,it.isMutualLike,it.isFlower))
             }
             result?.also {
                 ImUserInfoService.setUserInfo(*it.toTypedArray())
@@ -112,9 +112,9 @@ object ImUserInfoHelper {
             iLog("开始获取用户资料,${ids}")
             val conversations=messageViewModel.getConversationsInfo(ids)
             val result= conversations?.map { itemModel ->
-                ImUserInfoService.ImUserInfo(itemModel.conversationId,itemModel.nickname,itemModel.userImage,
+                ImUserInfoService.ImUserInfo(itemModel.conversationId,itemModel.nick,itemModel.image_url,
 
-                    ImUserInfoService.Ext(itemModel.age,itemModel.isRealName,itemModel.isVip,itemModel.isSuperVip,itemModel.location,itemModel.occupation,itemModel.education,itemModel.isMutualLike,itemModel.isFlower).also {
+                    ImUserInfoService.Ext(itemModel.age,itemModel.isRealName,itemModel.isVip,itemModel.isSuperVip,itemModel.location,itemModel.occupation_str,itemModel.education,itemModel.isMutualLike,itemModel.isFlower).also {
                         it.blacklist_permanent=itemModel.blacklist_permanent
                         it.blacklist_close_time=itemModel.blacklist_close_time
                         it.blacklist_status=itemModel.blacklist_status

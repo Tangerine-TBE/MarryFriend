@@ -40,6 +40,7 @@ import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.likeme.LoveFragment
+import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
 import com.twx.marryfriend.message.MyHelperActivity
 import com.twx.marryfriend.mine.MineFragment
@@ -50,6 +51,7 @@ import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
+import com.twx.marryfriend.push.PushManager
 import com.twx.marryfriend.push.help.PushConstants
 import com.twx.marryfriend.push.mfr.MyOppoPushCompat
 import com.twx.marryfriend.recommend.RecommendFragment
@@ -146,6 +148,15 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             } else {
                 messageNumNew.visibility = View.VISIBLE
                 messageNumNew.text = unread.toString()
+            }
+        }
+        PushManager.getNotificationMsg()?.also {
+            PushManager.handlerNotificationMsg()
+            val from=ImUserInfoHelper.getUserInfo(it.from)
+            if (UserInfo.isVip()||from?.isSuperVip==true||from?.isMutualLike==true){
+                startActivity(ImChatActivity.getIntent(this,it.from))
+            }else{
+                rb_main_message.performClick()
             }
         }
 

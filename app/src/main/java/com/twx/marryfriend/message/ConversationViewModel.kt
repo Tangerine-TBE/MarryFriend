@@ -13,7 +13,6 @@ import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.xyzz.myutils.NetworkUtil
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import kotlin.coroutines.resume
@@ -53,10 +52,10 @@ class ConversationViewModel:ViewModel() {
                             this.age=(it.age?:0)
                             this.isSuperVip=it.isSuperVip()
                             this.isVip=it.isVip()
-                            this.userImage=it.image_url
-                            this.nickname=it.nick
+                            this.image_url=it.image_url
+                            this.nick=it.nick
                             this.isRealName=it.isRealName()
-                            this.occupation=it.occupation_str
+                            this.occupation_str=it.occupation_str
                             this.education=RecommendBean.getEducationStr(it.education)?.label
                             this.location=it.work_city_str
                             this.isMutualLike=it.isMutualLike()

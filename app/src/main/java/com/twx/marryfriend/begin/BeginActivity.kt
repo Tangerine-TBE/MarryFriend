@@ -24,6 +24,7 @@ import com.huawei.hms.push.HmsMessaging
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
+import com.message.ImInit
 import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper
 import com.mobile.auth.gatewayauth.ResultCode
 import com.mobile.auth.gatewayauth.TokenResultListener
@@ -84,6 +85,7 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
         MobclickAgent.onEvent(this, "10000_login_process");
 
         sdkInit(AUTH_SECRET)
+        ImInit.init(application)
         mUIConfig = BaseUIConfig.init(0, this, mPhoneNumberAuthHelper)
 
     }

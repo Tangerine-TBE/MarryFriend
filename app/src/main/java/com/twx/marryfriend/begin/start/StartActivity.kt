@@ -34,6 +34,7 @@ import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.push.PushManager
 import com.twx.marryfriend.utils.GlideEngine
+import com.xyzz.myutils.show.iLog
 import kotlinx.android.synthetic.main.activity_start.*
 import java.io.File
 import java.io.InputStream
@@ -45,7 +46,17 @@ class StartActivity : MainBaseViewActivity() {
 
     override fun initView() {
         super.initView()
-        PushManager.onNotificationMessageClicked(this,intent.extras)
+        intent.extras?.also {
+            iLog(it.toString(),"推送，启动页传数据")
+            val t=it.getString("t")
+            val f=it.getString("f")
+            if (t==null||f==null){
+                PushManager.onNotificationMessageClicked(this)
+            }else{
+                PushManager.onNotificationMessageClicked(this,t,f)
+            }
+        }
+
         if (!SPStaticUtils.getBoolean(Constant.FIRST_START, true)) {
 
             startActivity(Intent(this, BeginActivity::class.java))

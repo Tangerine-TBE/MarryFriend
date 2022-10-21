@@ -6,10 +6,8 @@ import android.view.View
 import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeim.HMSPushHelper
 import com.hyphenate.easeim.section.base.WebViewActivity
-import com.hyphenate.easeui.EaseIM
 import com.hyphenate.easeui.utils.EaseUserUtils
 import com.kingja.loadsir.core.LoadSir
-import com.message.ImInit
 import com.message.ImUserManager
 import com.message.chat.CustomEvent
 import com.message.custom.IImEventListener
@@ -23,7 +21,6 @@ import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.utils.UMUtils
 import com.xyzz.myutils.MyUtils
-import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.longToast
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.Dispatchers
@@ -51,7 +48,6 @@ class AppApplication : BaseApplication() {
 //            .addCallback(CustomCallback())
 //            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
                 .commit()
-            ImInit.init(this)
             ImUserManager.userNameState.observeForever{ imId ->
                 if (imId!=UserInfo.getUserId()){
                     if (BuildConfig.DEBUG){
@@ -174,13 +170,6 @@ class AppApplication : BaseApplication() {
                         }
                     })
                 }
-            }
-            UserInfo.getUserId()?.also {
-                ImUserManager.login(it,{
-                    iLog("登录成功")
-                },{code, message ->
-                    iLog("登录失败,code:${code},message:${message}")
-                })
             }
         }
     }
