@@ -37,9 +37,7 @@ open class VerifyCollectionSuccessActivity : MainBaseViewActivity() {
 
         SPStaticUtils.put(Constant.ME_SEX, isSex(identityCode))
 
-        SPStaticUtils.put(Constant.ME_BIRTH_YEAR,
-            identityCode.substring(6, 10).toInt() - TimeUtils.date2String(TimeUtils.getNowDate(),
-                "yyyy").toInt() + 100)
+        SPStaticUtils.put(Constant.ME_BIRTH_YEAR, identityCode.substring(6, 10).toInt() - TimeUtils.date2String(TimeUtils.getNowDate(), "yyyy").toInt() + 100)
         SPStaticUtils.put(Constant.ME_BIRTH_MONTH, identityCode.substring(10, 12).toInt() - 1)
         SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
 

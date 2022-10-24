@@ -138,10 +138,9 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         SPStaticUtils.put(Constant.ME_BIRTH_MONTH, identityCode.substring(10, 12).toInt() - 1)
         SPStaticUtils.put(Constant.ME_BIRTH_DAY, identityCode.substring(12, 14).toInt() - 1)
 
-        SPStaticUtils.put(Constant.ME_BIRTH,
-            "${identityCode.substring(6, 10).toInt()}" + "-${
-                identityCode.substring(10, 12).toInt()
-            }" + "-${identityCode.substring(12, 14).toInt()}")
+        SPStaticUtils.put(Constant.ME_BIRTH, "${identityCode.substring(6, 10).toInt()}" + "-${
+            identityCode.substring(10, 12).toInt()
+        }" + "-${identityCode.substring(12, 14).toInt()}")
 
 
         val verifyInfoMap: MutableMap<String, String> = TreeMap()
@@ -176,7 +175,8 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         val id = SPStaticUtils.getString(Constant.TRUE_ID, "")
         val ta = 1
 
-        return " {      \"user_sex\":         \"$sex\"," +       // 性别
+        return " { " +
+                " \"user_sex\":         \"$sex\"," +       // 性别
                 "\"identity_name\":    \"$name\"," +      // 身份证名字
                 "\"identity_number\":  \"$id\"," +        // 身份证号码
                 " \"identity_status\":   $ta}"
@@ -185,6 +185,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
     // 需要上传的基础信息
     private fun getBaseInfo(): String {
 
+        val sex = SPStaticUtils.getInt(Constant.ME_SEX, 1)
         val age = TimeUtil.birthdayToAge(SPStaticUtils.getString(Constant.ME_BIRTH, ""))
         val birthday = SPStaticUtils.getString(Constant.ME_BIRTH, "")
 
@@ -211,6 +212,7 @@ open class CollectionSuccessActivity : MainBaseViewActivity(), IDoFaceVerifyCall
         val ta = SPStaticUtils.getString(Constant.ME_TA, "")
 
         val baseInfo = " {\"school_name\":       \"$school\"," +         // 学校名字
+                "\"user_sex\":            \"$sex\"," +                // 性别，（根据身份证的信息来填写性别）
                 "\"age\":            \"$age\"," +                // 用户年龄
                 "\"birthday\":      \"$birthday\"," +       // 出生年月日
                 "\"education\":         $edu," +                // 学历

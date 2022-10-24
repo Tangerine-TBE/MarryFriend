@@ -18,6 +18,7 @@ import com.twx.marryfriend.base.BaseConstant
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.begin.BeginActivity
+import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.utils.UMUtils
 import com.xyzz.myutils.MyUtils
@@ -59,7 +60,7 @@ class AppApplication : BaseApplication() {
                     },{code, message ->
 
                     })
-                    SpUtil.deleteUserInfo()
+                    SpLoginUtil.deleteUserInfo()
                     MyUtils.getLastResumedActivityLiveData().value.also { activity ->
                         if (activity is BeginActivity){
                             return@also
