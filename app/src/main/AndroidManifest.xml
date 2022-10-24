@@ -54,6 +54,13 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
+            android:name=".MfrMessageActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".set.black.BlackListActivity"
             android:exported="false" />
         <activity
@@ -98,7 +105,6 @@
                     android:path="/thirdpush"
                     android:scheme="agoo" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".tools.introduce.IntroduceToolActivity"
@@ -193,7 +199,6 @@
         <activity
             android:name=".login.LoginActivity"
             android:exported="true" />
-
         <activity
             android:name=".begin.start.StartActivity"
             android:exported="true"
@@ -205,15 +210,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".begin.BeginActivity"
             android:exported="true">
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".main.MainActivity"
@@ -251,8 +257,7 @@
             android:exported="true" />
         <activity
             android:name=".friend.FriendInfoActivity"
-            android:exported="true" />
-        <!-- 联通电信授权页 -->
+            android:exported="true" /> <!-- 联通电信授权页 -->
         <activity android:name=".search.SearchParamActivity" />
         <activity android:name=".search.AccurateSearchActivity" />
         <activity android:name=".search.SearchResultActivity" />
@@ -266,23 +271,18 @@
             android:name="com.mobile.auth.gatewayauth.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:launchMode="singleTop" />
-        <!-- 协议页面webview -->
+            android:launchMode="singleTop" /> <!-- 协议页面webview -->
         <activity
             android:name="com.mobile.auth.gatewayauth.activity.AuthWebVeiwActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:launchMode="singleTop"
-            android:screenOrientation="behind" />
-        <!-- 移动授权页 -->
+            android:screenOrientation="behind" /> <!-- 移动授权页 -->
         <activity
             android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
-            android:launchMode="singleTop" />
-
-
-        <!-- 推送点击跳转界面 -->
+            android:launchMode="singleTop" /> <!-- 推送点击跳转界面 -->
         <activity
             android:name=".push.mfr.MfrMessageActivity2"
             android:exported="true"
@@ -323,17 +323,13 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote" />
-
-        <!-- 华为应用推送的AppID -->
+            android:process=":remote" /> <!-- 华为应用推送的AppID -->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="appid=106852163" />
-
         <meta-data
             android:name="push_kit_auto_init_enabled"
-            android:value="true" />
-        <!-- 荣耀应用推送的AppID -->
+            android:value="true" /> <!-- 荣耀应用推送的AppID -->
         <!-- <meta-data -->
         <!-- android:name="com.hihonor.push.app_id" -->
         <!-- android:value="xxx" /> -->
@@ -343,10 +339,7 @@
             android:value="960e2f91dfe9777d8ff73287ac7bb08e" />
         <meta-data
             android:name="com.vivo.push.app_id"
-            android:value="105580857" />
-
-
-        <!-- 厂商通道 Android 12 兼容 Start -->
+            android:value="105580857" /> <!-- 厂商通道 Android 12 兼容 Start -->
         <service
             android:name="com.heytap.msp.push.service.DataMessageCallbackService"
             android:exported="true" />
@@ -358,15 +351,11 @@
             android:exported="false" />
         <service
             android:name="com.xiaomi.push.service.XMPushService"
-            android:exported="false" />
-
-        <!--        <receiver-->
-        <!--            android:name="org.android.agoo.vivo.PushMessageReceiverImpl"-->
-        <!--            android:exported="false" />-->
+            android:exported="false" /> <!-- <receiver -->
+        <!-- android:name="org.android.agoo.vivo.PushMessageReceiverImpl" -->
+        <!-- android:exported="false" /> -->
         <!-- 厂商通道 Android 12 兼容 End -->
-
-
-        <!-- 小米推送兼容-->
+        <!-- 小米推送兼容 -->
         <receiver
             android:name="org.android.agoo.xiaomi.MiPushBroadcastReceiver"
             tools:node="remove" />
@@ -382,9 +371,7 @@
             <intent-filter>
                 <action android:name="com.xiaomi.mipush.ERROR" />
             </intent-filter>
-        </receiver>
-        <!-- 小米推送兼容 -->
-
+        </receiver> <!-- 小米推送兼容 -->
         <!-- 华为推送兼容 -->
         <service
             android:name="org.android.agoo.huawei.HuaweiRcvService"
@@ -395,19 +382,18 @@
             <intent-filter>
                 <action android:name="com.huawei.push.action.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-        <!-- 华为推送兼容 -->
-
-        <!-- 魅族推送兼容-->
+        </service> <!-- 华为推送兼容 -->
+        <!-- 魅族推送兼容 -->
         <receiver
             android:name=".push.mfr.MyMzPushMessageReceiver"
             tools:node="remove">
             <intent-filter>
+
                 <!-- 接收push消息 -->
                 <action android:name="com.meizu.flyme.push.intent.MESSAGE" />
                 <!-- 接收register消息 -->
                 <action android:name="com.meizu.flyme.push.intent.REGISTER.FEEDBACK" />
-                <!-- 接收unregister消息-->
+                <!-- 接收unregister消息 -->
                 <action android:name="com.meizu.flyme.push.intent.UNREGISTER.FEEDBACK" />
                 <!-- 兼容低版本Flyme3推送服务配置 -->
                 <action android:name="com.meizu.c2dm.intent.REGISTRATION" />
@@ -415,11 +401,8 @@
 
                 <category android:name="${applicationId}" />
             </intent-filter>
-        </receiver>
-        <!-- 魅族推送兼容 -->
-
-
-        <!-- vivo推送兼容-->
+        </receiver> <!-- 魅族推送兼容 -->
+        <!-- vivo推送兼容 -->
         <receiver
             android:name="org.android.agoo.vivo.PushMessageReceiverImpl"
             tools:node="remove" />
@@ -427,12 +410,11 @@
             android:name="com.twx.marryfriend.push.VivoMsgReceiver"
             android:exported="true">
             <intent-filter>
+
                 <!-- 接收 push 消息 -->
                 <action android:name="com.vivo.pushclient.action.RECEIVE" />
             </intent-filter>
         </receiver>
-        <!-- vivo推送兼容 -->
-
     </application>
 
 </manifest>

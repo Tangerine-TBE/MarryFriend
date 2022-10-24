@@ -14,6 +14,7 @@ import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -183,15 +184,22 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
         }
     }
 
+    /**
+     * 1 man 2 girl 果是奇数性别为男，偶数则为女。
+     */
+    open fun isSex(idCard: String): Int {
+        return if (!TextUtils.isEmpty(idCard) && idCard.length == 18) {
+            if (idCard.substring(16, 17).toInt() % 2 == 0) {
+                2
+            } else {
+                1
+            }
+        } else 0
+    }
+
     private fun initView() {
 
-        Log.i("guo", "audit  : ${SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "")}")
-        Log.i("guo", "audit  : ${SPStaticUtils.getString(Constant.ME_AVATAR, "")}")
-
-
         tv_mine_uid.text = "用户ID：${SPStaticUtils.getString(Constant.USER_ID, "")}"
-
-        Log.i("hip","avatar : ${SPStaticUtils.getString(Constant.ME_AVATAR, "")}")
 
         if (SPStaticUtils.getString(Constant.ME_AVATAR_AUDIT, "") != "") {
             if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
@@ -2401,6 +2409,41 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                 }
 
             }
+
+            timer.onChronometerTickListener = Chronometer.OnChronometerTickListener { chronometer ->
+                // 如果从开始计时到现在超过了60s
+                if (chronometer != null) {
+                    if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
+                        ToastUtils.showShort("超过最大时间，自动上传")
+                        Log.i("guo", "超过60s了")
+
+                        chronometer.stop()
+                        timer.stop()
+                        audioRecorder.stopRecord()
+
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - timer.base).toString()}")
+
+                        // 存储录音文件的长度
+                        SPStaticUtils.put(Constant.ME_VOICE_LONG,
+                            (SystemClock.elapsedRealtime() - timer.base).toString())
+                        SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+
+                        mode.text = "点击播放"
+                        delete.visibility = View.VISIBLE
+                        confirm.visibility = View.VISIBLE
+                        recordMode = "listen"
+                        state.visibility = View.VISIBLE
+                        animation.visibility = View.GONE
+                        state.setImageResource(R.drawable.ic_record_play)
+
+                    }
+                }
+            }
+
 
             delete.setOnClickListener {
                 delete.visibility = View.GONE

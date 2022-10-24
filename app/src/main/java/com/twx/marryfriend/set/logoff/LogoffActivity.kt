@@ -20,6 +20,7 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.set.web.SetWebActivity
+import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_logoff.*
@@ -150,7 +151,7 @@ class LogoffActivity : MainBaseViewActivity() {
             confirm.setOnClickListener {
                 if (isAgree) {
 
-                    SpUtil.deleteUserInfo()
+                    SpLoginUtil.deleteUserInfo()
                     ll_logoff_loading.visibility = View.VISIBLE
 
 

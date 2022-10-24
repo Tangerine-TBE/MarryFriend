@@ -3,13 +3,12 @@ package com.twx.marryfriend.net.impl;
 import android.util.Log;
 
 import com.blankj.utilcode.util.ToastUtils;
-import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.FaceDetectBean;
-import com.twx.marryfriend.net.callback.IDoAutoLoginCallback;
 import com.twx.marryfriend.net.callback.IDoFaceDetectCallback;
+import com.twx.marryfriend.net.callback.vip.IDoDataFaceDetectCallback;
 import com.twx.marryfriend.net.module.UserData;
-import com.twx.marryfriend.net.present.IDoAutoLoginPresent;
 import com.twx.marryfriend.net.present.IDoFaceDetectPresent;
+import com.twx.marryfriend.net.present.vip.IDoDataFaceDetectPresent;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -24,26 +23,26 @@ import retrofit2.Response;
  * @author: Administrator
  * @date: 2022/5/13
  */
-public class doFaceDetectPresentImpl implements IDoFaceDetectPresent {
+public class doDataFaceDetectPresentImpl implements IDoDataFaceDetectPresent {
 
-    public static doFaceDetectPresentImpl sInstance;
+    public static doDataFaceDetectPresentImpl sInstance;
     public final UserData mUserData;
 
-    private List<IDoFaceDetectCallback> mCallback = new ArrayList<>();
+    private List<IDoDataFaceDetectCallback> mCallback = new ArrayList<>();
 
-    public doFaceDetectPresentImpl() {
+    public doDataFaceDetectPresentImpl() {
         this.mUserData = UserData.getInstance();
     }
 
-    public static doFaceDetectPresentImpl getsInstance() {
+    public static doDataFaceDetectPresentImpl getsInstance() {
         if (sInstance == null) {
-            sInstance = new doFaceDetectPresentImpl();
+            sInstance = new doDataFaceDetectPresentImpl();
         }
         return sInstance;
     }
 
     @Override
-    public void doFaceDetect(Map<String, String> info) {
+    public void doDataFaceDetect(Map<String, String> info) {
         handlerLoading();
         mUserData.doFaceDetect(info, new Callback<FaceDetectBean>() {
 
@@ -54,8 +53,8 @@ public class doFaceDetectPresentImpl implements IDoFaceDetectPresent {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
                     mBody = response.body();
                     if (mBody != null) {
-                        for (IDoFaceDetectCallback callback : mCallback) {
-                            callback.onDoFaceDetectSuccess(mBody);
+                        for (IDoDataFaceDetectCallback callback : mCallback) {
+                            callback.onDoDataFaceDetectSuccess(mBody);
                         }
                     }
                 }
@@ -66,11 +65,11 @@ public class doFaceDetectPresentImpl implements IDoFaceDetectPresent {
 
                 ToastUtils.showShort("网络请求失败，请检查网络");
 
-                Log.i("guo","error");
-                Log.i("guo",t.toString());
+                Log.i("guo", "error");
+                Log.i("guo", t.toString());
 
-                for (IDoFaceDetectCallback callback : mCallback) {
-                    callback.onDoFaceDetectError();
+                for (IDoDataFaceDetectCallback callback : mCallback) {
+                    callback.onDoDataFaceDetectError();
                 }
             }
         });
@@ -78,21 +77,21 @@ public class doFaceDetectPresentImpl implements IDoFaceDetectPresent {
     }
 
     private void handlerLoading() {
-        for (IDoFaceDetectCallback callback : mCallback) {
+        for (IDoDataFaceDetectCallback callback : mCallback) {
             callback.onLoading();
         }
     }
 
     @Override
-    public void registerCallback(IDoFaceDetectCallback iDoFaceDetectCallback) {
-        if (!mCallback.contains(iDoFaceDetectCallback)) {
-            mCallback.add(iDoFaceDetectCallback);
+    public void registerCallback(IDoDataFaceDetectCallback iDoDataFaceDetectCallback) {
+        if (!mCallback.contains(iDoDataFaceDetectCallback)) {
+            mCallback.add(iDoDataFaceDetectCallback);
         }
     }
 
     @Override
-    public void unregisterCallback(IDoFaceDetectCallback iDoFaceDetectCallback) {
-        mCallback.remove(iDoFaceDetectCallback);
+    public void unregisterCallback(IDoDataFaceDetectCallback iDoDataFaceDetectCallback) {
+        mCallback.remove(iDoDataFaceDetectCallback);
     }
 
 }

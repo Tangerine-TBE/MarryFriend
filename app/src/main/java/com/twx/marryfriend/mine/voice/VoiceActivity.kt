@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
+import android.widget.Chronometer
 import com.baidubce.BceClientException
 import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
@@ -260,6 +261,39 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
             }.start()
 
+        }
+
+        voice_timer.onChronometerTickListener = Chronometer.OnChronometerTickListener { chronometer ->
+            // 如果从开始计时到现在超过了60s
+            if (chronometer != null) {
+                if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
+                    ToastUtils.showShort("超过最大时间，自动上传")
+                    Log.i("guo", "超过60s了")
+
+                    chronometer.stop()
+                    voice_timer.stop()
+                    audioRecorder.stopRecord()
+
+                    Log.i("guo",
+                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+
+                    Log.i("guo",
+                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+
+                    // 存储录音文件的长度
+                    SPStaticUtils.put(Constant.ME_VOICE_LONG, (SystemClock.elapsedRealtime() - voice_timer.base).toString())
+                    SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+
+                    tv_voice_button.text = "点击播放"
+                    ll_voice_delete.visibility = View.VISIBLE
+                    ll_voice_confirm.visibility = View.VISIBLE
+                    recordMode = "listen"
+                    iv_voice_state.visibility = View.VISIBLE
+                    avv_voice_state.visibility = View.GONE
+                    iv_voice_state.setImageResource(R.drawable.ic_record_play)
+
+                }
+            }
         }
 
     }

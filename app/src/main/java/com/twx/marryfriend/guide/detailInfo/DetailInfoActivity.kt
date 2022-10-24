@@ -59,7 +59,6 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.constant.DataProvider
 import com.twx.marryfriend.guide.baseInfo.step.RegisterStep
-import com.twx.marryfriend.guide.detailInfo.artificial.IdentityActivity
 import com.twx.marryfriend.guide.detailInfo.life.LifeIntroduceActivity
 import com.twx.marryfriend.guide.detailInfo.search.SchoolSearchActivity
 import com.twx.marryfriend.guide.detailInfo.step.*
@@ -73,7 +72,7 @@ import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.BitmapUtil
 import com.twx.marryfriend.utils.GlideEngine
-import com.twx.marryfriend.view.DoubleSlideSeekBar
+import com.twx.marryfriend.utils.TimeUtil
 import com.umeng.analytics.MobclickAgent
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_detail_info.*
@@ -90,7 +89,6 @@ import kotlinx.android.synthetic.main.layout_guide_step_target.*
 import java.io.*
 import java.net.UnknownHostException
 import java.util.*
-import kotlin.math.log
 
 
 class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJobCallback,
@@ -415,6 +413,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private var isCompleteHobby = false
     private var isCompleteIdeal = false
 
+
+    // 文字校验之后逻辑模式
+    // “skip” 点击 跳过 键的逻辑
+    // “jump” 点击 下一步 键的逻辑
+    private var textMode = "skip"
+
     private lateinit var client: BosClient
 
     // -------------------  实名认证界面  -----------------
@@ -427,11 +431,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     private lateinit var doIdentityVerifyPresent: doIdentityVerifyPresentImpl
 
+
     private lateinit var updateBaseInfoPresent: doUpdateBaseInfoPresentImpl
 
     private lateinit var updateMoreInfoPresent: doUpdateMoreInfoPresentImpl
 
     private lateinit var updateDemandInfoPresent: doUpdateDemandInfoPresentImpl
+
 
     private lateinit var doUploadAvatarPresent: doUploadAvatarPresentImpl
 
@@ -660,50 +666,204 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             when (vf_guide_detail_container.displayedChild) {
                 0 -> {
                     //教育信息页点击跳过
-                    MobclickAgent.onEvent(this, "10019_education_skip");
+                    MobclickAgent.onEvent(this, "10019_education_skip")
+
+                    if (isFinishEdu) {
+                        SPStaticUtils.put(Constant.ME_EDU, eduPosition + 1)
+                        SPStaticUtils.put(Constant.ME_SCHOOL, eduSchool)
+                    }
+
+                    // 进行数据上传
+                    update()
+
                 }
                 1 -> {
                     //职业收入情况页面点击跳过
                     MobclickAgent.onEvent(this, "10024_occupation_skip");
+
+                    if (chooseJob && chooseIncome) {
+
+                        SPStaticUtils.put(Constant.ME_INDUSTRY_CODE, jobIDFirstList[jobFirst])
+                        SPStaticUtils.put(Constant.ME_INDUSTRY_NAME, jobFirstList[jobFirst])
+                        SPStaticUtils.put(Constant.ME_OCCUPATION_CODE, jobIDSecondList[jobSecond])
+                        SPStaticUtils.put(Constant.ME_OCCUPATION_NAME, jobSecondList[jobSecond])
+
+                        SPStaticUtils.put(Constant.ME_INCOME, incomePosition + 1)
+
+                    }
+
+                    // 进行数据上传
+                    update()
+
                 }
                 2 -> {
                     //居住城市和家乡页面点击跳过
                     MobclickAgent.onEvent(this, "10027_hometown_skip");
+
+                    if (chooseJobCity && chooseHomeCity) {
+
+                        if (isJobLocal) {
+                            // 定位数据
+                            SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, localCityOneCode)
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, localCityTwoCode)
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, localCityTwo)
+
+                        } else {
+                            // 选择数据
+                            SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, jobProvinceCode)
+                            SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, jobProvinceName)
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, jobCityCode)
+                            SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, jobCityName)
+                        }
+
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, homeProvinceCode)
+                        SPStaticUtils.put(Constant.ME_HOME_PROVINCE_NAME, homeProvinceName)
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_CODE, homeCityCode)
+                        SPStaticUtils.put(Constant.ME_HOME_CITY_NAME, homeCityName)
+
+                    }
+
+                    // 进行数据上传
+                    update()
+
                 }
                 3 -> {
                     //我的恋爱目标页面点击跳过
                     MobclickAgent.onEvent(this, "10030_love_goal_skip");
+
+                    if (chooseTarget && chooseAge) {
+
+                        SPStaticUtils.put(Constant.ME_LOVE_TARGET_SHOW, targetVisibilityPosition)
+                        SPStaticUtils.put(Constant.ME_LOVE_TARGET, target)
+
+                    }
+
+                    // 进行数据上传
+                    update()
+
                 }
                 4 -> {
                     //上传头像页面点击跳过
                     MobclickAgent.onEvent(this, "10033_upload_avatar_skip");
+
+                    if (isFinishPhoto) {
+
+                        // 上传头像
+                        Thread {
+
+                            try {
+
+                                //上传Object
+                                val file = File(mPhotoPath)
+                                // bucketName 为文件夹名 ，使用用户id来进行命名
+                                // key值为保存文件名，试用固定的几种格式来命名
+
+                                val avatarName = TimeUtils.getNowMills()
+
+                                val putObjectFromFileResponse = client.putObject("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${avatarName}.jpg", file)
+
+                                mPhotoUrl = client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", "${avatarName}.jpg", -1).toString()
+
+                                SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
+
+                                // 进行数据上传
+                                update()
+
+                            } catch (e: BceClientException) {
+                                e.printStackTrace()
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            } catch (e: BceServiceException) {
+                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                            } catch (e: UnknownHostException) {
+                                Log.i("guo", "网络请求错误，请检查网络后稍后重试")
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                e.printStackTrace()
+                            }
+
+                        }.start()
+
+                    }
+
                 }
                 5 -> {
                     //我的生活页面点击跳过
                     MobclickAgent.onEvent(this, "10036_my_life_skip");
+
+                    // 进行数据上传
+                    update()
+
                 }
                 6 -> {
                     //关于我页面点击跳过
                     MobclickAgent.onEvent(this, "10039_about_me_skip");
+
+                    if (isFinishIntroduce) {
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = introduceText
+                        isCompleteIntroduce = true
+                        textMode = "skip"
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }
+
                 }
                 7 -> {
                     //我的爱好页面点击跳过
                     MobclickAgent.onEvent(this, "10042_hobby_skip");
+
+                    if (isFinishHobby) {
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = hobbyText
+                        isCompleteHobby = true
+                        textMode = "skip"
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }
+
                 }
                 8 -> {
                     //我心目中的ta页面点击跳过
                     MobclickAgent.onEvent(this, "10045_hobby_skip");
+
+                    if (isFinishIdeal) {
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = idealText
+                        isCompleteIdeal = true
+                        textMode = "skip"
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }
+
                 }
                 9 -> {
                     //实名认证页面点击跳过
                     MobclickAgent.onEvent(this, "10048_real_name_skip");
+
+                    // 进行数据上传
+                    update()
+
                 }
             }
 
-            SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
-
-            startActivity(Intent(this, MainActivity::class.java))
-            this.finish()
         }
 
         tv_guide_detail_previous.setOnClickListener {
@@ -1045,6 +1205,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = introduceText
                         isCompleteIntroduce = true
+                        textMode = "jump"
                         doTextVerifyPresent.doTextVerify(map)
 
                     } else {
@@ -1062,6 +1223,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = hobbyText
                         isCompleteHobby = true
+                        textMode = "jump"
                         doTextVerifyPresent.doTextVerify(map)
 
                     } else {
@@ -1073,44 +1235,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     if (isFinishIdeal) {
 
-//                        for (i in 0.until(banTextList.size)) {
-//                            val code = banTextList[i]
-//                            if (idealText.contains(code)) {
-//                                haveBanText = true
-//                            }
-//                        }
-//                        if (haveBanText) {
-//
-//                            ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//
-//                            isFinishIdeal = false
-//                            haveBanText = false
-//
-//                            et_guide_ideal_content.setText("")
-//
-//                        } else {
-//
-//                            if (!(name != "" && identityCode != "")) {
-//                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-//                            }
-//
-//                            vf_guide_detail_container.showNext()
-//                            tv_guide_detail_privacy.visibility = View.VISIBLE
-//                            tv_guide_detail_service.visibility = View.VISIBLE
-//
-//                            tsb_guide_detail_guide.setPercent(1.0f, "100")
-//
-//                            SPStaticUtils.put(Constant.ME_TA, idealText)
-//
-//                        }
-
                         val map: MutableMap<String, String> = TreeMap()
                         map[Contents.ACCESS_TOKEN] =
                             SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = idealText
                         isCompleteIdeal = true
+                        textMode = "jump"
                         doTextVerifyPresent.doTextVerify(map)
 
                     } else {
@@ -1896,6 +2027,99 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     // ------------------- 实名认证界面  -----------------
 
 
+    // 开始上传信息
+
+    private fun update() {
+
+        Log.i("guo", "base : ${getBaseInfo()}")
+        Log.i("guo", "more : ${getMoreInfo()}")
+        Log.i("guo", "demand : ${getDemandInfo()}")
+
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+        updateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+        val moreInfoMap: MutableMap<String, String> = TreeMap()
+        moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
+        updateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
+
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+
+    }
+
+    // 需要上传的基础信息
+    private fun getBaseInfo(): String {
+
+        val age = SPStaticUtils.getInt(Constant.ME_AGE, 18)
+
+        val edu = SPStaticUtils.getInt(Constant.ME_EDU, 0)
+        val school = SPStaticUtils.getString(Constant.ME_SCHOOL, "")
+
+        val industryCode = SPStaticUtils.getInt(Constant.ME_INDUSTRY_CODE, 0)
+        val industryName = SPStaticUtils.getString(Constant.ME_INDUSTRY_NAME, "")
+        val occupationCode = SPStaticUtils.getInt(Constant.ME_OCCUPATION_CODE, 0)
+        val occupationName = SPStaticUtils.getString(Constant.ME_OCCUPATION_NAME, "")
+
+        val workProvinceCode = SPStaticUtils.getInt(Constant.ME_WORK_PROVINCE_CODE, 0)
+        val workProvinceName = SPStaticUtils.getString(Constant.ME_WORK_PROVINCE_NAME, "")
+        val workCityCode = SPStaticUtils.getInt(Constant.ME_WORK_CITY_CODE, 0)
+        val workCityName = SPStaticUtils.getString(Constant.ME_WORK_CITY_NAME, "")
+
+        val homeProvinceCode = SPStaticUtils.getInt(Constant.ME_HOME_PROVINCE_CODE, 0)
+        val homeProvinceName = SPStaticUtils.getString(Constant.ME_HOME_PROVINCE_NAME, "")
+        val homeCityCode = SPStaticUtils.getInt(Constant.ME_HOME_CITY_CODE, 0)
+        val homeCityName = SPStaticUtils.getString(Constant.ME_HOME_CITY_NAME, "")
+        val income = SPStaticUtils.getInt(Constant.ME_INCOME, 0)
+        val introduce = SPStaticUtils.getString(Constant.ME_INTRODUCE, "")
+        val hobby = SPStaticUtils.getString(Constant.ME_HOBBY, "")
+        val ta = SPStaticUtils.getString(Constant.ME_TA, "")
+
+        val baseInfo = " {\"school_name\":       \"$school\"," +         // 学校名字
+                "\"age\":            \"$age\"," +                // 用户年龄
+                "\"education\":         $edu," +                // 学历
+                "\"industry_num\":      $industryCode," +       // 行业编码
+                "\"industry_str\":      \"$industryName\"," +       // 行业名字
+                "\"occupation_num\":    $occupationCode," +     // 岗位编码
+                "\"occupation_str\":    \"$occupationName\"," +     // 岗位名字
+                "\"work_province_num\": \"$workProvinceCode\"," +           // 工作省份编码
+                "\"work_province_str\": \"$workProvinceName\"," +           // 工作省份名字
+                "\"work_city_num\":     \"$workCityCode\"," +           // 工作城市编码
+                "\"work_city_str\":     \"$workCityName\"," +           // 工作城市名字
+                "\"hometown_province_num\": \"$homeProvinceCode\"," +           // 家乡省份编码
+                "\"hometown_province_str\": \"$homeProvinceName\"," +           // 家乡省份名字
+                "\"hometown_city_num\":     \"$homeCityCode\"," +           // 家乡城市编码
+                "\"hometown_city_str\":     \"$homeCityName\"," +           // 家乡城市名字
+                "\"salary_range\":      $income," +             // 月薪范围
+                "\"introduce_self\":    \"$introduce\"," +          // 文字自我介绍
+                "\"daily_hobbies\":     \"$hobby\"," +              // 日常兴趣爱好
+                " \"ta_in_my_mind\":    \"$ta\"}"                   // 我心目中的Ta
+
+        return baseInfo
+    }
+
+    // 需要上传的更多信息
+    private fun getMoreInfo(): String {
+        val loveTarget = SPStaticUtils.getInt(Constant.ME_LOVE_TARGET, 0)
+        val loveTargetShow = SPStaticUtils.getInt(Constant.ME_LOVE_TARGET_SHOW, 0)
+        return " {\"love_target\":       $loveTarget," +       // 恋爱目标
+                "\"target_show\":       $loveTargetShow}"
+    }
+
+    // 需要上传的择偶条件信息
+    private fun getDemandInfo(): String {
+        val ageMin = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)
+        val ageMax = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)
+
+        return " {\"age_min\":       $ageMin,\"age_max\":       $ageMax}"
+
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -2235,13 +2459,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     }
 
     private fun judgeLoading() {
-        if (photoCompleteLoad && demandCompleteLoad && moreInfoCompleteLoad && baseInfoCompleteLoad) {
+        if (demandCompleteLoad && moreInfoCompleteLoad && baseInfoCompleteLoad) {
+
             ToastUtils.showShort("资料全部上传完成，跳转至首页")
 
             SPStaticUtils.put(Constant.DETAIL_INFO_FINISH, true)
 
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, MainActivity::class.java))
+
             this.finish()
 
         }
@@ -2306,9 +2531,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
     override fun onDoUploadAvatarError() {
         Log.i("guo", "error")
-        ThreadUtils.runOnUiThread {
-            ToastUtils.showShort("网络请求失败，请检查网络")
-        }
+        ToastUtils.showShort("网络请求失败，请检查网络")
         ll_guide_detail_loading.visibility = View.GONE
     }
 
@@ -3086,69 +3309,117 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             6 -> {
 
                 if (isCompleteIntroduce) {
-                    if (textVerifyBean.conclusion == "合规") {
 
-                        if (!isFinishHobby) {
+                    if (textMode == "skip") {
+
+                        if (textVerifyBean.conclusion == "合规") {
+
+                            SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+
+                            // 进行数据上传
+                            update()
+
+
+                        } else {
+                            if (textVerifyBean.error_msg != null) {
+                                ToastUtils.showShort(textVerifyBean.error_msg)
+                            } else {
+                                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            }
                             tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            isFinishIntroduce = false
+                            haveBanText = false
+                            et_guide_mine_content.setText("")
                         }
-
-                        //填写关于我_点击下一步
-                        MobclickAgent.onEvent(this, "10040_about_me_next");
-
-                        vf_guide_detail_container.showNext()
-
-                        //进入我的爱好页面
-                        MobclickAgent.onEvent(this, "10041_hobby");
-
-
-                        tsb_guide_detail_guide.setPercent(0.73f, "73")
-
-                        SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
 
                     } else {
-                        if (textVerifyBean.error_msg != null) {
-                            ToastUtils.showShort(textVerifyBean.error_msg)
+                        if (textVerifyBean.conclusion == "合规") {
+
+                            if (!isFinishHobby) {
+                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            }
+
+                            //填写关于我_点击下一步
+                            MobclickAgent.onEvent(this, "10040_about_me_next");
+
+                            vf_guide_detail_container.showNext()
+
+                            //进入我的爱好页面
+                            MobclickAgent.onEvent(this, "10041_hobby");
+
+
+                            tsb_guide_detail_guide.setPercent(0.73f, "73")
+
+                            SPStaticUtils.put(Constant.ME_INTRODUCE, introduceText)
+
                         } else {
-                            ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            if (textVerifyBean.error_msg != null) {
+                                ToastUtils.showShort(textVerifyBean.error_msg)
+                            } else {
+                                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            }
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            isFinishIntroduce = false
+                            haveBanText = false
+                            et_guide_mine_content.setText("")
                         }
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        isFinishIntroduce = false
-                        haveBanText = false
-                        et_guide_mine_content.setText("")
                     }
+
                     isCompleteIntroduce = false
                 }
 
             }
-
             7 -> {
                 if (isCompleteHobby) {
-                    if (textVerifyBean.conclusion == "合规") {
-                        if (!isFinishIdeal) {
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        }
 
-                        //填写我的爱好_点击下一步
-                        MobclickAgent.onEvent(this, "10043_hobby_next");
+                    if (textMode == "skip") {
+                        if (textVerifyBean.conclusion == "合规") {
 
-                        vf_guide_detail_container.showNext()
+                            SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
 
-                        //进入我心目中的ta页面
-                        MobclickAgent.onEvent(this, "10044_hobby");
+                            // 进行数据上传
+                            update()
 
-                        tsb_guide_detail_guide.setPercent(0.88f, "88")
-                        SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
-                    } else {
-                        if (textVerifyBean.error_msg != null) {
-                            ToastUtils.showShort(textVerifyBean.error_msg)
                         } else {
-                            ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            if (textVerifyBean.error_msg != null) {
+                                ToastUtils.showShort(textVerifyBean.error_msg)
+                            } else {
+                                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            }
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            isFinishHobby = false
+                            haveBanText = false
+                            et_guide_hobby_content.setText("")
                         }
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        isFinishHobby = false
-                        haveBanText = false
-                        et_guide_hobby_content.setText("")
+                    } else {
+                        if (textVerifyBean.conclusion == "合规") {
+                            if (!isFinishIdeal) {
+                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            }
+
+                            //填写我的爱好_点击下一步
+                            MobclickAgent.onEvent(this, "10043_hobby_next");
+
+                            vf_guide_detail_container.showNext()
+
+                            //进入我心目中的ta页面
+                            MobclickAgent.onEvent(this, "10044_hobby");
+
+                            tsb_guide_detail_guide.setPercent(0.88f, "88")
+                            SPStaticUtils.put(Constant.ME_HOBBY, hobbyText)
+                        } else {
+                            if (textVerifyBean.error_msg != null) {
+                                ToastUtils.showShort(textVerifyBean.error_msg)
+                            } else {
+                                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            }
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            isFinishHobby = false
+                            haveBanText = false
+                            et_guide_hobby_content.setText("")
+                        }
                     }
+
                     isCompleteHobby = false
                 }
 
@@ -3156,41 +3427,67 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
             8 -> {
 
                 if (isCompleteIdeal) {
-                    if (textVerifyBean.conclusion == "合规") {
 
-                        if (!(name != "" && identityCode != "")) {
-                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
-                        }
+                    if (textMode == "skip") {
+                        if (textVerifyBean.conclusion == "合规") {
 
-                        //填写我心目中的ta_点击下一步
-                        MobclickAgent.onEvent(this, "10046_hobby_next");
+                            SPStaticUtils.put(Constant.ME_TA, idealText)
 
-                        vf_guide_detail_container.showNext()
+                            // 进行数据上传
+                            update()
 
-                        //进入实名认证页面
-                        MobclickAgent.onEvent(this, "10047_real_name");
-
-                        tv_guide_detail_privacy.visibility = View.VISIBLE
-                        tv_guide_detail_service.visibility = View.VISIBLE
-
-                        tsb_guide_detail_guide.setPercent(1.0f, "100")
-
-                        SPStaticUtils.put(Constant.ME_TA, idealText)
-
-                    } else {
-
-                        if (textVerifyBean.error_msg != null) {
-                            ToastUtils.showShort(textVerifyBean.error_msg)
                         } else {
-                            ToastUtils.showShort(textVerifyBean.data[0].msg)
+
+                            if (textVerifyBean.error_msg != null) {
+                                ToastUtils.showShort(textVerifyBean.error_msg)
+                            } else {
+                                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            }
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+                            isFinishIdeal = false
+                            haveBanText = false
+
+                            et_guide_ideal_content.setText("")
                         }
-                        tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                    } else {
+                        if (textVerifyBean.conclusion == "合规") {
 
-                        isFinishIdeal = false
-                        haveBanText = false
+                            if (!(name != "" && identityCode != "")) {
+                                tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+                            }
 
-                        et_guide_ideal_content.setText("")
+                            //填写我心目中的ta_点击下一步
+                            MobclickAgent.onEvent(this, "10046_hobby_next");
+
+                            vf_guide_detail_container.showNext()
+
+                            //进入实名认证页面
+                            MobclickAgent.onEvent(this, "10047_real_name");
+
+                            tv_guide_detail_privacy.visibility = View.VISIBLE
+                            tv_guide_detail_service.visibility = View.VISIBLE
+
+                            tsb_guide_detail_guide.setPercent(1.0f, "100")
+
+                            SPStaticUtils.put(Constant.ME_TA, idealText)
+
+                        } else {
+
+                            if (textVerifyBean.error_msg != null) {
+                                ToastUtils.showShort(textVerifyBean.error_msg)
+                            } else {
+                                ToastUtils.showShort(textVerifyBean.data[0].msg)
+                            }
+                            tv_guide_detail_next.setBackgroundResource(R.drawable.shape_bg_common_next_non)
+
+                            isFinishIdeal = false
+                            haveBanText = false
+
+                            et_guide_ideal_content.setText("")
+                        }
                     }
+
                     isCompleteIdeal = false
                 }
             }

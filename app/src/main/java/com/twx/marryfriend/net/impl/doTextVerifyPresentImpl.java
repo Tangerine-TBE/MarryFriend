@@ -1,5 +1,6 @@
 package com.twx.marryfriend.net.impl;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.TextVerifyBean;
 import com.twx.marryfriend.net.callback.IDoAutoLoginCallback;
@@ -60,6 +61,9 @@ public class doTextVerifyPresentImpl implements IDoTextVerifyPresent {
 
             @Override
             public void onFailure(Call<TextVerifyBean> call, Throwable t) {
+
+                ToastUtils.showShort("网络请求失败，请检查网络");
+
                 for (IDoTextVerifyCallback callback : mCallback) {
                     callback.onDoTextVerifyError();
                 }

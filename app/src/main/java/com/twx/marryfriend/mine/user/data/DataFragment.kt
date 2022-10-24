@@ -60,6 +60,7 @@ import com.twx.marryfriend.mine.user.data.adapter.DataBaseAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataLifePhotoAdapter
 import com.twx.marryfriend.mine.user.data.adapter.DataMoreAdapter
 import com.twx.marryfriend.net.callback.*
+import com.twx.marryfriend.net.callback.vip.IDoDataFaceDetectCallback
 import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.utils.BitmapUtil
@@ -80,7 +81,7 @@ import kotlin.math.log
 
 
 class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCallback,
-    IDoFaceDetectCallback, IDoUpdateProportionCallback, IDoUpdateGreetInfoCallback,
+    IDoDataFaceDetectCallback, IDoUpdateProportionCallback, IDoUpdateGreetInfoCallback,
     IDoUploadAvatarCallback {
 
     // 敏感字
@@ -180,7 +181,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private lateinit var doUpdateBaseInfoPresent: doUpdateBaseInfoPresentImpl
     private lateinit var doUploadAvatarPresent: doUploadAvatarPresentImpl
 
-    private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
+    private lateinit var doFaceDetectPresent: doDataFaceDetectPresentImpl
     private lateinit var updateProportionPresent: doUpdateProportionPresentImpl
     private lateinit var doUpdateGreetPresent: doUpdateGreetInfoPresentImpl
 
@@ -222,7 +223,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         doUploadAvatarPresent = doUploadAvatarPresentImpl.getsInstance()
         doUploadAvatarPresent.registerCallback(this)
 
-        doFaceDetectPresent = doFaceDetectPresentImpl.getsInstance()
+        doFaceDetectPresent = doDataFaceDetectPresentImpl.getsInstance()
         doFaceDetectPresent.registerCallback(this)
 
         updateProportionPresent = doUpdateProportionPresentImpl.getsInstance()
@@ -3197,7 +3198,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
             map[Contents.IMAGE] = bitmapToBase64(bitmap)
 
-            doFaceDetectPresent.doFaceDetect(map)
+            doFaceDetectPresent.doDataFaceDetect(map)
 
         } else {
             ToastUtils.showShort("无法剪切选择图片")
@@ -3466,7 +3467,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
         if (uploadAvatarBean != null) {
             if (uploadAvatarBean.code == 200) {
+
+                if (ll_user_data_loading != null) {
+                    ll_user_data_loading.visibility = View.GONE
+                }
+
                 ToastUtils.showShort("上传成功")
+
             } else {
                 ToastUtils.showShort(uploadAvatarBean.msg)
             }
@@ -3494,19 +3501,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
-    override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
-
-        if (ll_user_data_loading != null) {
-            ll_user_data_loading.visibility = View.GONE
-        }
-
+    override fun onDoDataFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
 
         if (faceDetectBean.conclusion == "合规") {
 
             if (iv_user_data_avatar != null) {
                 iv_user_data_avatar.setImageDrawable(null)
             }
-
 
             val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
                 BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
@@ -3562,8 +3563,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     Log.i("guo", "Error StatusCode: " + e.statusCode);
                     Log.i("guo", "Error ErrorType: " + e.errorType);
                 } catch (e: UnknownHostException) {
-                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                    Log.i("guo", "网络请求错误，请检查网络后稍后重试")
                     ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    e.printStackTrace()
+                } catch (e: FileNotFoundException){
+                    Log.i("guo", "目标文件不存在，请稍后重试")
+                    ToastUtils.showShort("目标文件不存在，请稍后重试")
                     e.printStackTrace()
                 }
 
@@ -3571,6 +3576,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
 
         } else {
+
+            if (ll_user_data_loading != null) {
+                ll_user_data_loading.visibility = View.GONE
+            }
+
             if (faceDetectBean.error_msg != null) {
                 ToastUtils.showShort(faceDetectBean.error_msg)
             } else {
@@ -3580,7 +3590,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
-    override fun onDoFaceDetectError() {
+    override fun onDoDataFaceDetectError() {
         ll_user_data_loading.visibility = View.GONE
     }
 
@@ -3746,6 +3756,12 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         override fun onCreate() {
             super.onCreate()
+
+            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
+                findViewById<ImageView>(R.id.iv_dialog_like_avatar_example).setImageResource(R.drawable.ic_dialog_avatar_male)
+            } else {
+                findViewById<ImageView>(R.id.iv_dialog_like_avatar_example).setImageResource(R.drawable.ic_dialog_avatar_female)
+            }
 
             findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
                 dismiss()
@@ -4104,7 +4120,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             Log.i("guo", "Error StatusCode: " + e.statusCode);
                             Log.i("guo", "Error ErrorType: " + e.errorType);
                         } catch (e: UnknownHostException) {
-                            Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                            Log.i("guo", "网络请求错误，请检查网络后稍后重试")
                             ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                             e.printStackTrace()
                         }

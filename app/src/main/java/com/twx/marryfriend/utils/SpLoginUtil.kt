@@ -3,6 +3,8 @@ package com.twx.marryfriend.utils
 import com.blankj.utilcode.constant.TimeConstants
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.TimeUtils
+import com.message.ImUserManager
+import com.message.ImUserManager.logout
 import com.twx.marryfriend.bean.*
 import com.twx.marryfriend.constant.Constant
 
@@ -836,6 +838,19 @@ object SpLoginUtil {
         }
 
         InterdictionBean.putInterdictionState(interdictionBean)
+
+    }
+
+    // 删除本地存储信息
+    fun deleteUserInfo() {
+
+        SPStaticUtils.clear()
+
+        ImUserManager.logout({}, { code, message ->
+
+        })
+
+        SPStaticUtils.put(Constant.FIRST_START, false)
 
     }
 

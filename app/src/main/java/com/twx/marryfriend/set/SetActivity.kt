@@ -24,6 +24,7 @@ import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.message.MessageActivity
 import com.twx.marryfriend.set.safe.SafeActivity
 import com.twx.marryfriend.set.web.SetWebActivity
+import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.twx.marryfriend.vip.VipActivity
 import kotlinx.android.synthetic.main.activity_set.*
@@ -228,7 +229,7 @@ class SetActivity : MainBaseViewActivity() {
 
         tv_set_logout.setOnClickListener {
 
-            SpUtil.deleteUserInfo()
+            SpLoginUtil.deleteUserInfo()
 
             startActivity(Intent(this, BeginActivity::class.java))
             ActivityUtils.finishAllActivities()

@@ -22,6 +22,7 @@ import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.push.PushManager
+import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.utils.UMUtils
 import com.xyzz.myutils.MyUtils
@@ -55,7 +56,7 @@ class AppApplication : BaseApplication() {
                     },{code, message ->
 
                     })
-                    SpUtil.deleteUserInfo()
+                    SpLoginUtil.deleteUserInfo()
                     MyUtils.getLastResumedActivityLiveData().value.also { activity ->
                         if (activity is BeginActivity){
                             return@also
@@ -82,46 +83,7 @@ class AppApplication : BaseApplication() {
                     EaseUserUtils.setManDefHead(Sex.male.smallHead)
                     EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
                     EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
-                    EaseIM.getInstance().notifier.setNotificationInfoProvider(object :
-                        EaseNotifier.EaseNotificationInfoProvider{
-                        override fun getDisplayedText(message: EMMessage?): String {
-                            message?:return "点击查看"
-                            val text=if (message.type == EMMessage.Type.CUSTOM){
-                                val body=message.body as EMCustomMessageBody
-                                CustomEvent.getTip(body.event()) ?: EaseCommonUtils.getMessageDigest(message, this@AppApplication)
-                            }else{
-                                val t= EaseCommonUtils.getMessageDigest(message, this@AppApplication)
-                                t
-                            }
-                            return text
-                        }
 
-                        override fun getLatestText(
-                            message: EMMessage?,
-                            fromUsersNum: Int,
-                            messageNum: Int
-                        ): String {
-                            return getDisplayedText(message)
-                        }
-
-                        override fun getTitle(message: EMMessage?): String {
-                            return "你收到一条消息"
-                        }
-
-                        override fun getSmallIcon(message: EMMessage?): Int {
-                            return R.mipmap.ic_launcher
-                        }
-
-                        override fun getLaunchIntent(message: EMMessage?): Intent? {
-                            val t=message?.to
-                            val f=message?.from
-                            if (t!=null&&f!=null) {
-                                PushManager.onNotificationMessageClicked(this@AppApplication, t, f)
-                            }
-                            return null
-                        }
-
-                    })
                     ImCustomEventListenerManager.addListener(object : IImEventListener {
                         override fun click(view: View, event: CustomEvent, emMessage: EMMessage) {
                             when(event){

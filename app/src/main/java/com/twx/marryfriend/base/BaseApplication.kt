@@ -23,6 +23,7 @@ import com.umeng.commonsdk.utils.UMUtils
 import com.umeng.message.*
 import com.umeng.message.api.UPushRegisterCallback
 import com.umeng.message.entity.UMessage
+import com.xyzz.myutils.show.iLog
 import org.android.agoo.huawei.HuaWeiRegister
 import org.android.agoo.oppo.OppoRegister
 import org.android.agoo.vivo.VivoRegister
@@ -60,6 +61,7 @@ open class BaseApplication : Application() {
     @SuppressLint("RestrictedApi")
     override fun onCreate() {
         super.onCreate()
+        iLog("BaseApplication.application初始化")
         application = this
         appContext = baseContext
         mMainHandler = Handler()

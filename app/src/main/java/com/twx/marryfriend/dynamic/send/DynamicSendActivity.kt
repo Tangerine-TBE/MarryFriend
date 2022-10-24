@@ -1617,6 +1617,12 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         override fun onCreate() {
             super.onCreate()
 
+            if (SPStaticUtils.getInt(Constant.ME_SEX,1) == 1){
+                findViewById<ImageView>(R.id.iv_dialog_like_avatar_example).setImageResource(R.drawable.ic_dialog_avatar_male)
+            }else{
+                findViewById<ImageView>(R.id.iv_dialog_like_avatar_example).setImageResource(R.drawable.ic_dialog_avatar_female)
+            }
+
             findViewById<ImageView>(R.id.iv_dialog_like_avatar_close).setOnClickListener {
                 dismiss()
             }
