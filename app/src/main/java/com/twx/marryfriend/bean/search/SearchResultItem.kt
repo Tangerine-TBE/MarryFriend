@@ -47,7 +47,7 @@ data class SearchResultItem(
         return if (isImageStatus()){
             image_url
         }else{
-            UserInfo.getDefHeadImage(user_sex?:UserInfo.reversalSex(UserInfo.getOriginalUserSex()))
+            null
         }
     }
     private fun isImageStatus():Boolean{

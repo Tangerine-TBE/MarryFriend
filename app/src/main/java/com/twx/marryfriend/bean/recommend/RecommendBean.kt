@@ -202,7 +202,7 @@ data class RecommendBean(
      * 头像
      */
     fun getHeadImg():String?{
-        return headface?.firstOrNull()?.image_url?:UserInfo.getDefHeadImage(sex = base?.user_sex?:UserInfo.getUserSex().reversal().code)
+        return headface?.firstOrNull()?.image_url
     }
     fun isHeadIdentification():Boolean{
         return headface?.firstOrNull()?.real_status==1

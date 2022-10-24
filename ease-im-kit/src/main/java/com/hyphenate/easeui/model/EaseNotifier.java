@@ -38,7 +38,6 @@ import com.hyphenate.util.EasyUtils;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * new message notifier class
@@ -56,8 +55,9 @@ public class EaseNotifier {
 
     protected static int NOTIFY_ID = 0525; // start notification id
 
-    protected static final String CHANNEL_ID = "hyphenate_chatuidemo_notification";
+    protected static final String CHANNEL_ID = "chat_local_notification";
     protected static final long[] VIBRATION_PATTERN = new long[]{0, 180, 80, 120};
+    private static final String CHANNEL_NAME="聊天消息本地推送";
 
     protected NotificationManager notificationManager = null;
 
@@ -80,7 +80,7 @@ public class EaseNotifier {
         if (Build.VERSION.SDK_INT >= 26) {
             // Create the notification channel for Android 8.0
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    "hyphenate chatuidemo message default channel.", NotificationManager.IMPORTANCE_DEFAULT);
+                    CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setVibrationPattern(VIBRATION_PATTERN);
             notificationManager.createNotificationChannel(channel);
         }

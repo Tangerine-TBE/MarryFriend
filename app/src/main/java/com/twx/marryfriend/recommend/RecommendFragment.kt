@@ -3,6 +3,7 @@ package com.twx.marryfriend.recommend
 import android.Manifest
 import android.animation.Animator
 import android.animation.TimeInterpolator
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -19,7 +20,6 @@ import com.bumptech.glide.Glide
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import com.kingja.loadsir.core.LoadSir
 import com.message.ImMessageManager
 import com.twx.marryfriend.*
 import com.twx.marryfriend.bean.recommend.RecommendBean
@@ -32,14 +32,16 @@ import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImChatViewModel
-import com.twx.marryfriend.recommend.widget.*
+import com.twx.marryfriend.recommend.widget.CardConfig
+import com.twx.marryfriend.recommend.widget.RecommendGuideView
+import com.twx.marryfriend.recommend.widget.SlideCardCallback
+import com.twx.marryfriend.recommend.widget.SlideCardLayoutManager
 import com.twx.marryfriend.search.SearchParamActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.toast
 import com.xyzz.myutils.show.wLog
 import kotlinx.android.synthetic.main.fragment_recommend.*
-import kotlinx.android.synthetic.main.fragment_recommend.mutualLike
 import kotlinx.android.synthetic.main.item_recommend_mutual_like.*
 import kotlinx.android.synthetic.main.item_recommend_not_content.*
 import kotlinx.coroutines.Dispatchers
@@ -53,22 +55,8 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     private val recommendAdapter by lazy {
         RecommendAdapter(lifecycleScope,imChatViewModel)
     }
-    private val loadSir by lazy {
-        LoadSir.Builder()
-            .addCallback(LoadingCallback())
-//            .addCallback(MutualLikeCallback())
-//            .addCallback(NotContentCallback())
-            .setDefaultCallback(LoadingCallback::class.java)
-            .build()
-    }
     private val imChatViewModel by lazy {
         ViewModelProvider(this).get(ImChatViewModel::class.java)
-    }
-    private val loadService by lazy {
-        loadSir.register(contentViewSwitch
-        ) {
-            iLog("重加载")
-        }
     }
     private val recommendViewModel by lazy {
         ViewModelProvider(this).get(RecommendViewModel::class.java)
@@ -99,8 +87,25 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         test.setOnClickListener {
             toast(UserInfo.getUserId().toString())
             if (BuildConfig.DEBUG){
-                startActivity(ImChatActivity.getIntent(requireContext(), "2"))
+                startActivity(ImChatActivity.getIntent(requireContext(), ImMessageManager.MY_HELPER_ID))
             }
+        }
+        UserInfo.getUserId().also {
+            val text=if (it==null){
+                "id为空"
+            }else{
+                if (it.toIntOrNull()==null){
+                    "id不是int类型,id:${it}"
+                }else{
+                    return@also
+                }
+            }
+            AlertDialog.Builder(requireContext())
+                .setMessage(text)
+                .setPositiveButton("确定"){dialog,which->
+
+                }
+                .show()
         }
         cardSwipeView.adapter=recommendAdapter
         val cardCallback = SlideCardCallback()
@@ -139,10 +144,29 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
         }
 //        touchHelper.attachToRecyclerView(cardSwipeView)
         CardConfig.initConfig(context)
-        loadData()
         initListener()
         if (ContextCompat.checkSelfPermission(requireContext(),Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-            LocationUtils.startLocation()
+            if (recommendViewSwitcher.currentView!=loadingView){
+                recommendViewSwitcher.showNext()
+            }
+            if (!loadingView.isRunAnimation()){
+                loadingView.startAnimation()
+            }
+            lifecycleScope.launch {
+                delay(100)//百度定位sdk有可能没有初始化完成
+                var isSuccess=false//百度定位sdk有可能没有初始化完成
+                LocationUtils.startLocation(){
+                    isSuccess=true
+                    loadData()
+                }
+                delay(5000)//百度定位sdk有可能没有初始化完成
+                if (!isSuccess){
+                    LocationUtils.startLocation()
+                    loadData()
+                }
+            }
+        }else{
+            loadData()
         }
         //监听位置变化
         LocationUtils.observeLocation(this){
@@ -161,14 +185,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 guideActionCompleteHandler(it)
             }
         }
-//        showView(ViewType.content)
-//        showView(ViewType.mutual)
-//        if (BuildConfig.DEBUG){
-//            lifecycleScope.launch {
-//                delay(1000)
-//                showView(ViewType.mutual)
-//            }
-//        }
         Glide.with(myHead)
             .load(UserInfo.getHeadPortrait())
             .placeholder(UserInfo.getDefHeadImage())
@@ -232,7 +248,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     }
 
     private fun loadData(){
-        loadService?.showCallback(LoadingCallback::class.java)
+        if (recommendViewSwitcher.currentView!=loadingView){
+            recommendViewSwitcher.showNext()
+        }
+        if (!loadingView.isRunAnimation()){
+            loadingView.startAnimation()
+        }
         viewLifecycleOwner.lifecycleScope.launch(){
             try {
                 val list=recommendViewModel.loadRecommendUserId()
@@ -242,7 +263,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     recommendViewModel.loadRecommendUserInfo(list)
                 }
                 recommendAdapter.setData(data)
-                loadService?.showSuccess()
+                showContentView()
                 if(data.isEmpty()){
                     showView(ViewType.notContent)
                 }else{
@@ -253,7 +274,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                 wLog(e.stackTraceToString())
                 swipeRefreshLayout.isRefreshing=false
                 toast(e.message)
-                loadService?.showSuccess()
+                showContentView()
                 showView(ViewType.notContent)
             }
             try {
@@ -287,6 +308,12 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             }catch (e:Exception){
                 wLog(e.stackTraceToString())
             }
+        }
+    }
+
+    private fun showContentView(){
+        if (recommendViewSwitcher.currentView!=contentViewSwitch){
+            recommendViewSwitcher.showNext()
         }
     }
 
@@ -552,6 +579,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
     override fun onStart() {
         super.onStart()
         if (preUserVip!=UserInfo.getUserVipLevel()) {
+            iLog("vip等级发生了变化")
             preUserVip=UserInfo.getUserVipLevel()
             loadData()
         }
@@ -716,6 +744,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     }
                 }
                 val success=recommendViewModel.startCountDownTimer {
+                    iLog("到了推荐时间，刷新数据")
                     loadData()
                 }
                 if (success){

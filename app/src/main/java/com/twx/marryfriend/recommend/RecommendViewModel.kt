@@ -39,36 +39,6 @@ class RecommendViewModel():ViewModel() {
         }
     }
 
-    fun startCountDownTimer(finished:()->Unit):Boolean{
-        val currentTime=System.currentTimeMillis()
-        val cal=Calendar.getInstance().also {
-            it.set(Calendar.HOUR_OF_DAY,12)
-            it.set(Calendar.MINUTE,0)
-            it.set(Calendar.SECOND,0)
-            it.set(Calendar.MILLISECOND,0)
-        }
-        val millisInFunction=cal.timeInMillis-currentTime
-        return if (millisInFunction<0){
-            false
-        }else{
-            countDownTimer?.cancel()
-            countDownTimer=object :CountDownTimer(millisInFunction,1000L){
-                override fun onTick(millisUntilFinished: Long) {
-                    val h=millisUntilFinished/1000L/60L/60L
-                    val m=millisUntilFinished/1000L/60L%60L
-                    val s=millisUntilFinished/1000L%60L
-                    countDownTimerLiveData.value="${numberFormat.format(h)}:${numberFormat.format(m)}:${numberFormat.format(s)}"
-                }
-
-                override fun onFinish() {
-                    finished.invoke()
-                }
-            }
-            countDownTimer?.start()
-            true
-        }
-    }
-
     suspend fun loadRecommendUserId()=suspendCoroutine<List<Int>>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/commendList"
         val map= mutableMapOf<String,String>(
@@ -392,5 +362,35 @@ class RecommendViewModel():ViewModel() {
         },{
             coroutine.resumeWithException(Exception(it))
         })
+    }
+
+    fun startCountDownTimer(finished:()->Unit):Boolean{
+        val currentTime=System.currentTimeMillis()
+        val cal=Calendar.getInstance().also {
+            it.set(Calendar.HOUR_OF_DAY,12)
+            it.set(Calendar.MINUTE,0)
+            it.set(Calendar.SECOND,0)
+            it.set(Calendar.MILLISECOND,0)
+        }
+        val millisInFunction=cal.timeInMillis-currentTime
+        return if (millisInFunction<0){
+            false
+        }else{
+            countDownTimer?.cancel()
+            countDownTimer=object :CountDownTimer(millisInFunction,1000L){
+                override fun onTick(millisUntilFinished: Long) {
+                    val h=millisUntilFinished/1000L/60L/60L
+                    val m=millisUntilFinished/1000L/60L%60L
+                    val s=millisUntilFinished/1000L%60L
+                    countDownTimerLiveData.value="${numberFormat.format(h)}:${numberFormat.format(m)}:${numberFormat.format(s)}"
+                }
+
+                override fun onFinish() {
+                    finished.invoke()
+                }
+            }
+            countDownTimer?.start()
+            true
+        }
     }
 }

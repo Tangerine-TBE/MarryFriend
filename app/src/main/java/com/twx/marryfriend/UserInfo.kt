@@ -120,16 +120,6 @@ object UserInfo :ILoginListener{
     }
 
     fun getUserId():String?{
-//        val phone=SPStaticUtils.getString(Constant.USER_ACCOUNT,null)
-
-//        if(BuildConfig.DEBUG&&
-//            (phone=="15270318482"||phone=="17370452215")){//3是男的
-//            if (Build.MANUFACTURER.contains("xiaomi",true)){
-//                return "15"
-//            }
-//            return "2"//3,4,6,11,16//
-//        }
-
 //        if (BuildConfig.DEBUG&&isTestDv()){
 //            return "134"
 //        }
@@ -221,17 +211,6 @@ object UserInfo :ILoginListener{
         }else{
             R.mipmap.ic_def_hello_female
         }
-    }
-
-    fun getDefHeadImage(sex: Int):String{
-        if (sex==1){
-//            R.mipmap.icon_mine_female_default
-//            R.mipmap.icon_mine_male_default
-            return "https://www.google.com/imgres?imgurl=https%3A%2F%2Fimg.tukuppt.com%2Fpng_preview%2F00%2F09%2F06%2FPhiqi5eUUD.jpg!%2Ffw%2F780&imgrefurl=https%3A%2F%2Fwww.tukuppt.com%2Fmuban%2Fenxkwrae.html&tbnid=Q_a4GmZuCbOVMM&vet=12ahUKEwjAkN_xw4n5AhWvRvUHHX4sCx0QMygmegUIARCPAg..i&docid=ysTt9zGjULxHLM&w=780&h=724&q=%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F&ved=2ahUKEwjAkN_xw4n5AhWvRvUHHX4sCx0QMygmegUIARCPAg"
-        }else{
-            return "https://www.google.com/imgres?imgurl=https%3A%2F%2Fimg.zcool.cn%2Fcommunity%2F01c13f5b56bd8ba8012036be3d28b7.png%401280w_1l_2o_100sh.png&imgrefurl=https%3A%2F%2Fm.zcool.com.cn%2Fwork%2FZMjkxOTkxNDA%3D.html&tbnid=4rBY98RMBUB6SM&vet=12ahUKEwjAkN_xw4n5AhWvRvUHHX4sCx0QMygTegUIARDkAQ..i&docid=91X0_gUlFywQoM&w=265&h=265&q=%E9%BB%98%E8%AE%A4%E5%A4%B4%E5%83%8F&ved=2ahUKEwjAkN_xw4n5AhWvRvUHHX4sCx0QMygTegUIARDkAQ"
-        }
-
     }
 
     fun getGreetText():String?{

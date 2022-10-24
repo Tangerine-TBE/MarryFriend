@@ -3,11 +3,14 @@ package com.twx.marryfriend
 import android.app.Application
 import android.content.Intent
 import android.view.View
+import com.hyphenate.chat.EMCustomMessageBody
 import com.hyphenate.chat.EMMessage
 import com.hyphenate.easeim.HMSPushHelper
 import com.hyphenate.easeim.section.base.WebViewActivity
+import com.hyphenate.easeui.EaseIM
+import com.hyphenate.easeui.model.EaseNotifier
+import com.hyphenate.easeui.utils.EaseCommonUtils
 import com.hyphenate.easeui.utils.EaseUserUtils
-import com.kingja.loadsir.core.LoadSir
 import com.message.ImUserManager
 import com.message.chat.CustomEvent
 import com.message.custom.IImEventListener
@@ -18,6 +21,7 @@ import com.twx.marryfriend.base.BaseConstant
 import com.twx.marryfriend.bean.Sex
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.begin.BeginActivity
+import com.twx.marryfriend.push.PushManager
 import com.twx.marryfriend.utils.SpUtil
 import com.umeng.commonsdk.utils.UMUtils
 import com.xyzz.myutils.MyUtils
@@ -40,14 +44,6 @@ class AppApplication : BaseApplication() {
 
         if (UMUtils.isMainProgress(this)){
             MyUtils.init(this)
-            LoadSir.beginBuilder()
-                .addCallback(DefEmptyDataCallBack()) //添加各种状态页
-//            .addCallback(EmptyCallback())
-//            .addCallback(LoadingCallback())
-//            .addCallback(TimeoutCallback())
-//            .addCallback(CustomCallback())
-//            .setDefaultCallback(LoadingCallback::class.java) //设置默认状态页
-                .commit()
             ImUserManager.userNameState.observeForever{ imId ->
                 if (imId!=UserInfo.getUserId()){
                     if (BuildConfig.DEBUG){
@@ -86,7 +82,46 @@ class AppApplication : BaseApplication() {
                     EaseUserUtils.setManDefHead(Sex.male.smallHead)
                     EaseUserUtils.setWomanDefHead(Sex.woman.smallHead)
                     EaseUserUtils.setSex(UserInfo.getOriginalUserSex())
+                    EaseIM.getInstance().notifier.setNotificationInfoProvider(object :
+                        EaseNotifier.EaseNotificationInfoProvider{
+                        override fun getDisplayedText(message: EMMessage?): String {
+                            message?:return "点击查看"
+                            val text=if (message.type == EMMessage.Type.CUSTOM){
+                                val body=message.body as EMCustomMessageBody
+                                CustomEvent.getTip(body.event()) ?: EaseCommonUtils.getMessageDigest(message, this@AppApplication)
+                            }else{
+                                val t= EaseCommonUtils.getMessageDigest(message, this@AppApplication)
+                                t
+                            }
+                            return text
+                        }
 
+                        override fun getLatestText(
+                            message: EMMessage?,
+                            fromUsersNum: Int,
+                            messageNum: Int
+                        ): String {
+                            return getDisplayedText(message)
+                        }
+
+                        override fun getTitle(message: EMMessage?): String {
+                            return "你收到一条消息"
+                        }
+
+                        override fun getSmallIcon(message: EMMessage?): Int {
+                            return R.mipmap.ic_launcher
+                        }
+
+                        override fun getLaunchIntent(message: EMMessage?): Intent? {
+                            val t=message?.to
+                            val f=message?.from
+                            if (t!=null&&f!=null) {
+                                PushManager.onNotificationMessageClicked(this@AppApplication, t, f)
+                            }
+                            return null
+                        }
+
+                    })
                     ImCustomEventListenerManager.addListener(object : IImEventListener {
                         override fun click(view: View, event: CustomEvent, emMessage: EMMessage) {
                             when(event){

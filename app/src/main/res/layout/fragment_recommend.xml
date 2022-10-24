@@ -44,28 +44,37 @@
         </RelativeLayout>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <FrameLayout
-        android:id="@+id/contentViewSwitch"
+    <ViewSwitcher
+        android:id="@+id/recommendViewSwitcher"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/cardSwipeView"
+        <com.twx.marryfriend.recommend.widget.LoadingView
+            android:id="@+id/loadingView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-        <com.twx.marryfriend.recommend.widget.MutualLikeView
-            android:id="@+id/mutualLike"
+        <FrameLayout
+            android:id="@+id/contentViewSwitch"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
-        <com.twx.marryfriend.recommend.NotContentView
-            android:id="@+id/notContent"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        <com.twx.marryfriend.recommend.widget.RecommendGuideView
-            android:id="@+id/guideView"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout>
+            android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/cardSwipeView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <com.twx.marryfriend.recommend.widget.MutualLikeView
+                android:id="@+id/mutualLike"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            <com.twx.marryfriend.recommend.NotContentView
+                android:id="@+id/notContent"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <com.twx.marryfriend.recommend.widget.RecommendGuideView
+                android:id="@+id/guideView"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </FrameLayout>
+    </ViewSwitcher>
 </androidx.appcompat.widget.LinearLayoutCompat>
