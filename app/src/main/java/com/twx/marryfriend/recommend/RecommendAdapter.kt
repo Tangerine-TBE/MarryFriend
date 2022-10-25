@@ -20,6 +20,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
+import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.enumeration.HomeCardAction
@@ -38,17 +39,17 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
         private const val IS_FIRST_LISTENER_VOICE_KEY="first_listener_voice"
         private const val IS_FIRST_PUSH_VOICE="first_push_voice"
         private fun isFirstListenerVoice():Boolean{
-            return SPStaticUtils.getBoolean(IS_FIRST_LISTENER_VOICE_KEY,true)
+            return SPStaticUtils.getBoolean(IS_FIRST_LISTENER_VOICE_KEY+UserInfo.getUserId(),true)
         }
         private fun useFirstListenerVoice(){
-            SPStaticUtils.put(IS_FIRST_LISTENER_VOICE_KEY,false)
+            SPStaticUtils.put(IS_FIRST_LISTENER_VOICE_KEY+UserInfo.getUserId(),false)
         }
 
         private fun isFirstPushVoice():Boolean{
-            return SPStaticUtils.getBoolean(IS_FIRST_PUSH_VOICE,true)
+            return SPStaticUtils.getBoolean(IS_FIRST_PUSH_VOICE+UserInfo.getUserId(),true)
         }
         private fun useFirstPushVoice(){
-            SPStaticUtils.put(IS_FIRST_PUSH_VOICE,false)
+            SPStaticUtils.put(IS_FIRST_PUSH_VOICE+UserInfo.getUserId(),false)
         }
     }
     private val listData=ArrayList<RecommendBean>()
