@@ -5,11 +5,28 @@ import com.android.volley.toolbox.Volley
 import com.xyzz.myutils.show.eLog
 import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.show.wLog
+import java.io.File
+import java.io.FileOutputStream
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 object NetworkUtil {
     private val volley by lazy { Volley.newRequestQueue(MyUtils.application) }
+    private val errorLogDir by lazy {
+        File(MyUtils.application.externalCacheDir,"network_error").also {
+            if (!it.exists()){
+                it.mkdirs()
+            }
+        }
+    }
+    private val dayErrorLog by lazy {
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+        File(errorLogDir,simpleDateFormat.format(System.currentTimeMillis())+"_error_log.txt")
+    }
+    private val simpleDateFormat by lazy {
+        SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
+    }
     private val responseListener by lazy {
         ArrayList<(String)->Unit>()
     }
@@ -25,9 +42,19 @@ object NetworkUtil {
             responseListener.forEach {
                 it.invoke(response)
             }
-        }, {
-            wLog("${it.networkResponse?.statusCode?.toString()?:""}","网络,响应,${url.split("/").lastOrNull()?:url.takeLast(10)}")
-            fail.invoke(it.networkResponse?.statusCode.toString())
+        }, { error ->
+            wLog("${error.networkResponse?.statusCode?.toString()?:""}","网络,响应,${url.split("/").lastOrNull()?:url.takeLast(10)}")
+            fail.invoke(error.networkResponse?.statusCode.toString())
+            try {
+                FileOutputStream(dayErrorLog,true).use {
+                    it.write("${simpleDateFormat.format(System.currentTimeMillis())}\n".toByteArray())
+                    it.write("接口:${url} 加密参数:${parameter} 未加密参数:${notEncryptionParameter.toString()}\n".toByteArray())
+                    it.write(error.networkResponse.data)
+                    it.write("\n\n".toByteArray())
+                }
+            }catch (e:Exception){
+                wLog(e.stackTraceToString())
+            }
         }){
             override fun getParams(): MutableMap<String, String> {
                 val params: MutableMap<String, String> = HashMap()

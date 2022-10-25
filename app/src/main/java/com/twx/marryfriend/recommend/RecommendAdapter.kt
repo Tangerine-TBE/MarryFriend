@@ -23,7 +23,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.recommend.RecommendBean
 import com.twx.marryfriend.enumeration.HomeCardAction
-import com.twx.marryfriend.message.ImChatViewModel
+import com.twx.marryfriend.message.viewmodel.ImChatViewModel
 import com.twx.marryfriend.recommend.widget.LifeView
 import com.twx.marryfriend.recommend.widget.MyNestedScrollView
 import com.twx.marryfriend.recommend.widget.PicturePreviewView

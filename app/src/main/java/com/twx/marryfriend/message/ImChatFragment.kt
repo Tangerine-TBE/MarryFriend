@@ -19,6 +19,7 @@ import com.message.chat.CustomEvent
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
+import com.twx.marryfriend.message.viewmodel.ImChatViewModel
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog
@@ -54,21 +55,33 @@ class ImChatFragment: ChatFragment() {
     private val isMyHelper by lazy {
         conversationId==ImMessageManager.MY_HELPER_ID
     }
+    private val imChatViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(ImChatViewModel::class.java)
+    }
+    private var sensitiveWords:List<String>?=null
 
     override fun initView() {
         super.initView()
         isSendSuperVip= isSendOpenVipMsg(conversationId?:return)
         isSendHead=isUploadHeadMsg(conversationId?:return)
         ImMessageManager.insertSecurityMessage(conversationId?:return)//发送安全提示
-
+        lifecycleScope.launch {
+            sensitiveWords=imChatViewModel.getSensitiveWords()
+        }
 
         val easeChatPrimaryMenuListener= EaseChatPrimaryMenu::class.java.getDeclaredField("listener").also {
             it.isAccessible=true
         }.get(chatLayout.chatInputMenu.primaryMenu) as? EaseChatPrimaryMenuListener
-
         chatLayout.chatInputMenu.primaryMenu.setEaseChatPrimaryMenuListener(object : EaseChatPrimaryMenuListener{
             override fun onSendBtnClicked(content: String?) {
-                easeChatPrimaryMenuListener?.onSendBtnClicked(content)
+                iLog("点击了发送")
+                if (sensitiveWords?.any { content==it }==true){
+                    toast("消息包含非法内容")
+                    chatLayout.chatInputMenu.primaryMenu.editText.setText(content)
+                    chatLayout.chatInputMenu.primaryMenu.editText.setSelection(content?.length?:0)
+                }else{
+                    easeChatPrimaryMenuListener?.onSendBtnClicked(content)
+                }
             }
 
             override fun onTyping(s: CharSequence?, start: Int, before: Int, count: Int) {

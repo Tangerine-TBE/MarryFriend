@@ -1,10 +1,5 @@
 package com.twx.marryfriend.constant
 
-import com.twx.marryfriend.bean.vip.UpdateDescribeBean
-import retrofit2.Call
-import retrofit2.http.POST
-import retrofit2.http.QueryMap
-
 object Contents {
 
 

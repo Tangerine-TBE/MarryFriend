@@ -92,6 +92,13 @@ object ImMessageManager {
     private val isSendSecurityMap by lazy {
         HashMap<String,Boolean>()
     }
+
+    fun onDeleteConversation(conversationId: String){
+        val securityKey=SECURITY_MESSAGE_KEY+EMClient.getInstance().currentUser+"&"+conversationId//SECURITY_MESSAGE_KEY+conversationId
+        isSendSecurityMap[conversationId]=false
+        SPUtil.instance.remove(securityKey)
+    }
+
     fun insertSecurityMessage(conversationId:String){
         if (conversationId==MY_HELPER_ID){
             return
@@ -100,17 +107,12 @@ object ImMessageManager {
         val conversation=EMClient.getInstance().chatManager().getConversation(conversationId)
         val allMessages=conversation?.allMessages
         val firstMst=allMessages?.firstOrNull()
-        if (firstMst==null || allMessages.all { it.isUnread }){//如果本地一条已读消息都没有
-            SPUtil.instance.putBoolean(securityKey,false)
-            isSendSecurityMap[conversationId]=false
-        }else{
-            if (!isSendSecurityMap.keys.contains(conversationId)){
-                isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(securityKey,false)
-            }
+        if (!isSendSecurityMap.keys.contains(conversationId)){
+            isSendSecurityMap[conversationId]=SPUtil.instance.getBoolean(securityKey,false)
         }
         val isSendSecurity= isSendSecurityMap.get(conversationId)
-
         if (isSendSecurity!=true){
+            iLog("插入安全提示")
             ImMessageManager.getCustomMessage(conversationId, CustomEvent.security)?.also { emMessage ->
                 emMessage.msgTime=(firstMst?.msgTime?:System.currentTimeMillis())
                     .let { it-60L*60L*1000 }//减一个时间让下一条消息显示时间

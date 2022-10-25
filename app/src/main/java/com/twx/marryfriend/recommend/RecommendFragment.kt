@@ -31,7 +31,7 @@ import com.twx.marryfriend.friend.FriendInfoViewModel
 import com.twx.marryfriend.ilove.ILikeActivity
 import com.twx.marryfriend.main.MainActivity
 import com.twx.marryfriend.message.ImChatActivity
-import com.twx.marryfriend.message.ImChatViewModel
+import com.twx.marryfriend.message.viewmodel.ImChatViewModel
 import com.twx.marryfriend.recommend.widget.CardConfig
 import com.twx.marryfriend.recommend.widget.RecommendGuideView
 import com.twx.marryfriend.recommend.widget.SlideCardCallback
