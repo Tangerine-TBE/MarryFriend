@@ -123,7 +123,7 @@ object UserInfo :ILoginListener{
 //        if (BuildConfig.DEBUG&&isTestDv()){
 //            return "134"
 //        }
-        return "103"
+        return SPStaticUtils.getString(Constant.USER_ID, null)
     }
 
     fun isTestDv():Boolean{
@@ -140,7 +140,7 @@ object UserInfo :ILoginListener{
     }
 
     fun getUserVipLevel():Int{
-        return 2
+        return SPStaticUtils.getInt(Constant.USER_VIP_LEVEL,0)
 //        return 0
     }
 
