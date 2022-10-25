@@ -3,7 +3,6 @@ package com.twx.marryfriend.main
 import android.app.Notification
 import android.content.Context
 import android.content.Intent
-import android.text.TextUtils
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -22,13 +21,10 @@ import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
-import com.huawei.hms.aaid.HmsInstanceId
-import com.huawei.hms.common.ApiException
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.impl.FullScreenPopupView
 import com.message.ImMessageManager
-import com.message.ImUserManager
 import com.twx.marryfriend.ImUserInfoHelper
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
@@ -39,7 +35,7 @@ import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.constant.Contents
 import com.twx.marryfriend.dynamic.DynamicFragment
 import com.twx.marryfriend.ilove.ILikeActivity
-import com.twx.marryfriend.likeme.LoveFragment
+import com.twx.marryfriend.likeme.LikeMeFragment
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.message.ImConversationFragment
 import com.twx.marryfriend.message.MyHelperActivity
@@ -47,7 +43,6 @@ import com.twx.marryfriend.mine.MineFragment
 import com.twx.marryfriend.mine.comment.RecentCommentActivity
 import com.twx.marryfriend.mine.like.RecentLikeActivity
 import com.twx.marryfriend.mine.view.RecentViewActivity
-import com.twx.marryfriend.mine.voice.VoiceActivity
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.twx.marryfriend.net.callback.vip.IDoUpdateTokenCallback
 import com.twx.marryfriend.net.impl.vip.doUpdateTokenPresentImpl
@@ -80,7 +75,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
     private var isFirst = true
     private var recommend: RecommendFragment? = null
-    private var love: LoveFragment? = null
+    private var love: LikeMeFragment? = null
     private var dynamic: DynamicFragment? = null
     private var conversationListFragment: ImConversationFragment? = null
     private var mine: MineFragment? = null
@@ -146,15 +141,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
                 messageNumNew.text = unread.toString()
             }
         }
-        PushManager.getNotificationMsg()?.also {
-            PushManager.handlerNotificationMsg()
-            val from = ImUserInfoHelper.getUserInfo(it.from)
-            if (UserInfo.isVip() || from?.isSuperVip == true || from?.isMutualLike == true) {
-                startActivity(ImChatActivity.getIntent(this, it.from))
-            } else {
-                rb_main_message.performClick()
-            }
-        }
 
         val custom = SPStaticUtils.getString(Constant.PUSH_ACTION)
 
@@ -206,6 +192,18 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
         }
 
+    }
+
+    override fun onStart() {
+        super.onStart()
+        PushManager.handlerNotificationMsg()?.also {
+            val from=ImUserInfoHelper.getUserInfo(it.from)
+            if (UserInfo.isVip()||from?.isSuperVip==true||from?.isMutualLike==true){
+                startActivity(ImChatActivity.getIntent(this,it.from))
+            }else{
+                rb_main_message.performClick()
+            }
+        }
     }
 
     override fun initLoadData() {
@@ -319,7 +317,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     private fun initLoveFragment() {
         val transaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         if (love == null) {
-            love = LoveFragment()
+            love = LikeMeFragment()
             transaction.add(R.id.fl_main_container, love!!)
         }
         currentFragment = love
@@ -462,7 +460,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     }
 
     override fun onDoUpdateTokenError() {
-        ToastUtils.showShort("网络请求失败，请稍后再试")
+
     }
 
 
