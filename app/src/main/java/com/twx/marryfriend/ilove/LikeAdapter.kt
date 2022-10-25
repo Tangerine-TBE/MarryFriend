@@ -23,6 +23,11 @@ class LikeAdapter(private val isChat:Boolean=false):RecyclerView.Adapter<BaseVie
         notifyDataSetChanged()
     }
 
+    fun addData(list: List<ILikeItemBean>){
+        listData.addAll(list)
+        notifyItemRangeInserted(listData.size-list.size,list.size)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val itemView=LayoutInflater.from(parent.context).inflate(R.layout.item_ilike,parent,false)
         return BaseViewHolder(itemView)

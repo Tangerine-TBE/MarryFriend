@@ -27,20 +27,24 @@
             android:layout_height="match_parent"/>
     </FrameLayout>
     <com.scwang.smart.refresh.layout.SmartRefreshLayout
-        android:id="@+id/superLikeRefresh"
+        android:id="@+id/smartRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <com.scwang.smart.refresh.header.ClassicsHeader
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/superLikeRecyclerView"
+        <ViewSwitcher
+            android:id="@+id/viewSwitch"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-<!--        <com.scwang.smart.refresh.footer.ClassicsFooter-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content" />-->
+            android:layout_height="match_parent">
+            <include layout="@layout/item_like_empty_data"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/superLikeRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </ViewSwitcher>
+        <com.scwang.smart.refresh.footer.ClassicsFooter
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

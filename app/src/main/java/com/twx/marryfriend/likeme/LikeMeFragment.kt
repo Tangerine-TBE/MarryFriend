@@ -6,35 +6,21 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.kingja.loadsir.core.LoadSir
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.vip.VipGifEnum
 import com.twx.marryfriend.friend.FriendInfoActivity
-import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
-import kotlinx.android.synthetic.main.fragment_love.*
+import kotlinx.android.synthetic.main.fragment_like_me.*
 import kotlinx.coroutines.launch
 
-class LoveFragment : Fragment(R.layout.fragment_love) {
+class LikeMeFragment : Fragment(R.layout.fragment_like_me) {
     private val loadingDialog by lazy {
         LoadingDialogManager
             .createLoadingDialog()
             .create(requireContext())
-    }
-    private val loadSir by lazy {
-        LoadSir.Builder()
-            .addCallback(LiveEmptyData())
-            .build()
-    }
-    private val loadService by lazy {
-        loadSir.register(loveSwipeRefreshLayout
-        ) {
-            iLog("重加载")
-            refreshData()
-        }
     }
     private val liveViewModel by lazy {
         ViewModelProvider(this).get(LiveViewModel::class.java)
@@ -64,15 +50,15 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
                 liveAdapter.setData(data?.list ?: emptyList())
                 loveCount.text = "${data?.total ?: 0}人喜欢我"
                 text2.text = "${data?.total ?: 0}"
-                if (data?.list.isNullOrEmpty()) {
-                    loadService.showCallback(LiveEmptyData::class.java)
-                }else{
-                    loadService.showSuccess()
+                if ((!data?.list.isNullOrEmpty()).xor(viewSwitch.currentView==loveRecyclerView)){
+                    viewSwitch.showNext()
                 }
                 loveSwipeRefreshLayout.finishRefresh()
             } catch (e: Exception) {
                 toast(e.message)
-                loadService.showCallback(LiveEmptyData::class.java)
+                if (viewSwitch.currentView==loveRecyclerView){
+                    viewSwitch.showNext()
+                }
                 loveSwipeRefreshLayout.finishRefresh(false)
             }
             loadingDialog.dismiss()
@@ -91,7 +77,6 @@ class LoveFragment : Fragment(R.layout.fragment_love) {
                 }
             } catch (e: Exception) {
                 toast(e.message)
-                loadService.showCallback(LiveEmptyData::class.java)
                 loveSwipeRefreshLayout.finishLoadMore(false)
             }
         }

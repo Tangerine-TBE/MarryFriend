@@ -14,6 +14,7 @@ import com.twx.marryfriend.R
 import com.twx.marryfriend.UserInfo
 import com.twx.marryfriend.bean.vip.SVipGifEnum
 import com.twx.marryfriend.bean.vip.VipGifEnum
+import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.message.ImChatActivity
 import com.twx.marryfriend.recommend.RecommendCall
@@ -76,7 +77,9 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
         startSearch()
         initListener()
     }
-
+    private val uploadHeadDialog by lazy {
+        UploadHeadDialog(this)
+    }
     private fun initListener(){
         Glide.with(myHead)
             .load(UserInfo.getHeadPortrait())
@@ -104,6 +107,9 @@ class SearchResultActivity :AppCompatActivity(R.layout.activity_search_result){
             lifecycleScope.launch {
                 if (item.user_id?.toString()==UserInfo.getUserId()){
                     toast("不能喜欢自己")
+                    return@launch
+                }else if (!UserInfo.isHaveHeadImage()){
+                    uploadHeadDialog.show()
                     return@launch
                 }
                 recommendViewModel.otherLike(item.user_id?:return@launch toast("对方id为空")) {

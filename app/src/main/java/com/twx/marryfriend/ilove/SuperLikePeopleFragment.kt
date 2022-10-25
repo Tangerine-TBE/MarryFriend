@@ -1,6 +1,5 @@
 package com.twx.marryfriend.ilove
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -8,31 +7,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.kingja.loadsir.core.LoadSir
-import com.kingja.loadsir.core.Transport
 import com.twx.marryfriend.R
 import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.friend.FriendInfoActivity
 import com.twx.marryfriend.recommend.RecommendViewModel
 import com.twx.marryfriend.showUploadHeadDialog
-import com.xyzz.myutils.show.iLog
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.fragment_superlike_people.*
 import kotlinx.coroutines.launch
 
 class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
-    private val loadService by lazy {
-        val loadSir= LoadSir.Builder()
-            .addCallback(ILikeEmptyDataCallBack())
-            .build()
-        loadSir.register(superLikeRefresh
-        ) {
-            loadData()
-            iLog("重加载")
-        }
-    }
     private val loadingDialog by lazy {
         LoadingDialogManager.createLoadingDialog().create(requireContext())
     }
@@ -51,6 +37,7 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
     private val uploadHeadDialog by lazy {
         UploadHeadDialog(requireContext())
     }
+    private var page=1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,29 +46,36 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
 
         loadData()
         initListener()
-        loadService.setCallBack(ILikeEmptyDataCallBack::class.java,object : Transport{
-            override fun order(context: Context?, view: View?) {
-                view?.findViewById<TextView>(R.id.emptyDataTitle)?.text="暂时没有超喜欢的人"
-                view?.findViewById<TextView>(R.id.emptyDataDes)?.text="可以送小红花表达心意"
-            }
-        })
+        view.findViewById<TextView>(R.id.emptyDataTitle)?.text="暂时没有超喜欢的人"
+        view.findViewById<TextView>(R.id.emptyDataDes)?.text="可以送小红花表达心意"
     }
 
     private fun loadData(){
         viewLifecycleOwner.lifecycleScope.launch {
             loadingDialog.show()
             try {
-                val data=likeViewModel.loadSuperLike(1)
-                likeAdapter.setData(data?.list?: emptyList())
-                if(( data?.list?: emptyList()).isEmpty()){
-                    loadService.showCallback(ILikeEmptyDataCallBack::class.java)
+                val data=likeViewModel.loadSuperLike(1)?.list?: emptyList()
+                if (page==1){
+                    likeAdapter.setData(data)
+                    if(data.isNotEmpty().xor(viewSwitch.currentView==superLikeRecyclerView)){
+                        viewSwitch.showNext()
+                    }
+                    smartRefresh.finishRefresh()
                 }else{
-                    loadService.showSuccess()
+                    if (data.isEmpty()){
+                        smartRefresh.finishLoadMoreWithNoMoreData()
+                    }else{
+                        likeAdapter.addData(data)
+                        smartRefresh.finishLoadMore()
+                    }
                 }
-                superLikeRefresh.finishRefresh(true)
             }catch (e:Exception){
                 toast(e.message)
-                superLikeRefresh.finishRefresh(false)
+                if (page==1){
+                    smartRefresh.finishRefresh(false)
+                }else{
+                    smartRefresh.finishLoadMore(false)
+                }
             }
             loadingDialog.dismiss()
 
@@ -92,8 +86,13 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
         closeTip.setOnClickListener {
             closeView.visibility=View.GONE
         }
-        superLikeRefresh.setEnableLoadMore(false)
-        superLikeRefresh.setOnRefreshListener {
+        smartRefresh.setOnRefreshListener {
+            page=1
+            smartRefresh.resetNoMoreData()
+            loadData()
+        }
+        smartRefresh.setOnLoadMoreListener {
+            page++
             loadData()
         }
         likeAdapter.chatAction={

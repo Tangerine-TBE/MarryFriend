@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken
 import com.hyphenate.easeim.common.livedatas.LiveDataBus
 import com.message.ImMessageManager
 import com.message.ImUserInfoService
-import com.twx.marryfriend.message.ConversationViewModel
+import com.twx.marryfriend.message.viewmodel.ConversationViewModel
 import com.twx.marryfriend.message.model.ConversationsItemModel
 import com.xyzz.myutils.SPUtil
 import com.xyzz.myutils.show.iLog

@@ -19,7 +19,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -299,17 +298,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
 
     private fun updateToken(token: String) {
-
-
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.UMENG_TOKEN] = token
-            doUpdateTokenPresent.doUpdateToken(map)
-
-
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.UMENG_TOKEN] = token
+        doUpdateTokenPresent.doUpdateToken(map)
     }
 
     private fun initRecommendFragment() {

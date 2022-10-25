@@ -97,15 +97,16 @@ object LocationUtils {
     }
 
     @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
-    fun startLocation() {
+    fun startLocation(success:((BDLocation?)->Unit)?=null) {
         iLog("开始定位")
         val mLocationClient = LocationClient(context)
         mLocationClient.registerLocationListener(object :
             BDAbstractLocationListener() {
-            override fun onReceiveLocation(location: BDLocation) {
-                iLog(location.addrStr, "定位到了")
-                if (location.addrStr == null) {
+            override fun onReceiveLocation(location: BDLocation?) {
+                iLog(location?.addrStr?:"空对象", "定位到了")
+                if (location?.addrStr == null) {
                     locationLiveData.value = null
+                    success?.invoke(location)
                     return
                 }
                 locationLiveData.value = MyLocation(location.longitude,
@@ -129,6 +130,7 @@ object LocationUtils {
 
                     putLocation(myLocation)
                 }
+                success?.invoke(location)
             }
         })
         val option = LocationClientOption()

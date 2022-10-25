@@ -1,4 +1,4 @@
-package com.twx.marryfriend.message
+package com.twx.marryfriend.message.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

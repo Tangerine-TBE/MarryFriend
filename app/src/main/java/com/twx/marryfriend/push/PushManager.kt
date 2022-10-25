@@ -41,11 +41,9 @@ object PushManager {
         }
     }
 
-    fun getNotificationMsg():NotificationMessage?{
-        return currentNotificationMessage
-    }
-
-    fun handlerNotificationMsg() {
+    fun handlerNotificationMsg():NotificationMessage? {
+        val f=currentNotificationMessage
         currentNotificationMessage=null
+        return f
     }
 }

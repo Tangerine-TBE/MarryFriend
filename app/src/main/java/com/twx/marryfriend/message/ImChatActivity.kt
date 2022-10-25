@@ -16,6 +16,7 @@ import com.hyphenate.easeui.constants.EaseConstant
 import com.message.ImUserInfoService
 import com.twx.marryfriend.IntentManager
 import com.twx.marryfriend.dialog.ChatSettingDialog
+import com.twx.marryfriend.message.viewmodel.ImChatViewModel
 import com.xyzz.myutils.show.toast
 import kotlinx.coroutines.launch
 
@@ -164,6 +165,8 @@ open class ImChatActivity: ChatActivity() {
     override fun onChatError(code: Int, errorMsg: String?) {
         if(code==210){
             toast("你已经被对方屏蔽")
+        }else if(code==501){
+            toast("消息包含非法内容")
         }else{
             super.onChatError(code, errorMsg)
         }

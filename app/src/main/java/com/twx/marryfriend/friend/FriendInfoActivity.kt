@@ -31,7 +31,7 @@ import com.twx.marryfriend.dialog.ReChargeCoinDialog
 import com.twx.marryfriend.dialog.SendFlowerDialog
 import com.twx.marryfriend.dialog.UploadHeadDialog
 import com.twx.marryfriend.message.ImChatActivity
-import com.twx.marryfriend.message.ImChatViewModel
+import com.twx.marryfriend.message.viewmodel.ImChatViewModel
 import com.twx.marryfriend.recommend.LocationUtils
 import com.twx.marryfriend.recommend.PlayAudio
 import com.twx.marryfriend.recommend.RecommendCall

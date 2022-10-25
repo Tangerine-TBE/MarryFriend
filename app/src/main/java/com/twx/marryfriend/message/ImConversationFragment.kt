@@ -26,6 +26,7 @@ import com.message.ImUserInfoService
 import com.twx.marryfriend.*
 import com.twx.marryfriend.base.BaseViewHolder
 import com.twx.marryfriend.bean.vip.VipGifEnum
+import com.twx.marryfriend.message.viewmodel.ConversationViewModel
 import com.twx.marryfriend.mutual.MutualLikeActivity
 import com.xyzz.myutils.loadingdialog.LoadingDialogManager
 import com.xyzz.myutils.show.eLog
@@ -43,9 +44,14 @@ class ImConversationFragment: ConversationListFragment() {
             .createLoadingDialog()
             .create(requireContext())
     }
+    private val myEaseConversationPresenter by lazy {
+        MyEaseConversationPresenter()
+    }
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
+        conversationListLayout.setPresenter(myEaseConversationPresenter)
+
         llRoot.addView(LayoutInflater.from(requireContext()).inflate(R.layout.fragment_im_message,llRoot,false), 0)
         conversationListLayout.setBackgroundColor(Color.parseColor("#FFF5F5F5"))
         conversationListLayout.listAdapter.emptyLayoutId = R.layout.layout_conversation_not_data
