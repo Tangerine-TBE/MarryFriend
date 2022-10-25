@@ -12,6 +12,7 @@ import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
@@ -429,60 +430,100 @@ class OtherDynamicActivity : MainBaseViewActivity(),
 
     // 初次加载动态列表
     private fun getFirstTrendsList() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.FRIEND_UID] = userId
-        map[Contents.TRENDS_TYPE] = trendType.toString()
-        map[Contents.PAGE] = "1"
-        map[Contents.SIZE] = "10"
-        getOtherTrendsListPresent.getOtherTrendsList(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.FRIEND_UID] = userId
+            map[Contents.TRENDS_TYPE] = trendType.toString()
+            map[Contents.PAGE] = "1"
+            map[Contents.SIZE] = "10"
+            getOtherTrendsListPresent.getOtherTrendsList(map)
+
+
+
+
     }
 
     // 加载更多我的动态列表
     private fun getMoreTrendsList(currentPaper: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.FRIEND_UID] = userId
-        map[Contents.TRENDS_TYPE] = trendType.toString()
-        map[Contents.PAGE] = currentPaper.toString()
-        map[Contents.SIZE] = "10"
-        getOtherTrendsListPresent.getOtherTrendsList(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.MYSELF_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.FRIEND_UID] = userId
+            map[Contents.TRENDS_TYPE] = trendType.toString()
+            map[Contents.PAGE] = currentPaper.toString()
+            map[Contents.SIZE] = "10"
+            getOtherTrendsListPresent.getOtherTrendsList(map)
+
+
+
+
     }
 
     // 动态点赞
     private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doLikeClickPresent.doLikeClick(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doLikeClickPresent.doLikeClick(map)
+
+
+
+
 
     }
 
     // 取消点赞
     private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doLikeCancelPresent.doLikeCancel(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doLikeCancelPresent.doLikeCancel(map)
+
+
+
+
     }
 
     // 关注
     private fun doPlusFocus(hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doPlusFocusPresent.doPlusFocusOther(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doPlusFocusPresent.doPlusFocusOther(map)
+
+
+
     }
 
     // 取消关注
     private fun doCancelFocus(hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doCancelFocusPresent.doCancelFocusOther(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doCancelFocusPresent.doCancelFocusOther(map)
+
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -518,7 +559,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onDoPlusFocusError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoCancelFocusSuccess(cancelFocusBean: CancelFocusBean?) {
@@ -533,7 +574,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onDoCancelFocusError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetOtherTrendsListSuccess(otherTrendsListBean: OtherTrendsListBean?) {
@@ -637,6 +678,9 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     override fun onGetOtherTrendsListCodeError() {
         srl_dynamic_other_refresh.finishRefresh(false)
         srl_dynamic_other_refresh.finishLoadMore(false)
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
+
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
@@ -669,7 +713,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onDoLikeClickError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
@@ -686,7 +730,7 @@ class OtherDynamicActivity : MainBaseViewActivity(),
     }
 
     override fun onLikeCancelError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     inner class DynamicEditDialog(context: Context, val position: Int) :

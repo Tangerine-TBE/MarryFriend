@@ -8,6 +8,7 @@ import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.google.android.material.tabs.TabLayoutMediator
@@ -139,13 +140,18 @@ class TipsActivity : MainBaseViewActivity(), IDoDeleteTipsCallback {
 
     private fun doDeleteTips(discussId: Int, LikeId: Int) {
 
-        Log.i("guo", " LikeId : $likeId , discussId : $discussId")
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.DISCUSS_ID] = discussId.toString()
-        map[Contents.LIKE_ID] = LikeId.toString()
-        doDeleteTipsPresent.doDeleteTips(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.DISCUSS_ID] = discussId.toString()
+            map[Contents.LIKE_ID] = LikeId.toString()
+            doDeleteTipsPresent.doDeleteTips(map)
+
+
+
+
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -169,7 +175,7 @@ class TipsActivity : MainBaseViewActivity(), IDoDeleteTipsCallback {
     }
 
     override fun onDoDeleteTipsError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

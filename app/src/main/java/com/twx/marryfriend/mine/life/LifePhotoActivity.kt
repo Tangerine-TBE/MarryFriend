@@ -325,12 +325,16 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
     // 删除生活照
     private fun deleteLifePhoto(id: String) {
 
-        ll_life_photo_loading.visibility = View.VISIBLE
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ID] = id
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doDeletePhotoPresent.doDeletePhoto(map)
+
+            ll_life_photo_loading.visibility = View.VISIBLE
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ID] = id
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doDeletePhotoPresent.doDeletePhoto(map)
+
+
 
     }
 
@@ -1546,6 +1550,7 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
     override fun onDoDeletePhotoError() {
         ll_life_photo_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

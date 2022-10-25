@@ -9,10 +9,7 @@ import com.baidu.idl.face.platform.FaceEnvironment
 import com.baidu.idl.face.platform.FaceSDKManager
 import com.baidu.idl.face.platform.LivenessTypeEnum
 import com.baidu.idl.face.platform.listener.IInitCallback
-import com.blankj.utilcode.util.KeyboardUtils
-import com.blankj.utilcode.util.RegexUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -101,18 +98,21 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
             if (name != "" && identityCode != "") {
 
                 if (RegexUtils.isIDCard18Exact(identityCode)) {
-                    val map: MutableMap<String, String> = TreeMap()
-
-                    map[Contents.ACCESS_TOKEN] =
-                        SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/json"
-                    map[Contents.ID_CARD_NUMBER] = identityCode
-                    map[Contents.NAME] = name
-                    state = "VerifyInputActivity"
-                    doIdentityVerifyPresent.doIdentityVerify(map)
 
 
-                    ll_verify_input_loading.visibility = View.VISIBLE
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/json"
+                        map[Contents.ID_CARD_NUMBER] = identityCode
+                        map[Contents.NAME] = name
+                        state = "VerifyInputActivity"
+                        doIdentityVerifyPresent.doIdentityVerify(map)
+
+
+                        ll_verify_input_loading.visibility = View.VISIBLE
+
+
 
                 } else {
                     ToastUtils.showShort("请输入正确的身份证号")
@@ -293,6 +293,7 @@ class VerifyInputActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
 
     override fun onDoIdentityVerifyError() {
         ll_verify_input_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

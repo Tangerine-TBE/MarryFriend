@@ -78,24 +78,18 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
         super.initLoadData()
         // 查看本地是否存储过数据，若无，则请求，若有，则直接从本地取出
         if (!SPStaticUtils.getBoolean(Constant.SCHOOL_HAVE, false)) {
-            val map: MutableMap<String, String> = TreeMap()
-            getSchoolPresent.getSchool(map)
+
+
+
+                val map: MutableMap<String, String> = TreeMap()
+                getSchoolPresent.getSchool(map)
+
+
+
+
         } else {
             getData()
         }
-
-//        val banBean: BanBean = GsonUtils.fromJson(SPStaticUtils.getString(Constant.BAN_TEXT), BanBean::class.java)
-//
-//        val x = EncodeUtils.base64Decode(banBean.data.array_string)
-//
-//        val y = String(x)
-//        var yy = "{\"data\":$y}"
-//        var aa =
-//            com.twx.marryfriend.utils.GsonUtils.parseObject(yy, BaseInfoActivity.Test::class.java)
-//
-//        for (i in 0.until(aa.data.size)) {
-//            banTextList.add(aa.data[i])
-//        }
 
     }
 
@@ -221,7 +215,7 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
     }
 
     override fun onGetSchoolCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     inner class SchoolCreateDialog(context: Context) : FullScreenPopupView(context),
@@ -288,38 +282,19 @@ class SchoolSearchActivity : MainBaseViewActivity(), IGetSchoolCallback {
                     ToastUtils.showShort("学校名称至少为4个字")
                 } else {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (diySchool.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//
-//                        diySchool = ""
-//                        findViewById<EditText>(R.id.et_dialog_school_name).setText("")
-//                        haveBanText = false
-//
-//                    } else {
-//                        dismiss()
-//
-//                        val intent = intent
-//                        intent.putExtra("schoolName", diySchool)
-//                        setResult(RESULT_OK, intent)
-//                        finish()
-//                    }
 
 
-                    //输入学校名,点击创建
-                    MobclickAgent.onEvent(context, "10021_education_add_school_success");
+                        //输入学校名,点击创建
+                        MobclickAgent.onEvent(context, "10021_education_add_school_success");
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = diySchool
-                    doTextVerifyPresent.doTextVerify(map)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = diySchool
+                        doTextVerifyPresent.doTextVerify(map)
+
+
+
 
                 }
             }

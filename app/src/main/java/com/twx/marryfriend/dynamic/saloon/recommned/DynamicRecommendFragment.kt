@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.ConvertUtils
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.lxj.xpopup.XPopup
@@ -576,9 +577,16 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     // 获取消息提醒列表
     fun getTotalCount() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getTotalCountPresent.getTotalCount(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            getTotalCountPresent.getTotalCount(map)
+
+
+
+
     }
 
     // 动态添加一条信息
@@ -620,41 +628,67 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
 
     // 获取动态列表
     private fun getTrendSaloon(mode: String, max: Int, min: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.UP_DOWN] = mode
-        map[Contents.MAX_ID] = max.toString()
-        map[Contents.MIN_ID] = min.toString()
-        map[Contents.SIZE] = 10.toString()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getTrendSaloonPresent.getTrendSaloon(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.UP_DOWN] = mode
+            map[Contents.MAX_ID] = max.toString()
+            map[Contents.MIN_ID] = min.toString()
+            map[Contents.SIZE] = 10.toString()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            getTrendSaloonPresent.getTrendSaloon(map)
+
+
+
     }
 
     // 动态点赞
     private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doLikeClickPresent.doLikeClick(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doLikeClickPresent.doLikeClick(map)
+
+
+
+
 
     }
 
     // 取消点赞
     private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doLikeCancelPresent.doLikeCancel(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doLikeCancelPresent.doLikeCancel(map)
+
+
+
+
     }
 
     // 关注
     private fun doPlusFocus(hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doPlusFocusPresent.doPlusFocusOther(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doPlusFocusPresent.doPlusFocusOther(map)
+
+
+
+
     }
 
     // 添加一条数据
@@ -707,7 +741,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onGetTotalCountError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoPlusFocusSuccess(plusFocusBean: PlusFocusBean?) {
@@ -744,6 +778,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onDoPlusFocusError() {
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
@@ -761,6 +796,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onLikeCancelError() {
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoLikeClickSuccess(likeClickBean: LikeClickBean?) {
@@ -789,7 +825,7 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     }
 
     override fun onDoLikeClickError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetTrendSaloonSuccess(trendSaloonBean: TrendSaloonBean?) {
@@ -861,6 +897,9 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     override fun onGetTrendSaloonError() {
         srl_dynamic_recommend_refresh.finishRefresh(false)
         srl_dynamic_recommend_refresh.finishLoadMore(false)
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
+
     }
 
     inner class AvatarDialog(context: Context) : FullScreenPopupView(context) {

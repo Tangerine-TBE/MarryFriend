@@ -198,14 +198,20 @@ class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
         contact1: String,
         image: String,
     ) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.CONTENT_TEXT] = suggestion
-        map[Contents.PLATFORM] = "360"
-        map[Contents.VERSION] = "1.0"
-        map[Contents.CONTACT_1] = contact1
-        map[Contents.IMAGES_URL] = image
-        doUploadFeedbackPresent.doUploadFeedback(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.CONTENT_TEXT] = suggestion
+            map[Contents.PLATFORM] = "360"
+            map[Contents.VERSION] = "1.0"
+            map[Contents.CONTACT_1] = contact1
+            map[Contents.IMAGES_URL] = image
+            doUploadFeedbackPresent.doUploadFeedback(map)
+
+
+
     }
 
 
@@ -231,7 +237,7 @@ class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
 
     override fun onDoUploadFeedbackError() {
         ll_suggestion_load.visibility = View.GONE
-        ToastUtils.showShort("举报失败，请等到网络稳定后重新尝试")
+        ToastUtils.showShort("反馈失败，请等到网络稳定后重新尝试")
     }
 
     override fun onItemClick(v: View?, position: Int) {

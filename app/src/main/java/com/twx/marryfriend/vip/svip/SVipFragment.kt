@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.alipay.sdk.app.PayTask
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -254,20 +255,33 @@ class SVipFragment : Fragment(), IDoSVipAliPayCallback, IDoSVipRefreshSelfCallba
     }
 
     private fun doAliPay() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.BUY_ORDER_NUMBER] = getOrder("VIP", mVipMode, mPay)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.BUY_ORDER_NUMBER] = getOrder("VIP", mVipMode, mPay)
 //        map[Contents.FEE] = mVipPrice
-        map[Contents.FEE] = 0.01.toString()
-        map[Contents.BODY] = "会员"
-        map[Contents.USER_SYSTEM] = "1"
-        doSVipAliPayPresent.doSVipAliPay(map)
-        ll_vip_super_loading?.visibility = View.VISIBLE
+            map[Contents.FEE] = 0.01.toString()
+            map[Contents.BODY] = "会员"
+            map[Contents.USER_SYSTEM] = "1"
+            doSVipAliPayPresent.doSVipAliPay(map)
+            ll_vip_super_loading?.visibility = View.VISIBLE
+
+
+
+
     }
 
     private fun doSVipUpdate() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doRefreshSelfPresent.doSVipRefreshSelf(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doRefreshSelfPresent.doSVipRefreshSelf(map)
+
+
+
+
     }
 
     // 获取订单号信息
@@ -434,6 +448,7 @@ class SVipFragment : Fragment(), IDoSVipAliPayCallback, IDoSVipRefreshSelfCallba
 
     override fun onDoSVipAliPayError() {
         ll_vip_super_loading?.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoSVipRefreshSelfSuccess(refreshSelfBean: RefreshSelfBean?) {
@@ -459,6 +474,7 @@ class SVipFragment : Fragment(), IDoSVipAliPayCallback, IDoSVipRefreshSelfCallba
 
     override fun onDoSVipRefreshSelfError() {
         ll_vip_super_loading?.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
 

@@ -14,10 +14,7 @@ import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
-import com.blankj.utilcode.util.FileUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.TimeUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
@@ -238,10 +235,14 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
                     SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                    map[Contents.GREET_UPDATE] = getGreetInfo()
-                    doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                        map[Contents.GREET_UPDATE] = getGreetInfo()
+                        doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
 
                 } catch (e: BceClientException) {
                     e.printStackTrace()
@@ -341,7 +342,7 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
     }
 
     override fun onDoUpdateGreetInfoError() {
-        ToastUtils.showShort("上传失败，请稍后再试")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

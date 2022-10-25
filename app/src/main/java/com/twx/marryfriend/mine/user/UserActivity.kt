@@ -8,7 +8,9 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
@@ -111,24 +113,42 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
     // 获取生活照
     private fun getPhoto() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getPhotoListPresent.getPhotoList(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            getPhotoListPresent.getPhotoList(map)
+
+
+
+
 
     }
 
     // 获取择偶省市要求列表
     private fun getDemandAddress() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
+
+
+            val demandInfoMap: MutableMap<String, String> = TreeMap()
+            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
+
+
+
     }
 
     // 获取五个（所有信息）
     private fun getFiveInfo() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        getFiveInfoPresent.getFiveInfo(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            getFiveInfoPresent.getFiveInfo(map)
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -475,7 +495,7 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     }
 
     override fun onGetFiveInfoError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoGetDemandAddressSuccess(demandAddressBean: DemandAddressBean?) {
@@ -512,7 +532,7 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     }
 
     override fun onDoGetDemandAddressError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetPhotoListSuccess(photoListBean: PhotoListBean?) {
@@ -745,7 +765,7 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     }
 
     override fun onGetPhotoListError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

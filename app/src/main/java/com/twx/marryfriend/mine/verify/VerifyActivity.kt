@@ -4,6 +4,7 @@ import android.content.Intent
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
@@ -79,18 +80,31 @@ class VerifyActivity : MainBaseViewActivity(), IDoUpdateVerifyInfoCallback,
 
     private fun updateVerifyInfo() {
 
-        val verifyInfoMap: MutableMap<String, String> = TreeMap()
-        verifyInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        verifyInfoMap[Contents.VERIFY_UPDATE] = getVerifyInfo()
-        doUpdateVerifyInfoPresent.doUpdateVerifyInfo(verifyInfoMap)
+
+
+
+            val verifyInfoMap: MutableMap<String, String> = TreeMap()
+            verifyInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            verifyInfoMap[Contents.VERIFY_UPDATE] = getVerifyInfo()
+            doUpdateVerifyInfoPresent.doUpdateVerifyInfo(verifyInfoMap)
+
+
+
+
     }
 
     private fun updateBaseInfo() {
 
-        val baseInfoMap: MutableMap<String, String> = TreeMap()
-        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
-        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
+            val baseInfoMap: MutableMap<String, String> = TreeMap()
+            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
 
     }
 
@@ -203,7 +217,7 @@ class VerifyActivity : MainBaseViewActivity(), IDoUpdateVerifyInfoCallback,
     }
 
     override fun onDoUpdateVerifyInfoError() {
-        ToastUtils.showShort("数据上传失败，请重新认证")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

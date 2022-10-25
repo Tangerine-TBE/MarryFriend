@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
@@ -81,10 +82,14 @@ class IntroduceToolActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback 
     }
 
     private fun doUploadInfo(introduce: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.BASE_UPDATE] = "{\"introduce_self\":\"$introduce\"}"
-        doUpdateBaseInfoPresent.doUpdateBaseInfo(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.BASE_UPDATE] = "{\"introduce_self\":\"$introduce\"}"
+            doUpdateBaseInfoPresent.doUpdateBaseInfo(map)
+
+        
     }
 
     override fun onLoading() {

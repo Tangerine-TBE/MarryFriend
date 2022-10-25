@@ -20,9 +20,6 @@ open class MfrMessageActivity : UmengNotifyClickActivity() {
 
         Log.i("guo", "mmmmmmmsg :$msg")
 
-        if (!TextUtils.isEmpty(body)) {
-            runOnUiThread(Runnable { (findViewById<TextView>(R.id.tv)).text = body })
-        }
     }
 
 

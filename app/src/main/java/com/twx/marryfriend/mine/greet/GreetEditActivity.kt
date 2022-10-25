@@ -2,6 +2,7 @@ package com.twx.marryfriend.mine.greet
 
 import android.text.Editable
 import android.text.TextWatcher
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
@@ -98,11 +99,17 @@ class GreetEditActivity : MainBaseViewActivity(), IDoTextVerifyCallback,
 
             if (greet.length >= 10) {
 
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                map[Contents.TEXT] = greet
-                doTextVerifyPresent.doTextVerify(map)
+
+
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = greet
+                    doTextVerifyPresent.doTextVerify(map)
+
+
+
+
 
             } else {
                 ToastUtils.showShort("请输入至少10字内容")
@@ -111,10 +118,17 @@ class GreetEditActivity : MainBaseViewActivity(), IDoTextVerifyCallback,
     }
 
     private fun upDateGreet(greet: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        map[Contents.GREET_UPDATE] = getGreetInfo(greet)
-        doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            map[Contents.GREET_UPDATE] = getGreetInfo(greet)
+            doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+
+
     }
 
 
@@ -153,7 +167,7 @@ class GreetEditActivity : MainBaseViewActivity(), IDoTextVerifyCallback,
     }
 
     override fun onDoUpdateGreetInfoError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {

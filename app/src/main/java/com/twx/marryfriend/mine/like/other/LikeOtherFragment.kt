@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
@@ -109,12 +111,19 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
     }
 
     private fun getLikeOtherData(page: Int) {
-        isRequest = true
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PAGE] = page.toString()
-        map[Contents.SIZE] = "10"
-        getMeLikeWhoPresent.getMeLikeWho(map)
+
+
+
+            isRequest = true
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PAGE] = page.toString()
+            map[Contents.SIZE] = "10"
+            getMeLikeWhoPresent.getMeLikeWho(map)
+
+
+
+
     }
 
     override fun onLoading() {
@@ -167,6 +176,7 @@ class LikeOtherFragment : Fragment(), IGetMeLikeWhoCallback, RecentLikeAdapter.O
             sfl_like_other_refresh.finishRefresh(false)
             sfl_like_other_refresh.finishLoadMore(false)
         }
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onItemClick(v: View?, position: Int) {

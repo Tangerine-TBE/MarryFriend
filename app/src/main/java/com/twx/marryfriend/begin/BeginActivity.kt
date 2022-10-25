@@ -204,14 +204,18 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             val unique =
                 Settings.System.getString(application.contentResolver, Settings.Secure.ANDROID_ID)
             if (token != null) {
-                map[Contents.ALI_TOKEN] = token
-                map[Contents.EQUIPMENT_NUMBER] = unique
-                map[Contents.USER_VERSION] = getVersion()
-                map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-                map[Contents.USER_PACKAGE] = "com.jiaou.love"
-                map[Contents.USER_SYSTEM] = 1.toString()
-                map[Contents.USER_PKG_CHN] = "未来佳偶婚恋交友"
-                doAutoLoginPresent.doAutoLogin(map)
+
+
+                    map[Contents.ALI_TOKEN] = token
+                    map[Contents.EQUIPMENT_NUMBER] = unique
+                    map[Contents.USER_VERSION] = getVersion()
+                    map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+                    map[Contents.USER_PACKAGE] = "com.jiaou.love"
+                    map[Contents.USER_SYSTEM] = 1.toString()
+                    map[Contents.USER_PKG_CHN] = "未来佳偶婚恋交友"
+                    doAutoLoginPresent.doAutoLogin(map)
+
+
             }
         })
     }
@@ -293,6 +297,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
         //点击一键登录,登录失败
         MobclickAgent.onEvent(this, "10004_quick_login_fail");
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
 
     }
 

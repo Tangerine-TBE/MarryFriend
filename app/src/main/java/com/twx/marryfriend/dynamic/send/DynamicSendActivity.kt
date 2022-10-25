@@ -863,21 +863,29 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
     private fun doTextVerify(text: String) {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-        map[Contents.TEXT] = text
-        doTextVerifyPresent.doTextVerify(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+            map[Contents.TEXT] = text
+            doTextVerifyPresent.doTextVerify(map)
+
+
+
+
     }
 
     private fun uploadTrend() {
-        doUploadTrend = false
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TREND_INFO] = getUploadTrendInfo()
 
-        Log.i("guo", "trendInfo : ${getUploadTrendInfo()}")
 
-        doUploadTrendPresent.doUploadTrend(map)
+
+            doUploadTrend = false
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TREND_INFO] = getUploadTrendInfo()
+            doUploadTrendPresent.doUploadTrend(map)
+
+
 
     }
 
@@ -1329,6 +1337,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
     override fun onDoUploadTrendError() {
         ll_send_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     inner class AddChooseDialog(context: Context) : FullScreenPopupView(context) {

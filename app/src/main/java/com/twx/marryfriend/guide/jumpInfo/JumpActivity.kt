@@ -1094,28 +1094,40 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
         Log.i("guo", "jumpToMain")
 
-        val moreInfoMap: MutableMap<String, String> = TreeMap()
-        moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
-        doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
-        val baseInfoMap: MutableMap<String, String> = TreeMap()
-        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
-        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+            val moreInfoMap: MutableMap<String, String> = TreeMap()
+            moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
+            doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
+
+            val baseInfoMap: MutableMap<String, String> = TreeMap()
+            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
 
     }
 
     // 需要上传的基础信息
     private fun updateAvatar(photoUrl: String, type: String, name: String) {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.IMAGE_URL] = photoUrl
-        map[Contents.FILE_TYPE] = type
-        map[Contents.FILE_NAME] = name
-        map[Contents.CONTENT] = "0"
-        doUploadAvatarPresent.doUploadAvatar(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.IMAGE_URL] = photoUrl
+            map[Contents.FILE_TYPE] = type
+            map[Contents.FILE_NAME] = name
+            map[Contents.CONTENT] = "0"
+            doUploadAvatarPresent.doUploadAvatar(map)
+
+
+
+
 
     }
 
@@ -1467,6 +1479,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     override fun onDoUploadAvatarError() {
         ll_jump_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean?) {
@@ -1523,7 +1536,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                         Log.i("guo", "Error StatusCode: " + e.statusCode);
                         Log.i("guo", "Error ErrorType: " + e.errorType);
                     } catch (e: UnknownHostException) {
-                        Log.i("guo","网络请求错误，请检查网络后稍后重试")
+                        Log.i("guo", "网络请求错误，请检查网络后稍后重试")
                         ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                         e.printStackTrace()
                     }
@@ -1543,6 +1556,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     override fun onDoFaceDetectError() {
         ll_jump_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
@@ -1618,6 +1632,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     }
 
     override fun onDoUpdateMoreInfoError() {
+
         if (!isCompleteUpdateMoreInfo) {
             isCompleteUpdateMoreInfo = true
 
@@ -1633,7 +1648,7 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
             }
 
         }
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     // -------------------  上传头像界面  -----------------

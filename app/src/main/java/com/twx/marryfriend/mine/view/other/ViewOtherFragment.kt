@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -104,11 +105,17 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
     }
 
     private fun getViewOtherData(page: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PAGE] = page.toString()
-        map[Contents.SIZE] = "10"
-        getMeSeeWhoPresent.getMeSeeWho(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PAGE] = page.toString()
+            map[Contents.SIZE] = "10"
+            getMeSeeWhoPresent.getMeSeeWho(map)
+
+
+
     }
 
     override fun onLoading() {
@@ -155,6 +162,7 @@ class ViewOtherFragment : Fragment(), IGetMeSeeWhoCallback, ViewOtherAdapter.OnI
             sfl_view_other_refresh.finishRefresh(false)
             sfl_view_other_refresh.finishLoadMore(false)
         }
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onItemClick(v: View?, position: Int) {

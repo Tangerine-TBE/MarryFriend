@@ -11,6 +11,7 @@ import androidx.core.provider.FontRequest
 import androidx.emoji.text.EmojiCompat
 import androidx.emoji.text.FontRequestEmojiCompatConfig
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.bumptech.glide.Glide
@@ -400,30 +401,50 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback, IDoD
 
     // 初次加载我的动态列表
     private fun getFirstTrendsList() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.TRENDS_TYPE] = trendType.toString()
-        map[Contents.PAGE] = "1"
-        map[Contents.SIZE] = "10"
-        getMyTrendsListPresent.getMyTrendsList(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.TRENDS_TYPE] = trendType.toString()
+            map[Contents.PAGE] = "1"
+            map[Contents.SIZE] = "10"
+            getMyTrendsListPresent.getMyTrendsList(map)
+
+
+
+
+
     }
 
     // 加载更多我的动态列表
     private fun getMoreTrendsList(currentPaper: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.TRENDS_TYPE] = trendType.toString()
-        map[Contents.PAGE] = currentPaper.toString()
-        map[Contents.SIZE] = "10"
-        getMyTrendsListPresent.getMyTrendsList(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.TRENDS_TYPE] = trendType.toString()
+            map[Contents.PAGE] = currentPaper.toString()
+            map[Contents.SIZE] = "10"
+            getMyTrendsListPresent.getMyTrendsList(map)
+
+
+
     }
 
     // 删除我的动态
     private fun deleteTrends(trendId: Int, userId: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ID] = trendId.toString()
-        map[Contents.USER_ID] = userId
-        doDeleteTrendPresent.doDeleteTrend(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ID] = trendId.toString()
+            map[Contents.USER_ID] = userId
+            doDeleteTrendPresent.doDeleteTrend(map)
+
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -467,7 +488,7 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback, IDoD
     }
 
     override fun onDoDeleteTrendError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetMyTrendsListSuccess(myTrendsListBean: MyTrendsListBean) {
@@ -532,6 +553,8 @@ class MyDynamicActivity : MainBaseViewActivity(), IGetMyTrendsListCallback, IDoD
 
         srl_dynamic_mine_refresh.finishRefresh(false)
         srl_dynamic_mine_refresh.finishLoadMore(false)
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     inner class DynamicEditDialog(context: Context, val position: Int) :

@@ -3192,13 +3192,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             photoBitmap = bitmap
 
-            val map: MutableMap<String, String> = TreeMap()
 
-            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-            map[Contents.IMAGE] = bitmapToBase64(bitmap)
 
-            doFaceDetectPresent.doDataFaceDetect(map)
+                val map: MutableMap<String, String> = TreeMap()
+                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                map[Contents.IMAGE] = bitmapToBase64(bitmap)
+                doFaceDetectPresent.doDataFaceDetect(map)
+
+
 
         } else {
             ToastUtils.showShort("无法剪切选择图片")
@@ -3264,10 +3266,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         val introduceInfo = " {\"introduce_self\":    \"$introduce\"}"     // 我心目中的Ta
 
-        val baseInfoMap: MutableMap<String, String> = TreeMap()
-        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        baseInfoMap[Contents.BASE_UPDATE] = introduceInfo
-        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
+            val baseInfoMap: MutableMap<String, String> = TreeMap()
+            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            baseInfoMap[Contents.BASE_UPDATE] = introduceInfo
+            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
     }
 
 
@@ -3279,54 +3287,65 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         val taInfo = " {\"ta_in_my_mind\":    \"$ta\"}"                // 我心目中的Ta
 
-        val baseInfoMap: MutableMap<String, String> = TreeMap()
-        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        baseInfoMap[Contents.BASE_UPDATE] = taInfo
-        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
+            val baseInfoMap: MutableMap<String, String> = TreeMap()
+            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            baseInfoMap[Contents.BASE_UPDATE] = taInfo
+            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+
     }
 
 
     // 开始上传信息
     private fun update() {
 
-        val moreInfoMap: MutableMap<String, String> = TreeMap()
-        moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
-        doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
 
-        baseUpdateMode = "all"
-        needUpdateBase = true
 
-        val baseInfoMap: MutableMap<String, String> = TreeMap()
-        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
-        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+            val moreInfoMap: MutableMap<String, String> = TreeMap()
+            moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
+            doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
 
-        // 更新资料完善度
-        val proportionMap: MutableMap<String, String> = TreeMap()
-        proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        proportionMap[Contents.PROPORTION] = progress.toString()
-        updateProportionPresent.doUpdateProportion(proportionMap)
+            baseUpdateMode = "all"
+            needUpdateBase = true
+
+            val baseInfoMap: MutableMap<String, String> = TreeMap()
+            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
+
+
+            // 更新资料完善度
+            val proportionMap: MutableMap<String, String> = TreeMap()
+            proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            proportionMap[Contents.PROPORTION] = progress.toString()
+            updateProportionPresent.doUpdateProportion(proportionMap)
+
+
+
 
     }
 
     // 需要上传的基础信息
     private fun updateAvatar(photoUrl: String, type: String, name: String) {
 
-        Log.i("guo", "id :${SPStaticUtils.getString(Constant.USER_ID, "13")}")
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.IMAGE_URL] = photoUrl
-        map[Contents.FILE_TYPE] = type
-        map[Contents.FILE_NAME] = name
-        map[Contents.CONTENT] = "0"
 
-        Log.i("guo", "avatarInfo : ${map}")
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.IMAGE_URL] = photoUrl
+            map[Contents.FILE_TYPE] = type
+            map[Contents.FILE_NAME] = name
+            map[Contents.CONTENT] = "0"
+            doUploadAvatarPresent.doUploadAvatar(map)
 
-        doUploadAvatarPresent.doUploadAvatar(map)
+
 
     }
 
@@ -3482,14 +3501,14 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUploadAvatarError() {
-        ToastUtils.showShort("上传失败")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
     }
 
     override fun onDoUpdateGreetInfoError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoUpdateProportionSuccess(updateProportionInfoBean: UpdateProportionInfoBean?) {
@@ -3498,7 +3517,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateProportionError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoDataFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
@@ -3566,7 +3585,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                     Log.i("guo", "网络请求错误，请检查网络后稍后重试")
                     ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                     e.printStackTrace()
-                } catch (e: FileNotFoundException){
+                } catch (e: FileNotFoundException) {
                     Log.i("guo", "目标文件不存在，请稍后重试")
                     ToastUtils.showShort("目标文件不存在，请稍后重试")
                     e.printStackTrace()
@@ -3592,6 +3611,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     override fun onDoDataFaceDetectError() {
         ll_user_data_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
@@ -3612,7 +3632,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     }
 
     override fun onDoUpdateMoreInfoError() {
-        ToastUtils.showShort("上传信息失败")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoUpdateBaseInfoSuccess(baseInfoUpdateBean: BaseInfoUpdateBean?) {
@@ -3867,11 +3887,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = text
-                    doTextVerifyPresent.doTextVerify(map)
+
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = text
+                        doTextVerifyPresent.doTextVerify(map)
+
+
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -4106,10 +4130,16 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                             SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                            map[Contents.GREET_UPDATE] = getGreetInfo()
-                            doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+
+                                val map: MutableMap<String, String> = TreeMap()
+                                map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                                map[Contents.GREET_UPDATE] = getGreetInfo()
+                                doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+
 
                         } catch (e: BceClientException) {
                             e.printStackTrace()
@@ -4249,30 +4279,17 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (text.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        text = ""
-//                        content.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_TA, text)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = text
-                    doTextVerifyPresent.doTextVerify(map)
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = text
+                        doTextVerifyPresent.doTextVerify(map)
+
+
+
+
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -4353,30 +4370,15 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 if (name1.isNotEmpty()) {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (name1.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        name1 = ""
-//                        name.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_NAME, name1)
-//                        isNeedJump = true
-//                        dismiss()
-//                    }
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = name1
-                    doTextVerifyPresent.doTextVerify(map)
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = name1
+                        doTextVerifyPresent.doTextVerify(map)
+
+
 
                 } else {
                     ToastUtils.showShort("请输入新昵称")

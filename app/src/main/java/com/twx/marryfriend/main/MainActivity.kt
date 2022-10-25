@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.PermissionUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -89,10 +90,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         ViewModelProvider(this).get(RecommendViewModel::class.java)
     }
 
-
-    private var isJump = false
-    private var custom = ""
-
     private lateinit var doUpdateTokenPresent: doUpdateTokenPresentImpl
 
     override fun getLayoutView(): Int = R.layout.activity_main
@@ -152,19 +149,18 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         }
         PushManager.getNotificationMsg()?.also {
             PushManager.handlerNotificationMsg()
-            val from=ImUserInfoHelper.getUserInfo(it.from)
-            if (UserInfo.isVip()||from?.isSuperVip==true||from?.isMutualLike==true){
-                startActivity(ImChatActivity.getIntent(this,it.from))
-            }else{
+            val from = ImUserInfoHelper.getUserInfo(it.from)
+            if (UserInfo.isVip() || from?.isSuperVip == true || from?.isMutualLike == true) {
+                startActivity(ImChatActivity.getIntent(this, it.from))
+            } else {
                 rb_main_message.performClick()
             }
         }
 
+        val custom = SPStaticUtils.getString(Constant.PUSH_ACTION)
 
-        isJump = intent.getBooleanExtra("isJump", false)
-        custom = intent.getStringExtra("custom").toString()
+        if (custom != "") {
 
-        if (isJump) {
             when (custom) {
                 "shenhe_tongzhi" -> {
                     Log.i("guo", "审核通知，跳小秘书");
@@ -203,10 +199,12 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
                     ToastUtils.showShort("跳转至送礼界面")
                 }
                 else -> {
-                    Log.i("guo", "无动作，跳转至首页界面")
-                    startActivity(Intent(this, MainActivity::class.java))
+                    Log.i("guo", "无动作")
                 }
             }
+
+            SPStaticUtils.put(Constant.PUSH_ACTION, "")
+
         }
 
     }
@@ -248,9 +246,6 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
         super.initEvent()
         rb_main_recommend.setOnClickListener {
             initRecommendFragment()
-
-//            startActivity(VoiceActivity.getInt(this, false))
-
 
         }
 
@@ -304,10 +299,17 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
 
     private fun updateToken(token: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.UMENG_TOKEN] = token
-        doUpdateTokenPresent.doUpdateToken(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.UMENG_TOKEN] = token
+            doUpdateTokenPresent.doUpdateToken(map)
+
+
+
+
     }
 
     private fun initRecommendFragment() {
@@ -468,7 +470,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     }
 
     override fun onDoUpdateTokenError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
 

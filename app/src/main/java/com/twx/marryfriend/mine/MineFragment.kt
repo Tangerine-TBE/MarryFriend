@@ -814,22 +814,41 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     }
 
     private fun getAvatar() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doViewHeadFacePresent.doViewHeadFace(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doViewHeadFacePresent.doViewHeadFace(map)
+
+
+
+
     }
 
     private fun getFourTotal() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getFourTotalPresent.getFourTotal(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            getFourTotalPresent.getFourTotal(map)
+
+
+
+
     }
 
     // 获取五个（所有信息）
     private fun getFiveInfo() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getFiveInfoPresent.getFiveInfo(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            getFiveInfoPresent.getFiveInfo(map)
+
+
+
     }
 
     private fun saveBitmap(bitmap: Bitmap, targetPath: String): String {
@@ -1309,7 +1328,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     }
 
     override fun onGetFiveInfoError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetFourTotalSuccess(fourTotalBean: FourTotalBean?) {
@@ -1393,7 +1412,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     }
 
     override fun onGetFourTotalError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoViewHeadFaceSuccess(viewHeadfaceBean: ViewHeadfaceBean?) {
@@ -1529,7 +1548,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     }
 
     override fun onDoViewHeadFaceError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoUpdateGreetInfoSuccess(updateGreetInfoBean: UpdateGreetInfoBean?) {
@@ -1543,7 +1562,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     }
 
     override fun onDoUpdateGreetInfoError() {
-        ToastUtils.showShort("语音文件上传失败")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
@@ -1639,7 +1658,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     override fun onDoFaceDetectError() {
 
         ll_mine_loading.visibility = View.GONE
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
 //             -----------------  弹窗  -----------------
@@ -1797,30 +1816,19 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                 nick = name.text.toString()
 
-//                for (i in 0.until(banTextList.size)) {
-//                    val code = banTextList[i]
-//                    if (nick.contains(code)) {
-//                        haveBanText = true
-//                    }
-//                }
-
                 if (nick.isNotEmpty()) {
 
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        name.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        SPStaticUtils.put(Constant.ME_NAME, nick)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
+                    if (NetworkUtils.isAvailable()){
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = nick
-                    doTextVerifyPresent.doTextVerify(map)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = nick
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }else{
+                        ToastUtils.showShort("网络连接失败，请检查网络")
+                    }
 
                 } else {
                     ToastUtils.showShort("请输入您需要更改的昵称")
@@ -1945,30 +1953,17 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (text.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        text = ""
-//                        content.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_HOBBY, text)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
+                    if (NetworkUtils.isAvailable()){
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = text
-                    doTextVerifyPresent.doTextVerify(map)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = text
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }else{
+                        ToastUtils.showShort("网络连接失败，请检查网络")
+                    }
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2089,30 +2084,17 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (text.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        text = ""
-//                        content.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_GREET, text)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
+                    if (NetworkUtils.isAvailable()){
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = text
-                    doTextVerifyPresent.doTextVerify(map)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = text
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }else{
+                        ToastUtils.showShort("网络连接失败，请检查网络")
+                    }
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2233,30 +2215,17 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-//                    for (i in 0.until(banTextList.size)) {
-//                        val code = banTextList[i]
-//                        if (text.contains(code)) {
-//                            haveBanText = true
-//                        }
-//                    }
-//
-//                    if (haveBanText) {
-//                        ToastUtils.showShort("输入中存在敏感字，请重新输入")
-//                        text = ""
-//                        content.setText("")
-//                        haveBanText = false
-//                    } else {
-//                        // 保存数据
-//                        SPStaticUtils.put(Constant.ME_INTRODUCE, text)
-//                        isNeedUpdate = true
-//                        dismiss()
-//                    }
+                    if (NetworkUtils.isAvailable()){
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                    map[Contents.TEXT] = text
-                    doTextVerifyPresent.doTextVerify(map)
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = text
+                        doTextVerifyPresent.doTextVerify(map)
+
+                    }else{
+                        ToastUtils.showShort("网络连接失败，请检查网络")
+                    }
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2483,10 +2452,16 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                     SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                    map[Contents.GREET_UPDATE] = getGreetInfo()
-                    doUpdateGreetPresent.doUpdateGreetInfo(map)
+                    if (NetworkUtils.isAvailable()){
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                        map[Contents.GREET_UPDATE] = getGreetInfo()
+                        doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+                    }else{
+                        ToastUtils.showShort("网络连接失败，请检查网络")
+                    }
 
                 }.start()
 

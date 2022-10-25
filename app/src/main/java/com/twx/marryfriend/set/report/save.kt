@@ -201,35 +201,56 @@ class save {
 
         // 生活照 百度云审核
         private fun doFaceDetect(picPath: String) {
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
-            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-            map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(picPath))
-            doFaceDetectPresent.doLifeFaceDetect(map)
+
+
+
+
+                val map: MutableMap<String, String> = TreeMap()
+                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
+                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(picPath))
+                doFaceDetectPresent.doLifeFaceDetect(map)
+
+
+
+
         }
 
         // 文字审核
         private fun doTextDetect(text: String) {
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-            map[Contents.TEXT] = text
-            doTextVerifyPresent.doTextVerify(map)
+
+
+
+                val map: MutableMap<String, String> = TreeMap()
+                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                map[Contents.TEXT] = text
+                doTextVerifyPresent.doTextVerify(map)
+
+
+
+
         }
 
         // 上传举报信息
         private fun doReport(text: String, url: String) {
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.HOST_UID] = hostId
-            map[Contents.GUEST_UID] = guestId
-            map[Contents.REASON_CODE] = mode.toString()
-            map[Contents.REASON_TEXT] = text
-            map[Contents.MARK_NOTICE] = "0"
-            map[Contents.IMAGE_URL] = url
 
-            Log.i("guo", map.toString())
 
-            doReportOtherPresent.doReportOther(map)
+
+                val map: MutableMap<String, String> = TreeMap()
+                map[Contents.HOST_UID] = hostId
+                map[Contents.GUEST_UID] = guestId
+                map[Contents.REASON_CODE] = mode.toString()
+                map[Contents.REASON_TEXT] = text
+                map[Contents.MARK_NOTICE] = "0"
+                map[Contents.IMAGE_URL] = url
+
+                Log.i("guo", map.toString())
+
+                doReportOtherPresent.doReportOther(map)
+
+
+
         }
 
 

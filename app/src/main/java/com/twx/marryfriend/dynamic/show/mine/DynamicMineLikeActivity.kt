@@ -2,6 +2,8 @@ package com.twx.marryfriend.dynamic.show.mine
 
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
@@ -104,12 +106,17 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
 
     private fun getLikeList(Page: Int) {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = userId.toString()
-        map[Contents.PAGE] = Page.toString()
-        map[Contents.SIZE] = "50"
-        getLikeListPresent.getLikeList(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = userId.toString()
+            map[Contents.PAGE] = Page.toString()
+            map[Contents.SIZE] = "50"
+            getLikeListPresent.getLikeList(map)
+
+
+
 
     }
 
@@ -143,6 +150,8 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
     override fun onGetLikeListCodeError() {
         sfl_dynamic_mine_like_refresh.finishRefresh(false)
         sfl_dynamic_mine_like_refresh.finishLoadMore(false)
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
 
     }
 

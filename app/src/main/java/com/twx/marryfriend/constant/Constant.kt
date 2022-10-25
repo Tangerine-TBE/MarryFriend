@@ -18,9 +18,11 @@ object Constant {
     // 后台弹出界面权限提示
     const val BACKGROUND_PERMISSION_TIP = "background_permisssion_tip"
 
-
     // 是否第一次启动app
     const val FIRST_START = "first_start"
+
+    // 离线状态点击推送消息进入app后的动作
+    const val PUSH_ACTION = "push_action"
 
 
     // 用户id

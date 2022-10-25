@@ -339,13 +339,20 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
     // 头像上传
     private fun doUploadAvatar(url: String, type: String, name: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.IMAGE_URL] = mPhotoUrl
-        map[Contents.FILE_TYPE] = type
-        map[Contents.FILE_NAME] = name
-        map[Contents.CONTENT] = "0"
-        doUploadAvatarPresent.doUploadAvatar(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.IMAGE_URL] = mPhotoUrl
+            map[Contents.FILE_TYPE] = type
+            map[Contents.FILE_NAME] = name
+            map[Contents.CONTENT] = "0"
+            doUploadAvatarPresent.doUploadAvatar(map)
+
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -398,6 +405,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
     override fun onDoUploadAvatarError() {
         ll_avatar_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean?) {
@@ -457,6 +465,7 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
     override fun onDoFaceDetectError() {
         ll_avatar_loading.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

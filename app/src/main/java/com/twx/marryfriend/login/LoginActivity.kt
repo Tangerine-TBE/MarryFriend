@@ -140,9 +140,11 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 //输入手机号码,获取验证码
                 MobclickAgent.onEvent(this, "10007_get_verification_code");
 
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.Mobile] = phone
-                getVerifyCodePresent.getVerifyCode(map)
+
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.Mobile] = phone
+                    getVerifyCodePresent.getVerifyCode(map)
+
 
             } else {
                 ToastUtils.showShort("请输入正确手机号")
@@ -260,16 +262,19 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
 
                     KeyboardUtils.hideSoftInput(this@LoginActivity)
 
-                    val map: MutableMap<String, String> = TreeMap()
-                    map[Contents.Mobile] = phone
-                    map[Contents.VERIFY_CODE] = s.toString()
-                    map[Contents.DEVICE_CODE] = unique
-                    map[Contents.VERSION] = SPStaticUtils.getString(Constant.VERSION, "_360")
-                    map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-                    map[Contents.PACKAGE_ENGLISH] = "com.twx.marryfriend"
-                    map[Contents.SYSTEM] = "1"
-                    map[Contents.PACKAGE_CHINESE] = "婚恋"
-                    doPhoneLoginPresent.doPhoneLogin(map)
+
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.Mobile] = phone
+                        map[Contents.VERIFY_CODE] = s.toString()
+                        map[Contents.DEVICE_CODE] = unique
+                        map[Contents.VERSION] = SPStaticUtils.getString(Constant.VERSION, "_360")
+                        map[Contents.USER_PLATFORM] =
+                            SPStaticUtils.getString(Constant.CHANNEL, "_360")
+                        map[Contents.PACKAGE_ENGLISH] = "com.twx.marryfriend"
+                        map[Contents.SYSTEM] = "1"
+                        map[Contents.PACKAGE_CHINESE] = "婚恋"
+                        doPhoneLoginPresent.doPhoneLogin(map)
+
 
                 }
             }
@@ -279,9 +284,10 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
         tv_code_resend.setOnClickListener {
             startCurrentDownTimer()
 
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.Mobile] = phone
-            getVerifyCodePresent.getVerifyCode(map)
+
+                val map: MutableMap<String, String> = TreeMap()
+                map[Contents.Mobile] = phone
+                getVerifyCodePresent.getVerifyCode(map)
 
         }
 
@@ -404,7 +410,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
     }
 
     override fun onDoFaceVerifyError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoPhoneLoginSuccess(phoneLoginBean: PhoneLoginBean?) {
@@ -416,12 +422,15 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 MobclickAgent.onEvent(this, "10010_sms_login_success");
 
                 // 存储一下资料
-                SpUtil.storeVipInfo(phoneLoginBean.data.close_time_low, phoneLoginBean.data.close_time_high)
+                SpUtil.storeVipInfo(phoneLoginBean.data.close_time_low,
+                    phoneLoginBean.data.close_time_high)
 
 
                 SpLoginUtil.saveUserInfo(phoneLoginBean)
 
-                startActivity(GetInfoActivity.getIntent(this, phoneLoginBean.data.kind_type, phoneLoginBean.data.nick))
+                startActivity(GetInfoActivity.getIntent(this,
+                    phoneLoginBean.data.kind_type,
+                    phoneLoginBean.data.nick))
                 this.finish()
 
             } else {
@@ -441,6 +450,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
         MobclickAgent.onEvent(this, "10011_sms_login_fail");
 
         ToastUtils.showShort("登录失败，请稍后再试")
+
     }
 
     override fun onGetVerifyCodeSuccess(verifyCodeBean: VerifyCodeBean?) {
@@ -477,7 +487,7 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
         //获取验证码失败
         MobclickAgent.onEvent(this, "10009_get_verification_code_fail");
 
-        ToastUtils.showShort("验证码发送失败，请重试")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

@@ -3,6 +3,7 @@ package com.twx.marryfriend.set.black
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -95,19 +96,33 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
 
     // 获取黑名单列表
     private fun getBlackList(page: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PAGE] = page.toString()
-        map[Contents.SIZE] = "10"
-        getBlackListPresent.getBlackList(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PAGE] = page.toString()
+            map[Contents.SIZE] = "10"
+            getBlackListPresent.getBlackList(map)
+
+
+
+
     }
 
     // 移除黑名单
     private fun deleteBlackList(guestId: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.GUEST_UID] = guestId.toString()
-        doDeleteBlackListPresent.doDeleteBlackList(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.GUEST_UID] = guestId.toString()
+            doDeleteBlackListPresent.doDeleteBlackList(map)
+
+
+
+
     }
 
     override fun onLoading() {
@@ -130,7 +145,7 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
     }
 
     override fun onDoDeleteBlackListCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetBlackListSuccess(blackListBean: BlackListBean?) {
@@ -166,6 +181,9 @@ class BlackListActivity : MainBaseViewActivity(), IGetBlackListCallback, IDoDele
             sfl_blacklist_refresh.finishRefresh(false)
             sfl_blacklist_refresh.finishLoadMore(false)
         }
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
+
     }
 
 

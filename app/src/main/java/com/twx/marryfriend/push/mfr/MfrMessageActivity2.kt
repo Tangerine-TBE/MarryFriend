@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.blankj.utilcode.util.AppUtils
+import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ThreadUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.message.ImInit.init
 import com.message.ImUserManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.BaseConstant
+import com.twx.marryfriend.begin.BeginActivity
+import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.main.MainActivity.Companion.getIntent
 import com.umeng.message.UmengNotifyClick
 import com.umeng.message.entity.UMessage
@@ -29,20 +32,25 @@ class MfrMessageActivity2 : AppCompatActivity() {
 
             Log.i("guo", "mNotificationClick")
 
-            ThreadUtils.runOnUiThread {
+            SPStaticUtils.put(Constant.PUSH_ACTION,msg.custom)
 
-                init(BaseConstant.application)
+            startActivity(Intent(this@MfrMessageActivity2, BeginActivity::class.java))
 
-                ImUserManager.login("110", {
 
-                    Log.i("guo", "success")
-                    startActivity(getIntent(this@MfrMessageActivity2, true, msg.custom))
-
-                }, { code, message ->
-                    ToastUtils.showShort("数据登录失败，请重试")
-                    AppUtils.exitApp()
-                })
-            }
+//            ThreadUtils.runOnUiThread {
+//
+//                init(BaseConstant.application)
+//
+//                ImUserManager.login("110", {
+//
+//                    Log.i("guo", "success")
+//                    startActivity(getIntent(this@MfrMessageActivity2, true, msg.custom))
+//
+//                }, { code, message ->
+//                    ToastUtils.showShort("数据登录失败，请重试")
+//                    AppUtils.exitApp()
+//                })
+//            }
 
         }
     }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import androidx.fragment.app.FragmentActivity
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
@@ -104,18 +105,31 @@ class GreetInfoActivity : MainBaseViewActivity(), IGetGreetInfoCallback,
 
     // 获取招呼语信息
     private fun getGreetInfo() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        getGreetInfoPresent.getGreetInfo(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            getGreetInfoPresent.getGreetInfo(map)
+
+
+
     }
 
 
     // 删除招呼语信息
     private fun deleteGreetInfo() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        map[Contents.GREET_UPDATE] = getGreetInfo("")
-        doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            map[Contents.GREET_UPDATE] = getGreetInfo("")
+            doUpdateGreetPresent.doUpdateGreetInfo(map)
+
+
+
+
     }
 
     // 获取招呼语信息
@@ -178,7 +192,7 @@ class GreetInfoActivity : MainBaseViewActivity(), IGetGreetInfoCallback,
     }
 
     override fun onDoUpdateGreetInfoError() {
-        ToastUtils.showShort("删除失败，请稍后再试")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetGreetInfoSuccess(greetInfoBean: GreetInfoBean?) {
@@ -202,7 +216,7 @@ class GreetInfoActivity : MainBaseViewActivity(), IGetGreetInfoCallback,
     }
 
     override fun onGetGreetInfoCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

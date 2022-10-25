@@ -172,44 +172,49 @@ class ReportActivity : MainBaseViewActivity(), IDoReportOtherCallback,
     // 上传举报信息
     private fun doReport(text: String, url: String) {
 
-        val reasonText = when (mode) {
-            0 -> {
-                "其它"
-            }
-            1 -> {
-                "恶语辱骂"
-            }
-            2 -> {
-                "广告骚扰"
-            }
-            3 -> {
-                "投资诈骗"
-            }
-            4 -> {
-                "涉黄涉赌"
-            }
-            5 -> {
-                "资料作假"
-            }
-            6 -> {
-                "不当言论"
-            }
-            7 -> {
-                "其他平台违规"
-            }
-            else -> {
-                "其它"
-            }
-        }
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = hostId
-        map[Contents.GUEST_UID] = guestId
-        map[Contents.REASON_CODE] = (mode + 1).toString()
-        map[Contents.REASON_TEXT] = reasonText
-        map[Contents.MARK_NOTICE] = text
-        map[Contents.IMAGE_URL] = url
-        doReportOtherPresent.doReportOther(map)
+
+            val reasonText = when (mode) {
+                0 -> {
+                    "其它"
+                }
+                1 -> {
+                    "恶语辱骂"
+                }
+                2 -> {
+                    "广告骚扰"
+                }
+                3 -> {
+                    "投资诈骗"
+                }
+                4 -> {
+                    "涉黄涉赌"
+                }
+                5 -> {
+                    "资料作假"
+                }
+                6 -> {
+                    "不当言论"
+                }
+                7 -> {
+                    "其他平台违规"
+                }
+                else -> {
+                    "其它"
+                }
+            }
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = hostId
+            map[Contents.GUEST_UID] = guestId
+            map[Contents.REASON_CODE] = (mode + 1).toString()
+            map[Contents.REASON_TEXT] = reasonText
+            map[Contents.MARK_NOTICE] = text
+            map[Contents.IMAGE_URL] = url
+            doReportOtherPresent.doReportOther(map)
+
+
+
     }
 
     override fun onItemClick(v: View?, position: Int) {

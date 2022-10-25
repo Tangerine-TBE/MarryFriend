@@ -3,11 +3,7 @@ package com.twx.marryfriend.guide.info
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.blankj.utilcode.util.AppUtils
-import com.blankj.utilcode.util.GsonUtils
-import com.blankj.utilcode.util.SPStaticUtils
-import com.blankj.utilcode.util.ThreadUtils
-import com.blankj.utilcode.util.ToastUtils
+import com.blankj.utilcode.util.*
 import com.message.ImUserManager
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
@@ -166,18 +162,38 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
             Log.i("guo", "获取数据")
 
             if (!SPStaticUtils.getBoolean(Constant.JOB_HAVE, false)) {
-                val jobMap: MutableMap<String, String> = TreeMap()
-                getJobPresent.getJob(jobMap)
+
+
+
+                    val jobMap: MutableMap<String, String> = TreeMap()
+                    getJobPresent.getJob(jobMap)
+
+
+
+
             }
 
             if (!SPStaticUtils.getBoolean(Constant.CITY_HAVE, false)) {
-                val cityMap: MutableMap<String, String> = TreeMap()
-                getCityPresent.getCity(cityMap)
+
+
+
+                    val cityMap: MutableMap<String, String> = TreeMap()
+                    getCityPresent.getCity(cityMap)
+
+
+
+
             }
 
             if (!SPStaticUtils.getBoolean(Constant.INDUSTRY_HAVE, false)) {
-                val industryMap: MutableMap<String, String> = TreeMap()
-                getIndustryPresent.getIndustry(industryMap)
+
+
+
+                    val industryMap: MutableMap<String, String> = TreeMap()
+                    getIndustryPresent.getIndustry(industryMap)
+
+
+
             }
 
         } else {
@@ -191,6 +207,8 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     // 获取 头像 审核的 accessToken
     private fun getAccessToken() {
+
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.GRANT_TYPE] = "client_credentials"
         map[Contents.CLIENT_ID] = "jjKDyljlCOX3TcEcnXidYCcU"
@@ -201,6 +219,8 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     // 获取身份证号与姓名匹配的    accessToken
     private fun getIdAccessToken() {
+
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.GRANT_TYPE] = "client_credentials"
         map[Contents.CLIENT_ID] = "YLnCFKMcNiSBGxETIg4DeMht"
@@ -211,18 +231,25 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     // 获取 生活照 审核的 accessToken
     private fun getLifeAccessToken() {
+
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.GRANT_TYPE] = "client_credentials"
         map[Contents.CLIENT_ID] = "DfWMKUNlOSZzGIa6XzHKvTlZ"
         map[Contents.CLIENT_SECRET] = "F23G5Q3b0mWw2q5pyy6dyq4HEXSpdizu"
         getLifeAccessTokenPresent.getAccessToken(map)
+
     }
 
     // 获取五个（所有信息）
     private fun getFiveInfo() {
+
+
         val map: MutableMap<String, String> = TreeMap()
         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
         getFiveInfoPresent.getFiveInfo(map)
+
+
     }
 
     private fun isCompleteLoading() {
@@ -639,7 +666,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onGetFiveInfoError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetLifeAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
@@ -649,7 +676,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onGetLifeAccessTokenFail() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetIdAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
@@ -659,7 +686,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onGetIdAccessTokenFail() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetAccessTokenSuccess(accessTokenBean: AccessTokenBean?) {
@@ -669,7 +696,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onGetAccessTokenFail() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetJobSuccess(jobBean: JobBean) {
@@ -700,7 +727,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onGetJobError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
 
     }
 
@@ -726,7 +753,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
     }
 
     override fun onGetIndustryError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetCitySuccess(cityBean: CityBean) {
@@ -748,7 +775,7 @@ class GetInfoActivity : MainBaseViewActivity(), IGetCityCallback, IGetIndustryCa
 
     override fun onGetCityCodeError() {
 
-        Log.i("guo", "error")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
 
     }
 

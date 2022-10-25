@@ -181,15 +181,16 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
                         if (SPStaticUtils.getString(Constant.ACCESS_TOKEN, "") != null) {
 
-                            Log.i("guo", SPStaticUtils.getString(Constant.ACCESS_TOKEN, ""))
 
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = name
-                            isTextVerify = true
-                            doTextVerifyPresent.doTextVerify(map)
+
+                                val map: MutableMap<String, String> = TreeMap()
+                                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                                map[Contents.TEXT] = name
+                                isTextVerify = true
+                                doTextVerifyPresent.doTextVerify(map)
+
+
 
                         } else {
                             ToastUtils.showShort("数据加载失败，请重新打开应用")
@@ -222,10 +223,12 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
                         Log.i("guo", str)
 
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                        map[Contents.BASE_UPDATE] = str
-                        updateBaseInfoPresent.doUpdateBaseInfo(map)
+
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                            map[Contents.BASE_UPDATE] = str
+                            updateBaseInfoPresent.doUpdateBaseInfo(map)
+
 
                     } else {
 
@@ -382,11 +385,18 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
 
     // 获取 头像 审核的 accessToken
     private fun getAccessToken() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.GRANT_TYPE] = "client_credentials"
-        map[Contents.CLIENT_ID] = "jjKDyljlCOX3TcEcnXidYCcU"
-        map[Contents.CLIENT_SECRET] = "GQcKzFuA87uEQZhIDnlcxTpkjT2oLxdX"
-        getAccessTokenPresent.getAccessToken(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.GRANT_TYPE] = "client_credentials"
+            map[Contents.CLIENT_ID] = "jjKDyljlCOX3TcEcnXidYCcU"
+            map[Contents.CLIENT_SECRET] = "GQcKzFuA87uEQZhIDnlcxTpkjT2oLxdX"
+            getAccessTokenPresent.getAccessToken(map)
+
+
+
+
 
     }
 
@@ -422,7 +432,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
     }
 
     override fun onGetAccessTokenFail() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoTextVerifySuccess(textVerifyBean: TextVerifyBean) {

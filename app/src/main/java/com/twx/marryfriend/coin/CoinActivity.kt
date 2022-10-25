@@ -10,6 +10,7 @@ import android.os.Handler
 import android.os.Message
 import android.view.View
 import com.alipay.sdk.app.PayTask
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
@@ -185,28 +186,49 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
     }
 
     private fun getCoinPrice() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-        map[Contents.TYPE_KIND] = "android"
-        getCoinPricePresent.getCoinPrice(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+            map[Contents.TYPE_KIND] = "android"
+            getCoinPricePresent.getCoinPrice(map)
+
+
+
+
 
     }
 
     private fun doAliPay() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.BUY_ORDER_NUMBER] = getOrder("JIN", mMode, mPay)
-        map[Contents.FEE] = mPrice
-        map[Contents.BODY] = "金币"
-        map[Contents.USER_SYSTEM] = "1"
-        doAliPayPresent.doAliPay(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.BUY_ORDER_NUMBER] = getOrder("JIN", mMode, mPay)
+            map[Contents.FEE] = mPrice
+            map[Contents.BODY] = "金币"
+            map[Contents.USER_SYSTEM] = "1"
+            doAliPayPresent.doAliPay(map)
+
+
+
+
 
     }
 
     private fun updateCoin() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doRefreshSelfPresent.doRefreshSelf(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doRefreshSelfPresent.doRefreshSelf(map)
+
+
+
+
     }
 
 
@@ -410,7 +432,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
     }
 
     override fun onDoRefreshSelfError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoAliPaySuccess(aliPayBean: AliPayBean?) {
@@ -431,7 +453,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
     }
 
     override fun onDoAliPayError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
 
@@ -455,7 +477,7 @@ class CoinActivity : MainBaseViewActivity(), IGetCoinPriceCallback, IDoAliPayCal
     }
 
     override fun onGetCoinPriceCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

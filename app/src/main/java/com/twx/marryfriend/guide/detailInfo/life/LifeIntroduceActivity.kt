@@ -269,24 +269,33 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
     // 上传生活照
     private fun uploadPhoto(imageUrl: String, fileType: String, fileName: String, content: String) {
 
-        val map: MutableMap<String, String> = TreeMap()
 
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.IMAGE_URL] = imageUrl
-        map[Contents.FILE_TYPE] = fileType
-        map[Contents.FILE_NAME] = fileName
-        map[Contents.CONTENT] = content
 
-        doUploadPhotoPresent.doUploadPhoto(map)
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.IMAGE_URL] = imageUrl
+            map[Contents.FILE_TYPE] = fileType
+            map[Contents.FILE_NAME] = fileName
+            map[Contents.CONTENT] = content
+            doUploadPhotoPresent.doUploadPhoto(map)
+
+
+
+
     }
 
     // 更新生活照描述
     private fun updateDescribe(photoId: String, content: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PHOTO_ID] = photoId
-        map[Contents.CONTENT] = content
-        doUpdateDescribePresent.doUpdateDescribe(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PHOTO_ID] = photoId
+            map[Contents.CONTENT] = content
+            doUpdateDescribePresent.doUpdateDescribe(map)
+
+
     }
 
 
@@ -349,7 +358,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
 
     override fun onDoUploadPhotoError() {
         ll_life_introduce_loading.visibility = View.GONE
-        ToastUtils.showShort("生活照上传失败，请稍后再试")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
 
     }
 

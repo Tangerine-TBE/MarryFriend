@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.blankj.utilcode.constant.TimeConstants
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.TimeUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -236,34 +237,61 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     }
 
     private fun updateCoin() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doRefreshSelfPresent.doRefreshSelf(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doRefreshSelfPresent.doRefreshSelf(map)
+
+
+
+
     }
 
     private fun getVipPrice() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-        map[Contents.TYPE_KIND] = "android"
-        map[Contents.VIP_LEVEL] = "1"
-        getVipPricePresent.getVipPrice(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+            map[Contents.TYPE_KIND] = "android"
+            map[Contents.VIP_LEVEL] = "1"
+            getVipPricePresent.getVipPrice(map)
+
+
+
+
     }
 
     private fun getSVipPrice() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-        map[Contents.TYPE_KIND] = "android"
-        map[Contents.VIP_LEVEL] = "2"
-        getSVipPricePresent.getSVipPrice(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+            map[Contents.TYPE_KIND] = "android"
+            map[Contents.VIP_LEVEL] = "2"
+            getSVipPricePresent.getSVipPrice(map)
+
+
+
+
     }
 
     private fun doPreviewOther() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.GUEST_UID] = targetId.toString()
-        doPreviewOtherPresent.doPreviewOther(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.GUEST_UID] = targetId.toString()
+            doPreviewOtherPresent.doPreviewOther(map)
+
+
+
     }
 
 
@@ -548,7 +576,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     }
 
     override fun onDoRefreshSelfError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoPreviewOtherSuccess(previewOtherBean: PreviewOtherBean?) {
@@ -562,7 +590,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     }
 
     override fun onDoPreviewOtherError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetSVipPriceSuccess(vipPriceBean: VipPriceBean?) {
@@ -584,7 +612,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     }
 
     override fun onGetSVipPriceCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetVipPriceSuccess(vipPriceBean: VipPriceBean?) {
@@ -606,7 +634,7 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     }
 
     override fun onGetVipPriceCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

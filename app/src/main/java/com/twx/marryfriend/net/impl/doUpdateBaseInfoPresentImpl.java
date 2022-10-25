@@ -1,5 +1,6 @@
 package com.twx.marryfriend.net.impl;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.twx.marryfriend.bean.AutoLoginBean;
 import com.twx.marryfriend.bean.BaseInfoUpdateBean;
 import com.twx.marryfriend.net.callback.IDoUpdateBaseInfoCallback;
@@ -58,6 +59,9 @@ public class doUpdateBaseInfoPresentImpl implements IDoUpdateBaseInfoPresent {
 
             @Override
             public void onFailure(Call<BaseInfoUpdateBean> call, Throwable t) {
+
+                ToastUtils.showShort("网络请求失败，请稍后再试");
+
                 for (IDoUpdateBaseInfoCallback callback : mCallback) {
                     callback.onDoUpdateBaseInfoError();
                 }

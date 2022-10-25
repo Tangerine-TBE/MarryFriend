@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.lxj.xpopup.XPopup
@@ -480,31 +481,52 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
 
     // 获取动态列表
     private fun getTrendFocus(mode: String, max: Int, min: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.UP_DOWN] = mode
-        map[Contents.MAX_ID] = max.toString()
-        map[Contents.MIN_ID] = min.toString()
-        map[Contents.SIZE] = 10.toString()
-        getTrendFocusPresent.getTrendFocus(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.UP_DOWN] = mode
+            map[Contents.MAX_ID] = max.toString()
+            map[Contents.MIN_ID] = min.toString()
+            map[Contents.SIZE] = 10.toString()
+            getTrendFocusPresent.getTrendFocus(map)
+
+
+
+
     }
 
     // 动态点赞
     private fun doLikeClick(trendId: Int, hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doFocusLikeClickPresent.doFocusLikeClick(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doFocusLikeClickPresent.doFocusLikeClick(map)
+
+
+
+
     }
 
     // 取消点赞
     private fun doLikeCancelClick(trendId: Int, hostUid: String, guestUid: String) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = trendId.toString()
-        map[Contents.HOST_UID] = hostUid.toString()
-        map[Contents.GUEST_UID] = guestUid.toString()
-        doFocusLikeCancelPresent.doFocusLikeCancel(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = trendId.toString()
+            map[Contents.HOST_UID] = hostUid.toString()
+            map[Contents.GUEST_UID] = guestUid.toString()
+            doFocusLikeCancelPresent.doFocusLikeCancel(map)
+
+
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -543,7 +565,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
     }
 
     override fun onDoFocusLikeClickError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoFocusLikeCancelSuccess(likeCancelBean: LikeCancelBean?) {
@@ -560,7 +582,7 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
     }
 
     override fun onFocusLikeCancelError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetTrendFocusSuccess(trendFocusBean: TrendFocusBean?) {
@@ -630,6 +652,9 @@ class DynamicFriendFragment : Fragment(), IGetTrendFocusCallback, IDoFocusLikeCl
     override fun onGetTrendFocusError() {
         srl_dynamic_focus_refresh.finishRefresh(false)
         srl_dynamic_focus_refresh.finishLoadMore(false)
+
+        ToastUtils.showShort("网络请求失败，请稍后再试")
+
     }
 
     override fun onItemClick(v: View?, position: Int) {

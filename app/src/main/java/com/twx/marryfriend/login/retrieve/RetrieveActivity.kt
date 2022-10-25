@@ -239,8 +239,7 @@ class RetrieveActivity : MainBaseViewActivity(), IDoIdentityVerifyCallback {
         ToastUtils.showShort(identityVerifyBean.error_code)
         ToastUtils.showShort(identityVerifyBean.error_msg)
 
-        Log.i("guo", "${identityVerifyBean.error_code}")
-        Log.i("guo", "${identityVerifyBean.error_msg}")
+        ToastUtils.showShort("网络请求失败，请稍后再试")
 
     }
 

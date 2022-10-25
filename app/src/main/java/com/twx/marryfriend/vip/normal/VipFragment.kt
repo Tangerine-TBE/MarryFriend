@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alipay.sdk.app.PayTask
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
@@ -224,22 +225,32 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
     }
 
     private fun doAliPay() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.BUY_ORDER_NUMBER] = getOrder("VIP", mVipMode, mPay)
-//        map[Contents.FEE] = mVipPrice
-        map[Contents.FEE] = 0.01.toString()
-        map[Contents.BODY] = "会员"
-        map[Contents.USER_SYSTEM] = "1"
-        doAliPayPresent.doAliPay(map)
 
-        ll_vip_normal_loading?.visibility = View.VISIBLE
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.BUY_ORDER_NUMBER] = getOrder("VIP", mVipMode, mPay)
+//        map[Contents.FEE] = mVipPrice
+            map[Contents.FEE] = 0.01.toString()
+            map[Contents.BODY] = "会员"
+            map[Contents.USER_SYSTEM] = "1"
+            doAliPayPresent.doAliPay(map)
+
+            ll_vip_normal_loading?.visibility = View.VISIBLE
+
 
     }
 
     private fun doUpdate() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doRefreshSelfPresent.doVipRefreshSelf(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doRefreshSelfPresent.doVipRefreshSelf(map)
+
+
+
     }
 
     // 获取订单号信息
@@ -410,6 +421,7 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
     override fun onDoVipRefreshSelfError() {
         ll_vip_normal_loading?.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoAliPaySuccess(aliPayBean: AliPayBean?) {
@@ -429,6 +441,7 @@ class VipFragment : Fragment(), IDoAliPayCallback, IDoVipRefreshSelfCallback {
 
     override fun onDoAliPayError() {
         ll_vip_normal_loading?.visibility = View.GONE
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

@@ -10,7 +10,9 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.dynamic.PlaceSearchBean
@@ -62,13 +64,19 @@ class LocationActivity : MainBaseViewActivity(),
             when (msg.what) {
                 1 -> {
                     if (msg.obj.toString() == et_search_container.text.toString()) {//进行判断
-                        val query = et_search_container.text.toString().trim { it <= ' ' }
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.QUERY] = query
-                        map[Contents.REGION] = city
-                        map[Contents.OUTPUT] = "json"
-                        map[Contents.AK] = "48vcqnOCS39h9H7xmijcdeCy"
-                        mBaiduSearchPresent.doBaiduSearch(map)
+
+
+
+
+                            val query = et_search_container.text.toString().trim { it <= ' ' }
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.QUERY] = query
+                            map[Contents.REGION] = city
+                            map[Contents.OUTPUT] = "json"
+                            map[Contents.AK] = "48vcqnOCS39h9H7xmijcdeCy"
+                            mBaiduSearchPresent.doBaiduSearch(map)
+
+
 
 
                     }
@@ -146,13 +154,18 @@ class LocationActivity : MainBaseViewActivity(),
         et_search_container.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                val query = et_search_container.text.toString().trim { it <= ' ' }
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.QUERY] = query
-                map[Contents.REGION] = city
-                map[Contents.OUTPUT] = "json"
-                map[Contents.AK] = "48vcqnOCS39h9H7xmijcdeCy"
-                mBaiduSearchPresent.doBaiduSearch(map)
+
+
+                    val query = et_search_container.text.toString().trim { it <= ' ' }
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.QUERY] = query
+                    map[Contents.REGION] = city
+                    map[Contents.OUTPUT] = "json"
+                    map[Contents.AK] = "48vcqnOCS39h9H7xmijcdeCy"
+                    mBaiduSearchPresent.doBaiduSearch(map)
+
+
+
             }
             false
         }
@@ -230,11 +243,17 @@ class LocationActivity : MainBaseViewActivity(),
 
     // 搜索附近地点
     private fun doPlaceSearch(page: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.KEY] = "c3f19644948b0b0134b70c5bd424cc5f"
-        map[Contents.LOCATION] = location
-        map[Contents.PAGE] = page.toString()
-        doPlaceSearch.doPlaceSearch(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.KEY] = "c3f19644948b0b0134b70c5bd424cc5f"
+            map[Contents.LOCATION] = location
+            map[Contents.PAGE] = page.toString()
+            doPlaceSearch.doPlaceSearch(map)
+
+
+
 
     }
 
@@ -257,7 +276,7 @@ class LocationActivity : MainBaseViewActivity(),
     }
 
     override fun onBaiduSearchError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoPlaceSearchSuccess(placeSearchBean: PlaceSearchBean) {
@@ -272,7 +291,7 @@ class LocationActivity : MainBaseViewActivity(),
     }
 
     override fun onDoPlaceSearchError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

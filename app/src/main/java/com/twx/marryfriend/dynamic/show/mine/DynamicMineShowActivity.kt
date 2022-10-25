@@ -509,20 +509,34 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
     // 获取具体动态
     private fun getTrendsList() {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.ID] = id.toString()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        doCheckTrendPresent.doCheckTrend(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ID] = id.toString()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            doCheckTrendPresent.doCheckTrend(map)
+
+
+
+
     }
 
     // 获取一级父评论
     private fun getCommentOne(page: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.TRENDS_ID] = 6.toString()
-        map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PAGE] = page.toString()
-        map[Contents.SIZE] = "10"
-        getCommentOnePresent.getCommentOne(map)
+
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.TRENDS_ID] = 6.toString()
+            map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PAGE] = page.toString()
+            map[Contents.SIZE] = "10"
+            getCommentOnePresent.getCommentOne(map)
+
+
+
     }
 
     // 给动态提交父评论
@@ -605,6 +619,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onDoCommentTwoCreateError() {
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoCommentOneCreateSuccess(commentOneCreateBean: CommentOneCreateBean?) {
@@ -641,7 +656,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onDoCommentOneCreateError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetCommentOneSuccess(commentOneBean: CommentOneBean) {
@@ -675,7 +690,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onGetCommentOneCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onGetCommentTwoSuccess(commentTwoBean: CommentTwoBean) {
@@ -706,7 +721,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onGetCommentTwoCodeError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoCheckTrendSuccess(checkTrendBean: CheckTrendBean?) {
@@ -1192,7 +1207,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     }
 
     override fun onDoCheckTrendError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onItemClick(v: View?, positionOne: Int) {
@@ -1482,7 +1497,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
         }
 
         override fun onDoDeleteTrendError() {
-
+            ToastUtils.showShort("网络请求失败，请稍后再试")
         }
 
     }
@@ -1529,23 +1544,31 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
             findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
                 // 删除动态
-                when (mode) {
-                    0 -> {
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ID] = mid.toString()
-                        map[Contents.TRENDS_ID] = trendsId.toString()
-                        map[Contents.HOST_UID] = hostId.toString()
-                        map[Contents.GUEST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-                        doCommentOneDeletePresent.doCommentOneDelete(map)
+
+                if (NetworkUtils.isAvailable()){
+
+                    when (mode) {
+                        0 -> {
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.ID] = mid.toString()
+                            map[Contents.TRENDS_ID] = trendsId.toString()
+                            map[Contents.HOST_UID] = hostId.toString()
+                            map[Contents.GUEST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+                            doCommentOneDeletePresent.doCommentOneDelete(map)
+                        }
+                        1 -> {
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.ID] = mid.toString()
+                            map[Contents.TRENDS_ID] = trendsId.toString()
+                            map[Contents.PARENT_ID] = hostId.toString()
+                            doCommentTwoDeletePresent.doCommentTwoDelete(map)
+                        }
                     }
-                    1 -> {
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ID] = mid.toString()
-                        map[Contents.TRENDS_ID] = trendsId.toString()
-                        map[Contents.PARENT_ID] = hostId.toString()
-                        doCommentTwoDeletePresent.doCommentTwoDelete(map)
-                    }
+
+                }else{
+                    ToastUtils.showShort("网络连接失败，请检查网络")
                 }
+
             }
         }
 
@@ -1576,6 +1599,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         override fun onDoCommentOneDeleteError() {
             dismiss()
+            ToastUtils.showShort("网络请求失败，请稍后再试")
         }
 
         override fun onDoCommentTwoDeleteSuccess(commentTwoDeleteBean: CommentTwoDeleteBean?) {
@@ -1642,6 +1666,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
 
         override fun onDoCommentTwoDeleteError() {
             dismiss()
+            ToastUtils.showShort("网络请求失败，请稍后再试")
         }
 
     }

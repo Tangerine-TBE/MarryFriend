@@ -3,6 +3,7 @@ package com.twx.marryfriend.set.message
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.hyphenate.easeim.section.me.activity.MessageReceiveSetActivity
@@ -203,76 +204,84 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
     // 获取推送设置
     private fun getPushSet() {
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        getPushSetPresent.getPushSet(map)
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            getPushSetPresent.getPushSet(map)
+
+
+
+
 
     }
 
     // 修改推送设置
     private fun doUpdatePushSet() {
 
-        Log.i("guo", "data $data")
-        Log.i("guo", "love $love")
-        Log.i("guo", "comment $comment")
-        Log.i("guo", "like $like")
-        Log.i("guo", "view $view")
-        Log.i("guo", "online $online")
-        Log.i("guo", "love2Online $love2Online")
-        Log.i("guo", "love2 $love2")
-        Log.i("guo", "gift $gift")
 
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.SHENHE_TONGZHI] = if (data) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.TA_GANG_XIHUAN_NI] = if (love) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.PINGLUN_DONGTAI] = if (comment) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.DIANZAN_DONGTAI] = if (like) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.KANLE_NIDE_ZILIAO] = if (view) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.NIXIHUANDE_SHANGXIAN] = if (online) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.XIANGHU_XIHUAN_SHANGXIAN] = if (love2Online) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.DIANJI_XIANGHU_XIHUAN] = if (love2) {
-            "1"
-        } else {
-            "0"
-        }
-        map[Contents.SHOUDAO_LIWU_TONGZHI] = if (gift) {
-            "1"
-        } else {
-            "0"
-        }
 
-        Log.i("guo", map.toString())
+            Log.i("guo", "data $data")
+            Log.i("guo", "love $love")
+            Log.i("guo", "comment $comment")
+            Log.i("guo", "like $like")
+            Log.i("guo", "view $view")
+            Log.i("guo", "online $online")
+            Log.i("guo", "love2Online $love2Online")
+            Log.i("guo", "love2 $love2")
+            Log.i("guo", "gift $gift")
 
-        doUpdatePushSetPresent.doUpdatePushSet(map)
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.SHENHE_TONGZHI] = if (data) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.TA_GANG_XIHUAN_NI] = if (love) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.PINGLUN_DONGTAI] = if (comment) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.DIANZAN_DONGTAI] = if (like) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.KANLE_NIDE_ZILIAO] = if (view) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.NIXIHUANDE_SHANGXIAN] = if (online) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.XIANGHU_XIHUAN_SHANGXIAN] = if (love2Online) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.DIANJI_XIANGHU_XIHUAN] = if (love2) {
+                "1"
+            } else {
+                "0"
+            }
+            map[Contents.SHOUDAO_LIWU_TONGZHI] = if (gift) {
+                "1"
+            } else {
+                "0"
+            }
+
+            doUpdatePushSetPresent.doUpdatePushSet(map)
+
+
 
     }
 
@@ -328,7 +337,7 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
     }
 
     override fun onGetPushSetError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDoUpdatePushSetSuccess(updatePushSetBean: UpdatePushSetBean?) {
@@ -341,7 +350,7 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
     }
 
     override fun onDoUpdatePushSetError() {
-
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {

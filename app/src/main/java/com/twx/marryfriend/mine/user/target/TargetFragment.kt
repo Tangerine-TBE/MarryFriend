@@ -223,22 +223,28 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     }
 
     private fun update() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
-        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+
+
+            val demandInfoMap: MutableMap<String, String> = TreeMap()
+            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+            updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+
 
     }
 
     // 修改择偶省市要求列表
     private fun uploadDemandAddress() {
-        val demandInfoMap: MutableMap<String, String> = TreeMap()
-        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-        demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
 
-        Log.i("guo", "jobAddressInfoList_updata : ${getDemandAddressInfo()}")
 
-        doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
+
+            val demandInfoMap: MutableMap<String, String> = TreeMap()
+            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+            demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
+            doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
+
+
+
     }
 
     // 显示第一个弹窗
@@ -3755,6 +3761,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     }
 
     override fun onDoUpdateDemandInfoError() {
+        ToastUtils.showShort("数据上传失败")
     }
 
     override fun onDestroy() {

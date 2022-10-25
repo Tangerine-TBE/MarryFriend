@@ -2,7 +2,9 @@ package com.twx.marryfriend.coin
 
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
+import com.blankj.utilcode.util.ToastUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.twx.marryfriend.R
@@ -76,11 +78,17 @@ class CoinRecordActivity : MainBaseViewActivity(), IGetCoinRecordCallback {
     }
 
     private fun getCoinRecord(page: Int) {
-        val map: MutableMap<String, String> = TreeMap()
-        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-        map[Contents.PAGE] = page.toString()
-        map[Contents.SIZE] = "10"
-        getCoinRecordPresent.getCoinRecord(map)
+
+
+
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+            map[Contents.PAGE] = page.toString()
+            map[Contents.SIZE] = "10"
+            getCoinRecordPresent.getCoinRecord(map)
+
+
+
 
     }
 
@@ -124,6 +132,7 @@ class CoinRecordActivity : MainBaseViewActivity(), IGetCoinRecordCallback {
             sfl_coin_record_refresh.finishRefresh(false)
             sfl_coin_record_refresh.finishLoadMore(false)
         }
+        ToastUtils.showShort("网络请求失败，请稍后再试")
     }
 
     override fun onDestroy() {
