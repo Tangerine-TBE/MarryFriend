@@ -75,12 +75,18 @@ class ImChatFragment: ChatFragment() {
         chatLayout.chatInputMenu.primaryMenu.setEaseChatPrimaryMenuListener(object : EaseChatPrimaryMenuListener{
             override fun onSendBtnClicked(content: String?) {
                 iLog("点击了发送")
-                if (sensitiveWords?.any { content==it }==true){
+                val pcontent=
+                if (sensitiveWords?.any { content?.contains(it)==true }==true){
                     toast("消息包含非法内容")
                     chatLayout.chatInputMenu.primaryMenu.editText.setText(content)
                     chatLayout.chatInputMenu.primaryMenu.editText.setSelection(content?.length?:0)
+                    content+"(违规)"
                 }else{
                     easeChatPrimaryMenuListener?.onSendBtnClicked(content)
+                    content
+                }
+                lifecycleScope.launch {
+                    imChatViewModel.putMessage(conversationId,pcontent?:return@launch)
                 }
             }
 

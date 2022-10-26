@@ -373,7 +373,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                         }
                         view.isEnabled=false
                     }else{
-                        toast("请稍后")
+                        toast("严肃浏览,请不要点过快点击")
                     }
                 }
             }
@@ -403,7 +403,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     }
                     view.isEnabled=false
                 }else{
-                    toast("请稍后")
+                    toast("严肃浏览,请不要点过快点击")
                 }
             }
         }
@@ -431,7 +431,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
                     }
                     view.isEnabled=false
                 }else{
-                    toast("请稍后")
+                    toast("严肃浏览,请不要点过快点击")
                 }
             }
         }
