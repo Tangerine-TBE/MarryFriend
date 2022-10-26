@@ -472,10 +472,10 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                         this.visibility= View.VISIBLE
                         myDynamicCount.text=("查看所有"+item.getDynamicCount().toString()+"条动态")
                         val imageList=list.flatMap {
-                            it.image_url?.split(",")?: emptyList()
+                            it.image_url?.replace(", ",",")?.split(",")?: emptyList()
                         }.filter { it.isNotBlank() }
                         val video=list.flatMap {
-                            it.video_url?.split(",")?: emptyList()
+                            it.video_url?.replace(", ",",")?.split(",")?: emptyList()
                         }.filter { it.isNotBlank() }
                         if (imageList.isEmpty()){
                             dynamicPreview.visibility= View.GONE
