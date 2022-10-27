@@ -232,8 +232,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         doUpdateGreetPresent = doUpdateGreetInfoPresentImpl.getsInstance()
         doUpdateGreetPresent.registerCallback(this)
 
-        mTempPhotoPath =
-            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+        mTempPhotoPath = activity?.externalCacheDir.toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(requireActivity().cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = requireActivity().externalCacheDir.toString() + File.separator + "head.png"

@@ -570,8 +570,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         targetVisibilityList.add("目标相同的人可见")
         targetVisibilityList.add("不公开")
 
-        mTempPhotoPath =
-            Environment.getExternalStorageDirectory().toString() + File.separator + "photo.jpeg"
+        mTempPhotoPath = this.externalCacheDir.toString() + File.separator + "photo.jpeg"
         mDestination = Uri.fromFile(File(this.cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = externalCacheDir.toString() + File.separator + "head.png"
@@ -1472,7 +1471,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 mLifeFirstUrl,
                 mLifeFirstText,
                 1,
-                mLifeFirstId), 111)
+                mLifeFirstId,
+                mLifeFirstUrl), 111)
 
         }
 
@@ -1493,7 +1493,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 mLifeSecondPath,
                 mLifeSecondText,
                 1,
-                mLifeSecondId), 222)
+                mLifeSecondId,
+                mLifeSecondUrl), 222)
         }
 
         iv_guide_life_pic_two_delete.setOnClickListener {
@@ -1513,7 +1514,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 mLifeThirdPath,
                 mLifeThirdText,
                 1,
-                mLifeThirdId), 333)
+                mLifeThirdId,
+                mLifeThirdUrl), 333)
         }
 
         iv_guide_life_pic_three_delete.setOnClickListener {
@@ -1531,7 +1533,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 mLifeFourPath,
                 mLifeFourText,
                 1,
-                mLifeFourId), 444)
+                mLifeFourId,
+                mLifeFourUrl), 444)
 
         }
 
@@ -1551,7 +1554,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 mLifeFivePath,
                 mLifeFiveText,
                 1,
-                mLifeFiveId), 555)
+                mLifeFiveId,
+                mLifeFiveUrl), 555)
 
         }
 

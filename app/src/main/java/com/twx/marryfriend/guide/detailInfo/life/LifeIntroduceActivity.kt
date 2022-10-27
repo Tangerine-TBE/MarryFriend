@@ -79,6 +79,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
         private const val INTRODUCE = "introduce"
         private const val MODE = "mode"
         private const val PHOTO_ID = "photo_Id"
+        private const val URL = "url"
 
         fun getIntent(
             context: Context,
@@ -86,12 +87,14 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
             introduce: String,
             mode: Int? = 0,
             photoId: String? = "",
+            url: String? = "",
         ): Intent {
             val intent = Intent(context, LifeIntroduceActivity::class.java)
             intent.putExtra(PATH, path)
             intent.putExtra(INTRODUCE, introduce)
             intent.putExtra(MODE, mode)
             intent.putExtra(PHOTO_ID, photoId)
+            intent.putExtra(URL, url)
             return intent
         }
 
@@ -107,6 +110,8 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
 
         mode = intent.getIntExtra("mode", 0)
         photoId = intent.getStringExtra("photo_Id").toString()
+
+        picUrl = intent.getStringExtra("url").toString()
 
         doUploadPhotoPresent = doUploadPhotoPresentImpl.getsInstance()
         doUploadPhotoPresent.registerCallback(this)
@@ -160,6 +165,11 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
 
         tv_life_introduce_confirm.setOnClickListener {
 
+
+            Log.i("guo","显示loading弹窗")
+            ll_life_introduce_loading.visibility = View.VISIBLE
+
+
             // 文字审核
             introduce = et_life_introduce_introduce.text.toString().trim { it <= ' ' }
 
@@ -169,102 +179,115 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
 
                     Log.i("guo", "图片合规，开始进行上传")
 
-                    val file = File(picPath)
 
-                    val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
-                        BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(file), it)
-                    }
-
-                    val mPhotoPath = this.externalCacheDir.toString() + File.separator + "${
-                        FileUtils.getFileNameNoExtension(picPath)
-                    }.png"
-
-                    if (bitmap != null) {
-                        BitmapUtil.saveBitmap(bitmap, mPhotoPath)
-                    }
-
-                    Luban.with(this)
-                        .load(mPhotoPath)
-                        .ignoreBy(100)
-                        .setTargetDir(this.externalCacheDir.toString())
-                        .setCompressListener(object : OnCompressListener {
-                            override fun onStart() {
-                                Log.i("guo", "开始压缩")
-                            }
-
-                            override fun onSuccess(file: File) {
-
-                                Log.i("guo", "压缩完成")
-
-                                ll_life_introduce_loading.visibility = View.VISIBLE
-
-                                Thread {
-
-                                    try {
-
-                                        val name =
-                                            if (SPStaticUtils.getString(Constant.USER_ID, "default").length == 1
-                                            ) { "0${SPStaticUtils.getString(Constant.USER_ID, "default")}"
-                                            } else { SPStaticUtils.getString(Constant.USER_ID, "default") }
-
-                                        // 时间戳，防止重复上传时传不上去
-                                        val span = TimeUtils.getNowMills()
-                                        val path = "${FileUtils.getFileNameNoExtension(picPath)}_${span}.jpg"
-
-                                        val putObjectFromFileResponse = client.putObject("user${name}", path, file)
-
-                                        picUrl = client.generatePresignedUrl("user${name}", path, -1).toString()
-
-                                        Log.i("guo", "mLifeSecondUrl :$picUrl")
+                    Thread{
 
 
+                        val file = File(picPath)
 
-                                        uploadPhoto(picUrl,
-                                            FileUtils.getFileNameNoExtension(picPath),
-                                            FileUtils.getFileExtension(picPath),
-                                            introduce)
+                        val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
+                            BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(file), it)
+                        }
 
-                                    } catch (e: BceClientException) {
-                                        e.printStackTrace()
+                        val mPhotoPath = this.externalCacheDir.toString() + File.separator + "${
+                            FileUtils.getFileNameNoExtension(picPath)
+                        }.png"
 
-                                        ThreadUtils.runOnUiThread {
-                                            ll_life_introduce_loading.visibility = View.GONE
-                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
-                                        }
+                        if (bitmap != null) {
+                            BitmapUtil.saveBitmap(bitmap, mPhotoPath)
+                        }
 
-                                    } catch (e: BceServiceException) {
+                        Luban.with(this).load(mPhotoPath).ignoreBy(100)
+                            .setTargetDir(this.externalCacheDir.toString())
+                            .setCompressListener(object : OnCompressListener {
+                                override fun onStart() {
+                                    Log.i("guo", "开始压缩")
+                                }
 
-                                        ThreadUtils.runOnUiThread {
-                                            ll_life_introduce_loading.visibility = View.GONE
-                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
-                                        }
+                                override fun onSuccess(file: File) {
 
-                                        Log.i("guo", "Error ErrorCode: " + e.errorCode)
-                                        Log.i("guo", "Error RequestId: " + e.requestId)
-                                        Log.i("guo", "Error StatusCode: " + e.statusCode)
-                                        Log.i("guo", "Error ErrorType: " + e.errorType)
+                                    ThreadUtils.runOnUiThread {
+                                        Log.i("guo", "压缩完成")
 
-                                    } catch (e: UnknownHostException) {
-                                        e.printStackTrace()
+                                        Thread {
 
-                                        ThreadUtils.runOnUiThread {
-                                            ll_life_introduce_loading.visibility = View.GONE
-                                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
-                                        }
+                                            try {
 
+                                                val name = if (SPStaticUtils.getString(Constant.USER_ID,
+                                                        "default").length == 1
+                                                ) {
+                                                    "0${
+                                                        SPStaticUtils.getString(Constant.USER_ID, "default")
+                                                    }"
+                                                } else {
+                                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                                }
+
+                                                // 时间戳，防止重复上传时传不上去
+                                                val span = TimeUtils.getNowMills()
+                                                val path =
+                                                    "${FileUtils.getFileNameNoExtension(picPath)}_${span}.jpg"
+
+                                                val putObjectFromFileResponse =
+                                                    client.putObject("user${name}", path, file)
+
+                                                picUrl =
+                                                    client.generatePresignedUrl("user${name}", path, -1)
+                                                        .toString()
+
+                                                Log.i("guo", "mLifeSecondUrl :$picUrl")
+
+                                                uploadPhoto(picUrl,
+                                                    FileUtils.getFileNameNoExtension(picPath),
+                                                    FileUtils.getFileExtension(picPath),
+                                                    introduce)
+
+                                            } catch (e: BceClientException) {
+                                                e.printStackTrace()
+
+                                                ThreadUtils.runOnUiThread {
+                                                    ll_life_introduce_loading.visibility = View.GONE
+                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                }
+
+                                            } catch (e: BceServiceException) {
+
+                                                ThreadUtils.runOnUiThread {
+                                                    ll_life_introduce_loading.visibility = View.GONE
+                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                }
+
+                                                Log.i("guo", "Error ErrorCode: " + e.errorCode)
+                                                Log.i("guo", "Error RequestId: " + e.requestId)
+                                                Log.i("guo", "Error StatusCode: " + e.statusCode)
+                                                Log.i("guo", "Error ErrorType: " + e.errorType)
+
+                                            } catch (e: UnknownHostException) {
+                                                e.printStackTrace()
+
+                                                ThreadUtils.runOnUiThread {
+                                                    ll_life_introduce_loading.visibility = View.GONE
+                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                }
+
+                                            }
+
+                                        }.start()
                                     }
 
-                                }.start()
-                            }
+                                }
 
-                            override fun onError(e: Throwable) {
+                                override fun onError(e: Throwable) {
 
-                                Log.i("guo", "throwable :$e")
+                                    Log.i("guo", "throwable :$e")
 
-                                ToastUtils.showShort("图片解析失败，请稍后再试")
+                                    ToastUtils.showShort("图片解析失败，请稍后再试")
 
-                            }
-                        }).launch()
+                                }
+                            }).launch()
+
+
+                    }.start()
 
 
                 }
@@ -274,11 +297,9 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
                     Log.i("guo", "开始进行修改")
 
                     if (introduce.isNotEmpty()) {
-
-                        ll_life_introduce_loading.visibility = View.VISIBLE
-
                         updateDescribe(photoId, introduce)
                     } else {
+                        ll_life_introduce_loading.visibility = View.GONE
                         ToastUtils.showShort("请输入生活照描述")
                     }
 
