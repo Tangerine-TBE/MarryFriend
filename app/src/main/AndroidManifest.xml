@@ -264,8 +264,7 @@
             android:name=".push.mfr.MfrMessageActivity2"
             android:exported="true"
             android:launchMode="singleTask"
-            android:theme="@style/AppStartTheme"
-            >
+            android:theme="@style/AppStartTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
