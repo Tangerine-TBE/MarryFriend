@@ -2,9 +2,7 @@ package com.twx.marryfriend.base
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.message.custom.MyHelperAdapterDelegate
 import com.twx.marryfriend.AppApplication
-import com.twx.marryfriend.UserInfo
 
 object BaseConstant {
     val application by lazy { AppApplication.application }

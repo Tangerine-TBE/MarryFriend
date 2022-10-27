@@ -609,7 +609,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             return
         }
 //            loadingDialog.show()
-        val t=recommendViewModel.disLike(item.getId())
+        val t=recommendViewModel.disLikeHome(item.getId())
 //            loadingDialog.dismiss()
 
         if (t.code==200){
@@ -642,7 +642,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             return
         }
         //            loadingDialog.show()
-        val t=recommendViewModel.like(item.getId()) {
+        val t=recommendViewModel.likeHome(item.getId()) {
             showView(ViewType.mutual)
             Glide.with(taHead)
                 .load(item.getHeadImg())
@@ -681,7 +681,7 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
             return
         }
         loadingDialog.show()
-        recommendViewModel.superLike(item.getId()) {
+        recommendViewModel.superLikeHome(item.getId()) {
             coinInsufficientDialog.show(item.getHeadImg())
         }.also {
             if (it.code==200){

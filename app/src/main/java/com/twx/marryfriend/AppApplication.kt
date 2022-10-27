@@ -75,6 +75,7 @@ class AppApplication : BaseApplication() {
                     }
                 }else{
                     ImUserInfoHelper.initUserInfo()
+                    iLog("华为推送初始化")
                     // 获取华为 HMS 推送 token
                     HMSPushHelper.getInstance().getHMSToken(BaseConstant.application)
                     MyHelperAdapterDelegate.sexAction={

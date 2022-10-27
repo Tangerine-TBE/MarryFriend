@@ -89,7 +89,7 @@ class LikePeopleFragment:Fragment(R.layout.fragment_like_people) {
             if (!uploadHeadDialog.showUploadHeadDialog()){
                 lifecycleScope.launch {
                     loadingDialog.show()
-                    recommendViewModel.superLike(item.guest_uid){
+                    recommendViewModel.otherSuperLike(item.guest_uid){
                         coinInsufficientDialog.show(item.image_url)
                     }.also {
                         if (it.code==200){
