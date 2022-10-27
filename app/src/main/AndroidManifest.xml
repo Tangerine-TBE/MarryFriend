@@ -54,13 +54,6 @@
         android:theme="@style/Theme.MarryFriend"
         tools:replace="android:label">
         <activity
-            android:name=".MfrMessageActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".set.black.BlackListActivity"
             android:exported="false" />
         <activity
@@ -90,22 +83,6 @@
         <activity
             android:name=".mine.comment.RecentCommentActivity"
             android:exported="false" />
-        <activity
-            android:name=".push.xiaomi.MfrMessageActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="${applicationId}"
-                    android:path="/thirdpush"
-                    android:scheme="agoo" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".tools.introduce.IntroduceToolActivity"
             android:exported="false" />
@@ -286,7 +263,9 @@
         <activity
             android:name=".push.mfr.MfrMessageActivity2"
             android:exported="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/AppStartTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -329,7 +308,8 @@
             android:value="appid=106852163" />
         <meta-data
             android:name="push_kit_auto_init_enabled"
-            android:value="true" /> <!-- 荣耀应用推送的AppID -->
+            android:value="true" />
+        <!-- 荣耀应用推送的AppID -->
         <!-- <meta-data -->
         <!-- android:name="com.hihonor.push.app_id" -->
         <!-- android:value="xxx" /> -->

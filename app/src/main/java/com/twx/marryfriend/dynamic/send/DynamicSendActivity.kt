@@ -73,6 +73,9 @@ import io.microshow.rxffmpeg.RxFFmpegCommandList
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
+import kotlinx.android.synthetic.main.activity_life_introduce.*
+import top.zibin.luban.Luban
+import top.zibin.luban.OnCompressListener
 import java.io.File
 import java.net.UnknownHostException
 import java.util.*
@@ -203,10 +206,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
         // 设置HTTP最大连接数为10
         config.maxConnections = 10
-        // 设置TCP连接超时为5000毫秒
+
         config.connectionTimeoutInMillis = 15000
-        // 设置Socket传输数据超时的时间为2000毫秒
+
         config.socketTimeoutInMillis = 15000
+
 
         config.credentials = DefaultBceCredentials("545c965a81ba49889f9d070a1e147a7b",
             "1b430f2517d0460ebdbecfd910c572f8")
@@ -617,6 +621,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
             content = UnicodeUtils.newLineText(et_send_content.text.toString().trim { it <= ' ' })
 
+            Log.i("guo", "mDataList : ${mDataList}")
+
 
             if (mDataList.isNotEmpty() || content != "") {
 
@@ -633,6 +639,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
                             // 还需要上传图片
+
+                            Log.i("guo", "mDataList : ${mDataList}")
 
                             Log.i("guo", "start : ${TimeUtils.getNowDate()}")
 
@@ -652,77 +660,144 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                     }
                                 }
 
+                                Log.i("guo", "trendsType : ${trendsType}")
 
                                 when (trendsType) {
                                     1 -> {
                                         // 图片动态 ，上传图片
 
-                                        ll_send_loading.visibility = View.VISIBLE
+                                        Log.i("guo", "图片动态 ，上传图片")
+
 
                                         val xlist: MutableList<String> = arrayListOf()
-                                        Thread {
 
-                                            for (i in 0.until(mDataList.size)) {
+                                        ll_send_loading.visibility = View.VISIBLE
 
-                                                val name = TimeUtils.getNowMills()
 
-                                                val file = File(mDataList[i])
-
-                                                val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友",
-                                                    16f,
-                                                    Color.WHITE)?.let {
-                                                    BitmapUtil.createWaterMarkBitmap(ImageUtils.getBitmap(
-                                                        file), it)
+                                        Luban.with(this).load(mDataList).ignoreBy(100)
+                                            .setTargetDir(this.externalCacheDir.toString())
+                                            .setCompressListener(object : OnCompressListener {
+                                                override fun onStart() {
+                                                    Log.i("guo", "开始压缩")
                                                 }
 
-                                                val mPhotoPath =
-                                                    this.externalCacheDir.toString() + File.separator + "${
-                                                        FileUtils.getFileNameNoExtension(mDataList[i])
-                                                    }.png"
+                                                override fun onSuccess(file: File?) {
 
-                                                if (bitmap != null) {
-                                                    BitmapUtil.saveBitmap(bitmap, mPhotoPath)
+                                                    Log.i("guo", "压缩完成")
+
+                                                    if (file != null) {
+
+                                                        Thread {
+
+                                                            try {
+
+                                                                val name = TimeUtils.getNowMills()
+
+                                                                val bitmap =
+                                                                    BitmapUtil.generateBitmap("佳偶婚恋交友",
+                                                                        16f,
+                                                                        Color.WHITE)?.let {
+                                                                        BitmapUtil.createWaterMarkBitmap(
+                                                                            ImageUtils.getBitmap(
+                                                                                file),
+                                                                            it)
+                                                                    }
+
+                                                                val mPhotoPath =
+                                                                    this@DynamicSendActivity.externalCacheDir.toString() + File.separator + "${
+                                                                        FileUtils.getFileNameNoExtension(
+                                                                            file.path)
+                                                                    }.png"
+
+                                                                if (bitmap != null) {
+                                                                    BitmapUtil.saveBitmap(bitmap,
+                                                                        mPhotoPath)
+                                                                }
+
+                                                                val putObjectFromFileResponse =
+                                                                    client.putObject("user${
+                                                                        SPStaticUtils.getString(
+                                                                            Constant.USER_ID,
+                                                                            "default")
+                                                                    }",
+                                                                        "${name}.jpg",
+                                                                        File(mPhotoPath))
+
+
+                                                                xlist.add(client.generatePresignedUrl(
+                                                                    "user${
+                                                                        SPStaticUtils.getString(
+                                                                            Constant.USER_ID,
+                                                                            "default")
+                                                                    }",
+                                                                    "${name}.jpg",
+                                                                    -1).toString())
+
+                                                                if (xlist.size == mDataList.size) {
+
+                                                                    val x = xlist.toString()
+                                                                        .replace("[", "")
+
+                                                                    imageUrl = x.replace("]", "")
+
+                                                                    uploadTrend()
+                                                                }
+
+                                                            } catch (e: BceClientException) {
+                                                                e.printStackTrace()
+
+                                                                ThreadUtils.runOnUiThread {
+                                                                    ll_send_loading.visibility =
+                                                                        View.GONE
+                                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                                    this@DynamicSendActivity.finish()
+                                                                }
+
+                                                            } catch (e: BceServiceException) {
+
+                                                                ThreadUtils.runOnUiThread {
+                                                                    ll_send_loading.visibility =
+                                                                        View.GONE
+                                                                    this@DynamicSendActivity.finish()
+                                                                }
+
+                                                                Log.i("guo",
+                                                                    "Error ErrorCode: " + e.errorCode)
+                                                                Log.i("guo",
+                                                                    "Error RequestId: " + e.requestId)
+                                                                Log.i("guo",
+                                                                    "Error StatusCode: " + e.statusCode)
+                                                                Log.i("guo",
+                                                                    "Error ErrorType: " + e.errorType)
+
+                                                            } catch (e: UnknownHostException) {
+                                                                e.printStackTrace()
+
+                                                                ThreadUtils.runOnUiThread {
+                                                                    ll_send_loading.visibility =
+                                                                        View.GONE
+                                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                                    this@DynamicSendActivity.finish()
+                                                                }
+
+                                                            }
+
+
+                                                        }.start()
+
+                                                    }
+
                                                 }
 
-                                                val putObjectFromFileResponse =
-                                                    client.putObject("user${
-                                                        SPStaticUtils.getString(Constant.USER_ID,
-                                                            "default")
-                                                    }", "${name}.jpg", File(mPhotoPath))
+                                                override fun onError(e: Throwable?) {
+                                                    Log.i("guo", "图片解析失败，请稍后再试")
+                                                    ToastUtils.showShort("图片解析失败，请稍后再试")
+                                                }
 
+                                            }).launch()
 
-                                                xlist.add(client.generatePresignedUrl("user${
-                                                    SPStaticUtils.getString(Constant.USER_ID,
-                                                        "default")
-                                                }", "${name}.jpg", -1).toString())
-
-                                                Log.i("guo", " $i : ${xlist}")
-
-                                            }
-
-                                            val x = xlist.toString().replace("[", "")
-
-                                            imageUrl = x.replace("]", "")
-
-                                            if (content != "") {
-
-                                                Log.i("guo", "文字 ----图片 ")
-                                                doTextVerify = false
-                                                doTextVerify(content)
-                                            } else {
-
-                                                Log.i("guo", "end : ${TimeUtils.getNowDate()}")
-                                                Log.i("guo",
-                                                    "start --- UPLOAD : ${TimeUtils.getNowDate()}")
-
-                                                Log.i("guo", "上传 ----图片 ")
-                                                uploadTrend()
-                                            }
-
-                                        }.start()
 
                                     }
-
                                     2 -> {
 
                                         val mWatermarkPath =
@@ -737,6 +812,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                         }
 
                                         val coverPath = getVideoCover(mDataList[0], this)
+
+                                        ll_send_loading.visibility = View.VISIBLE
 
                                         Thread {
 
@@ -760,16 +837,34 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                             } catch (e: BceClientException) {
                                                 e.printStackTrace()
-                                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+
+                                                ThreadUtils.runOnUiThread {
+                                                    ll_send_loading.visibility = View.GONE
+                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                    this.finish()
+                                                }
+
+
                                             } catch (e: BceServiceException) {
+
+                                                ThreadUtils.runOnUiThread {
+                                                    ll_send_loading.visibility = View.GONE
+                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                    this.finish()
+                                                }
+
                                                 Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                                 Log.i("guo", "Error RequestId: " + e.requestId);
                                                 Log.i("guo", "Error StatusCode: " + e.statusCode);
                                                 Log.i("guo", "Error ErrorType: " + e.errorType);
                                             } catch (e: UnknownHostException) {
-                                                Log.i("guo","网络请求错误，请检查网络后稍后重试")
-                                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                                 e.printStackTrace()
+                                                ThreadUtils.runOnUiThread {
+                                                    ll_send_loading.visibility = View.GONE
+                                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                                    this.finish()
+                                                }
+
                                             }
 
                                         }.start()
@@ -864,14 +959,11 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     private fun doTextVerify(text: String) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-            map[Contents.TEXT] = text
-            doTextVerifyPresent.doTextVerify(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+        map[Contents.TEXT] = text
+        doTextVerifyPresent.doTextVerify(map)
 
 
     }
@@ -879,12 +971,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     private fun uploadTrend() {
 
 
-
-            doUploadTrend = false
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.TREND_INFO] = getUploadTrendInfo()
-            doUploadTrendPresent.doUploadTrend(map)
-
+        doUploadTrend = false
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.TREND_INFO] = getUploadTrendInfo()
+        doUploadTrendPresent.doUploadTrend(map)
 
 
     }
@@ -986,31 +1076,37 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                 videoUrl = x.replace("]", "")
 
 
-                                if (content != "") {
+                                uploadTrend()
 
-
-                                    Log.i("guo", "文字 ----压缩 ")
-                                    doTextVerify = false
-                                    doTextVerify(content)
-                                } else {
-
-                                    Log.i("guo", "上传 ----压缩 ")
-
-                                    uploadTrend()
-                                }
 
                             } catch (e: BceClientException) {
                                 e.printStackTrace()
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+
+                                ThreadUtils.runOnUiThread {
+                                    ll_send_loading.visibility = View.GONE
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    this@DynamicSendActivity.finish()
+                                }
+
                             } catch (e: BceServiceException) {
+
+                                ThreadUtils.runOnUiThread {
+                                    ll_send_loading.visibility = View.GONE
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    this@DynamicSendActivity.finish()
+                                }
+
                                 Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                 Log.i("guo", "Error RequestId: " + e.requestId);
                                 Log.i("guo", "Error StatusCode: " + e.statusCode);
                                 Log.i("guo", "Error ErrorType: " + e.errorType);
                             } catch (e: UnknownHostException) {
-                                Log.i("guo","网络请求错误，请检查网络后稍后重试")
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                 e.printStackTrace()
+                                ThreadUtils.runOnUiThread {
+                                    ll_send_loading.visibility = View.GONE
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    this@DynamicSendActivity.finish()
+                                }
                             }
 
 
@@ -1128,16 +1224,28 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                 } catch (e: BceClientException) {
                                     e.printStackTrace()
-                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    ThreadUtils.runOnUiThread {
+                                        ll_send_loading.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                        this@DynamicSendActivity.finish()
+                                    }
                                 } catch (e: BceServiceException) {
+                                    ThreadUtils.runOnUiThread {
+                                        ll_send_loading.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                        this@DynamicSendActivity.finish()
+                                    }
                                     Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                     Log.i("guo", "Error RequestId: " + e.requestId);
                                     Log.i("guo", "Error StatusCode: " + e.statusCode);
                                     Log.i("guo", "Error ErrorType: " + e.errorType);
                                 } catch (e: UnknownHostException) {
-                                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
-                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                     e.printStackTrace()
+                                    ThreadUtils.runOnUiThread {
+                                        ll_send_loading.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                        this@DynamicSendActivity.finish()
+                                    }
                                 }
 
                             }.start()
@@ -1170,7 +1278,7 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     }
 
     //  调整分辨率压缩视频
-    //  ffmpeg -i Desktop/1.mov -s vga Desktop/1.mp4
+//  ffmpeg -i Desktop/1.mov -s vga Desktop/1.mp4
     private fun zipVideo(
         VideoPath: String,
         vga: String,
@@ -1186,13 +1294,13 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
     }
 
     // 视频添加图片水印
-    // ffmpeg -y -i videoPath.mp4 -i musicPath.png -filter_complex [0:v]scale=iw:ih[outv0];[1:0]scale=0.0:0.0[outv1];[outv0][outv1]overlay=0:0 -preset superfast targetFile.mp4
-    //      scale：水印大小，水印长度＊水印的高度；
-    //      overlay：水印的位置，距离屏幕左侧的距离＊距离屏幕上侧的距离；mainW主视频宽度， mainH主视频高度，overlayW水印宽度，overlayH水印高度
-    //      左上角overlay参数为 overlay=0:0
-    //      右上角为 overlay= main_w-overlay_w:0
-    //      右下角为 overlay= main_w-overlay_w:main_h-overlay_h
-    //      左下角为 overlay=0: main_h-overlay_h
+// ffmpeg -y -i videoPath.mp4 -i musicPath.png -filter_complex [0:v]scale=iw:ih[outv0];[1:0]scale=0.0:0.0[outv1];[outv0][outv1]overlay=0:0 -preset superfast targetFile.mp4
+//      scale：水印大小，水印长度＊水印的高度；
+//      overlay：水印的位置，距离屏幕左侧的距离＊距离屏幕上侧的距离；mainW主视频宽度， mainH主视频高度，overlayW水印宽度，overlayH水印高度
+//      左上角overlay参数为 overlay=0:0
+//      右上角为 overlay= main_w-overlay_w:0
+//      右下角为 overlay= main_w-overlay_w:main_h-overlay_h
+//      左下角为 overlay=0: main_h-overlay_h
     private fun addWaterMark(
         videoPath: String,
         picPath: String,
@@ -1548,6 +1656,8 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                 val tempPhotoFile: File = File(mTempPhotoPath)
                                 val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                                intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 120)
+                                intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 1024L * 1024 * 100)
                                 // 如果在Android7.0以上,使用FileProvider获取Uri
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                     intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -1626,9 +1736,9 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         override fun onCreate() {
             super.onCreate()
 
-            if (SPStaticUtils.getInt(Constant.ME_SEX,1) == 1){
+            if (SPStaticUtils.getInt(Constant.ME_SEX, 1) == 1) {
                 findViewById<ImageView>(R.id.iv_dialog_like_avatar_example).setImageResource(R.drawable.ic_dialog_avatar_male)
-            }else{
+            } else {
                 findViewById<ImageView>(R.id.iv_dialog_like_avatar_example).setImageResource(R.drawable.ic_dialog_avatar_female)
             }
 

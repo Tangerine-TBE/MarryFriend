@@ -225,6 +225,8 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     // 多功能的视频播放器
     implementation "com.github.CarGuo.GSYVideoPlayer:gsyVideoPlayer:8.1.5-jitpack"
+    // 鲁班压缩
+    implementation 'top.zibin:Luban:1.1.8'
 
     // retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

@@ -384,7 +384,6 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
-
     private fun initPresent() {
 
         lastBaseInfo = getBaseInfo()
@@ -418,10 +417,8 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     private fun initEvent() {
 
-        if (TimeUtil.isShowMyData()) {
-            TimeUtil.onShowMyData()
-            showFirstDialog()
-        }
+        Log.i("guo", "ME_BIRTH : --------${SPStaticUtils.getString(Constant.ME_BIRTH, "")}")
+
 
         iv_user_data_avatar.setOnClickListener {
 
@@ -668,6 +665,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     }
 
+    fun showDataFirstDialog() {
+        if (TimeUtil.isShowMyData()) {
+            TimeUtil.onShowMyData()
+            showFirstDialog()
+        }
+    }
+
     // 验证码倒计时
     private fun startCurrentDownTimer(mBeginTime: Long) {
         isCurrentDown = true
@@ -735,6 +739,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
     // 进入界面时显示一个弹窗
     private fun showFirstDialog() {
+
 
         if (SPStaticUtils.getString(Constant.ME_NAME, "") == "") {
             // 昵称
@@ -2610,7 +2615,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
         nation = when (SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0)) {
             0 -> "未填写"
-            else -> DataProvider.NationData[SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0)]
+            else -> DataProvider.NationData[SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0) - 1]
         }
 
         smoke = when (SPStaticUtils.getInt(Constant.ME_SMOKE, 0)) {
@@ -3193,13 +3198,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
             photoBitmap = bitmap
 
 
-
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                map[Contents.IMAGE] = bitmapToBase64(bitmap)
-                doFaceDetectPresent.doDataFaceDetect(map)
-
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+            map[Contents.IMAGE] = bitmapToBase64(bitmap)
+            doFaceDetectPresent.doDataFaceDetect(map)
 
 
         } else {
@@ -3267,13 +3270,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val introduceInfo = " {\"introduce_self\":    \"$introduce\"}"     // 我心目中的Ta
 
 
-
-
-            val baseInfoMap: MutableMap<String, String> = TreeMap()
-            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            baseInfoMap[Contents.BASE_UPDATE] = introduceInfo
-            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = introduceInfo
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
 
     }
@@ -3288,13 +3288,10 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
         val taInfo = " {\"ta_in_my_mind\":    \"$ta\"}"                // 我心目中的Ta
 
 
-
-
-            val baseInfoMap: MutableMap<String, String> = TreeMap()
-            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            baseInfoMap[Contents.BASE_UPDATE] = taInfo
-            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = taInfo
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
 
     }
@@ -3304,30 +3301,26 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private fun update() {
 
 
+        val moreInfoMap: MutableMap<String, String> = TreeMap()
+        moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
+        doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
 
-            val moreInfoMap: MutableMap<String, String> = TreeMap()
-            moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
-            doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
+        baseUpdateMode = "all"
+        needUpdateBase = true
+
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
 
-            baseUpdateMode = "all"
-            needUpdateBase = true
-
-            val baseInfoMap: MutableMap<String, String> = TreeMap()
-            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
-            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
-
-            // 更新资料完善度
-            val proportionMap: MutableMap<String, String> = TreeMap()
-            proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            proportionMap[Contents.PROPORTION] = progress.toString()
-            updateProportionPresent.doUpdateProportion(proportionMap)
-
-
+        // 更新资料完善度
+        val proportionMap: MutableMap<String, String> = TreeMap()
+        proportionMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        proportionMap[Contents.PROPORTION] = progress.toString()
+        updateProportionPresent.doUpdateProportion(proportionMap)
 
 
     }
@@ -3336,15 +3329,13 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
     private fun updateAvatar(photoUrl: String, type: String, name: String) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.IMAGE_URL] = photoUrl
-            map[Contents.FILE_TYPE] = type
-            map[Contents.FILE_NAME] = name
-            map[Contents.CONTENT] = "0"
-            doUploadAvatarPresent.doUploadAvatar(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
 
     }
@@ -3575,20 +3566,27 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
                 } catch (e: BceClientException) {
                     e.printStackTrace()
-                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    }
                 } catch (e: BceServiceException) {
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    }
                     Log.i("guo", "Error ErrorCode: " + e.errorCode);
                     Log.i("guo", "Error RequestId: " + e.requestId);
                     Log.i("guo", "Error StatusCode: " + e.statusCode);
                     Log.i("guo", "Error ErrorType: " + e.errorType);
                 } catch (e: UnknownHostException) {
-                    Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                     e.printStackTrace()
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    }
                 } catch (e: FileNotFoundException) {
-                    Log.i("guo", "目标文件不存在，请稍后重试")
-                    ToastUtils.showShort("目标文件不存在，请稍后重试")
                     e.printStackTrace()
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("文件不存在，请重新选择文件")
+                    }
                 }
 
             }.start()
@@ -3888,13 +3886,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 if (size >= 10) {
 
 
-
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                        map[Contents.TEXT] = text
-                        doTextVerifyPresent.doTextVerify(map)
-
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
 
                 } else {
@@ -4131,28 +4127,30 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                             SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
 
-
-
-                                val map: MutableMap<String, String> = TreeMap()
-                                map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                                map[Contents.GREET_UPDATE] = getGreetInfo()
-                                doUpdateGreetPresent.doUpdateGreetInfo(map)
-
-
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                            map[Contents.GREET_UPDATE] = getGreetInfo()
+                            doUpdateGreetPresent.doUpdateGreetInfo(map)
 
 
                         } catch (e: BceClientException) {
                             e.printStackTrace()
-                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            ThreadUtils.runOnUiThread {
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            }
                         } catch (e: BceServiceException) {
+                            ThreadUtils.runOnUiThread {
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            }
                             Log.i("guo", "Error ErrorCode: " + e.errorCode);
                             Log.i("guo", "Error RequestId: " + e.requestId);
                             Log.i("guo", "Error StatusCode: " + e.statusCode);
                             Log.i("guo", "Error ErrorType: " + e.errorType);
                         } catch (e: UnknownHostException) {
-                            Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                             e.printStackTrace()
+                            ThreadUtils.runOnUiThread {
+                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                            }
                         }
 
                     }.start()
@@ -4280,15 +4278,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 if (size >= 10) {
 
 
-
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                        map[Contents.TEXT] = text
-                        doTextVerifyPresent.doTextVerify(map)
-
-
-
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = text
+                    doTextVerifyPresent.doTextVerify(map)
 
 
                 } else {
@@ -4371,13 +4365,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
                 if (name1.isNotEmpty()) {
 
 
-
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                        map[Contents.TEXT] = name1
-                        doTextVerifyPresent.doTextVerify(map)
-
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                    map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                    map[Contents.TEXT] = name1
+                    doTextVerifyPresent.doTextVerify(map)
 
 
                 } else {
@@ -5608,7 +5600,11 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             wheel.data = DataProvider.NationData
 
-            mNationPosition = SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0)
+            mNationPosition = if (SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0) != 0) {
+                SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0) - 1
+            } else {
+                SPStaticUtils.getInt(Constant.ME_NATIONALITY, 0)
+            }
 
             wheel.setSelectedItemPosition(mNationPosition, false)
 
@@ -5642,7 +5638,7 @@ class DataFragment : Fragment(), IDoUpdateMoreInfoCallback, IDoUpdateBaseInfoCal
 
             confirm.setOnClickListener {
                 ToastUtils.showShort("${DataProvider.NationData[mNationPosition]}")
-                SPStaticUtils.put(Constant.ME_NATIONALITY, mNationPosition)
+                SPStaticUtils.put(Constant.ME_NATIONALITY, mNationPosition + 1)
 
                 isNeedJump = true
                 dismiss()

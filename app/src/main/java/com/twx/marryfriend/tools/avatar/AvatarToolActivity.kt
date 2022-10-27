@@ -12,6 +12,8 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.content.FileProvider
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -48,6 +50,7 @@ import kotlinx.android.synthetic.main.fragment_mine.*
 import kotlinx.android.synthetic.main.layout_guide_step_edu.*
 import kotlinx.android.synthetic.main.layout_guide_step_life.*
 import java.io.*
+import java.net.UnknownHostException
 import java.util.*
 
 class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUploadAvatarCallback {
@@ -341,16 +344,13 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
     private fun doUploadAvatar(url: String, type: String, name: String) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.IMAGE_URL] = mPhotoUrl
-            map[Contents.FILE_TYPE] = type
-            map[Contents.FILE_NAME] = name
-            map[Contents.CONTENT] = "0"
-            doUploadAvatarPresent.doUploadAvatar(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = mPhotoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
 
     }
@@ -413,9 +413,6 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
         if (faceDetectBean != null) {
             if (faceDetectBean.conclusion == "合规") {
 
-                ll_avatar_loading.visibility = View.GONE
-
-                ToastUtils.showShort("头像上传成功")
 
                 val bitmap = BitmapUtil.generateBitmap("佳偶婚恋交友", 16f, Color.WHITE)?.let {
                     BitmapUtil.createWaterMarkBitmap(photoBitmap, it)
@@ -426,26 +423,55 @@ class AvatarToolActivity : MainBaseViewActivity(), IDoFaceDetectCallback, IDoUpl
 
                 Thread {
 
-                    //上传Object
-                    val file = File(mPhotoPath)
-                    // bucketName 为文件夹名 ，使用用户id来进行命名
-                    // key值为保存文件名，试用固定的几种格式来命名
+                    try {
 
-                    val span = TimeUtils.getNowMills()
-                    val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+                        //上传Object
+                        val file = File(mPhotoPath)
+                        // bucketName 为文件夹名 ，使用用户id来进行命名
+                        // key值为保存文件名，试用固定的几种格式来命名
 
-                    val putObjectFromFileResponse =
-                        avatarClient.putObject("user" + SPStaticUtils.getString(Constant.USER_ID,
-                            "default"), path, file)
+                        val span = TimeUtils.getNowMills()
+                        val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
 
-                    mPhotoUrl = avatarClient.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", path, -1).toString()
+                        val putObjectFromFileResponse =
+                            avatarClient.putObject("user" + SPStaticUtils.getString(Constant.USER_ID,
+                                "default"), path, file)
 
-                    // 这个时候应该上传
-                    doUploadAvatar(mPhotoUrl,
-                        FileUtils.getFileExtension(mPhotoPath),
-                        FileUtils.getFileNameNoExtension(mPhotoPath))
+                        mPhotoUrl = avatarClient.generatePresignedUrl("user${
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                        }", path, -1).toString()
+
+                        // 这个时候应该上传
+                        doUploadAvatar(mPhotoUrl,
+                            FileUtils.getFileExtension(mPhotoPath),
+                            FileUtils.getFileNameNoExtension(mPhotoPath))
+
+                    } catch (e: BceClientException) {
+                        e.printStackTrace()
+
+                        ThreadUtils.runOnUiThread {
+                            ll_avatar_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
+                    } catch (e: BceServiceException) {
+
+                        ThreadUtils.runOnUiThread {
+                            ll_avatar_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
+
+                        Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                        Log.i("guo", "Error RequestId: " + e.requestId);
+                        Log.i("guo", "Error StatusCode: " + e.statusCode);
+                        Log.i("guo", "Error ErrorType: " + e.errorType);
+                    } catch (e: UnknownHostException) {
+                        e.printStackTrace()
+                        ThreadUtils.runOnUiThread {
+                            ll_avatar_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
+                    }
+
 
                 }.start()
 

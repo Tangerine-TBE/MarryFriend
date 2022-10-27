@@ -775,16 +775,22 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             } catch (e: BceClientException) {
                                 e.printStackTrace()
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                             } catch (e: BceServiceException) {
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                                 Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                 Log.i("guo", "Error RequestId: " + e.requestId);
                                 Log.i("guo", "Error StatusCode: " + e.statusCode);
                                 Log.i("guo", "Error ErrorType: " + e.errorType);
                             } catch (e: UnknownHostException) {
-                                Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                 e.printStackTrace()
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                             }
 
                         }.start()
@@ -807,18 +813,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (isFinishIntroduce) {
 
 
-
-
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = introduceText
-                            isCompleteIntroduce = true
-                            textMode = "skip"
-                            doTextVerifyPresent.doTextVerify(map)
-
-
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = introduceText
+                        isCompleteIntroduce = true
+                        textMode = "skip"
+                        doTextVerifyPresent.doTextVerify(map)
 
 
                     }
@@ -831,16 +833,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (isFinishHobby) {
 
 
-
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = hobbyText
-                            isCompleteHobby = true
-                            textMode = "skip"
-                            doTextVerifyPresent.doTextVerify(map)
-
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = hobbyText
+                        isCompleteHobby = true
+                        textMode = "skip"
+                        doTextVerifyPresent.doTextVerify(map)
 
 
                     }
@@ -853,16 +853,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (isFinishIdeal) {
 
 
-
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = idealText
-                            isCompleteIdeal = true
-                            textMode = "skip"
-                            doTextVerifyPresent.doTextVerify(map)
-
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = idealText
+                        isCompleteIdeal = true
+                        textMode = "skip"
+                        doTextVerifyPresent.doTextVerify(map)
 
 
                     }
@@ -1054,8 +1052,11 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (isJobLocal) {
                             // 定位数据
                             SPStaticUtils.put(Constant.ME_WORK_PROVINCE_CODE, localCityOneCode)
+                            SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, localCityOne)
                             SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, localCityTwoCode)
                             SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, localCityTwo)
+
+                            SPStaticUtils.put(Constant.ME_WORK, "${localCityOne}-${localCityTwo}")
 
                         } else {
                             // 选择数据
@@ -1063,6 +1064,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             SPStaticUtils.put(Constant.ME_WORK_PROVINCE_NAME, jobProvinceName)
                             SPStaticUtils.put(Constant.ME_WORK_CITY_CODE, jobCityCode)
                             SPStaticUtils.put(Constant.ME_WORK_CITY_NAME, jobCityName)
+
+                            SPStaticUtils.put(Constant.ME_WORK, "${jobProvinceName}-${jobCityName}")
                         }
 
                         SPStaticUtils.put(Constant.ME_HOME_PROVINCE_CODE, homeProvinceCode)
@@ -1167,16 +1170,22 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             } catch (e: BceClientException) {
                                 e.printStackTrace()
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                             } catch (e: BceServiceException) {
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                                 Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                 Log.i("guo", "Error RequestId: " + e.requestId);
                                 Log.i("guo", "Error StatusCode: " + e.statusCode);
                                 Log.i("guo", "Error ErrorType: " + e.errorType);
                             } catch (e: UnknownHostException) {
-                                Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                 e.printStackTrace()
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                             }
 
                         }.start()
@@ -1214,16 +1223,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (isFinishIntroduce) {
 
 
-
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = introduceText
-                            isCompleteIntroduce = true
-                            textMode = "jump"
-                            doTextVerifyPresent.doTextVerify(map)
-
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = introduceText
+                        isCompleteIntroduce = true
+                        textMode = "jump"
+                        doTextVerifyPresent.doTextVerify(map)
 
 
                     } else {
@@ -1235,17 +1242,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (isFinishHobby) {
 
 
-
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = hobbyText
-                            isCompleteHobby = true
-                            textMode = "jump"
-                            doTextVerifyPresent.doTextVerify(map)
-
-
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = hobbyText
+                        isCompleteHobby = true
+                        textMode = "jump"
+                        doTextVerifyPresent.doTextVerify(map)
 
 
                     } else {
@@ -1258,19 +1262,14 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     if (isFinishIdeal) {
 
 
-
-
-                            val map: MutableMap<String, String> = TreeMap()
-                            map[Contents.ACCESS_TOKEN] =
-                                SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                            map[Contents.TEXT] = idealText
-                            isCompleteIdeal = true
-                            textMode = "jump"
-                            doTextVerifyPresent.doTextVerify(map)
-
-
-
+                        val map: MutableMap<String, String> = TreeMap()
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+                        map[Contents.TEXT] = idealText
+                        isCompleteIdeal = true
+                        textMode = "jump"
+                        doTextVerifyPresent.doTextVerify(map)
 
 
                     } else {
@@ -1285,17 +1284,15 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         if (RegexUtils.isIDCard18Exact(identityCode)) {
 
 
+                            val map: MutableMap<String, String> = TreeMap()
+                            map[Contents.ACCESS_TOKEN] =
+                                SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
+                            map[Contents.CONTENT_TYPE] = "application/json"
+                            map[Contents.ID_CARD_NUMBER] = identityCode
+                            map[Contents.NAME] = name
+                            doIdentityVerifyPresent.doIdentityVerify(map)
 
-                                val map: MutableMap<String, String> = TreeMap()
-                                map[Contents.ACCESS_TOKEN] =
-                                    SPStaticUtils.getString(Constant.ID_ACCESS_TOKEN, "")
-                                map[Contents.CONTENT_TYPE] = "application/json"
-                                map[Contents.ID_CARD_NUMBER] = identityCode
-                                map[Contents.NAME] = name
-                                doIdentityVerifyPresent.doIdentityVerify(map)
-
-                                // 返回mbody为空，以后人脸识别可以了直接
-
+                            // 返回mbody为空，以后人脸识别可以了直接
 
 
                         } else {
@@ -1920,11 +1917,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private fun getIndustry() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            getIndustryPresent.getIndustry(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        getIndustryPresent.getIndustry(map)
 
 
     }
@@ -1932,10 +1926,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private fun getJob() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            getJobPresent.getJob(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        getJobPresent.getJob(map)
 
 
     }
@@ -2037,15 +2029,13 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private fun updateAvatar(photoUrl: String, type: String, name: String) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.IMAGE_URL] = photoUrl
-            map[Contents.FILE_TYPE] = type
-            map[Contents.FILE_NAME] = name
-            map[Contents.CONTENT] = "0"
-            doUploadAvatarPresent.doUploadAvatar(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
 
     }
@@ -2057,15 +2047,12 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private fun deleteLifePhoto(id: String) {
 
 
+        ll_guide_life_loading.visibility = View.VISIBLE
 
-            ll_guide_life_loading.visibility = View.VISIBLE
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ID] = id
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            doDeletePhotoPresent.doDeletePhoto(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ID] = id
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        doDeletePhotoPresent.doDeletePhoto(map)
 
 
     }
@@ -2091,25 +2078,20 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         Log.i("guo", "demand : ${getDemandInfo()}")
 
 
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+        updateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
+        val moreInfoMap: MutableMap<String, String> = TreeMap()
+        moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
+        updateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
-
-            val baseInfoMap: MutableMap<String, String> = TreeMap()
-            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
-            updateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
-            val moreInfoMap: MutableMap<String, String> = TreeMap()
-            moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
-            updateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
-
-            val demandInfoMap: MutableMap<String, String> = TreeMap()
-            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
-            updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
-
-
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
 
     }
@@ -3653,7 +3635,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         ToastUtils.showShort("身份验证接口暂不可用")
 
 
-
     }
 
     override fun onDoFaceDetectSuccess(faceDetectBean: FaceDetectBean) {
@@ -3693,7 +3674,6 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                         }", "${faceName}.jpg", -1).toString()
 
 
-                        Log.i("guo", mPhotoUrl)
 
                         updateAvatar(mPhotoUrl,
                             FileUtils.getFileExtension(mPhotoPath),
@@ -3701,20 +3681,31 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                     } catch (e: BceClientException) {
                         e.printStackTrace()
-                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        ThreadUtils.runOnUiThread {
+                            ll_guide_detail_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                     } catch (e: BceServiceException) {
+                        ThreadUtils.runOnUiThread {
+                            ll_guide_detail_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                         Log.i("guo", "Error ErrorCode: " + e.errorCode);
                         Log.i("guo", "Error RequestId: " + e.requestId);
                         Log.i("guo", "Error StatusCode: " + e.statusCode);
                         Log.i("guo", "Error ErrorType: " + e.errorType);
                     } catch (e: UnknownHostException) {
-                        Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                         e.printStackTrace()
+                        ThreadUtils.runOnUiThread {
+                            ll_guide_detail_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                     } catch (e: IOException) {
-                        Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                         e.printStackTrace();
+                        ThreadUtils.runOnUiThread {
+                            ll_guide_detail_loading.visibility = View.GONE
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                     }
 
                 }.start()

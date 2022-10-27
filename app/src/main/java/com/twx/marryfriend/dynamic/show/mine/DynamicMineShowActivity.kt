@@ -1545,8 +1545,6 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
             findViewById<TextView>(R.id.tv_dialog_tip_confirm).setOnClickListener {
                 // 删除动态
 
-                if (NetworkUtils.isAvailable()){
-
                     when (mode) {
                         0 -> {
                             val map: MutableMap<String, String> = TreeMap()
@@ -1565,9 +1563,7 @@ class DynamicMineShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                         }
                     }
 
-                }else{
-                    ToastUtils.showShort("网络连接失败，请检查网络")
-                }
+
 
             }
         }

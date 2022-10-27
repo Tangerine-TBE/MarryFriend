@@ -7,6 +7,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -29,8 +31,10 @@ import com.twx.marryfriend.net.callback.vip.IDoReportOtherCallback
 import com.twx.marryfriend.net.impl.vip.doReportOtherPresentImpl
 import com.twx.marryfriend.set.adapter.ReportDataAdapter
 import com.twx.marryfriend.utils.GlideEngine
+import kotlinx.android.synthetic.main.activity_avatar_tool.*
 import kotlinx.android.synthetic.main.activity_report.*
 import java.io.File
+import java.net.UnknownHostException
 import java.util.*
 
 class ReportActivity : MainBaseViewActivity(), IDoReportOtherCallback,
@@ -173,46 +177,44 @@ class ReportActivity : MainBaseViewActivity(), IDoReportOtherCallback,
     private fun doReport(text: String, url: String) {
 
 
-
-            val reasonText = when (mode) {
-                0 -> {
-                    "其它"
-                }
-                1 -> {
-                    "恶语辱骂"
-                }
-                2 -> {
-                    "广告骚扰"
-                }
-                3 -> {
-                    "投资诈骗"
-                }
-                4 -> {
-                    "涉黄涉赌"
-                }
-                5 -> {
-                    "资料作假"
-                }
-                6 -> {
-                    "不当言论"
-                }
-                7 -> {
-                    "其他平台违规"
-                }
-                else -> {
-                    "其它"
-                }
+        val reasonText = when (mode) {
+            0 -> {
+                "其它"
             }
+            1 -> {
+                "恶语辱骂"
+            }
+            2 -> {
+                "广告骚扰"
+            }
+            3 -> {
+                "投资诈骗"
+            }
+            4 -> {
+                "涉黄涉赌"
+            }
+            5 -> {
+                "资料作假"
+            }
+            6 -> {
+                "不当言论"
+            }
+            7 -> {
+                "其他平台违规"
+            }
+            else -> {
+                "其它"
+            }
+        }
 
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.HOST_UID] = hostId
-            map[Contents.GUEST_UID] = guestId
-            map[Contents.REASON_CODE] = (mode + 1).toString()
-            map[Contents.REASON_TEXT] = reasonText
-            map[Contents.MARK_NOTICE] = text
-            map[Contents.IMAGE_URL] = url
-            doReportOtherPresent.doReportOther(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = hostId
+        map[Contents.GUEST_UID] = guestId
+        map[Contents.REASON_CODE] = (mode + 1).toString()
+        map[Contents.REASON_TEXT] = reasonText
+        map[Contents.MARK_NOTICE] = text
+        map[Contents.IMAGE_URL] = url
+        doReportOtherPresent.doReportOther(map)
 
 
     }
@@ -258,46 +260,75 @@ class ReportActivity : MainBaseViewActivity(), IDoReportOtherCallback,
 
                             Thread {
 
-                                for (i in 0.until(mChooseList.size)) {
+                                try {
 
-                                    val coverName = TimeUtils.getNowMills()
+                                    for (i in 0.until(mChooseList.size)) {
 
-                                    val putObjectFromFileResponse = client.putObject("user${
-                                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }",
-                                        "${coverName}.jpg",
-                                        File(mChooseList[i]))
+                                        val coverName = TimeUtils.getNowMills()
 
-                                    mList.add(0, client.generatePresignedUrl("user${
-                                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                                    }",
-                                        "${coverName}.jpg",
-                                        -1)
-                                        .toString())
+                                        val putObjectFromFileResponse = client.putObject("user${
+                                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                                        }",
+                                            "${coverName}.jpg",
+                                            File(mChooseList[i]))
 
-                                }
+                                        mList.add(0, client.generatePresignedUrl("user${
+                                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                                        }",
+                                            "${coverName}.jpg",
+                                            -1)
+                                            .toString())
 
-                                ThreadUtils.runOnUiThread {
-
-                                    Log.i("guo", "size : ${mList.size}")
-
-                                    tv_report_photo_size.text = "${mList.size}/9张"
-
-                                    if (reportText != "" && mList.isNotEmpty()) {
-                                        iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit)
-                                    } else {
-                                        iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit_non)
                                     }
 
-                                    if (mList.size < 9) {
-                                        mList.add("add")
+                                    ThreadUtils.runOnUiThread {
+
+                                        Log.i("guo", "size : ${mList.size}")
+
+                                        tv_report_photo_size.text = "${mList.size}/9张"
+
+                                        if (reportText != "" && mList.isNotEmpty()) {
+                                            iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit)
+                                        } else {
+                                            iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit_non)
+                                        }
+
+                                        if (mList.size < 9) {
+                                            mList.add("add")
+                                        }
+
+                                        ll_report_load.visibility = View.GONE
+
+                                        adapter.notifyDataSetChanged()
+
                                     }
 
-                                    ll_report_load.visibility = View.GONE
+                                } catch (e: BceClientException) {
+                                    e.printStackTrace()
 
-                                    adapter.notifyDataSetChanged()
+                                    ThreadUtils.runOnUiThread {
+                                        ll_report_load.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    }
+                                } catch (e: BceServiceException) {
 
+                                    ThreadUtils.runOnUiThread {
+                                        ll_report_load.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    }
+
+                                    Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                    Log.i("guo", "Error RequestId: " + e.requestId);
+                                    Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                    Log.i("guo", "Error ErrorType: " + e.errorType);
+                                } catch (e: UnknownHostException) {
+                                    e.printStackTrace()
+                                    ThreadUtils.runOnUiThread {
+                                        ll_report_load.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    }
                                 }
+
 
                             }.start()
 

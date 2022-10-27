@@ -321,16 +321,28 @@ class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
 
                                 } catch (e: BceClientException) {
                                     e.printStackTrace()
-                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    ThreadUtils.runOnUiThread {
+                                        ll_suggestion_load.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    }
+
                                 } catch (e: BceServiceException) {
+
+                                    ThreadUtils.runOnUiThread {
+                                        ll_suggestion_load.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    }
+
                                     Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                     Log.i("guo", "Error RequestId: " + e.requestId);
                                     Log.i("guo", "Error StatusCode: " + e.statusCode);
                                     Log.i("guo", "Error ErrorType: " + e.errorType);
                                 } catch (e: UnknownHostException) {
-                                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
-                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                     e.printStackTrace()
+                                    ThreadUtils.runOnUiThread {
+                                        ll_suggestion_load.visibility = View.GONE
+                                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                    }
                                 }
 
                             }.start()

@@ -8,6 +8,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import com.baidubce.BceClientException
+import com.baidubce.BceServiceException
 import com.baidubce.auth.DefaultBceCredentials
 import com.baidubce.services.bos.BosClient
 import com.baidubce.services.bos.BosClientConfiguration
@@ -36,10 +38,12 @@ import com.twx.marryfriend.net.impl.doTextVerifyPresentImpl
 import com.twx.marryfriend.net.impl.vip.doReportOtherPresentImpl
 import com.twx.marryfriend.set.adapter.ReportDataAdapter
 import com.twx.marryfriend.utils.GlideEngine
+import kotlinx.android.synthetic.main.activity_avatar_tool.*
 import kotlinx.android.synthetic.main.activity_report.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.net.UnknownHostException
 import java.util.*
 
 /**
@@ -203,15 +207,11 @@ class save {
         private fun doFaceDetect(picPath: String) {
 
 
-
-
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
-                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(picPath))
-                doFaceDetectPresent.doLifeFaceDetect(map)
-
-
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.LIFE_ACCESS_TOKEN, "")
+            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+            map[Contents.IMAGE] = bitmapToBase64(ImageUtils.getBitmap(picPath))
+            doFaceDetectPresent.doLifeFaceDetect(map)
 
 
         }
@@ -220,14 +220,11 @@ class save {
         private fun doTextDetect(text: String) {
 
 
-
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
-                map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
-                map[Contents.TEXT] = text
-                doTextVerifyPresent.doTextVerify(map)
-
-
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+            map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
+            map[Contents.TEXT] = text
+            doTextVerifyPresent.doTextVerify(map)
 
 
         }
@@ -236,19 +233,17 @@ class save {
         private fun doReport(text: String, url: String) {
 
 
+            val map: MutableMap<String, String> = TreeMap()
+            map[Contents.HOST_UID] = hostId
+            map[Contents.GUEST_UID] = guestId
+            map[Contents.REASON_CODE] = mode.toString()
+            map[Contents.REASON_TEXT] = text
+            map[Contents.MARK_NOTICE] = "0"
+            map[Contents.IMAGE_URL] = url
 
-                val map: MutableMap<String, String> = TreeMap()
-                map[Contents.HOST_UID] = hostId
-                map[Contents.GUEST_UID] = guestId
-                map[Contents.REASON_CODE] = mode.toString()
-                map[Contents.REASON_TEXT] = text
-                map[Contents.MARK_NOTICE] = "0"
-                map[Contents.IMAGE_URL] = url
+            Log.i("guo", map.toString())
 
-                Log.i("guo", map.toString())
-
-                doReportOtherPresent.doReportOther(map)
-
+            doReportOtherPresent.doReportOther(map)
 
 
         }
@@ -403,7 +398,6 @@ class save {
 
             if (mDetectList.size == mChooseList.size) {
 
-                Log.i("guo", mDetectList.toString())
 
                 val mErrorList = mutableListOf<Int>()
 
@@ -412,35 +406,60 @@ class save {
 
                         Thread {
 
-                            val span = TimeUtils.getNowMills()
-                            val path =
-                                "${FileUtils.getFileNameNoExtension(mChooseList[i])}_${span}.jpg"
+                            try {
 
-                            val putObjectFromFileResponse = client.putObject("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", path, File(mChooseList[i]))
+                                val span = TimeUtils.getNowMills()
+                                val path =
+                                    "${FileUtils.getFileNameNoExtension(mChooseList[i])}_${span}.jpg"
 
-                            mList.add(0, client.generatePresignedUrl("user${
-                                SPStaticUtils.getString(Constant.USER_ID, "default")
-                            }", path, -1).toString())
+                                val putObjectFromFileResponse = client.putObject("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", path, File(mChooseList[i]))
 
-                            ThreadUtils.runOnUiThread {
+                                mList.add(0, client.generatePresignedUrl("user${
+                                    SPStaticUtils.getString(Constant.USER_ID, "default")
+                                }", path, -1).toString())
 
-                                if (mList.size != 9) {
-                                    tv_report_photo_size.text = "${mList.size - 1}/9张"
-                                } else {
-                                    tv_report_photo_size.text = "${mList.size}/9张"
+                                ThreadUtils.runOnUiThread {
+
+                                    if (mList.size != 9) {
+                                        tv_report_photo_size.text = "${mList.size - 1}/9张"
+                                    } else {
+                                        tv_report_photo_size.text = "${mList.size}/9张"
+                                    }
+
+                                    adapter.notifyDataSetChanged()
+                                    if (mErrorList.size != 0) {
+                                        ToastUtils.showShort("共有${mErrorList.size}张图片违规")
+                                    }
+
+                                    if (reportText != "" && mList.size != 1) {
+                                        iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit)
+                                    } else {
+                                        iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit_non)
+                                    }
                                 }
 
-                                adapter.notifyDataSetChanged()
-                                if (mErrorList.size != 0) {
-                                    ToastUtils.showShort("共有${mErrorList.size}张图片违规")
+                            } catch (e: BceClientException) {
+                                e.printStackTrace()
+
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
+                            } catch (e: BceServiceException) {
+
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                 }
 
-                                if (reportText != "" && mList.size != 1) {
-                                    iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit)
-                                } else {
-                                    iv_report_reason_commit.setImageResource(R.mipmap.icon_report_commit_non)
+                                Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                                Log.i("guo", "Error RequestId: " + e.requestId);
+                                Log.i("guo", "Error StatusCode: " + e.statusCode);
+                                Log.i("guo", "Error ErrorType: " + e.errorType);
+                            } catch (e: UnknownHostException) {
+                                e.printStackTrace()
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                 }
                             }
 

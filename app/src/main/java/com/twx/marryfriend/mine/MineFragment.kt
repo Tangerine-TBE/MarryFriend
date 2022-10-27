@@ -79,6 +79,7 @@ import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.view.LoadingAnimation.AVLoadingIndicatorView
 import com.twx.marryfriend.vip.VipActivity
 import com.yalantis.ucrop.UCrop
+import kotlinx.android.synthetic.main.activity_avatar_tool.*
 import kotlinx.android.synthetic.main.fragment_mine.*
 import java.io.*
 import java.net.UnknownHostException
@@ -816,12 +817,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     private fun getAvatar() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            doViewHeadFacePresent.doViewHeadFace(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        doViewHeadFacePresent.doViewHeadFace(map)
 
 
     }
@@ -829,12 +827,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     private fun getFourTotal() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            getFourTotalPresent.getFourTotal(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getFourTotalPresent.getFourTotal(map)
 
 
     }
@@ -843,10 +838,9 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
     private fun getFiveInfo() {
 
 
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            getFiveInfoPresent.getFiveInfo(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getFiveInfoPresent.getFiveInfo(map)
 
 
     }
@@ -1584,7 +1578,7 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                 try {
 
-                    if (File(mPhotoPath).exists()){
+                    if (File(mPhotoPath).exists()) {
 
                         Thread {
 
@@ -1596,10 +1590,14 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
                                 // key值为保存文件名，试用固定的几种格式来命名
 
                                 val span = TimeUtils.getNowMills()
-                                val path = "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
+                                val path =
+                                    "${FileUtils.getFileNameNoExtension(mPhotoPath)}_${span}.jpg"
 
                                 val putObjectFromFileResponse =
-                                    client.putObject("user${SPStaticUtils.getString(Constant.USER_ID, "13")}", path, file)
+                                    client.putObject("user${
+                                        SPStaticUtils.getString(Constant.USER_ID,
+                                            "13")
+                                    }", path, file)
 
                                 mPhotoUrl = client.generatePresignedUrl("user${
                                     SPStaticUtils.getString(Constant.USER_ID, "default")
@@ -1613,28 +1611,34 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                             } catch (e: BceClientException) {
                                 e.printStackTrace()
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                             } catch (e: BceServiceException) {
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                                 Log.i("guo", "Error ErrorCode: " + e.errorCode);
                                 Log.i("guo", "Error RequestId: " + e.requestId);
                                 Log.i("guo", "Error StatusCode: " + e.statusCode);
                                 Log.i("guo", "Error ErrorType: " + e.errorType);
                             } catch (e: UnknownHostException) {
-                                Log.i("guo","网络请求错误，请检查网络后稍后重试")
-                                ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                                 e.printStackTrace()
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                                }
                             }
 
                         }.start()
 
-                    }else{
+                    } else {
                         ToastUtils.showShort("文件读取失败，请稍后再试")
                     }
 
-                }catch (e: com.baidubce.BceClientException){
+                } catch (e: com.baidubce.BceClientException) {
                     e.printStackTrace()
                     ToastUtils.showShort("文件读取失败，请稍后再试")
-                }catch (e:FileNotFoundException){
+                } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                     ToastUtils.showShort("文件读取失败，请稍后再试")
                 }
@@ -1818,17 +1822,16 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                 if (nick.isNotEmpty()) {
 
-                    if (NetworkUtils.isAvailable()){
+
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = nick
                         doTextVerifyPresent.doTextVerify(map)
 
-                    }else{
-                        ToastUtils.showShort("网络连接失败，请检查网络")
-                    }
+
 
                 } else {
                     ToastUtils.showShort("请输入您需要更改的昵称")
@@ -1953,17 +1956,16 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    if (NetworkUtils.isAvailable()){
+
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = text
                         doTextVerifyPresent.doTextVerify(map)
 
-                    }else{
-                        ToastUtils.showShort("网络连接失败，请检查网络")
-                    }
+
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2084,17 +2086,16 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    if (NetworkUtils.isAvailable()){
+
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = text
                         doTextVerifyPresent.doTextVerify(map)
 
-                    }else{
-                        ToastUtils.showShort("网络连接失败，请检查网络")
-                    }
+
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2215,17 +2216,16 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
             confirm.setOnClickListener {
                 if (size >= 10) {
 
-                    if (NetworkUtils.isAvailable()){
+
 
                         val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.ACCESS_TOKEN] = SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
+                        map[Contents.ACCESS_TOKEN] =
+                            SPStaticUtils.getString(Constant.ACCESS_TOKEN, "")
                         map[Contents.CONTENT_TYPE] = "application/x-www-form-urlencoded"
                         map[Contents.TEXT] = text
                         doTextVerifyPresent.doTextVerify(map)
 
-                    }else{
-                        ToastUtils.showShort("网络连接失败，请检查网络")
-                    }
+
 
                 } else {
                     ToastUtils.showShort("请输入至少10字内容")
@@ -2432,36 +2432,56 @@ class MineFragment : Fragment(), IDoFaceDetectCallback, IDoUpdateGreetInfoCallba
 
                 Thread {
 
-                    //上传Object
-                    val file = File(recordPath)
-                    // bucketName 为文件夹名 ，使用用户id来进行命名
-                    // key值为保存文件名，试用固定的几种格式来命名
+                    try {
 
-                    val span = TimeUtils.getNowMills()
-                    val path = "${FileUtils.getFileNameNoExtension(recordPath)}_${span}.mp3"
+                        //上传Object
+                        val file = File(recordPath)
+                        // bucketName 为文件夹名 ，使用用户id来进行命名
+                        // key值为保存文件名，试用固定的几种格式来命名
 
-                    val putObjectFromFileResponse = client.putObject("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", path, file)
+                        val span = TimeUtils.getNowMills()
+                        val path = "${FileUtils.getFileNameNoExtension(recordPath)}_${span}.mp3"
 
-                    val mVoiceUrl = client.generatePresignedUrl("user${
-                        SPStaticUtils.getString(Constant.USER_ID, "default")
-                    }", path, -1).toString()
+                        val putObjectFromFileResponse = client.putObject("user${
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                        }", path, file)
 
-                    Log.i("guo", mVoiceUrl)
+                        val mVoiceUrl = client.generatePresignedUrl("user${
+                            SPStaticUtils.getString(Constant.USER_ID, "default")
+                        }", path, -1).toString()
 
-                    SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
+                        Log.i("guo", mVoiceUrl)
 
-                    if (NetworkUtils.isAvailable()){
+                        SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
                         val map: MutableMap<String, String> = TreeMap()
                         map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
                         map[Contents.GREET_UPDATE] = getGreetInfo()
                         doUpdateGreetPresent.doUpdateGreetInfo(map)
 
-                    }else{
-                        ToastUtils.showShort("网络连接失败，请检查网络")
+                    } catch (e: BceClientException) {
+                        e.printStackTrace()
+
+                        ThreadUtils.runOnUiThread {
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
+                    } catch (e: BceServiceException) {
+
+                        ThreadUtils.runOnUiThread {
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
+
+                        Log.i("guo", "Error ErrorCode: " + e.errorCode);
+                        Log.i("guo", "Error RequestId: " + e.requestId);
+                        Log.i("guo", "Error StatusCode: " + e.statusCode);
+                        Log.i("guo", "Error ErrorType: " + e.errorType);
+                    } catch (e: UnknownHostException) {
+                        e.printStackTrace()
+                        ThreadUtils.runOnUiThread {
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                     }
+
 
                 }.start()
 

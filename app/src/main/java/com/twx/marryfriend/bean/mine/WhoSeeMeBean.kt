@@ -27,7 +27,7 @@ data class WhoSeeMeList(
     val identity_status: Any,
     val image_url: String,
     val level: Any,
-    val nick: String,
+    val nick: String?,
     val occupation_str: String,
     val update_time: String,
     val user_sex: Int,

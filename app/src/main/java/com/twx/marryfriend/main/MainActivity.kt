@@ -197,10 +197,10 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     override fun onStart() {
         super.onStart()
         PushManager.handlerNotificationMsg()?.also {
-            val from=ImUserInfoHelper.getUserInfo(it.from)
-            if (UserInfo.isVip()||from?.isSuperVip==true||from?.isMutualLike==true){
-                startActivity(ImChatActivity.getIntent(this,it.from))
-            }else{
+            val from = ImUserInfoHelper.getUserInfo(it.from)
+            if (UserInfo.isVip() || from?.isSuperVip == true || from?.isMutualLike == true) {
+                startActivity(ImChatActivity.getIntent(this, it.from))
+            } else {
                 rb_main_message.performClick()
             }
         }
