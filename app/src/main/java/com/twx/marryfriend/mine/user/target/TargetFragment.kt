@@ -225,10 +225,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     private fun update() {
 
 
-            val demandInfoMap: MutableMap<String, String> = TreeMap()
-            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
-            updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.DEMAND_UPDATE] = getDemandInfo()
+        updateDemandInfoPresent.doUpdateDemandInfo(demandInfoMap)
 
 
     }
@@ -237,12 +237,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     private fun uploadDemandAddress() {
 
 
-
-            val demandInfoMap: MutableMap<String, String> = TreeMap()
-            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
-            doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
-
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        demandInfoMap[Contents.SHENG_SHI] = getDemandAddressInfo()
+        doPlusDemandAddressPresent.doPlusDemandAddress(demandInfoMap)
 
 
     }
@@ -335,7 +333,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7) == 7) {
+                    if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 9) == 9) {
                         // 月收入
                         showIncomeDialog()
                     } else {
@@ -407,7 +405,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             1 -> {
-                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7) == 7) {
+                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 9) == 9) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -933,7 +931,9 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         val z = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
         val listZ = z.split(",")
 
-        if (z == "0") {
+        if (z == "") {
+            haveChild = "未填写"
+        } else if (z == "0") {
             haveChild = "不限"
         } else {
             haveChild = ""
@@ -953,6 +953,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 haveChild = haveChild.substring(0, haveChild.length - 1)
             }
         }
+
+
 
         when (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5)) {
             0 -> wantChild = "不限"
@@ -1272,11 +1274,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
     // 何时结婚
     private fun showMarryDialog() {
-        XPopup.Builder(context)
-            .dismissOnTouchOutside(false)
-            .dismissOnBackPressed(true)
-            .isDestroyOnDismiss(true)
-            .popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+        XPopup.Builder(context).dismissOnTouchOutside(false).dismissOnBackPressed(true)
+            .isDestroyOnDismiss(true).popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
             .asCustom(MarryDialog(requireContext())).show()
     }
 
@@ -1307,8 +1306,25 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             wheelTwo.data = mAgeMaxList
 
 
-            mMinAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) - 18
-            mMaxAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) - 18
+            mMinAgePosition = if (SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) == 18) {
+                0
+            } else {
+                SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) - 18
+            }
+
+            mMaxAgePosition = if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) == 18) {
+                0
+            } else {
+                SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) - 18
+            }
+
+            Log.i("guo","mMinAgePosition : $mMinAgePosition")
+
+            Log.i("guo","mMaxAgePosition : $mMaxAgePosition")
+
+
+//            mMinAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) - 18
+//            mMaxAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) - 18
 
             wheelOne.setSelectedItemPosition(mMinAgePosition, false)
             wheelTwo.setSelectedItemPosition(mMaxAgePosition, false)
@@ -1379,6 +1395,12 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             }
 
             confirm.setOnClickListener {
+
+                Log.i("guo","mMinAgePosition : $mMinAgePosition")
+
+                Log.i("guo","mMaxAgePosition : $mMaxAgePosition")
+
+
                 ToastUtils.showShort("${mAgeMinList[mMinAgePosition]} - ${mAgeMaxList[mMaxAgePosition]} ")
                 SPStaticUtils.put(Constant.TA_AGE_MIN, mAgeMinList[mMinAgePosition])
                 SPStaticUtils.put(Constant.TA_AGE_MAX, mAgeMaxList[mMaxAgePosition])
@@ -1432,8 +1454,21 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             wheelOne.data = mHeightMinList
             wheelTwo.data = mHeightMaxList
 
-            mMinHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) - 140
-            mMaxHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) - 140
+
+            mMinHeightPosition = if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) == 0) {
+                0
+            } else {
+                SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) - 140
+            }
+
+
+            mMaxHeightPosition = if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) == 0) {
+                0
+            } else {
+                SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) - 140
+            }
+
+//            mMaxHeightPosition = SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) - 140
 
             wheelOne.setSelectedItemPosition(mMinHeightPosition, false)
             wheelTwo.setSelectedItemPosition(mMaxHeightPosition, false)
@@ -1504,7 +1539,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             confirm.setOnClickListener {
 
                 Log.i("guo", "mMinHeightPosition : $mMinHeightPosition")
-                Log.i("guo", "mMinHeightPosition : $mMinHeightPosition")
+                Log.i("guo", "mMaxHeightPosition : $mMaxHeightPosition")
 
                 SPStaticUtils.put(Constant.TA_HEIGHT_MIN, mHeightMinList[mMinHeightPosition])
                 SPStaticUtils.put(Constant.TA_HEIGHT_MAX, mHeightMaxList[mMaxHeightPosition])

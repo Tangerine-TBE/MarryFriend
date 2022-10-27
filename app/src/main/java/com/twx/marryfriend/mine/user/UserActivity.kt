@@ -28,6 +28,7 @@ import com.twx.marryfriend.net.callback.IGetPhotoListCallback
 import com.twx.marryfriend.net.impl.doGetDemandAddressPresentImpl
 import com.twx.marryfriend.net.impl.getFiveInfoPresentImpl
 import com.twx.marryfriend.net.impl.getPhotoListPresentImpl
+import com.twx.marryfriend.utils.TimeUtil
 import com.yalantis.ucrop.UCrop
 import kotlinx.android.synthetic.main.activity_user.*
 import kotlinx.android.synthetic.main.fragment_data.*
@@ -115,13 +116,9 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     private fun getPhoto() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            getPhotoListPresent.getPhotoList(map)
-
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getPhotoListPresent.getPhotoList(map)
 
 
     }
@@ -130,10 +127,9 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     private fun getDemandAddress() {
 
 
-            val demandInfoMap: MutableMap<String, String> = TreeMap()
-            demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
-
+        val demandInfoMap: MutableMap<String, String> = TreeMap()
+        demandInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        doGetDemandAddressPresent.doGetDemandAddress(demandInfoMap)
 
 
     }
@@ -142,11 +138,9 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
     private fun getFiveInfo() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            getFiveInfoPresent.getFiveInfo(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        getFiveInfoPresent.getFiveInfo(map)
 
 
     }
@@ -193,8 +187,9 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
             if (fiveInfoBean.code == 200) {
 
 
-                // 自我介绍、语音介绍、心目中的ta
+                Log.i("guo111", "更新数据")
 
+                // 自我介绍、语音介绍、心目中的ta
 
                 SPStaticUtils.put(Constant.ME_INTRODUCE, fiveInfoBean.data.base.introduce_self)
 
@@ -207,7 +202,6 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
                 SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
 
 
-
                 SPStaticUtils.put(Constant.ME_NAME, fiveInfoBean.data.base.nick)
 
                 SPStaticUtils.put(Constant.ME_SEX, fiveInfoBean.data.base.user_sex)
@@ -217,7 +211,8 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
                 SPStaticUtils.put(Constant.ME_HEIGHT, fiveInfoBean.data.base.height)
 
-                SPStaticUtils.put(Constant.ME_INDUSTRY_NAME, fiveInfoBean.data.base.industry_str)
+                SPStaticUtils.put(Constant.ME_INDUSTRY_NAME,
+                    fiveInfoBean.data.base.industry_str)
                 SPStaticUtils.put(Constant.ME_OCCUPATION_NAME,
                     fiveInfoBean.data.base.occupation_str)
 
@@ -471,7 +466,8 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
                     val interdictionBean = InterdictionBean().also {
                         it.blacklist_status = fiveInfoBean.data.blacklist.blacklist_status
                         it.blacklist_permanent = fiveInfoBean.data.blacklist.blacklist_permanent
-                        it.blacklist_close_time = fiveInfoBean.data.blacklist.blacklist_close_time
+                        it.blacklist_close_time =
+                            fiveInfoBean.data.blacklist.blacklist_close_time
                     }
 
                     InterdictionBean.putInterdictionState(interdictionBean)
@@ -489,6 +485,9 @@ class UserActivity : MainBaseViewActivity(), IGetPhotoListCallback, IDoGetDemand
 
                 // 更新心目中的他、自我介绍
                 dateFragment.updateTextInfo()
+
+                dateFragment.showDataFirstDialog()
+
 
             }
         }

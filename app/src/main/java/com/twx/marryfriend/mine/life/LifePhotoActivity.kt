@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
@@ -47,6 +48,7 @@ import com.twx.marryfriend.net.callback.IDoUploadPhotoCallback
 import com.twx.marryfriend.net.impl.doDeletePhotoPresentImpl
 import com.twx.marryfriend.net.impl.doLifeFaceDetectPresentImpl
 import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
+import com.twx.marryfriend.utils.DynamicFileProvider
 import com.twx.marryfriend.utils.GlideEngine
 import kotlinx.android.synthetic.main.activity_life_photo.*
 import java.io.ByteArrayOutputStream
@@ -63,6 +65,9 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
     // 选择器中选中的图片路径
     private var lifeChoosePath: String = ""
+
+    //  生活照拍照文件路径
+    private var mTempPhotoPath = ""
 
     // 生活照暂存的bitmap
     private var lifeBitmap: Bitmap? = null
@@ -191,6 +196,10 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
     override fun initLoadData() {
         super.initLoadData()
+
+        mTempPhotoPath =
+            this@LifePhotoActivity.externalCacheDir.toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
+
     }
 
     override fun initPresent() {
@@ -239,9 +248,14 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             // 这个地方做个判断，要是有url，就传入url，若是没有，就正常流程，包装点进预览有数据
 
-            Log.i("guo","第一张图片Id ： $mLifeFirstId")
+            Log.i("guo", "第一张图片Id ： $mLifeFirstId")
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFirstPath,mLifeFirstText,1,mLifeFirstId), 111)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeFirstPath,
+                mLifeFirstText,
+                1,
+                mLifeFirstId,
+                mLifeFirstUrl), 111)
 
         }
 
@@ -259,7 +273,12 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
         rl_life_photo_pic_two.setOnClickListener {
             // 第二张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeSecondPath,mLifeSecondText,1,mLifeSecondId), 222)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeSecondPath,
+                mLifeSecondText,
+                1,
+                mLifeSecondId,
+                mLifeSecondUrl), 222)
 
         }
 
@@ -276,7 +295,12 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
         rl_life_photo_pic_three.setOnClickListener {
             // 第三张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeThirdPath,mLifeThirdText,1,mLifeThirdId), 333)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeThirdPath,
+                mLifeThirdText,
+                1,
+                mLifeThirdId,
+                mLifeThirdUrl), 333)
 
         }
 
@@ -295,7 +319,12 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
         rl_life_photo_pic_four.setOnClickListener {
             // 第四张图片的描述
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFourPath,mLifeFourText,1,mLifeFourId), 444)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeFourPath,
+                mLifeFourText,
+                1,
+                mLifeFourId,
+                mLifeFourUrl), 444)
 
         }
 
@@ -315,7 +344,12 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
             // 这个地方做个判断，要是有url，就传入url，若是没有，就正常流程，包装点进预览有数据
 
-            startActivityForResult(LifeIntroduceActivity.getIntent(this,mLifeFivePath,mLifeFiveText,1,mLifeFiveId), 555)
+            startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                mLifeFivePath,
+                mLifeFiveText,
+                1,
+                mLifeFiveId,
+                mLifeFiveUrl), 555)
 
         }
 
@@ -326,14 +360,12 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
     private fun deleteLifePhoto(id: String) {
 
 
+        ll_life_photo_loading.visibility = View.VISIBLE
 
-            ll_life_photo_loading.visibility = View.VISIBLE
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.ID] = id
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            doDeletePhotoPresent.doDeletePhoto(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.ID] = id
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        doDeletePhotoPresent.doDeletePhoto(map)
 
 
     }
@@ -529,42 +561,53 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
                 3 -> {
-                    if (data != null) {
-                        val bundle = data.extras
-                        val bitmap: Bitmap = bundle?.get("data") as Bitmap
+                    // 拍照回调
 
-                        lifeBitmap = bitmap
+                    Log.i("guo", "拍照回调 : $mTempPhotoPath")
 
-                        val mTempLifePath = Environment.getExternalStorageDirectory()
-                            .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
+                    val bitmap: Bitmap = ImageUtils.getBitmap(mTempPhotoPath)
 
-                        ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
+                    lifeBitmap = bitmap
 
-                        lifeChoosePath = mTempLifePath
+                    val mTempLifePath = Environment.getExternalStorageDirectory()
+                        .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
 
-                        if (!haveFirstPic) {
+                    ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 111)
+                    lifeChoosePath = mTempLifePath
 
-                        } else if (!haveSecondPic) {
+                    if (!haveFirstPic) {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 222)
+                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                            lifeChoosePath,
+                            ""), 111)
 
-                        } else if (!haveThirdPic) {
+                    } else if (!haveSecondPic) {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 333)
+                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                            lifeChoosePath,
+                            ""), 222)
 
-                        } else if (!haveFourPic) {
+                    } else if (!haveThirdPic) {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 444)
+                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                            lifeChoosePath,
+                            ""), 333)
 
-                        } else if (!haveFivePic) {
+                    } else if (!haveFourPic) {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,lifeChoosePath,""), 555)
+                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                            lifeChoosePath,
+                            ""), 444)
 
-                        }
+                    } else if (!haveFivePic) {
+
+                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
+                            lifeChoosePath,
+                            ""), 555)
 
                     }
+
                 }
                 111 -> {
                     // 生活第一张图的介绍
@@ -766,8 +809,31 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                             all: Boolean,
                         ) {
                             if (all) {
+
+                                mTempPhotoPath =
+                                    this@LifePhotoActivity.externalCacheDir.toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
+
+                                val tempPhotoFile: File = File(mTempPhotoPath)
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
+
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority =
+                                        this@LifePhotoActivity.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri =
+                                        DynamicFileProvider.getUriForFile(this@LifePhotoActivity,
+                                            authority,
+                                            tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+
                                 startActivityForResult(intent, 3)
+
+
                             } else {
                                 ToastUtils.showShort("请授予应用所需相关权限")
                             }
@@ -811,23 +877,33 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                             if (!haveFirstPic) {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 111)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                    lifeChoosePath,
+                                    ""), 111)
 
                             } else if (!haveSecondPic) {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 222)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                    lifeChoosePath,
+                                    ""), 222)
 
                             } else if (!haveThirdPic) {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 333)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                    lifeChoosePath,
+                                    ""), 333)
 
                             } else if (!haveFourPic) {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 444)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                    lifeChoosePath,
+                                    ""), 444)
 
                             } else if (!haveFivePic) {
 
-                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,lifeChoosePath,""), 555)
+                                startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                    lifeChoosePath,
+                                    ""), 555)
 
                             }
 

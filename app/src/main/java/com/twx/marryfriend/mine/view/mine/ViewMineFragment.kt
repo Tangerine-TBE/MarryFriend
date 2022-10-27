@@ -112,13 +112,11 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
     private fun getViewMineData(page: Int) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.PAGE] = page.toString()
-            map[Contents.SIZE] = "10"
-            getWhoSeeMePresent.getWhoSeeMe(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.PAGE] = page.toString()
+        map[Contents.SIZE] = "10"
+        getWhoSeeMePresent.getWhoSeeMe(map)
 
 
     }
@@ -160,9 +158,14 @@ class ViewMineFragment : Fragment(), IGetWhoSeeMeCallback, ViewMineAdapter.OnIte
 
                 currentPaper++
                 for (i in 0.until(whoSeeMeBean.data.list.size)) {
-                    mList.add(whoSeeMeBean.data.list[i])
 
-                    idList.add(whoSeeMeBean.data.list[i].host_uid.toString())
+                    if (whoSeeMeBean.data.list[i].nick != null) {
+
+                        mList.add(whoSeeMeBean.data.list[i])
+
+                        idList.add(whoSeeMeBean.data.list[i].host_uid.toString())
+
+                    }
 
                 }
 

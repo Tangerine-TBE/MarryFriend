@@ -2,6 +2,7 @@ package com.twx.marryfriend.set.message
 
 import android.util.Log
 import android.view.View
+import android.widget.Switch
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.blankj.utilcode.util.NetworkUtils
 import com.blankj.utilcode.util.SPStaticUtils
@@ -20,10 +21,12 @@ import com.twx.marryfriend.net.impl.vip.doUpdatePushSetPresentImpl
 import com.twx.marryfriend.net.impl.vip.getPushSetPresentImpl
 import com.twx.marryfriend.net.present.vip.IDoUpdatePushSetPresent
 import com.twx.marryfriend.set.adapter.MessageAdapter
+import com.twx.marryfriend.set.adapter.MessageTwoAdapter
 import kotlinx.android.synthetic.main.activity_message.*
 import java.util.*
 
-class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePushSetCallback {
+class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePushSetCallback,
+    MessageAdapter.OnItemClickListener, MessageTwoAdapter.OnTwoItemClickListener {
 
     private var data = true   // 资料审核通知
     private var love = true   // TA刚刚喜欢了你
@@ -40,7 +43,7 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
     private var mBottomList: MutableList<MessageSwitchBean> = arrayListOf()
 
     private lateinit var adapter1: MessageAdapter
-    private lateinit var adapter2: MessageAdapter
+    private lateinit var adapter2: MessageTwoAdapter
 
     private lateinit var getPushSetPresent: getPushSetPresentImpl
     private lateinit var doUpdatePushSetPresent: doUpdatePushSetPresentImpl
@@ -80,8 +83,10 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
 
 
         adapter1 = MessageAdapter(mTopList)
-        adapter2 = MessageAdapter(mBottomList)
+        adapter2 = MessageTwoAdapter(mBottomList)
 
+        adapter1.setOnItemClickListener(this)
+        adapter2.setOnItemClickListener(this)
 
         rv_message_container_top.layoutManager = LinearLayoutManager(this)
         rv_message_container_top.adapter = adapter1
@@ -114,173 +119,69 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
             doUpdatePushSet()
         }
 
-        adapter1.setOnItemClickListener(object : MessageAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, position: Int) {
-                when (position) {
-                    0 -> {
-                        data = !data
-
-                        mTopList[0].switch = !mTopList[0].switch
-                        Log.i("guo", "data $data")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                    1 -> {
-                        love = !love
-
-                        mTopList[1].switch = !mTopList[1].switch
-                        Log.i("guo", "love $love")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                    2 -> {
-                        comment = !comment
-
-                        mTopList[2].switch = !mTopList[2].switch
-                        Log.i("guo", "comment $comment")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                    3 -> {
-                        like = !like
-
-                        mTopList[3].switch = !mTopList[3].switch
-                        Log.i("guo", "like $like")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                    4 -> {
-                        view = !view
-
-                        mTopList[4].switch = !mTopList[4].switch
-                        Log.i("guo", "view $view")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                    5 -> {
-                        online = !online
-
-                        mTopList[5].switch = !mTopList[5].switch
-                        Log.i("guo", "online $online")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                    6 -> {
-                        love2Online = !love2Online
-
-                        mTopList[6].switch = !mTopList[6].switch
-                        Log.i("guo", "love2Online $love2Online")
-
-                        adapter1.notifyDataSetChanged()
-                    }
-                }
-
-            }
-
-
-        })
-
-        adapter2.setOnItemClickListener(object : MessageAdapter.OnItemClickListener {
-            override fun onItemClick(v: View?, position: Int) {
-                when (position) {
-                    0 -> {
-                        love2 = !love2
-                        Log.i("guo", "love2 $love2")
-                        adapter2.notifyDataSetChanged()
-                    }
-                    1 -> {
-                        gift = !gift
-                        Log.i("guo", "gift $gift")
-                        adapter2.notifyDataSetChanged()
-                    }
-                }
-            }
-
-
-        })
-
     }
 
     // 获取推送设置
     private fun getPushSet() {
 
-
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            getPushSetPresent.getPushSet(map)
-
-
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        getPushSetPresent.getPushSet(map)
 
     }
 
     // 修改推送设置
     private fun doUpdatePushSet() {
 
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.SHENHE_TONGZHI] = if (data) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.TA_GANG_XIHUAN_NI] = if (love) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.PINGLUN_DONGTAI] = if (comment) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.DIANZAN_DONGTAI] = if (like) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.KANLE_NIDE_ZILIAO] = if (view) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.NIXIHUANDE_SHANGXIAN] = if (online) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.XIANGHU_XIHUAN_SHANGXIAN] = if (love2Online) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.DIANJI_XIANGHU_XIHUAN] = if (love2) {
+            "1"
+        } else {
+            "0"
+        }
+        map[Contents.SHOUDAO_LIWU_TONGZHI] = if (gift) {
+            "1"
+        } else {
+            "0"
+        }
 
-
-            Log.i("guo", "data $data")
-            Log.i("guo", "love $love")
-            Log.i("guo", "comment $comment")
-            Log.i("guo", "like $like")
-            Log.i("guo", "view $view")
-            Log.i("guo", "online $online")
-            Log.i("guo", "love2Online $love2Online")
-            Log.i("guo", "love2 $love2")
-            Log.i("guo", "gift $gift")
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.SHENHE_TONGZHI] = if (data) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.TA_GANG_XIHUAN_NI] = if (love) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.PINGLUN_DONGTAI] = if (comment) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.DIANZAN_DONGTAI] = if (like) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.KANLE_NIDE_ZILIAO] = if (view) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.NIXIHUANDE_SHANGXIAN] = if (online) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.XIANGHU_XIHUAN_SHANGXIAN] = if (love2Online) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.DIANJI_XIANGHU_XIHUAN] = if (love2) {
-                "1"
-            } else {
-                "0"
-            }
-            map[Contents.SHOUDAO_LIWU_TONGZHI] = if (gift) {
-                "1"
-            } else {
-                "0"
-            }
-
-            doUpdatePushSetPresent.doUpdatePushSet(map)
-
+        doUpdatePushSetPresent.doUpdatePushSet(map)
 
 
     }
@@ -308,15 +209,16 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
                 gift = getPushSetBean.data.shoudao_liwu_tongzhi == 1
 
 
-                Log.i("guo", "data $data")
-                Log.i("guo", "love $love")
-                Log.i("guo", "comment $comment")
-                Log.i("guo", "like $like")
-                Log.i("guo", "view $view")
-                Log.i("guo", "online $online")
-                Log.i("guo", "love2Online $love2Online")
-                Log.i("guo", "love2 $love2")
-                Log.i("guo", "gift $gift")
+                mTopList[0].switch = data
+                mTopList[1].switch = love
+                mTopList[2].switch = comment
+                mTopList[3].switch = like
+                mTopList[4].switch = view
+                mTopList[5].switch = online
+                mTopList[6].switch = love2Online
+
+                mBottomList[0].switch = love2
+                mBottomList[1].switch = gift
 
                 SPStaticUtils.put(Constant.DATA_REVIEW_TIP, data)
                 SPStaticUtils.put(Constant.TA_LIKE_NOW_TIP, love)
@@ -357,6 +259,71 @@ class MessageActivity : MainBaseViewActivity(), IGetPushSetCallback, IDoUpdatePu
         super.onDestroy()
         getPushSetPresent.unregisterCallback(this)
         doUpdatePushSetPresent.unregisterCallback(this)
+    }
+
+    override fun onItemClick(v: View?, position: Int) {
+
+    }
+
+    override fun onItemSwitchClick(v: View?, position: Int) {
+
+        when (position) {
+            0 -> {
+                data = !data
+                SPStaticUtils.put(Constant.DATA_REVIEW_TIP, data)
+                Log.i("guo", "data :$data")
+            }
+            1 -> {
+                love = !love
+                SPStaticUtils.put(Constant.TA_LIKE_NOW_TIP, love)
+                Log.i("guo", "love :$love")
+            }
+            2 -> {
+                comment = !comment
+                SPStaticUtils.put(Constant.TA_COMMENT_TIP, comment)
+                Log.i("guo", "comment :$comment")
+            }
+            3 -> {
+                like = !like
+                SPStaticUtils.put(Constant.TA_DIANZAN_TIP, like)
+                Log.i("guo", "like :$like")
+            }
+            4 -> {
+                view = !view
+                SPStaticUtils.put(Constant.TA_LOOK_NOW_TIP, view)
+                Log.i("guo", "view :$view")
+            }
+            5 -> {
+                online = !online
+                SPStaticUtils.put(Constant.LIKE_TA_ONLINE_TIP, online)
+                Log.i("guo", "online :$online")
+            }
+            6 -> {
+                love2Online = !love2Online
+                SPStaticUtils.put(Constant.LIKE_ALL_ONLINE_TIP, love2Online)
+                Log.i("guo", "love2Online :$love2Online")
+            }
+        }
+
+    }
+
+    override fun onTwoItemClick(v: View?, position: Int) {
+
+    }
+
+    override fun onTwoItemSwitchClick(v: View?, position: Int) {
+        when (position) {
+            0 -> {
+                love2 = !love2
+                SPStaticUtils.put(Constant.LIKE_ALL_TIP, love2)
+                Log.i("guo", "love2 :$love2")
+            }
+            1 -> {
+                gift = !gift
+                SPStaticUtils.put(Constant.GET_GIFT, gift)
+                Log.i("guo", "gift :$gift")
+            }
+        }
     }
 
 

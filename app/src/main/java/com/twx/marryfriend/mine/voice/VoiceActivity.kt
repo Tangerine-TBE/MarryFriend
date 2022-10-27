@@ -130,7 +130,8 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
 
                                     // 计时器
                                     voice_timer.base = SystemClock.elapsedRealtime() //计时器清零
-                                    val hour = (SystemClock.elapsedRealtime() - voice_timer.base) / 1000 / 3600
+                                    val hour =
+                                        (SystemClock.elapsedRealtime() - voice_timer.base) / 1000 / 3600
                                     voice_timer.format = "0$hour:%s"
                                     voice_timer.start()
 
@@ -140,7 +141,8 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
                                 }
                                 "stop" -> {
 
-                                    Log.i("guo", "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+                                    Log.i("guo",
+                                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
 
                                     // 存储录音文件的长度
                                     SPStaticUtils.put(Constant.ME_VOICE_LONG,
@@ -236,66 +238,74 @@ class VoiceActivity : MainBaseViewActivity(), IDoUpdateGreetInfoCallback {
                     SPStaticUtils.put(Constant.ME_VOICE, mVoiceUrl)
 
 
-
-                        val map: MutableMap<String, String> = TreeMap()
-                        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-                        map[Contents.GREET_UPDATE] = getGreetInfo()
-                        doUpdateGreetPresent.doUpdateGreetInfo(map)
-
+                    val map: MutableMap<String, String> = TreeMap()
+                    map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+                    map[Contents.GREET_UPDATE] = getGreetInfo()
+                    doUpdateGreetPresent.doUpdateGreetInfo(map)
 
 
                 } catch (e: BceClientException) {
                     e.printStackTrace()
-                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    }
                 } catch (e: BceServiceException) {
+
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    }
+
                     Log.i("guo", "Error ErrorCode: " + e.errorCode);
                     Log.i("guo", "Error RequestId: " + e.requestId);
                     Log.i("guo", "Error StatusCode: " + e.statusCode);
                     Log.i("guo", "Error ErrorType: " + e.errorType);
                 } catch (e: UnknownHostException) {
-                    Log.i("guo","网络请求错误，请检查网络后稍后重试")
-                    ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                     e.printStackTrace()
+                    ThreadUtils.runOnUiThread {
+                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                    }
                 }
-
 
 
             }.start()
 
         }
 
-        voice_timer.onChronometerTickListener = Chronometer.OnChronometerTickListener { chronometer ->
-            // 如果从开始计时到现在超过了60s
-            if (chronometer != null) {
-                if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
-                    ToastUtils.showShort("超过最大时间，自动上传")
-                    Log.i("guo", "超过60s了")
+        voice_timer.onChronometerTickListener =
+            Chronometer.OnChronometerTickListener { chronometer ->
+                // 如果从开始计时到现在超过了60s
+                if (chronometer != null) {
+                    if (SystemClock.elapsedRealtime() - chronometer.base > 60 * 1000) {
+                        ToastUtils.showShort("超过最大时间，自动上传")
+                        Log.i("guo", "超过60s了")
 
-                    chronometer.stop()
-                    voice_timer.stop()
-                    audioRecorder.stopRecord()
+                        chronometer.stop()
+                        voice_timer.stop()
+                        audioRecorder.stopRecord()
 
-                    Log.i("guo",
-                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
 
-                    Log.i("guo",
-                        "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
+                        Log.i("guo",
+                            "time :${(SystemClock.elapsedRealtime() - voice_timer.base).toString()}")
 
-                    // 存储录音文件的长度
-                    SPStaticUtils.put(Constant.ME_VOICE_LONG, (SystemClock.elapsedRealtime() - voice_timer.base).toString())
-                    SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
+                        // 存储录音文件的长度
+                        SPStaticUtils.put(Constant.ME_VOICE_LONG,
+                            (SystemClock.elapsedRealtime() - voice_timer.base).toString())
+                        SPStaticUtils.put(Constant.ME_VOICE_NAME, "Greet")
 
-                    tv_voice_button.text = "点击播放"
-                    ll_voice_delete.visibility = View.VISIBLE
-                    ll_voice_confirm.visibility = View.VISIBLE
-                    recordMode = "listen"
-                    iv_voice_state.visibility = View.VISIBLE
-                    avv_voice_state.visibility = View.GONE
-                    iv_voice_state.setImageResource(R.drawable.ic_record_play)
+                        tv_voice_button.text = "点击播放"
+                        ll_voice_delete.visibility = View.VISIBLE
+                        ll_voice_confirm.visibility = View.VISIBLE
+                        recordMode = "listen"
+                        iv_voice_state.visibility = View.VISIBLE
+                        avv_voice_state.visibility = View.GONE
+                        iv_voice_state.setImageResource(R.drawable.ic_record_play)
 
+                    }
                 }
             }
-        }
 
     }
 

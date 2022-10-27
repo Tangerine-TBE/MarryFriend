@@ -230,7 +230,15 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
             rl_vip_dialog_container.visibility = View.GONE
         }
 
+        iv_vip_dialog_error_close.setOnClickListener {
+            rl_vip_dialog_container.visibility = View.GONE
+        }
+
         tv_vip_dialog_dynamic_buy.setOnClickListener {
+            rl_vip_dialog_container.visibility = View.GONE
+        }
+
+        tv_vip_dialog_error_buy.setOnClickListener {
             rl_vip_dialog_container.visibility = View.GONE
         }
 
@@ -239,12 +247,9 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private fun updateCoin() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            doRefreshSelfPresent.doRefreshSelf(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        doRefreshSelfPresent.doRefreshSelf(map)
 
 
     }
@@ -252,15 +257,12 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private fun getVipPrice() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-            map[Contents.TYPE_KIND] = "android"
-            map[Contents.VIP_LEVEL] = "1"
-            getVipPricePresent.getVipPrice(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+        map[Contents.TYPE_KIND] = "android"
+        map[Contents.VIP_LEVEL] = "1"
+        getVipPricePresent.getVipPrice(map)
 
 
     }
@@ -268,15 +270,12 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private fun getSVipPrice() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-            map[Contents.TYPE_KIND] = "android"
-            map[Contents.VIP_LEVEL] = "2"
-            getSVipPricePresent.getSVipPrice(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+        map[Contents.TYPE_KIND] = "android"
+        map[Contents.VIP_LEVEL] = "2"
+        getSVipPricePresent.getSVipPrice(map)
 
 
     }
@@ -284,12 +283,10 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
     private fun doPreviewOther() {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.GUEST_UID] = targetId.toString()
-            doPreviewOtherPresent.doPreviewOther(map)
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.HOST_UID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.GUEST_UID] = targetId.toString()
+        doPreviewOtherPresent.doPreviewOther(map)
 
 
     }
@@ -581,10 +578,20 @@ class VipActivity : MainBaseViewActivity(), XCollapsingToolbarLayout.OnScrimsLis
 
     override fun onDoPreviewOtherSuccess(previewOtherBean: PreviewOtherBean?) {
         if (previewOtherBean != null) {
-            if (previewOtherBean.code == 200) {
-                updateDialog(previewOtherBean)
-            } else {
-                ToastUtils.showShort(previewOtherBean.msg)
+            when (previewOtherBean.code) {
+                200 -> {
+                    ll_vip_dialog_normal?.visibility = View.VISIBLE
+                    ll_vip_dialog_error?.visibility = View.GONE
+                    updateDialog(previewOtherBean)
+                }
+                474 -> {
+                    ll_vip_dialog_normal?.visibility = View.GONE
+                    ll_vip_dialog_error?.visibility = View.VISIBLE
+                }
+                else -> {
+                    ToastUtils.showShort(previewOtherBean.msg)
+                }
+
             }
         }
     }

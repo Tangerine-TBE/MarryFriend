@@ -208,12 +208,14 @@
         android:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/ll_vip_dialog_normal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="32dp"
             android:background="@drawable/shape_bg_dialog"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -416,10 +418,65 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/ll_vip_dialog_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="32dp"
+            android:background="@drawable/shape_bg_dialog"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="18dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="此用户账号异常"
+                    android:textColor="#FF4444"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_vip_dialog_error_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@mipmap/icon_dialog_close" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="25dp"
+                android:text="该用户（ID：13245788525）账号存在异常，为了您的征婚安全，该账号已被限制。"
+                android:textColor="#101010"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tv_vip_dialog_error_buy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="17dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/shape_bg_common_next"
+                android:gravity="center"
+                android:paddingVertical="20dp"
+                android:text="购买会员，查看其他用户"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>
-
-
-
-

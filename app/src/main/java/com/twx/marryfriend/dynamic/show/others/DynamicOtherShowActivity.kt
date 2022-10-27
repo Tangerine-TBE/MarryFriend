@@ -1328,581 +1328,598 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     override fun onDoCheckTrendSuccess(checkTrendBean: CheckTrendBean?) {
 
         if (checkTrendBean != null) {
-            if (checkTrendBean.code == 200) {
-                if (checkTrendBean.data.list.isNotEmpty()) {
+//            if (checkTrendBean.code == 200) {
+//
+//            }
+//            else {
+//                ToastUtils.showShort("网络请求错误")
+//            }
 
-                    info = checkTrendBean.data.list[0]
-                    val image = checkTrendBean.data.imgs
+            when(checkTrendBean.code) {
+                200 -> {
+                    if (checkTrendBean.data.list.isNotEmpty()) {
 
-                    SpUtil.storeVipInfo(info.close_time_low, info.close_time_high)
+                        info = checkTrendBean.data.list[0]
+                        val image = checkTrendBean.data.imgs
 
-                    trendsId = info.id
-                    hostUid = info.user_id.toInt()
-                    threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
+                        SpUtil.storeVipInfo(info.close_time_low, info.close_time_high)
 
-
-                    if (isMine) {
-                        riv_dynamic_other_show_heard_name.text = "我的动态"
-                    } else {
-                        when (info.user_sex) {
-                            1 -> riv_dynamic_other_show_heard_name.text = "他的动态"
-                            2 -> riv_dynamic_other_show_heard_name.text = "她的动态"
-                            else -> riv_dynamic_other_show_heard_name.text = "他的动态"
-                        }
-                    }
-
-                    if (info.user_sex == 1) {
-                        Glide.with(applicationContext).load(info.headface)
-                            .error(R.drawable.ic_mine_male_default)
-                            .placeholder(R.drawable.ic_mine_male_default)
-                            .into(riv_dynamic_other_show_avatar)
-                    } else {
-                        Glide.with(applicationContext).load(info.headface)
-                            .error(R.drawable.ic_mine_female_default)
-                            .placeholder(R.drawable.ic_mine_female_default)
-                            .into(riv_dynamic_other_show_avatar)
-                    }
-
-                    tv_dynamic_other_show_name.text = info.nick
+                        trendsId = info.id
+                        hostUid = info.user_id.toInt()
+                        threeId = SPStaticUtils.getString(Constant.USER_ID, "13").toInt()
 
 
-                    when (info.real_face) {
-                        1 -> {
-                            iv_detail_dynamic_other_avatar.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            iv_detail_dynamic_other_avatar.visibility = View.GONE
-                        }
-                    }
-
-                    when (info.identity_status) {
-                        1 -> {
-                            iv_detail_dynamic_other_identity.visibility = View.VISIBLE
-                        }
-                        else -> {
-                            iv_detail_dynamic_other_identity.visibility = View.GONE
-                        }
-                    }
-
-                    when (SpUtil.getVipLevel(info.close_time_low, info.close_time_high)) {
-                        0 -> {
-                            iv_detail_dynamic_other_vip.visibility = View.GONE
-                        }
-                        1 -> {
-                            iv_detail_dynamic_other_vip.visibility = View.VISIBLE
-                            iv_detail_dynamic_other_vip.setImageResource(R.drawable.ic_vip)
-                        }
-                        2 -> {
-                            iv_detail_dynamic_other_vip.visibility = View.VISIBLE
-                            iv_detail_dynamic_other_vip.setImageResource(R.drawable.ic_svip)
-                        }
-                    }
-
-
-                    val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
-                        Calendar.YEAR) - info.age).toString().substring(2, 4)
-                    val city = info.work_city_str
-                    val edu = eduList[info.education]
-
-                    val job = if (info.industry_str == "") {
-                        "${info.industry_str}"
-                    } else {
-                        " ${info.industry_str}/${info.occupation_str}"
-                    }
-
-                    tv_dynamic_other_show_info.text = "${year}年  $city  $edu  $job"
-
-                    if (info.focous_uid != null) {
-                        haveFocus = true
-
-                        iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_chat)
-
-                    } else {
-                        haveFocus = false
-
-                        iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_focus)
-
-                    }
-
-                    tv_dynamic_other_show_time.text = TimeUtil.getCommonTime(info.create_time)
-
-                    if (info.guest_uid != null) {
-                        isLike = true
-                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom_check)
-                    } else {
-                        isLike = false
-                        iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom)
-                    }
-
-                    if (info.position != "") {
-                        ll_dynamic_other_show_location.visibility = View.VISIBLE
-                        tv_dynamic_other_show_location.text = info.position
-                    } else {
-                        ll_dynamic_other_show_location.visibility = View.GONE
-                    }
-
-                    if (info.discuss_count == null) {
-                        tv_dynamic_other_show_comment.text = 0.toString()
-                    } else {
-                        tv_dynamic_other_show_comment.text = info.discuss_count.toString()
-                    }
-
-                    if (info.like_count == null || info.like_count == 0) {
-
-                        likeSum = 0
-
-                        rl_dynamic_other_show_like.visibility = View.GONE
-
-                        tv_dynamic_other_show_like.text = likeSum.toString()
-                    } else {
-
-                        likeSum = info.like_count!!
-
-                        rl_dynamic_other_show_like.visibility = View.VISIBLE
-
-                        tv_dynamic_other_show_like.text = likeSum.toString()
-                    }
-
-                    if (info.text_content != "") {
-                        tv_dynamic_other_show_text.text = info.text_content
-                    } else {
-                        tv_dynamic_other_show_text.visibility = View.GONE
-                    }
-
-                    when (info.trends_type) {
-                        1 -> {
-
-                            ll_dynamic_other_show_video.visibility = View.GONE
-
-
-                            // 图片
-                            if (info.text_content != "") {
-                                tv_dynamic_other_show_text.text = info.text_content
-                            } else {
-                                tv_dynamic_other_show_text.visibility = View.GONE
+                        if (isMine) {
+                            riv_dynamic_other_show_heard_name.text = "我的动态"
+                        } else {
+                            when (info.user_sex) {
+                                1 -> riv_dynamic_other_show_heard_name.text = "他的动态"
+                                2 -> riv_dynamic_other_show_heard_name.text = "她的动态"
+                                else -> riv_dynamic_other_show_heard_name.text = "他的动态"
                             }
+                        }
 
-                            mPicList = info.image_url.split(",") as MutableList<String>
-                            for (i in 0.until(mPicList.size)) {
-                                if (mPicList[i].contains(" ")) {
-                                    mPicList[i] = mPicList[i].replace(" ", "")
-                                }
+                        if (info.user_sex == 1) {
+                            Glide.with(applicationContext).load(info.headface)
+                                .error(R.drawable.ic_mine_male_default)
+                                .placeholder(R.drawable.ic_mine_male_default)
+                                .into(riv_dynamic_other_show_avatar)
+                        } else {
+                            Glide.with(applicationContext).load(info.headface)
+                                .error(R.drawable.ic_mine_female_default)
+                                .placeholder(R.drawable.ic_mine_female_default)
+                                .into(riv_dynamic_other_show_avatar)
+                        }
+
+                        tv_dynamic_other_show_name.text = info.nick
+
+
+                        when (info.real_face) {
+                            1 -> {
+                                iv_detail_dynamic_other_avatar.visibility = View.VISIBLE
                             }
-
-                            when (mPicList.size) {
-                                1 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.GONE
-                                    ll_dynamic_other_show_three.visibility = View.GONE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_three.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_four.visibility = View.GONE
-                                    iv_dynamic_other_show_five.visibility = View.GONE
-                                    iv_dynamic_other_show_six.visibility = View.GONE
-                                    iv_dynamic_other_show_seven.visibility = View.GONE
-                                    iv_dynamic_other_show_eight.visibility = View.GONE
-                                    iv_dynamic_other_show_nine.visibility = View.GONE
-                                }
-                                2 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.GONE
-                                    ll_dynamic_other_show_three.visibility = View.GONE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_four.visibility = View.GONE
-                                    iv_dynamic_other_show_five.visibility = View.GONE
-                                    iv_dynamic_other_show_six.visibility = View.GONE
-                                    iv_dynamic_other_show_seven.visibility = View.GONE
-                                    iv_dynamic_other_show_eight.visibility = View.GONE
-                                    iv_dynamic_other_show_nine.visibility = View.GONE
-                                }
-                                3 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.GONE
-                                    ll_dynamic_other_show_three.visibility = View.GONE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_three)
-                                    iv_dynamic_other_show_four.visibility = View.GONE
-                                    iv_dynamic_other_show_five.visibility = View.GONE
-                                    iv_dynamic_other_show_six.visibility = View.GONE
-                                    iv_dynamic_other_show_seven.visibility = View.GONE
-                                    iv_dynamic_other_show_eight.visibility = View.GONE
-                                    iv_dynamic_other_show_nine.visibility = View.GONE
-                                }
-                                4 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_three.visibility = View.GONE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_four.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_four)
-                                    iv_dynamic_other_show_five.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[3])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_five)
-                                    iv_dynamic_other_show_six.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_seven.visibility = View.GONE
-                                    iv_dynamic_other_show_eight.visibility = View.GONE
-                                    iv_dynamic_other_show_nine.visibility = View.GONE
-                                }
-                                5 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_three.visibility = View.GONE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_three)
-                                    iv_dynamic_other_show_four.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[3])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_four)
-                                    iv_dynamic_other_show_five.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[4])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_five)
-                                    iv_dynamic_other_show_six.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_seven.visibility = View.GONE
-                                    iv_dynamic_other_show_eight.visibility = View.GONE
-                                    iv_dynamic_other_show_nine.visibility = View.GONE
-                                }
-                                6 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_three.visibility = View.GONE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_three)
-                                    iv_dynamic_other_show_four.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[3])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_four)
-                                    iv_dynamic_other_show_five.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[4])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_five)
-                                    iv_dynamic_other_show_six.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[5])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_six)
-                                    iv_dynamic_other_show_seven.visibility = View.GONE
-                                    iv_dynamic_mine_show_eight.visibility = View.GONE
-                                    iv_dynamic_other_show_nine.visibility = View.GONE
-                                }
-                                7 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_three.visibility = View.VISIBLE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_three)
-                                    iv_dynamic_other_show_four.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[3])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_four)
-                                    iv_dynamic_other_show_five.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[4])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_five)
-                                    iv_dynamic_other_show_six.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[5])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_six)
-                                    iv_dynamic_other_show_seven.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[6])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_seven)
-                                    iv_dynamic_other_show_eight.visibility = View.INVISIBLE
-                                    iv_dynamic_other_show_nine.visibility = View.INVISIBLE
-                                }
-                                8 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_three.visibility = View.VISIBLE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_three)
-                                    iv_dynamic_other_show_four.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[3])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_four)
-                                    iv_dynamic_other_show_five.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[4])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_five)
-                                    iv_dynamic_other_show_six.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[5])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_six)
-                                    iv_dynamic_other_show_seven.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[6])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_seven)
-                                    iv_dynamic_other_show_eight.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[7])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_eight)
-                                    iv_dynamic_other_show_nine.visibility = View.INVISIBLE
-                                }
-                                9 -> {
-                                    ll_dynamic_other_show_one.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_two.visibility = View.VISIBLE
-                                    ll_dynamic_other_show_three.visibility = View.VISIBLE
-
-                                    iv_dynamic_other_show_one.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[0])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_one)
-                                    iv_dynamic_other_show_two.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[1])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_two)
-                                    iv_dynamic_other_show_three.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[2])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_three)
-                                    iv_dynamic_other_show_four.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[3])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_four)
-                                    iv_dynamic_other_show_five.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[4])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_five)
-                                    iv_dynamic_other_show_six.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[5])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_six)
-                                    iv_dynamic_other_show_seven.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[6])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_seven)
-                                    iv_dynamic_other_show_eight.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[7])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_eight)
-                                    iv_dynamic_other_show_nine.visibility = View.VISIBLE
-                                    Glide.with(applicationContext).load(mPicList[8])
-                                        .error(R.drawable.ic_pic_default)
-                                        .placeholder(R.drawable.ic_pic_default)
-                                        .into(iv_dynamic_other_show_nine)
-                                }
+                            else -> {
+                                iv_detail_dynamic_other_avatar.visibility = View.GONE
                             }
+                        }
+
+                        when (info.identity_status) {
+                            1 -> {
+                                iv_detail_dynamic_other_identity.visibility = View.VISIBLE
+                            }
+                            else -> {
+                                iv_detail_dynamic_other_identity.visibility = View.GONE
+                            }
+                        }
+
+                        when (SpUtil.getVipLevel(info.close_time_low, info.close_time_high)) {
+                            0 -> {
+                                iv_detail_dynamic_other_vip.visibility = View.GONE
+                            }
+                            1 -> {
+                                iv_detail_dynamic_other_vip.visibility = View.VISIBLE
+                                iv_detail_dynamic_other_vip.setImageResource(R.drawable.ic_vip)
+                            }
+                            2 -> {
+                                iv_detail_dynamic_other_vip.visibility = View.VISIBLE
+                                iv_detail_dynamic_other_vip.setImageResource(R.drawable.ic_svip)
+                            }
+                        }
+
+
+                        val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
+                            Calendar.YEAR) - info.age).toString().substring(2, 4)
+                        val city = info.work_city_str
+                        val edu = eduList[info.education]
+
+                        val job = if (info.industry_str == "") {
+                            "${info.industry_str}"
+                        } else {
+                            " ${info.industry_str}/${info.occupation_str}"
+                        }
+
+                        tv_dynamic_other_show_info.text = "${year}年  $city  $edu  $job"
+
+                        if (info.focous_uid != null) {
+                            haveFocus = true
+
+                            iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_chat)
+
+                        } else {
+                            haveFocus = false
+
+                            iv_dynamic_other_show_mode.setImageResource(R.drawable.ic_base_focus)
 
                         }
-                        2 -> {
-                            // 视频
 
-                            mVideoUrl = info.video_url
-                            mName = info.nick
+                        tv_dynamic_other_show_time.text = TimeUtil.getCommonTime(info.create_time)
 
-                            ll_dynamic_other_show_video.visibility = View.VISIBLE
-                            ll_dynamic_other_show_one.visibility = View.GONE
-                            ll_dynamic_other_show_two.visibility = View.GONE
-                            ll_dynamic_other_show_three.visibility = View.GONE
-
-                            Glide.with(applicationContext).load(info.video_url)
-                                .into(iv_dynamic_other_show_video)
-
-                            if (info.text_content != "") {
-                                tv_dynamic_other_show_text.text = info.text_content
-                            } else {
-                                tv_dynamic_other_show_text.visibility = View.GONE
-                            }
-
+                        if (info.guest_uid != null) {
+                            isLike = true
+                            iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom_check)
+                        } else {
+                            isLike = false
+                            iv_dynamic_other_show_like.setImageResource(R.drawable.ic_dynamic_like_bottom)
                         }
-                        3 -> {
-                            // 文字
 
-                            ll_dynamic_other_show_video.visibility = View.GONE
-                            ll_dynamic_other_show_one.visibility = View.GONE
-                            ll_dynamic_other_show_two.visibility = View.GONE
-                            ll_dynamic_other_show_three.visibility = View.GONE
+                        if (info.position != "") {
+                            ll_dynamic_other_show_location.visibility = View.VISIBLE
+                            tv_dynamic_other_show_location.text = info.position
+                        } else {
+                            ll_dynamic_other_show_location.visibility = View.GONE
+                        }
 
+                        if (info.discuss_count == null) {
+                            tv_dynamic_other_show_comment.text = 0.toString()
+                        } else {
+                            tv_dynamic_other_show_comment.text = info.discuss_count.toString()
+                        }
+
+                        if (info.like_count == null || info.like_count == 0) {
+
+                            likeSum = 0
+
+                            rl_dynamic_other_show_like.visibility = View.GONE
+
+                            tv_dynamic_other_show_like.text = likeSum.toString()
+                        } else {
+
+                            likeSum = info.like_count!!
+
+                            rl_dynamic_other_show_like.visibility = View.VISIBLE
+
+                            tv_dynamic_other_show_like.text = likeSum.toString()
+                        }
+
+                        if (info.text_content != "") {
                             tv_dynamic_other_show_text.text = info.text_content
+                        } else {
+                            tv_dynamic_other_show_text.visibility = View.GONE
                         }
+
+                        when (info.trends_type) {
+                            1 -> {
+
+                                ll_dynamic_other_show_video.visibility = View.GONE
+
+
+                                // 图片
+                                if (info.text_content != "") {
+                                    tv_dynamic_other_show_text.text = info.text_content
+                                } else {
+                                    tv_dynamic_other_show_text.visibility = View.GONE
+                                }
+
+                                mPicList = info.image_url.split(",") as MutableList<String>
+                                for (i in 0.until(mPicList.size)) {
+                                    if (mPicList[i].contains(" ")) {
+                                        mPicList[i] = mPicList[i].replace(" ", "")
+                                    }
+                                }
+
+                                when (mPicList.size) {
+                                    1 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.GONE
+                                        ll_dynamic_other_show_three.visibility = View.GONE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_three.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_four.visibility = View.GONE
+                                        iv_dynamic_other_show_five.visibility = View.GONE
+                                        iv_dynamic_other_show_six.visibility = View.GONE
+                                        iv_dynamic_other_show_seven.visibility = View.GONE
+                                        iv_dynamic_other_show_eight.visibility = View.GONE
+                                        iv_dynamic_other_show_nine.visibility = View.GONE
+                                    }
+                                    2 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.GONE
+                                        ll_dynamic_other_show_three.visibility = View.GONE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_four.visibility = View.GONE
+                                        iv_dynamic_other_show_five.visibility = View.GONE
+                                        iv_dynamic_other_show_six.visibility = View.GONE
+                                        iv_dynamic_other_show_seven.visibility = View.GONE
+                                        iv_dynamic_other_show_eight.visibility = View.GONE
+                                        iv_dynamic_other_show_nine.visibility = View.GONE
+                                    }
+                                    3 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.GONE
+                                        ll_dynamic_other_show_three.visibility = View.GONE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_three)
+                                        iv_dynamic_other_show_four.visibility = View.GONE
+                                        iv_dynamic_other_show_five.visibility = View.GONE
+                                        iv_dynamic_other_show_six.visibility = View.GONE
+                                        iv_dynamic_other_show_seven.visibility = View.GONE
+                                        iv_dynamic_other_show_eight.visibility = View.GONE
+                                        iv_dynamic_other_show_nine.visibility = View.GONE
+                                    }
+                                    4 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_three.visibility = View.GONE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_four.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_four)
+                                        iv_dynamic_other_show_five.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[3])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_five)
+                                        iv_dynamic_other_show_six.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_seven.visibility = View.GONE
+                                        iv_dynamic_other_show_eight.visibility = View.GONE
+                                        iv_dynamic_other_show_nine.visibility = View.GONE
+                                    }
+                                    5 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_three.visibility = View.GONE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_three)
+                                        iv_dynamic_other_show_four.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[3])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_four)
+                                        iv_dynamic_other_show_five.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[4])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_five)
+                                        iv_dynamic_other_show_six.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_seven.visibility = View.GONE
+                                        iv_dynamic_other_show_eight.visibility = View.GONE
+                                        iv_dynamic_other_show_nine.visibility = View.GONE
+                                    }
+                                    6 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_three.visibility = View.GONE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_three)
+                                        iv_dynamic_other_show_four.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[3])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_four)
+                                        iv_dynamic_other_show_five.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[4])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_five)
+                                        iv_dynamic_other_show_six.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[5])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_six)
+                                        iv_dynamic_other_show_seven.visibility = View.GONE
+                                        iv_dynamic_mine_show_eight.visibility = View.GONE
+                                        iv_dynamic_other_show_nine.visibility = View.GONE
+                                    }
+                                    7 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_three.visibility = View.VISIBLE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_three)
+                                        iv_dynamic_other_show_four.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[3])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_four)
+                                        iv_dynamic_other_show_five.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[4])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_five)
+                                        iv_dynamic_other_show_six.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[5])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_six)
+                                        iv_dynamic_other_show_seven.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[6])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_seven)
+                                        iv_dynamic_other_show_eight.visibility = View.INVISIBLE
+                                        iv_dynamic_other_show_nine.visibility = View.INVISIBLE
+                                    }
+                                    8 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_three.visibility = View.VISIBLE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_three)
+                                        iv_dynamic_other_show_four.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[3])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_four)
+                                        iv_dynamic_other_show_five.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[4])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_five)
+                                        iv_dynamic_other_show_six.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[5])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_six)
+                                        iv_dynamic_other_show_seven.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[6])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_seven)
+                                        iv_dynamic_other_show_eight.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[7])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_eight)
+                                        iv_dynamic_other_show_nine.visibility = View.INVISIBLE
+                                    }
+                                    9 -> {
+                                        ll_dynamic_other_show_one.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_two.visibility = View.VISIBLE
+                                        ll_dynamic_other_show_three.visibility = View.VISIBLE
+
+                                        iv_dynamic_other_show_one.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[0])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_one)
+                                        iv_dynamic_other_show_two.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[1])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_two)
+                                        iv_dynamic_other_show_three.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[2])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_three)
+                                        iv_dynamic_other_show_four.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[3])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_four)
+                                        iv_dynamic_other_show_five.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[4])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_five)
+                                        iv_dynamic_other_show_six.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[5])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_six)
+                                        iv_dynamic_other_show_seven.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[6])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_seven)
+                                        iv_dynamic_other_show_eight.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[7])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_eight)
+                                        iv_dynamic_other_show_nine.visibility = View.VISIBLE
+                                        Glide.with(applicationContext).load(mPicList[8])
+                                            .error(R.drawable.ic_pic_default)
+                                            .placeholder(R.drawable.ic_pic_default)
+                                            .into(iv_dynamic_other_show_nine)
+                                    }
+                                }
+
+                            }
+                            2 -> {
+                                // 视频
+
+                                mVideoUrl = info.video_url
+                                mName = info.nick
+
+                                ll_dynamic_other_show_video.visibility = View.VISIBLE
+                                ll_dynamic_other_show_one.visibility = View.GONE
+                                ll_dynamic_other_show_two.visibility = View.GONE
+                                ll_dynamic_other_show_three.visibility = View.GONE
+
+                                Glide.with(applicationContext).load(info.video_url)
+                                    .into(iv_dynamic_other_show_video)
+
+                                if (info.text_content != "") {
+                                    tv_dynamic_other_show_text.text = info.text_content
+                                } else {
+                                    tv_dynamic_other_show_text.visibility = View.GONE
+                                }
+
+                            }
+                            3 -> {
+                                // 文字
+
+                                ll_dynamic_other_show_video.visibility = View.GONE
+                                ll_dynamic_other_show_one.visibility = View.GONE
+                                ll_dynamic_other_show_two.visibility = View.GONE
+                                ll_dynamic_other_show_three.visibility = View.GONE
+
+                                tv_dynamic_other_show_text.text = info.text_content
+                            }
+                        }
+
+                        when (checkTrendBean.data.imgs.size) {
+                            0 -> {
+                                ll_dynamic_other_show_like.visibility = View.GONE
+                            }
+                            1 -> {
+
+                                likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
+
+                                iv_dynamic_other_show_like1.visibility = View.VISIBLE
+                                Glide.with(applicationContext).load(image[0].image_url)
+                                    .error(R.drawable.ic_mine_male_default)
+                                    .placeholder(R.drawable.ic_mine_male_default)
+                                    .into(iv_dynamic_other_show_like1)
+
+                                iv_dynamic_other_show_like2.visibility = View.GONE
+
+                                iv_dynamic_other_show_like3.visibility = View.GONE
+                            }
+                            2 -> {
+
+                                likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
+                                likeAvatar.add(checkTrendBean.data.imgs[1].image_url)
+
+                                iv_dynamic_other_show_like1.visibility = View.VISIBLE
+                                Glide.with(applicationContext).load(image[0].image_url)
+                                    .error(R.drawable.ic_mine_male_default)
+                                    .placeholder(R.drawable.ic_mine_male_default)
+                                    .into(iv_dynamic_other_show_like1)
+
+                                iv_dynamic_other_show_like2.visibility = View.VISIBLE
+                                Glide.with(applicationContext).load(image[1].image_url)
+                                    .into(iv_dynamic_other_show_like2)
+
+                                iv_dynamic_other_show_like3.visibility = View.GONE
+                            }
+                            3 -> {
+
+                                likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
+                                likeAvatar.add(checkTrendBean.data.imgs[1].image_url)
+                                likeAvatar.add(checkTrendBean.data.imgs[2].image_url)
+
+                                iv_dynamic_other_show_like1.visibility = View.VISIBLE
+                                Glide.with(applicationContext).load(image[0].image_url)
+                                    .error(R.drawable.ic_mine_male_default)
+                                    .placeholder(R.drawable.ic_mine_male_default)
+                                    .into(iv_dynamic_other_show_like1)
+
+                                iv_dynamic_other_show_like2.visibility = View.VISIBLE
+                                Glide.with(applicationContext).load(image[1].image_url)
+                                    .into(iv_dynamic_other_show_like2)
+
+                                iv_dynamic_other_show_like3.visibility = View.VISIBLE
+                                Glide.with(applicationContext).load(image[2].image_url)
+                                    .into(iv_dynamic_other_show_like3)
+                            }
+                        }
+
                     }
-
-                    when (checkTrendBean.data.imgs.size) {
-                        0 -> {
-                            ll_dynamic_other_show_like.visibility = View.GONE
-                        }
-                        1 -> {
-
-                            likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
-
-                            iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
-                                .error(R.drawable.ic_mine_male_default)
-                                .placeholder(R.drawable.ic_mine_male_default)
-                                .into(iv_dynamic_other_show_like1)
-
-                            iv_dynamic_other_show_like2.visibility = View.GONE
-
-                            iv_dynamic_other_show_like3.visibility = View.GONE
-                        }
-                        2 -> {
-
-                            likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
-                            likeAvatar.add(checkTrendBean.data.imgs[1].image_url)
-
-                            iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
-                                .error(R.drawable.ic_mine_male_default)
-                                .placeholder(R.drawable.ic_mine_male_default)
-                                .into(iv_dynamic_other_show_like1)
-
-                            iv_dynamic_other_show_like2.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[1].image_url)
-                                .into(iv_dynamic_other_show_like2)
-
-                            iv_dynamic_other_show_like3.visibility = View.GONE
-                        }
-                        3 -> {
-
-                            likeAvatar.add(checkTrendBean.data.imgs[0].image_url)
-                            likeAvatar.add(checkTrendBean.data.imgs[1].image_url)
-                            likeAvatar.add(checkTrendBean.data.imgs[2].image_url)
-
-                            iv_dynamic_other_show_like1.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[0].image_url)
-                                .error(R.drawable.ic_mine_male_default)
-                                .placeholder(R.drawable.ic_mine_male_default)
-                                .into(iv_dynamic_other_show_like1)
-
-                            iv_dynamic_other_show_like2.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[1].image_url)
-                                .into(iv_dynamic_other_show_like2)
-
-                            iv_dynamic_other_show_like3.visibility = View.VISIBLE
-                            Glide.with(applicationContext).load(image[2].image_url)
-                                .into(iv_dynamic_other_show_like3)
-                        }
-                    }
-
+                }
+                464 -> {
+                    ToastUtils.showShort(checkTrendBean.msg)
+                    val intent = intent
+                    setResult(RESULT_OK, intent)
+                    this.finish()
+                }
+                else -> {
+                    ToastUtils.showShort(checkTrendBean.msg)
                 }
 
-            } else {
-                ToastUtils.showShort("网络请求错误")
             }
+
         }
 
     }

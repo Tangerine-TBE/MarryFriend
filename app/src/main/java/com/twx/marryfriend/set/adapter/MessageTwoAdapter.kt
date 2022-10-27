@@ -18,25 +18,25 @@ import com.twx.marryfriend.bean.set.SetSwitchBean
  * @author: Administrator
  * @date: 2022/7/28
  */
-class MessageAdapter(private val mList: MutableList<MessageSwitchBean>) :
-    RecyclerView.Adapter<MessageAdapter.ViewHolder>(), View.OnClickListener {
+class MessageTwoAdapter(private val mList: MutableList<MessageSwitchBean>) :
+    RecyclerView.Adapter<MessageTwoAdapter.ViewHolder>(), View.OnClickListener {
 
     private lateinit var mContext: Context
 
-    private var mOnItemClickListener: OnItemClickListener? = null
+    private var mOnItemClickListener: OnTwoItemClickListener? = null
 
-    interface OnItemClickListener {
-        fun onItemClick(v: View?, position: Int)
-        fun onItemSwitchClick(v: View?, position: Int)
+    interface OnTwoItemClickListener {
+        fun onTwoItemClick(v: View?, position: Int)
+        fun onTwoItemSwitchClick(v: View?, position: Int)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
+    fun setOnItemClickListener(listener: OnTwoItemClickListener) {
         this.mOnItemClickListener = listener
     }
 
     override fun onClick(v: View?) {
         if (v != null) {
-            mOnItemClickListener?.onItemClick(v, v.tag as Int)
+            mOnItemClickListener?.onTwoItemClick(v, v.tag as Int)
         }
     }
 
@@ -69,7 +69,7 @@ class MessageAdapter(private val mList: MutableList<MessageSwitchBean>) :
         }
 
         holder.switch.setOnClickListener {
-            mOnItemClickListener?.onItemSwitchClick(it, position)
+            mOnItemClickListener?.onTwoItemSwitchClick(it, position)
         }
 
     }

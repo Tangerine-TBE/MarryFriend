@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:text="你的星座"
+            android:text="你的民族"
             android:textColor="#404040"
             android:textSize="17sp"
             android:textStyle="bold" />

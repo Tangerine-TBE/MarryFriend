@@ -1095,19 +1095,15 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
         Log.i("guo", "jumpToMain")
 
 
+        val moreInfoMap: MutableMap<String, String> = TreeMap()
+        moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
+        doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
 
-
-            val moreInfoMap: MutableMap<String, String> = TreeMap()
-            moreInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            moreInfoMap[Contents.MORE_UPDATE] = getMoreInfo()
-            doUpdateMoreInfoPresent.doUpdateMoreInfo(moreInfoMap)
-
-            val baseInfoMap: MutableMap<String, String> = TreeMap()
-            baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
-            baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
-            doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
-
-
+        val baseInfoMap: MutableMap<String, String> = TreeMap()
+        baseInfoMap[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID)
+        baseInfoMap[Contents.BASE_UPDATE] = getBaseInfo()
+        doUpdateBaseInfoPresent.doUpdateBaseInfo(baseInfoMap)
 
 
     }
@@ -1116,17 +1112,13 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
     private fun updateAvatar(photoUrl: String, type: String, name: String) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
-            map[Contents.IMAGE_URL] = photoUrl
-            map[Contents.FILE_TYPE] = type
-            map[Contents.FILE_NAME] = name
-            map[Contents.CONTENT] = "0"
-            doUploadAvatarPresent.doUploadAvatar(map)
-
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
+        map[Contents.IMAGE_URL] = photoUrl
+        map[Contents.FILE_TYPE] = type
+        map[Contents.FILE_NAME] = name
+        map[Contents.CONTENT] = "0"
+        doUploadAvatarPresent.doUploadAvatar(map)
 
 
     }
@@ -1465,8 +1457,6 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
     override fun onDoUploadAvatarSuccess(uploadAvatarBean: UploadAvatarBean?) {
 
-        Log.i("guo", "onDoUploadAvatarSuccess")
-
         if (uploadAvatarBean != null) {
             if (uploadAvatarBean.code == 200) {
                 SPStaticUtils.put(Constant.ME_AVATAR_AUDIT, mPhotoUrl)
@@ -1515,13 +1505,11 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
                                 "default")
                         }", path, file)
 
-                        Log.i("guo", path)
 
                         mPhotoUrl = client.generatePresignedUrl("user${
                             SPStaticUtils.getString(Constant.USER_ID, "default")
                         }", path, -1).toString()
 
-                        Log.i("guo", mPhotoUrl)
 
                         updateAvatar(mPhotoUrl,
                             FileUtils.getFileExtension(mPhotoPath),
@@ -1529,16 +1517,22 @@ class JumpActivity : MainBaseViewActivity(), IDoUpdateMoreInfoCallback, IDoUpdat
 
                     } catch (e: BceClientException) {
                         e.printStackTrace()
-                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        ThreadUtils.runOnUiThread {
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                     } catch (e: BceServiceException) {
+                        ThreadUtils.runOnUiThread {
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                         Log.i("guo", "Error ErrorCode: " + e.errorCode);
                         Log.i("guo", "Error RequestId: " + e.requestId);
                         Log.i("guo", "Error StatusCode: " + e.statusCode);
                         Log.i("guo", "Error ErrorType: " + e.errorType);
                     } catch (e: UnknownHostException) {
-                        Log.i("guo", "网络请求错误，请检查网络后稍后重试")
-                        ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
                         e.printStackTrace()
+                        ThreadUtils.runOnUiThread {
+                            ToastUtils.showShort("网络请求错误，请检查网络后稍后重试")
+                        }
                     }
 
                 }.start()
