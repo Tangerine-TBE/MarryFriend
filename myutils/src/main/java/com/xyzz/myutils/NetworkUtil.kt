@@ -1,5 +1,7 @@
 package com.xyzz.myutils
 
+import android.content.Intent
+import androidx.core.content.FileProvider
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.xyzz.myutils.show.eLog
@@ -20,9 +22,9 @@ object NetworkUtil {
             }
         }
     }
-    private val dayErrorLog by lazy {
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
-        File(errorLogDir,simpleDateFormat.format(System.currentTimeMillis())+"_error_log.txt")
+    private fun generateHtmlFile():File{
+        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd_HH_mm_ss_SSSS", Locale.CHINA)
+        return File(errorLogDir,simpleDateFormat.format(System.currentTimeMillis())+"_error_log.html")
     }
     private val simpleDateFormat by lazy {
         SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA)
@@ -46,11 +48,20 @@ object NetworkUtil {
             wLog("${error.networkResponse?.statusCode?.toString()?:""}","网络,响应,${url.split("/").lastOrNull()?:url.takeLast(10)}")
             fail.invoke(error.networkResponse?.statusCode.toString())
             try {
-                FileOutputStream(dayErrorLog,true).use {
-                    it.write("${simpleDateFormat.format(System.currentTimeMillis())}\n".toByteArray())
-                    it.write("接口:${url} 加密参数:${parameter} 未加密参数:${notEncryptionParameter.toString()}\n".toByteArray())
-                    it.write(error.networkResponse.data)
-                    it.write("\n\n".toByteArray())
+                generateHtmlFile().also { file ->
+                    file.outputStream().use {
+                        it.write("<!--${simpleDateFormat.format(System.currentTimeMillis())}\n".toByteArray())
+                        it.write("接口:${url} 加密参数:${parameter} 未加密参数:${notEncryptionParameter.toString()}\n -->".toByteArray())
+                        it.write(error.networkResponse.data)
+                    }
+                    if (BuildConfig.DEBUG){
+                        val intent=Intent(Intent.ACTION_VIEW)
+                        intent.data =
+                            FileProvider.getUriForFile(MyUtils.application,MyUtils.authorities,file)
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        MyUtils.application.startActivity(intent)
+                    }
                 }
             }catch (e:Exception){
                 wLog(e.stackTraceToString())

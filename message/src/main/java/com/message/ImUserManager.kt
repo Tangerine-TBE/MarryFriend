@@ -92,10 +92,21 @@ object ImUserManager {
         }
         iLog("用户:${userName},正在登录")
         if (EMClient.getInstance().isLoggedIn){
-            iLog("用户已经登录，直接返回登录")
-            success.invoke()
-            onLoginSuccess()
-            return
+            if (EMClient.getInstance().currentUser==userName){
+                iLog("用户已经登录，直接返回登录")
+                success.invoke()
+                onLoginSuccess()
+                return
+            }else{
+                iLog("当前环信登录账户与当前用户账户不匹配，退出环信账户;当前用户:${userName},环信用户:${EMClient.getInstance().currentUser}")
+                try {
+                    EMClient.getInstance().logout(true)
+                    iLog("退出成功")
+                }catch (e:Exception){
+                    iLog("退出失败")
+                    wLog(e.stackTraceToString())
+                }
+            }
         }
         EMClient.getInstance().login(userName, password, object : EMCallBack {
             //回调

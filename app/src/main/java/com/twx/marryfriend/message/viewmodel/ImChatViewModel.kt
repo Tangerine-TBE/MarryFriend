@@ -93,19 +93,19 @@ class ImChatViewModel:ViewModel() {
     /**
      * 上传聊天记录，未实现
      */
-    suspend fun putMessage(guest_uid:String)=suspendCoroutine<OurRelationship>{ coroutine->
-        val url="${Contents.USER_URL}/marryfriend/TrendsNotice/ourRelationship"
+    suspend fun putMessage(guest_uid:String,text:String)=suspendCoroutine<Unit>{ coroutine->
+        val url="${Contents.USER_URL}/marryfriend/MemberCharge/reportChat"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
-            "guest_uid" to guest_uid.toString()
+            "guest_uid" to guest_uid.toString(),
+            "content" to text
         )
         NetworkUtil.sendPostSecret(url,map,{ response ->
             try {
                 val jsonObject=JSONObject(response)
                 val code=jsonObject.getInt("code")
                 if (code==200){
-                    coroutine.resume(Gson().fromJson(jsonObject.getJSONObject("data").toString(),
-                        OurRelationship::class.java))
+                    coroutine.resume(Unit)
                 }else{
                     coroutine.resumeWithException(Exception(jsonObject.getString("msg")))
                 }
