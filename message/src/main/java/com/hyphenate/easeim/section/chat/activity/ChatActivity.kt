@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.hyphenate.chat.EMChatRoom
 import com.hyphenate.chat.EMClient
@@ -27,6 +28,7 @@ import com.hyphenate.easeui.constants.EaseConstant
 import com.hyphenate.easeui.model.EaseEvent
 import com.hyphenate.easeui.widget.EaseTitleBar.OnBackPressListener
 import com.hyphenate.easeui.widget.EaseTitleBar.OnRightClickListener
+import com.message.ImMessageManager
 import com.xyzz.myutils.show.toast
 import kotlinx.android.synthetic.main.demo_activity_chat.*
 
@@ -73,6 +75,10 @@ open class ChatActivity : BaseInitActivity(), OnBackPressListener, OnRightClickL
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         initChatFragment()
+
+        if (ImMessageManager.MY_HELPER_ID==conversationId) {
+            chatSetting.isVisible=false
+        }
     }
 
     private fun initChatFragment() {
@@ -191,7 +197,12 @@ open class ChatActivity : BaseInitActivity(), OnBackPressListener, OnRightClickL
                 conversationId
             }
         }
-        myActionBar.setTitle(title?:"")
+        if (ImMessageManager.MY_HELPER_ID==conversationId){
+            myActionBar.setTitle("恋爱小管家")
+        }else{
+            myActionBar.setTitle(title?:"")
+        }
+
     }
 
     override fun onBackPress(view: View) {

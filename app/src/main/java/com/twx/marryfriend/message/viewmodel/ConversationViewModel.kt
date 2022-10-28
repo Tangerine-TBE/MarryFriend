@@ -38,7 +38,7 @@ class ConversationViewModel:ViewModel() {
     suspend fun getConversationsInfo(ids:List<String>)=suspendCoroutine<List<ConversationsItemModel>?>{ continuation->
         viewModelScope.launch {
             val friendsInfo=try {
-                getFriendsInfo(ids.filter { it!=ImMessageManager.MY_HELPER_ID }).data
+                getFriendsInfo(ids).data
             }catch (e:Exception){
                 null
             }
