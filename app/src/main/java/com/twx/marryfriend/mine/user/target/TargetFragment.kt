@@ -815,22 +815,23 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         var photo = ""
         var marry = ""
 
-        age = when (SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)) {
-            0 -> "未填写"
+        age = when (SPStaticUtils.getInt(Constant.TA_AGE_MIN, -1)) {
+            -1 -> "未填写"
+            0 -> "不限"
             else -> "${
                 SPStaticUtils.getInt(Constant.TA_AGE_MIN, 0)
             }~${SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)}"
         }
 
-        height = when (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)) {
-            0 -> "未填写"
+        height = when (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, -1)) {
+            -1 -> "未填写"
             else -> "${SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)}~${
                 SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
             }"
         }
 
-        income = when (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 9)) {
-            9 -> "未填写"
+        income = when (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, -1)) {
+            -1 -> "未填写"
             0 -> "不限"
             else -> when (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)) {
                 0 -> {
@@ -888,7 +889,19 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
 
         val y = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
-        val listY = y.split(",")
+        val listY = y.split(",") as MutableList<String>
+
+        for (i in 0.until(listY.size)) {
+            if (listY[i].contains(" ")) {
+                listY[i] = listY[i].replace(" ", "")
+            }
+            if (listY[i].contains(" ")) {
+                listY[i] = listY[i].replace(" ", "")
+            }
+        }
+
+        Log.i("guo", "y :$y")
+        Log.i("guo", "listY :$listY")
 
         if (y == "0") {
             marryState = "不限"
@@ -909,8 +922,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
         }
 
-        body = when (SPStaticUtils.getInt(Constant.TA_BODY, 10)) {
-            10 -> "未填写"
+        body = when (SPStaticUtils.getInt(Constant.TA_BODY, -1)) {
+            -1 -> "未填写"
             else ->
 
                 // 先判断性别
@@ -929,7 +942,22 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         }
 
         val z = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
-        val listZ = z.split(",")
+        val listZ = z.split(",") as MutableList<String>
+
+        val newListZ: MutableList<String> = arrayListOf()
+
+        for (i in 0.until(listZ.size)) {
+            newListZ.add(listZ[i])
+        }
+
+        for (i in 0.until(newListZ.size)) {
+            if (newListZ[i].contains("]")) {
+                newListZ[i] = newListZ[i].replace("]", "")
+            }
+            if (newListZ[i].contains("[")) {
+                newListZ[i] = newListZ[i].replace("[", "")
+            }
+        }
 
         if (z == "") {
             haveChild = "未填写"
@@ -937,16 +965,16 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             haveChild = "不限"
         } else {
             haveChild = ""
-            if (listZ.contains("1")) {
+            if (newListZ.contains("1")) {
                 haveChild += "没有孩子/"
             }
-            if (listZ.contains("2")) {
+            if (newListZ.contains("2")) {
                 haveChild += "有孩子且住在一起/"
             }
-            if (listZ.contains("3")) {
+            if (newListZ.contains("3")) {
                 haveChild += "有孩子偶尔会住在一起/"
             }
-            if (listZ.contains("4")) {
+            if (newListZ.contains("4")) {
                 haveChild += "有孩子但不在身边/"
             }
             if (haveChild != "") {
@@ -954,44 +982,42 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             }
         }
 
-
-
-        when (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5)) {
+        when (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1)) {
+            -1 -> wantChild = "未填写"
             0 -> wantChild = "不限"
             1 -> wantChild = "视情况而定"
             2 -> wantChild = "想要孩子"
             3 -> wantChild = "不想要孩子"
             4 -> wantChild = "以后再告诉你"
-            5 -> wantChild = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_SMOKE, 5)) {
+        when (SPStaticUtils.getInt(Constant.TA_SMOKE, -1)) {
+            -1 -> smoke = "未填写"
             0 -> smoke = "不限"
             1 -> smoke = "可以随意吸烟"
             2 -> smoke = "偶尔抽烟"
             3 -> smoke = "禁止抽烟"
             4 -> smoke = "社交场合可以抽"
-            5 -> smoke = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_DRINK, 5)) {
+        when (SPStaticUtils.getInt(Constant.TA_DRINK, -1)) {
+            -1 -> drink = "未填写"
             0 -> drink = "不限"
             1 -> drink = "可以随意喝酒"
             2 -> drink = "偶尔喝酒"
             3 -> drink = "禁止喝酒"
             4 -> drink = "社交场合可以喝"
-            5 -> drink = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3)) {
+        when (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1)) {
+            -1 -> photo = "未填写"
             0 -> photo = "不限"
             1 -> photo = "有"
             2 -> photo = "没有"
-            3 -> photo = "未填写"
         }
 
-        when (SPStaticUtils.getInt(Constant.TA_MARRY, 0)) {
-            0 -> marry = "未填写"
+        when (SPStaticUtils.getInt(Constant.TA_MARRY, -1)) {
+            -1 -> marry = "未填写"
             1 -> marry = "认同闪婚"
             2 -> marry = "一年内"
             3 -> marry = "两年内"
@@ -1318,9 +1344,9 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) - 18
             }
 
-            Log.i("guo","mMinAgePosition : $mMinAgePosition")
+            Log.i("guo", "mMinAgePosition : $mMinAgePosition")
 
-            Log.i("guo","mMaxAgePosition : $mMaxAgePosition")
+            Log.i("guo", "mMaxAgePosition : $mMaxAgePosition")
 
 
 //            mMinAgePosition = SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) - 18
@@ -1396,9 +1422,9 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
             confirm.setOnClickListener {
 
-                Log.i("guo","mMinAgePosition : $mMinAgePosition")
+                Log.i("guo", "mMinAgePosition : $mMinAgePosition")
 
-                Log.i("guo","mMaxAgePosition : $mMaxAgePosition")
+                Log.i("guo", "mMaxAgePosition : $mMaxAgePosition")
 
 
                 ToastUtils.showShort("${mAgeMinList[mMinAgePosition]} - ${mAgeMaxList[mMaxAgePosition]} ")
@@ -2414,7 +2440,17 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         private fun initChoose() {
 
             val x = SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")
-            val list = x.split(",")
+            val list = x.split(",") as MutableList<String>
+
+            for (i in 0.until(list.size)) {
+                if (list[i].contains(" ")) {
+                    list[i] = list[i].replace(" ", "")
+                }
+                if (list[i].contains(" ")) {
+                    list[i] = list[i].replace(" ", "")
+                }
+            }
+
 
             if (x == "0") {
                 tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
@@ -3001,7 +3037,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                     if (chooseOne) x.add("1")
                     if (chooseTwo) x.add("2")
                     if (chooseThree) x.add("3")
-                    if (chooseFour) x.add("3")
+                    if (chooseFour) x.add("4")
 
                     when (x.size) {
                         1 -> text = "${x[0]}"
@@ -3038,29 +3074,44 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
         private fun initChoose() {
 
             val x = SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")
-            val list = x.split(",")
+            val list = x.split(",") as MutableList<String>
+
+            val newList: MutableList<String> = arrayListOf()
+
+            for (i in 0.until(list.size)) {
+                newList.add(list[i])
+            }
+
+            for (i in 0.until(newList.size)) {
+                if (newList[i].contains("]")) {
+                    newList[i] = newList[i].replace("]", "")
+                }
+                if (newList[i].contains("[")) {
+                    newList[i] = newList[i].replace("[", "")
+                }
+            }
 
             if (x == "0") {
                 tv_unlimited.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_unlimited.setTextColor(Color.parseColor("#FF4444"))
                 chooseLimit = true
             }
-            if (list.contains("1")) {
+            if (newList.contains("1")) {
                 tv_one.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_one.setTextColor(Color.parseColor("#FF4444"))
                 chooseOne = true
             }
-            if (list.contains("2")) {
+            if (newList.contains("2")) {
                 tv_two.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_two.setTextColor(Color.parseColor("#FF4444"))
                 chooseTwo = true
             }
-            if (list.contains("3")) {
+            if (newList.contains("3")) {
                 tv_three.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_three.setTextColor(Color.parseColor("#FF4444"))
                 chooseThree = true
             }
-            if (list.contains("4")) {
+            if (newList.contains("4")) {
                 tv_four.setBackgroundResource(R.drawable.shape_bg_dialog_choose_check)
                 tv_four.setTextColor(Color.parseColor("#FF4444"))
                 chooseFour = true

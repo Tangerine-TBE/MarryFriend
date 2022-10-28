@@ -179,9 +179,7 @@ class LifeIntroduceActivity : MainBaseViewActivity(), IDoUploadPhotoCallback,
 
                     Log.i("guo", "图片合规，开始进行上传")
 
-
                     Thread{
-
 
                         val file = File(picPath)
 

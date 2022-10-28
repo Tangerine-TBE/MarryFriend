@@ -32,7 +32,9 @@ class MfrMessageActivity2 : AppCompatActivity() {
 
             Log.i("guo", "mNotificationClick")
 
-            SPStaticUtils.put(Constant.PUSH_ACTION,msg.custom)
+            Log.i("guo", "msg.custom  : ${msg.custom}")
+
+            SPStaticUtils.put(Constant.PUSH_ACTION, msg.custom)
 
             startActivity(Intent(this@MfrMessageActivity2, BeginActivity::class.java))
 

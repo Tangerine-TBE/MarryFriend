@@ -592,6 +592,10 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
     // 动态添加一条信息
     fun addDynamicInfo(trendSaloonList: TrendSaloonList) {
 
+        Log.i("guo","-------new : ${trendSaloonList}")
+
+        Log.i("guo","-------old : ${mTrendList}")
+
         val focus = trendSaloonList.focus_uid != null
 
         val like = trendSaloonList.guest_uid != null
@@ -607,13 +611,14 @@ class DynamicRecommendFragment : Fragment(), IGetTrendSaloonCallback, IDoLikeCli
                     mDeleteList.add(i)
                 }
             }
+
         }
 
 
         if (mDeleteList.isNotEmpty()) {
             for (j in 0.until(mDeleteList.size)) {
-                mTrendList.removeAt(j)
-                mDiyList.removeAt(j)
+                mTrendList.removeAt(mDeleteList[j])
+                mDiyList.removeAt(mDeleteList[j])
             }
         }
 

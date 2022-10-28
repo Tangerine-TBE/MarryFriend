@@ -51,6 +51,8 @@ import com.twx.marryfriend.net.impl.doUploadPhotoPresentImpl
 import com.twx.marryfriend.utils.DynamicFileProvider
 import com.twx.marryfriend.utils.GlideEngine
 import kotlinx.android.synthetic.main.activity_life_photo.*
+import top.zibin.luban.Luban
+import top.zibin.luban.OnCompressListener
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
@@ -565,48 +567,79 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                     Log.i("guo", "拍照回调 : $mTempPhotoPath")
 
-                    val bitmap: Bitmap = ImageUtils.getBitmap(mTempPhotoPath)
 
-                    lifeBitmap = bitmap
+                    Luban.with(this)
+                        .load(mTempPhotoPath)
+                        .ignoreBy(100)
+                        .setTargetDir(this.externalCacheDir.toString())
+                        .setCompressListener(object : OnCompressListener {
+                            override fun onStart() {
 
-                    val mTempLifePath = Environment.getExternalStorageDirectory()
-                        .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
+                            }
 
-                    ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
+                            override fun onSuccess(file: File?) {
 
-                    lifeChoosePath = mTempLifePath
+                                Log.i("guo", "压缩成功")
 
-                    if (!haveFirstPic) {
+                                ThreadUtils.runOnUiThread {
 
-                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                            lifeChoosePath,
-                            ""), 111)
+//                                    val bitmap: Bitmap =
+//                                        ImageUtils.rotate(ImageUtils.getBitmap(file), 90, 0F, 0F)
 
-                    } else if (!haveSecondPic) {
+                                    val bitmap: Bitmap = ImageUtils.getBitmap(file)
 
-                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                            lifeChoosePath,
-                            ""), 222)
+                                    lifeBitmap = bitmap
 
-                    } else if (!haveThirdPic) {
+                                    val mTempLifePath = Environment.getExternalStorageDirectory()
+                                        .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
 
-                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                            lifeChoosePath,
-                            ""), 333)
+                                    ImageUtils.save(bitmap,
+                                        mTempLifePath,
+                                        Bitmap.CompressFormat.PNG)
 
-                    } else if (!haveFourPic) {
+                                    lifeChoosePath = mTempLifePath
 
-                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                            lifeChoosePath,
-                            ""), 444)
+                                    if (!haveFirstPic) {
 
-                    } else if (!haveFivePic) {
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                            lifeChoosePath,
+                                            ""), 111)
 
-                        startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                            lifeChoosePath,
-                            ""), 555)
+                                    } else if (!haveSecondPic) {
 
-                    }
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                            lifeChoosePath,
+                                            ""), 222)
+
+                                    } else if (!haveThirdPic) {
+
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                            lifeChoosePath,
+                                            ""), 333)
+
+                                    } else if (!haveFourPic) {
+
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                            lifeChoosePath,
+                                            ""), 444)
+
+                                    } else if (!haveFivePic) {
+
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
+                                            lifeChoosePath,
+                                            ""), 555)
+
+                                    }
+
+                                }
+
+                            }
+
+                            override fun onError(e: Throwable?) {
+                                ToastUtils.showShort("图片解析失败，请重试")
+                            }
+
+                        }).launch()
 
                 }
                 111 -> {
@@ -766,7 +799,6 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                     }
                 }
-
 
             }
         }

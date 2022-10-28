@@ -71,6 +71,7 @@ import com.twx.marryfriend.net.impl.*
 import com.twx.marryfriend.set.feedback.FeedbackActivity
 import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.BitmapUtil
+import com.twx.marryfriend.utils.DynamicFileProvider
 import com.twx.marryfriend.utils.GlideEngine
 import com.twx.marryfriend.utils.TimeUtil
 import com.umeng.analytics.MobclickAgent
@@ -86,6 +87,8 @@ import kotlinx.android.synthetic.main.layout_guide_step_life.*
 import kotlinx.android.synthetic.main.layout_guide_step_mine.*
 import kotlinx.android.synthetic.main.layout_guide_step_photo.*
 import kotlinx.android.synthetic.main.layout_guide_step_target.*
+import top.zibin.luban.Luban
+import top.zibin.luban.OnCompressListener
 import java.io.*
 import java.net.UnknownHostException
 import java.util.*
@@ -273,6 +276,9 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
     private lateinit var doFaceDetectPresent: doFaceDetectPresentImpl
 
     // -------------------  我的生活界面  -----------------
+
+    // 生活拍照暂存文件
+    private var mTempLifePhotoPath = ""
 
     // 选择器中选中的图片路径
     private var lifeChoosePath: String = ""
@@ -571,6 +577,8 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
         targetVisibilityList.add("不公开")
 
         mTempPhotoPath = this.externalCacheDir.toString() + File.separator + "photo.jpeg"
+        mTempLifePhotoPath =
+            this@DetailInfoActivity.externalCacheDir.toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
         mDestination = Uri.fromFile(File(this.cacheDir, "photoCropImage.jpeg"))
 
         mPhotoPath = externalCacheDir.toString() + File.separator + "head.png"
@@ -2188,49 +2196,70 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                     startPhotoCropActivity(Uri.fromFile(temp))
                 }
                 3 -> {
-                    if (data != null) {
-                        val bundle = data.extras
-                        val bitmap: Bitmap = bundle?.get("data") as Bitmap
 
-                        lifeBitmap = bitmap
+                    Luban.with(this)
+                        .load(mTempPhotoPath)
+                        .ignoreBy(100)
+                        .setTargetDir(this.externalCacheDir.toString())
+                        .setCompressListener(object : OnCompressListener {
+                            override fun onStart() {
 
-                        val mTempLifePath = Environment.getExternalStorageDirectory()
-                            .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
+                            }
 
-                        ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
+                            override fun onSuccess(file: File?) {
 
-                        lifeChoosePath = mTempLifePath
+                                ThreadUtils.runOnUiThread {
 
-                        if (mLifeFirstUrl == "") {
+                                    val bitmap: Bitmap = ImageUtils.getBitmap(mTempLifePhotoPath)
 
+                                    lifeBitmap = bitmap
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                                lifeChoosePath,
-                                ""), 111)
+                                    val mTempLifePath = Environment.getExternalStorageDirectory()
+                                        .toString() + File.separator + "life_${TimeUtils.getNowMills()}.jpeg"
 
-                        } else if (mLifeSecondUrl == "") {
+                                    ImageUtils.save(bitmap, mTempLifePath, Bitmap.CompressFormat.PNG)
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                                lifeChoosePath,
-                                ""), 222)
+                                    lifeChoosePath = mTempLifePath
 
-                        } else if (mLifeThirdUrl == "") {
+                                    if (mLifeFirstUrl == "") {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                                lifeChoosePath,
-                                ""), 333)
-                        } else if (mLifeFourUrl == "") {
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                            lifeChoosePath,
+                                            ""), 111)
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                                lifeChoosePath,
-                                ""), 444)
-                        } else if (mLifeFiveUrl == "") {
+                                    } else if (mLifeSecondUrl == "") {
 
-                            startActivityForResult(LifeIntroduceActivity.getIntent(this,
-                                lifeChoosePath,
-                                ""), 555)
-                        }
-                    }
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                            lifeChoosePath,
+                                            ""), 222)
+
+                                    } else if (mLifeThirdUrl == "") {
+
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                            lifeChoosePath,
+                                            ""), 333)
+                                    } else if (mLifeFourUrl == "") {
+
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                            lifeChoosePath,
+                                            ""), 444)
+                                    } else if (mLifeFiveUrl == "") {
+
+                                        startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
+                                            lifeChoosePath,
+                                            ""), 555)
+                                    }
+
+                                }
+
+                            }
+
+                            override fun onError(e: Throwable?) {
+                                ToastUtils.showShort("图片解析失败，请重试")
+                            }
+
+                        }).launch()
+
                 }
                 111 -> {
                     // 生活第一张图的介绍
@@ -4761,7 +4790,27 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                             if (all) {
 
+                                mTempLifePhotoPath =
+                                    this@DetailInfoActivity.externalCacheDir.toString() + File.separator + "${TimeUtils.getNowMills()}.jpeg"
+
+                                val tempPhotoFile: File = File(mTempLifePhotoPath)
                                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE) // 启动系统相机
+
+                                // 如果在Android7.0以上,使用FileProvider获取Uri
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                    intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                                    val authority =
+                                        this@DetailInfoActivity.packageName.toString() + ".fileProvider"
+                                    val contentUri: Uri =
+                                        DynamicFileProvider.getUriForFile(this@DetailInfoActivity,
+                                            authority,
+                                            tempPhotoFile)
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+                                } else {
+                                    intent.putExtra(MediaStore.EXTRA_OUTPUT,
+                                        Uri.fromFile(tempPhotoFile))
+                                }
+
                                 startActivityForResult(intent, 3)
 
                             } else {

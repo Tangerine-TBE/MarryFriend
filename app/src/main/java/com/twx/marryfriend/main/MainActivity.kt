@@ -540,6 +540,8 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
             object : UmengNotificationClickHandler() {
                 override fun openActivity(context: Context, msg: UMessage) {
                     super.openActivity(context, msg)
+
+
                 }
 
                 override fun launchApp(context: Context, msg: UMessage) {
@@ -555,7 +557,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
 
                     Log.i("guo", "customUmengPush: ${uMessage}")
 
-//                    Log.i("guo", "customUmengPush: ${uMessage.custom}")
+                    Log.i("guo", " 后台点击事件: ${uMessage.custom}")
                     when (uMessage.custom) {
                         "shenhe_tongzhi" -> {
                             Log.i("guo", "审核通知，跳小秘书")

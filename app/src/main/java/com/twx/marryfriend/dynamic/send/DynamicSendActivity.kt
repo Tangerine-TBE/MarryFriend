@@ -2,10 +2,10 @@ package com.twx.marryfriend.dynamic.send
 
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import android.text.*
 import android.text.method.LinkMovementMethod
@@ -73,7 +73,6 @@ import io.microshow.rxffmpeg.RxFFmpegCommandList
 import io.microshow.rxffmpeg.RxFFmpegInvoke
 import io.microshow.rxffmpeg.RxFFmpegSubscriber
 import kotlinx.android.synthetic.main.activity_dynamic_send.*
-import kotlinx.android.synthetic.main.activity_life_introduce.*
 import top.zibin.luban.Luban
 import top.zibin.luban.OnCompressListener
 import java.io.File
@@ -219,7 +218,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
 
     }
-
 
     override fun initEvent() {
         super.initEvent()
@@ -625,10 +623,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                             intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                                             val authority =
                                                 this@DynamicSendActivity.packageName.toString() + ".fileProvider"
-                                            val contentUri: Uri =
-                                                DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
-                                                    authority,
-                                                    tempPhotoFile)
+                                            val contentUri: Uri = DynamicFileProvider.getUriForFile(
+                                                this@DynamicSendActivity,
+                                                authority,
+                                                tempPhotoFile)
                                             intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
                                         } else {
                                             intent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -1005,7 +1003,6 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
         val marginTop = itemHeight * row + editHeight + layoutMargin //+ itemSpace * (row - 1)
 
     }
-
 
     private fun doTextVerify(text: String) {
 
@@ -1390,15 +1387,41 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                     }
                 }
                 1 -> {
+
+                    Log.i("guo", "回调")
+
                     // 录制视频回调
                     val task: TimerTask = object : TimerTask() {
                         override fun run() {
                             ThreadUtils.runOnUiThread {
-                                mDataList.add(mTempPhotoPath)
-                                mAdapter.data = mDataList
-                                mAdapter.notifyDataSetChanged()
 
-                                fixBottom()
+                                Log.i("guo", "uri")
+
+                                val uri = data?.data
+                                val cursor: Cursor? = uri?.let {
+                                    this@DynamicSendActivity.contentResolver.query(it,
+                                        null,
+                                        null,
+                                        null,
+                                        null)
+                                }
+                                if (cursor != null) {
+                                    if (cursor.moveToFirst()) {
+                                        val videoPath: String =
+                                            cursor.getString(cursor.getColumnIndex("_data"))
+
+                                        Log.i("guo", "videoPath ： $videoPath")
+
+                                        mDataList.add(videoPath)
+                                        mAdapter.data = mDataList
+                                        mAdapter.notifyDataSetChanged()
+
+                                        fixBottom()
+
+                                    }
+                                }
+
+
                             }
                         }
                     }
@@ -1719,10 +1742,10 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
 
                                             val authority =
                                                 this@DynamicSendActivity.packageName.toString() + ".fileProvider"
-                                            val contentUri: Uri =
-                                                DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
-                                                    authority,
-                                                    tempPhotoFile)
+                                            val contentUri: Uri = DynamicFileProvider.getUriForFile(
+                                                this@DynamicSendActivity,
+                                                authority,
+                                                tempPhotoFile)
 
 //                                    val contentUri: Uri = UriUtils.file2Uri(tempPhotoFile)
 
@@ -1778,20 +1801,22 @@ class DynamicSendActivity : MainBaseViewActivity(), IDoUploadTrendCallback, IDoT
                                     val intent = Intent(MediaStore.ACTION_VIDEO_CAPTURE)
                                     intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 120)
                                     intent.putExtra(MediaStore.EXTRA_SIZE_LIMIT, 1024L * 1024 * 100)
-                                    // 如果在Android7.0以上,使用FileProvider获取Uri
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                                        val authority =
-                                            this@DynamicSendActivity.packageName.toString() + ".fileProvider"
-                                        val contentUri: Uri =
-                                            DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
-                                                authority,
-                                                tempPhotoFile)
-                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
-                                    } else {
-                                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                                            Uri.fromFile(tempPhotoFile))
-                                    }
+
+//                                    // 如果在Android7.0以上,使用FileProvider获取Uri
+//                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                                        intent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+//                                        val authority =
+//                                            this@DynamicSendActivity.packageName.toString() + ".fileProvider"
+//                                        val contentUri: Uri =
+//                                            DynamicFileProvider.getUriForFile(this@DynamicSendActivity,
+//                                                authority,
+//                                                tempPhotoFile)
+//                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri)
+//                                    } else {
+//                                        intent.putExtra(MediaStore.EXTRA_OUTPUT,
+//                                            Uri.fromFile(tempPhotoFile))
+//                                    }
+
                                     startActivityForResult(intent, 1)
                                 }
 

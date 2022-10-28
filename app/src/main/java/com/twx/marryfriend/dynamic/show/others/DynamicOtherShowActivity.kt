@@ -256,13 +256,12 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
     override fun initLoadData() {
         super.initLoadData()
 
+        eduList.add("")
         eduList.add("大专以下")
         eduList.add("大专")
         eduList.add("本科")
         eduList.add("硕士")
         eduList.add("博士")
-        eduList.add("博士以上")
-        eduList.add("")
 
         getTrendsList()
         getCommentOne(currentPaper)
@@ -1410,6 +1409,7 @@ class DynamicOtherShowActivity : MainBaseViewActivity(), IDoCheckTrendCallback,
                         val year = (TimeUtils.getValueByCalendarField(TimeUtils.getNowDate(),
                             Calendar.YEAR) - info.age).toString().substring(2, 4)
                         val city = info.work_city_str
+
                         val edu = eduList[info.education]
 
                         val job = if (info.industry_str == "") {

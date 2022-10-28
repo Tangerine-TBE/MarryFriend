@@ -44,12 +44,12 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
         getLikeListPresent = getLikeListPresentImpl.getsInstance()
         getLikeListPresent.registerCallback(this)
 
+        mEduData.add("")
         mEduData.add("大专以下")
         mEduData.add("大专")
         mEduData.add("本科")
         mEduData.add("硕士")
         mEduData.add("博士")
-        mEduData.add("博士以上")
 
         adapter = DynamicMineLikeAdapter(mLikeList, mEduData)
 
@@ -107,15 +107,12 @@ class DynamicMineLikeActivity : MainBaseViewActivity(),
     private fun getLikeList(Page: Int) {
 
 
-
-            val map: MutableMap<String, String> = TreeMap()
-            map[Contents.TRENDS_ID] = trendId.toString()
-            map[Contents.HOST_UID] = userId.toString()
-            map[Contents.PAGE] = Page.toString()
-            map[Contents.SIZE] = "50"
-            getLikeListPresent.getLikeList(map)
-
-
+        val map: MutableMap<String, String> = TreeMap()
+        map[Contents.TRENDS_ID] = trendId.toString()
+        map[Contents.HOST_UID] = userId.toString()
+        map[Contents.PAGE] = Page.toString()
+        map[Contents.SIZE] = "50"
+        getLikeListPresent.getLikeList(map)
 
 
     }
