@@ -188,7 +188,7 @@ class ImChatFragment: ChatFragment() {
     override fun onClickSendFlower() {
         lifecycleScope.launch {
             try {
-                recommendViewModel.superLike(conversationId?.toIntOrNull()?:return@launch){
+                recommendViewModel.otherSuperLike(conversationId?.toIntOrNull()?:return@launch){
                     coinInsufficientDialog.show()
                 }.also {
                     if (it.code==200){

@@ -150,7 +150,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun disLike(guest_uid: Int)=suspendCoroutine<RecommendCall>{ coroutine->
+    suspend fun disLikeHome(guest_uid: Int)=suspendCoroutine<RecommendCall>{ coroutine->
         if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
             viewModelScope.launch {
                 iLog("不喜欢,未请求接口")
@@ -185,7 +185,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun like(
+    suspend fun likeHome(
         guest_uid: Int,
         mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
         if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
@@ -228,9 +228,83 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun otherLike(
-        guest_uid: Int,
-        mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
+    suspend fun superLikeHome(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<RecommendCall>{coroutine->
+        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
+            viewModelScope.launch {
+                iLog("超级喜欢,未请求接口")
+                delay(700)
+                coroutine.resume(RecommendCall())
+            }
+            return@suspendCoroutine
+        }
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/eachOneCommend"
+        val map= mapOf(
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "guest_uid" to guest_uid.toString(),
+            "feeling" to "send")
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val jsonObject=JSONObject(response)
+                val code=jsonObject.getInt("code")
+                if (code==432){
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_NOT_HAVE,jsonObject.getString("msg")))
+                }else if (code==200) {
+                    coroutine.resume(RecommendCall())
+                }else{
+                    val tip=try {
+                        jsonObject.getString("msg")
+                    }catch (e:Exception){
+                        response
+                    }
+                    if (code==444){
+                        coinInsufficient?.invoke()
+                    }
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,tip))
+                }
+            }catch (e:Exception){
+                coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,response))
+            }
+        },{
+            coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,it))
+        })
+    }
+
+    suspend fun otherDisLike(guest_uid: Int)=suspendCoroutine<RecommendCall>{ coroutine->
+        if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
+            viewModelScope.launch {
+                iLog("不喜欢,未请求接口")
+                delay(700)
+                coroutine.resume(RecommendCall())
+            }
+            return@suspendCoroutine
+        }
+        val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusUnconcern"
+        val map= mapOf(
+            "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
+            "guest_uid" to guest_uid.toString())
+
+        NetworkUtil.sendPostSecret(url,map,{ response ->
+            try {
+                val jsonObject=JSONObject(response)
+                val code=jsonObject.getInt("code")
+                if (code==432){
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_NOT_HAVE,jsonObject.getString("msg")))
+                }else if (code==200) {
+                    preDisLike=guest_uid
+                    coroutine.resume(RecommendCall())
+                }else{
+                    coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,jsonObject.getString("msg")))
+                }
+            }catch (e:Exception){
+                coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,"转换失败,${response}"))
+            }
+        },{
+            coroutine.resume(RecommendCall(RecommendCall.RECOMMEND_OTHER,it))
+        })
+    }
+
+    suspend fun otherLike(guest_uid: Int, mutualLikeAction: (() -> Unit)? = null)=suspendCoroutine<RecommendCall>{ coroutine->
         val url="${Contents.USER_URL}/marryfriend/CommendSearch/plusPutongXihuanOther"
         val map= mapOf(
             "host_uid" to (UserInfo.getUserId()?:return@suspendCoroutine coroutine.resumeWithException(Exception("未登录"))),
@@ -262,7 +336,7 @@ class RecommendViewModel():ViewModel() {
         })
     }
 
-    suspend fun superLike(guest_uid: Int,coinInsufficient:(()->Unit)?=null)=suspendCoroutine<RecommendCall>{coroutine->
+    suspend fun otherSuperLike(guest_uid: Int, coinInsufficient:(()->Unit)?=null)=suspendCoroutine<RecommendCall>{ coroutine->
         if (BuildConfig.DEBUG&&UserInfo.isTestDv()){
             viewModelScope.launch {
                 iLog("超级喜欢,未请求接口")

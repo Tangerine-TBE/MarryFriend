@@ -4,13 +4,13 @@ apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdk rootProject.ext.version.minSdkVersion
+        targetSdk rootProject.ext.version.targetSdkVersion
         versionCode 100
         versionName '1.0.0'
 

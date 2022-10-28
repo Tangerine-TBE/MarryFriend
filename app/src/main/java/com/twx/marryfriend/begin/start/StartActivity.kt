@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.SPStaticUtils
 import com.blankj.utilcode.util.ToastUtils
@@ -36,6 +37,8 @@ import com.twx.marryfriend.push.PushManager
 import com.twx.marryfriend.utils.GlideEngine
 import com.xyzz.myutils.show.iLog
 import kotlinx.android.synthetic.main.activity_start.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
 import java.util.ArrayList
@@ -59,8 +62,11 @@ class StartActivity : MainBaseViewActivity() {
 
         if (!SPStaticUtils.getBoolean(Constant.FIRST_START, true)) {
 
-            startActivity(Intent(this, BeginActivity::class.java))
-            this.finish()
+            lifecycleScope.launch {
+                delay(500)
+                startActivity(Intent(this@StartActivity, BeginActivity::class.java))
+                this@StartActivity.finish()
+            }
 
         } else {
 

@@ -103,7 +103,7 @@ class SuperLikePeopleFragment:Fragment(R.layout.fragment_superlike_people)  {
                 lifecycleScope.launch {
                     loadingDialog.show()
                     try {
-                        recommendViewModel.superLike(it.guest_uid){
+                        recommendViewModel.otherSuperLike(it.guest_uid){
                             coinInsufficientDialog.show(it.image_url)
                         }.also {
                             if (it.code==200){

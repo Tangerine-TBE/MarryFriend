@@ -20,7 +20,7 @@ import com.xyzz.myutils.show.iLog
 //http://sdkdocs.easemob.com/apidoc/android/chat3.0/annotated.html
 object ImMessageManager {
     private const val SECURITY_MESSAGE_KEY="security_message_k_"
-    const val MY_HELPER_ID="小秘书"//小秘书id
+    const val MY_HELPER_ID="2"//小秘书id
 
     val newMessageLiveData=MutableLiveData<List<EMMessage>?>()//收到新消息
     private val fromConversationRead=MutableLiveData<String>()
