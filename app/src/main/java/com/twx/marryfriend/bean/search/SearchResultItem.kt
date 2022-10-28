@@ -17,6 +17,7 @@ data class SearchResultItem(
     private var image_url: String? = "",
     var img_count: Int? = 0,
     var introduce_self: String? = "",
+    var introduce_status:Int=0,
     var like_uid: Int? = 0,
     var marry_had: Int? = 0,
     var nick: String? = "",

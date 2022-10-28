@@ -241,10 +241,18 @@ data class RecommendBean(
         return (vip_info?.level?:0)>0
     }
     fun getAboutMe():String?{
-        return base?.introduce_self
+        return if (base?.introduce_status==2){
+            base?.introduce_self
+        }else{
+            null
+        }
     }
     fun getAboutMeHobby():String?{
-        return base?.daily_hobbies
+        return if (base?.introduce_status==2){
+            base?.daily_hobbies
+        }else{
+            null
+        }
     }
     fun getExpectedTa():String?{
         return base?.ta_in_my_mind

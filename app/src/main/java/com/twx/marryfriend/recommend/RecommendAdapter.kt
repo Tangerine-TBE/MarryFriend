@@ -232,15 +232,8 @@ class RecommendAdapter constructor(private val scope:CoroutineScope, private val
                     return@apply
                 }else{
                     this.visibility=View.VISIBLE
-                }
-                holder.getView<TextView>(R.id.aboutMe).also { textView ->
-                    if (text.isNotBlank()){
-                        textView.visibility=View.VISIBLE
-                        textView.text=text
-//                        textView.setExpandableText(text, 3, "查看更多>", "收起")
-                    }else{
-                        textView.visibility=View.GONE
-                    }
+                    aboutMe.text=text
+//                    aboutMe.setExpandableText(text, 3, "查看更多>", "收起")
                 }
             }
         }

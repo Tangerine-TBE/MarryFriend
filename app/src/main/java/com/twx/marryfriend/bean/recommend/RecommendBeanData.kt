@@ -33,6 +33,7 @@ data class Base(
     val industry_num: String? = null,
     val industry_str: String? = null,
     val introduce_self: String? = null,
+    val introduce_status:Int=0,
     val marry_had: Int? = null,
     val nick: String? = null,
     val occupation_index: String? = null,

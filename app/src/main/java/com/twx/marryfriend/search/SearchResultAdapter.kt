@@ -91,7 +91,7 @@ class SearchResultAdapter:RecyclerView.Adapter<BaseViewHolder>() {
         }
 
         holder.getView<TextView>(R.id.searchItemText).also {
-            if (item.introduce_self.isNullOrBlank()){
+            if (item.introduce_status!=2||item.introduce_self.isNullOrBlank()){
                 it.visibility=View.GONE
             }else{
                 it.visibility=View.VISIBLE

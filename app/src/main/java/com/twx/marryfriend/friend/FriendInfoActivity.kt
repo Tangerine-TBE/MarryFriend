@@ -309,12 +309,7 @@ class FriendInfoActivity:AppCompatActivity(R.layout.activity_friend_info) {
                         return@apply
                     }else{
                         this.visibility=View.VISIBLE
-                    }
-                    if (text.isNotBlank()){
-                        aboutMe.visibility=View.VISIBLE
                         aboutMe.text = text
-                    }else{
-                        aboutMe.visibility=View.GONE
                     }
                 }
             }
