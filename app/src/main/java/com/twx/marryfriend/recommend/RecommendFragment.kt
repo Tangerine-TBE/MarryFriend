@@ -613,7 +613,6 @@ class RecommendFragment : Fragment(R.layout.fragment_recommend){
 //            loadingDialog.dismiss()
 
         if (t.code==200){
-            notData()
             recommendAdapter.removeItem(item)
             if (recommendAdapter.getData().isEmpty()){
                 showView(ViewType.notContent)
