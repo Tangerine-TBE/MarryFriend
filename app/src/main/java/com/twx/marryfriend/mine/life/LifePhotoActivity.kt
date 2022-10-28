@@ -567,6 +567,8 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                     Log.i("guo", "拍照回调 : $mTempPhotoPath")
 
+                    ll_life_photo_loading.visibility = View.VISIBLE
+
 
                     Luban.with(this)
                         .load(mTempPhotoPath)
@@ -601,30 +603,35 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
 
                                     if (!haveFirstPic) {
 
+                                        ll_life_photo_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
                                             lifeChoosePath,
                                             ""), 111)
 
                                     } else if (!haveSecondPic) {
 
+                                        ll_life_photo_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
                                             lifeChoosePath,
                                             ""), 222)
 
                                     } else if (!haveThirdPic) {
 
+                                        ll_life_photo_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
                                             lifeChoosePath,
                                             ""), 333)
 
                                     } else if (!haveFourPic) {
 
+                                        ll_life_photo_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
                                             lifeChoosePath,
                                             ""), 444)
 
                                     } else if (!haveFivePic) {
 
+                                        ll_life_photo_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@LifePhotoActivity,
                                             lifeChoosePath,
                                             ""), 555)
@@ -636,7 +643,11 @@ class LifePhotoActivity : MainBaseViewActivity(), IDoDeletePhotoCallback {
                             }
 
                             override fun onError(e: Throwable?) {
-                                ToastUtils.showShort("图片解析失败，请重试")
+                                ThreadUtils.runOnUiThread {
+                                    ll_life_photo_loading.visibility = View.GONE
+                                    ToastUtils.showShort("图片解析失败，请重试")
+                                }
+
                             }
 
                         }).launch()

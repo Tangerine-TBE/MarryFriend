@@ -2197,8 +2197,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                 }
                 3 -> {
 
+                    ll_guide_detail_loading.visibility = View.VISIBLE
+
                     Luban.with(this)
-                        .load(mTempPhotoPath)
+                        .load(mTempLifePhotoPath)
                         .ignoreBy(100)
                         .setTargetDir(this.externalCacheDir.toString())
                         .setCompressListener(object : OnCompressListener {
@@ -2210,7 +2212,7 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                 ThreadUtils.runOnUiThread {
 
-                                    val bitmap: Bitmap = ImageUtils.getBitmap(mTempLifePhotoPath)
+                                    val bitmap: Bitmap = ImageUtils.getBitmap(file)
 
                                     lifeBitmap = bitmap
 
@@ -2223,28 +2225,33 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
 
                                     if (mLifeFirstUrl == "") {
 
+                                        ll_guide_detail_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
                                             lifeChoosePath,
                                             ""), 111)
 
                                     } else if (mLifeSecondUrl == "") {
 
+                                        ll_guide_detail_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
                                             lifeChoosePath,
                                             ""), 222)
 
                                     } else if (mLifeThirdUrl == "") {
 
+                                        ll_guide_detail_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
                                             lifeChoosePath,
                                             ""), 333)
                                     } else if (mLifeFourUrl == "") {
 
+                                        ll_guide_detail_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
                                             lifeChoosePath,
                                             ""), 444)
                                     } else if (mLifeFiveUrl == "") {
 
+                                        ll_guide_detail_loading.visibility = View.GONE
                                         startActivityForResult(LifeIntroduceActivity.getIntent(this@DetailInfoActivity,
                                             lifeChoosePath,
                                             ""), 555)
@@ -2255,7 +2262,10 @@ class DetailInfoActivity : MainBaseViewActivity(), IGetIndustryCallback, IGetJob
                             }
 
                             override fun onError(e: Throwable?) {
-                                ToastUtils.showShort("图片解析失败，请重试")
+                                ThreadUtils.runOnUiThread {
+                                    ToastUtils.showShort("图片解析失败，请重试")
+                                    ll_guide_detail_loading.visibility = View.GONE
+                                }
                             }
 
                         }).launch()

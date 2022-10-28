@@ -154,6 +154,10 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
 
     private fun initEvent() {
 
+        Log.i("guo","TA_MARRY_STATE   ${SPStaticUtils.getString(Constant.TA_MARRY_STATE, "")}")
+
+        Log.i("guo","TA_HAVE_CHILD   ${SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "")}")
+
         if (TimeUtil.isShowMyTarget()) {
             TimeUtil.onShowMyTarget()
             showTargetFirstDialog()
@@ -248,15 +252,15 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     // 显示第一个弹窗
     private fun showTargetFirstDialog() {
 
-        if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0) == 0) {
+        if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, -1) == -1) {
             // 年龄
             showAgeDialog()
         } else {
-            if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0) == 0) {
+            if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, -1) == -1) {
                 // 身高
                 showHeightDialog()
             } else {
-                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 7) == 7) {
+                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, -1) == -1) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -264,11 +268,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                         // 学历
                         showEduDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
+                        if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "-1") == "-1") {
                             // 婚况
                             showMarryStateDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                            if (SPStaticUtils.getInt(Constant.TA_BODY, -1) == -1) {
                                 // 体型
                                 showBodyDialog()
                             } else {
@@ -276,32 +280,32 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                                     // 工作地区
                                     showJobDialog()
                                 } else {
-                                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                                         // 有没有孩子
                                         showHaveChildDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                                             // 是否想要孩子
                                             showWantChildDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                                                 // 是否吸烟
                                                 showSmokeDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_DRINK,
-                                                        5) == 5
+                                                        -1) == -1
                                                 ) {
                                                     // 是否喝酒
                                                     showDrinkDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
-                                                            3) == 3
+                                                            -1) == -1
                                                     ) {
                                                         // 有无照片
                                                         showPhotoDialog()
                                                     } else {
                                                         if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                0) == 0
+                                                                -1) == -1
                                                         ) {
                                                             // 何时结婚
                                                             showMarryDialog()
@@ -329,11 +333,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     private fun showNextDialog(position: Int) {
         when (position) {
             0 -> {
-                if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0) == 0) {
+                if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, -1) == -1) {
                     // 身高
                     showHeightDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 9) == 9) {
+                    if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, -1) == -1) {
                         // 月收入
                         showIncomeDialog()
                     } else {
@@ -341,11 +345,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                             // 学历
                             showEduDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
+                            if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "-1") == "-1") {
                                 // 婚况
                                 showMarryStateDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                                if (SPStaticUtils.getInt(Constant.TA_BODY, -1) == -1) {
                                     // 体型
                                     showBodyDialog()
                                 } else {
@@ -354,37 +358,37 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                                         showJobDialog()
                                     } else {
                                         if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD,
-                                                "") == ""
+                                                "[-1]") == "[-1]"
                                         ) {
                                             // 有没有孩子
                                             showHaveChildDialog()
                                         } else {
                                             if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD,
-                                                    5) == 5
+                                                    -1) == -1
                                             ) {
                                                 // 是否想要孩子
                                                 showWantChildDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_SMOKE,
-                                                        5) == 5
+                                                        -1) == -1
                                                 ) {
                                                     // 是否吸烟
                                                     showSmokeDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.TA_DRINK,
-                                                            5) == 5
+                                                            -1) == -1
                                                     ) {
                                                         // 是否喝酒
                                                         showDrinkDialog()
                                                     } else {
                                                         if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
-                                                                3) == 3
+                                                                -1) == -1
                                                         ) {
                                                             // 有无照片
                                                             showPhotoDialog()
                                                         } else {
                                                             if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                    0) == 0
+                                                                    -1) == -1
                                                             ) {
                                                                 // 何时结婚
                                                                 showMarryDialog()
@@ -405,7 +409,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             1 -> {
-                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 9) == 9) {
+                if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, -1) == -1) {
                     // 月收入
                     showIncomeDialog()
                 } else {
@@ -413,11 +417,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                         // 学历
                         showEduDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
+                        if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "-1") == "-1") {
                             // 婚况
                             showMarryStateDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                            if (SPStaticUtils.getInt(Constant.TA_BODY, -1) == -1) {
                                 // 体型
                                 showBodyDialog()
                             } else {
@@ -425,32 +429,32 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                                     // 工作地区
                                     showJobDialog()
                                 } else {
-                                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                                         // 有没有孩子
                                         showHaveChildDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                                             // 是否想要孩子
                                             showWantChildDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                                                 // 是否吸烟
                                                 showSmokeDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_DRINK,
-                                                        5) == 5
+                                                        -1) == -1
                                                 ) {
                                                     // 是否喝酒
                                                     showDrinkDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
-                                                            3) == 3
+                                                            -1) == -1
                                                     ) {
                                                         // 有无照片
                                                         showPhotoDialog()
                                                     } else {
                                                         if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                                0) == 0
+                                                                -1) == -1
                                                         ) {
                                                             // 何时结婚
                                                             showMarryDialog()
@@ -474,11 +478,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                     // 学历
                     showEduDialog()
                 } else {
-                    if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
+                    if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "-1") == "-1") {
                         // 婚况
                         showMarryStateDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                        if (SPStaticUtils.getInt(Constant.TA_BODY, -1) == -1) {
                             // 体型
                             showBodyDialog()
                         } else {
@@ -486,30 +490,30 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                                 // 工作地区
                                 showJobDialog()
                             } else {
-                                if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                                if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                                     // 有没有孩子
                                     showHaveChildDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                    if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                                         // 是否想要孩子
                                         showWantChildDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                        if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                                             // 是否吸烟
                                             showSmokeDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                            if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                                                 // 是否喝酒
                                                 showDrinkDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
-                                                        3) == 3
+                                                        -1) == -1
                                                 ) {
                                                     // 有无照片
                                                     showPhotoDialog()
                                                 } else {
                                                     if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                            0) == 0
+                                                            -1) == -1
                                                     ) {
                                                         // 何时结婚
                                                         showMarryDialog()
@@ -528,11 +532,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             3 -> {
-                if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "") == "") {
+                if (SPStaticUtils.getString(Constant.TA_MARRY_STATE, "-1") == "-1") {
                     // 婚况
                     showMarryStateDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                    if (SPStaticUtils.getInt(Constant.TA_BODY, -1) == -1) {
                         // 体型
                         showBodyDialog()
                     } else {
@@ -540,30 +544,30 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                             // 工作地区
                             showJobDialog()
                         } else {
-                            if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                            if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                                 // 有没有孩子
                                 showHaveChildDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                                if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                                     // 是否想要孩子
                                     showWantChildDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                    if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                                         // 是否吸烟
                                         showSmokeDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                        if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                                             // 是否喝酒
                                             showDrinkDialog()
                                         } else {
                                             if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO,
-                                                    3) == 3
+                                                    -1) == -1
                                             ) {
                                                 // 有无照片
                                                 showPhotoDialog()
                                             } else {
                                                 if (SPStaticUtils.getInt(Constant.TA_MARRY,
-                                                        0) == 0
+                                                        -1) == -1
                                                 ) {
                                                     // 何时结婚
                                                     showMarryDialog()
@@ -581,7 +585,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             4 -> {
-                if (SPStaticUtils.getInt(Constant.TA_BODY, 10) == 10) {
+                if (SPStaticUtils.getInt(Constant.TA_BODY, -1) == -1) {
                     // 体型
                     showBodyDialog()
                 } else {
@@ -589,27 +593,27 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                         // 工作地区
                         showJobDialog()
                     } else {
-                        if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                        if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                             // 有没有孩子
                             showHaveChildDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                            if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                                 // 是否想要孩子
                                 showWantChildDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                                if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                                     // 是否吸烟
                                     showSmokeDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                    if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                                         // 是否喝酒
                                         showDrinkDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                                             // 有无照片
                                             showPhotoDialog()
                                         } else {
-                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                                            if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                                                 // 何时结婚
                                                 showMarryDialog()
                                             } else {
@@ -629,27 +633,27 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                     // 工作地区
                     showJobDialog()
                 } else {
-                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                    if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                         // 有没有孩子
                         showHaveChildDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                        if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                             // 是否想要孩子
                             showWantChildDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                            if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                                 // 是否吸烟
                                 showSmokeDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                                if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                                     // 是否喝酒
                                     showDrinkDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                                         // 有无照片
                                         showPhotoDialog()
                                     } else {
-                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                                        if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                                             // 何时结婚
                                             showMarryDialog()
                                         } else {
@@ -664,27 +668,27 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             6 -> {
-                if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "") == "") {
+                if (SPStaticUtils.getString(Constant.TA_HAVE_CHILD, "[-1]") == "[-1]") {
                     // 有没有孩子
                     showHaveChildDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                    if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                         // 是否想要孩子
                         showWantChildDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                        if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                             // 是否吸烟
                             showSmokeDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                            if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                                 // 是否喝酒
                                 showDrinkDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                                     // 有无照片
                                     showPhotoDialog()
                                 } else {
-                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                                    if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                                         // 何时结婚
                                         showMarryDialog()
                                     } else {
@@ -698,23 +702,23 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             7 -> {
-                if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, 5) == 5) {
+                if (SPStaticUtils.getInt(Constant.TA_WANT_CHILD, -1) == -1) {
                     // 是否想要孩子
                     showWantChildDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                    if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                         // 是否吸烟
                         showSmokeDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                        if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                             // 是否喝酒
                             showDrinkDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                            if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                                 // 有无照片
                                 showPhotoDialog()
                             } else {
-                                if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                                if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                                     // 何时结婚
                                     showMarryDialog()
                                 } else {
@@ -727,19 +731,19 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             8 -> {
-                if (SPStaticUtils.getInt(Constant.TA_SMOKE, 5) == 5) {
+                if (SPStaticUtils.getInt(Constant.TA_SMOKE, -1) == -1) {
                     // 是否吸烟
                     showSmokeDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                    if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                         // 是否喝酒
                         showDrinkDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                        if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                             // 有无照片
                             showPhotoDialog()
                         } else {
-                            if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                            if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                                 // 何时结婚
                                 showMarryDialog()
                             } else {
@@ -751,15 +755,15 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             9 -> {
-                if (SPStaticUtils.getInt(Constant.TA_DRINK, 5) == 5) {
+                if (SPStaticUtils.getInt(Constant.TA_DRINK, -1) == -1) {
                     // 是否喝酒
                     showDrinkDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                    if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                         // 有无照片
                         showPhotoDialog()
                     } else {
-                        if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                        if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                             // 何时结婚
                             showMarryDialog()
                         } else {
@@ -770,11 +774,11 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             10 -> {
-                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, 3) == 3) {
+                if (SPStaticUtils.getInt(Constant.TA_HAVE_PHOTO, -1) == -1) {
                     // 有无照片
                     showPhotoDialog()
                 } else {
-                    if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                    if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                         // 何时结婚
                         showMarryDialog()
                     } else {
@@ -784,7 +788,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
                 }
             }
             11 -> {
-                if (SPStaticUtils.getInt(Constant.TA_MARRY, 0) == 0) {
+                if (SPStaticUtils.getInt(Constant.TA_MARRY, -1) == -1) {
                     // 何时结婚
                     showMarryDialog()
                 } else {
@@ -1332,13 +1336,15 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             wheelTwo.data = mAgeMaxList
 
 
-            mMinAgePosition = if (SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) == 18) {
+            mMinAgePosition = if (SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) == 18
+                || SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) == -1) {
                 0
             } else {
                 SPStaticUtils.getInt(Constant.TA_AGE_MIN, 18) - 18
             }
 
-            mMaxAgePosition = if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) == 18) {
+            mMaxAgePosition = if (SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) == 18
+                || SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) == -1) {
                 0
             } else {
                 SPStaticUtils.getInt(Constant.TA_AGE_MAX, 18) - 18
@@ -1481,14 +1487,18 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             wheelTwo.data = mHeightMaxList
 
 
-            mMinHeightPosition = if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) == 0) {
+            mMinHeightPosition = if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) == 0
+                || SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) == -1
+            ) {
                 0
             } else {
                 SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 140) - 140
             }
 
 
-            mMaxHeightPosition = if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) == 0) {
+            mMaxHeightPosition = if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) == 0
+                || SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) == -1
+            ) {
                 0
             } else {
                 SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 140) - 140
@@ -1619,8 +1629,19 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             wheelOne.data = DataProvider.TargetIncomeData
             wheelTwo.data = DataProvider.TargetIncomeData
 
-            mIncomeMin = SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
-            mIncomeMax = SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
+            mIncomeMin = if (SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0) == -1) {
+                0
+            } else {
+                SPStaticUtils.getInt(Constant.TA_INCOME_MIN, 0)
+            }
+
+            mIncomeMax = if (SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0) == -1) {
+                0
+            } else {
+                SPStaticUtils.getInt(Constant.TA_INCOME_MAX, 0)
+            }
+
+
 
             wheelOne.setSelectedItemPosition(mIncomeMin, false)
             wheelTwo.setSelectedItemPosition(mIncomeMax, false)

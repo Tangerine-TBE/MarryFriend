@@ -218,8 +218,7 @@ class BaseInfoActivity : MainBaseViewActivity(), IDoUpdateBaseInfoCallback, IDoT
                         SPStaticUtils.put(Constant.ME_HEIGHT, height)
 
 
-                        val str =
-                            " {\"age\":$age, \"height\":$height, \"nick\":\"$name\", \"user_sex\":$sex}"
+                        val str = " {\"age\":$age, \"height\":$height, \"nick\":\"$name\", \"user_sex\":$sex}"
 
                         Log.i("guo", str)
 
