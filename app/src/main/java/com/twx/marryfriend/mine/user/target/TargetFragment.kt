@@ -256,7 +256,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             // 年龄
             showAgeDialog()
         } else {
-            if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, -1) == -1) {
+            if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0) == 0) {
                 // 身高
                 showHeightDialog()
             } else {
@@ -333,7 +333,7 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
     private fun showNextDialog(position: Int) {
         when (position) {
             0 -> {
-                if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, -1) == -1) {
+                if (SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0) == 0) {
                     // 身高
                     showHeightDialog()
                 } else {
@@ -827,8 +827,8 @@ class TargetFragment : Fragment(), IDoUpdateDemandInfoCallback, IDoPlusDemandAdd
             }~${SPStaticUtils.getInt(Constant.TA_AGE_MAX, 0)}"
         }
 
-        height = when (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, -1)) {
-            -1 -> "未填写"
+        height = when (SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)) {
+            0 -> "未填写"
             else -> "${SPStaticUtils.getInt(Constant.TA_HEIGHT_MIN, 0)}~${
                 SPStaticUtils.getInt(Constant.TA_HEIGHT_MAX, 0)
             }"
