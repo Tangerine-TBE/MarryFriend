@@ -37,10 +37,12 @@ import com.twx.marryfriend.guide.info.GetInfoActivity
 import com.twx.marryfriend.login.LoginActivity
 import com.twx.marryfriend.net.callback.IDoAutoLoginCallback
 import com.twx.marryfriend.net.impl.doAutoLoginPresentImpl
+import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.set.web.SetWebActivity
 import com.twx.marryfriend.utils.SpLoginUtil
 import com.twx.marryfriend.utils.SpUtil
 import com.umeng.analytics.MobclickAgent
+import com.umeng.commonsdk.utils.UMUtils
 import java.util.*
 
 class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
@@ -67,6 +69,10 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
         doAutoLoginPresent = doAutoLoginPresentImpl.getsInstance()
         doAutoLoginPresent.registerCallback(this)
+
+
+        //启动优化：建议在子线程中执行初始化
+        Thread { PushHelper.init(applicationContext) }.start()
 
 
         //准备进入登录流程
@@ -98,7 +104,8 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
             // 跳过登录界面
             startActivity(GetInfoActivity.getIntent(this,
                 1,
-                SPStaticUtils.getString(Constant.ME_NAME), true))
+                SPStaticUtils.getString(Constant.ME_NAME),
+                true))
 
             this.finish()
 
@@ -193,16 +200,14 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
                 Settings.System.getString(application.contentResolver, Settings.Secure.ANDROID_ID)
             if (token != null) {
 
-
-                    map[Contents.ALI_TOKEN] = token
-                    map[Contents.EQUIPMENT_NUMBER] = unique
-                    map[Contents.USER_VERSION] = getVersion()
-                    map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
-                    map[Contents.USER_PACKAGE] = "com.jiaou.love"
-                    map[Contents.USER_SYSTEM] = 1.toString()
-                    map[Contents.USER_PKG_CHN] = "未来佳偶婚恋交友"
-                    doAutoLoginPresent.doAutoLogin(map)
-
+                map[Contents.ALI_TOKEN] = token
+                map[Contents.EQUIPMENT_NUMBER] = unique
+                map[Contents.USER_VERSION] = getVersion()
+                map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+                map[Contents.USER_PACKAGE] = "com.jiaou.love"
+                map[Contents.USER_SYSTEM] = 1.toString()
+                map[Contents.USER_PKG_CHN] = "未来佳偶婚恋交友"
+                doAutoLoginPresent.doAutoLogin(map)
 
             }
         })

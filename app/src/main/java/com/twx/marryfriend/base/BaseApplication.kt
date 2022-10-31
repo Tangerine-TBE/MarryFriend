@@ -78,11 +78,6 @@ open class BaseApplication : Application() {
         PushHelper.preInit(this)
         //是否同意隐私政策
 
-        val isMainProcess = UMUtils.isMainProgress(this)
-        if (isMainProcess) {
-            //启动优化：建议在子线程中执行初始化
-            Thread { PushHelper.init(applicationContext) }.start()
-        }
 
         initChild()
 

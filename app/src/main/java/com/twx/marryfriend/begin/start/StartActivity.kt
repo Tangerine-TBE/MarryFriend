@@ -34,7 +34,9 @@ import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.begin.BeginActivity
 import com.twx.marryfriend.constant.Constant
 import com.twx.marryfriend.push.PushManager
+import com.twx.marryfriend.push.help.PushHelper
 import com.twx.marryfriend.utils.GlideEngine
+import com.umeng.commonsdk.utils.UMUtils
 import com.xyzz.myutils.show.iLog
 import kotlinx.android.synthetic.main.activity_start.*
 import kotlinx.coroutines.delay
@@ -50,13 +52,13 @@ class StartActivity : MainBaseViewActivity() {
     override fun initView() {
         super.initView()
         intent.extras?.also {
-            iLog(it.toString(),"推送，启动页传数据")
-            val t=it.getString("t")
-            val f=it.getString("f")
-            if (t==null||f==null){
+            iLog(it.toString(), "推送，启动页传数据")
+            val t = it.getString("t")
+            val f = it.getString("f")
+            if (t == null || f == null) {
                 PushManager.onNotificationMessageClicked(this)
-            }else{
-                PushManager.onNotificationMessageClicked(this,t,f)
+            } else {
+                PushManager.onNotificationMessageClicked(this, t, f)
             }
         }
 
@@ -111,6 +113,7 @@ class StartActivity : MainBaseViewActivity() {
                 dismiss()
 
                 SPStaticUtils.put(Constant.FIRST_START, false)
+
 
                 startActivity(Intent(this@StartActivity, BeginActivity::class.java))
                 this@StartActivity.finish()
