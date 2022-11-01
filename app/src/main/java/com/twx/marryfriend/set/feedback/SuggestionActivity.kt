@@ -1,5 +1,7 @@
 package com.twx.marryfriend.set.feedback
 
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -204,14 +206,23 @@ class SuggestionActivity : MainBaseViewActivity(), IDoUploadFeedbackCallback,
             val map: MutableMap<String, String> = TreeMap()
             map[Contents.USER_ID] = SPStaticUtils.getString(Constant.USER_ID, "13")
             map[Contents.CONTENT_TEXT] = suggestion
-            map[Contents.PLATFORM] = "360"
-            map[Contents.VERSION] = "1.0"
+            map[Contents.PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
+            map[Contents.VERSION] = getVersion()
             map[Contents.CONTACT_1] = contact1
             map[Contents.IMAGES_URL] = image
             doUploadFeedbackPresent.doUploadFeedback(map)
 
 
 
+    }
+
+    // 获取版本号
+    private fun getVersion(): String {
+        var channelName: String = "1.0"
+        val packageManager: PackageManager = this.packageManager
+        val info: PackageInfo = packageManager.getPackageInfo(this.packageName, 0)
+        channelName = info.versionName
+        return channelName
     }
 
 

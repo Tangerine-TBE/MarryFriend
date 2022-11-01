@@ -5,8 +5,8 @@ object Contents {
 
     // 域名
     const val USER_URL =
-        "http://api.aijiaou.com"
-//        "http://test.aisou.club"
+//        "http://api.aijiaou.com"
+        "http://test.aisou.club"
 
 
     //  百度api所需的 Access Token 所需域名

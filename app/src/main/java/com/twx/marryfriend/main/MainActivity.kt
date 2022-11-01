@@ -475,7 +475,7 @@ class MainActivity : MainBaseViewActivity(), IDoUpdateTokenCallback {
     fun initPush(context: Context) {
         UMConfigure.init(context,
             PushConstants.APP_KEY,
-            PushConstants.CHANNEL,
+            SPStaticUtils.getString(Constant.CHANNEL, "_360"),
             UMConfigure.DEVICE_TYPE_PHONE,
             PushConstants.MESSAGE_SECRET)
 
