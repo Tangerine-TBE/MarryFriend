@@ -86,14 +86,14 @@ android {
     }
 
     //    只在打包提测时改apk文件名，开发时记得注释掉
-    applicationVariants.all { variant ->
-        variant.getPackageApplication().outputDirectory = new File("E:\\安装包\\深圳市天王星互娱科技有限公司\\婚恋\\婚恋1.0.0\\_${variant.productFlavors[0].name}")
-        variant.outputs.all {
-            outputFileName = "${variant.productFlavors[0].manifestPlaceholders.get("app_name_channel")}" +
-                    "_${variant.productFlavors[0].name}" +
-                    "_${variant.versionName}.apk"
-        }
-    }
+//    applicationVariants.all { variant ->
+//        variant.getPackageApplication().outputDirectory = new File("E:\\安装包\\深圳市天王星互娱科技有限公司\\婚恋\\婚恋1.0.0\\_${variant.productFlavors[0].name}")
+//        variant.outputs.all {
+//            outputFileName = "${variant.productFlavors[0].manifestPlaceholders.get("app_name_channel")}" +
+//                    "_${variant.productFlavors[0].name}" +
+//                    "_${variant.versionName}.apk"
+//        }
+//    }
 
     productFlavors {
         _anzhi {
@@ -117,7 +117,7 @@ android {
         _vivo {
 
             manifestPlaceholders = [
-                    app_name_channel: "3D高清地图导航",
+                    app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_vivo"]
         }
         _360 {
@@ -161,12 +161,6 @@ android {
             manifestPlaceholders = [
                     app_name_channel: "佳偶婚恋交友",
                     CHANNEL_VALUE   : "_ali"]
-        }
-        _google {
-
-            manifestPlaceholders = [
-                    app_name_channel: "佳偶婚恋交友",
-                    CHANNEL_VALUE   : "_google"]
         }
     }
     buildFeatures {

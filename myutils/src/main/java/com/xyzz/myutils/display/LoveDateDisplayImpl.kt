@@ -12,7 +12,7 @@ class LoveDateDisplayImpl:IDateDisplay {
     private var dateTime=0L
 
     override fun textDateInit(textDate: String, pattern: String): IDateDisplay {
-        dateTime=parseTextDate(textDate,pattern)?.time?: throw Exception("${textDate}转换成日期异常，pattern=${pattern}")
+        dateTime=parseTextDate(textDate,pattern)?.time?:0L
         return this
     }
 
@@ -25,6 +25,9 @@ class LoveDateDisplayImpl:IDateDisplay {
     }
 
     override fun toText(): String {
+        if (dateTime==0L){
+            return "未知"
+        }
         return dateTime.let {
             val day = it.timeToDayAgo()
             if (day>0){

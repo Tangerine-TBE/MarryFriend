@@ -6,6 +6,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun parseTextDate(textDate:String,pattern:String):Date?{
+    if (textDate.isBlank()){
+        return null
+    }
     val simpleDateFormat=SimpleDateFormat(pattern, Locale.CHINA)
     return simpleDateFormat.parse(textDate)
 }
