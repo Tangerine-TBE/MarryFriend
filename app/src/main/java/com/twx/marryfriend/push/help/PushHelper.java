@@ -35,7 +35,7 @@ public class PushHelper {
      * 预初始化
      */
     public static void preInit(Context context) {
-        UMConfigure.preInit(context, PushConstants.APP_KEY, PushConstants.CHANNEL);
+        UMConfigure.preInit(context, PushConstants.APP_KEY, SPStaticUtils.getString(Constant.CHANNEL, "_360"));
     }
 
     /**
@@ -48,7 +48,8 @@ public class PushHelper {
         // 参数三：发布渠道名称；
         // 参数四：设备类型，UMConfigure.DEVICE_TYPE_PHONE：手机；UMConfigure.DEVICE_TYPE_BOX：盒子；默认为手机
         // 参数五：Push推送业务的secret，填写Umeng Message Secret对应信息
-        UMConfigure.init(context, PushConstants.APP_KEY, PushConstants.CHANNEL,
+        UMConfigure.init(context, PushConstants.APP_KEY,
+                SPStaticUtils.getString(Constant.CHANNEL, "_360"),
                 UMConfigure.DEVICE_TYPE_PHONE, PushConstants.MESSAGE_SECRET);
 
         //获取推送实例

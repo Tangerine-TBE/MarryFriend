@@ -11,6 +11,7 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,6 +26,7 @@ import com.mobile.auth.gatewayauth.PhoneNumberAuthHelper
 import com.mobile.auth.gatewayauth.ResultCode
 import com.mobile.auth.gatewayauth.TokenResultListener
 import com.mobile.auth.gatewayauth.model.TokenRet
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.AutoLoginBean
@@ -73,6 +75,18 @@ class BeginActivity : MainBaseViewActivity(), IDoAutoLoginCallback {
 
         //启动优化：建议在子线程中执行初始化
         Thread { PushHelper.init(applicationContext) }.start()
+
+
+        SPStaticUtils.put(
+            Constant.CHANNEL,
+            java.lang.String.valueOf(
+                packageManager.getApplicationInfo(
+                    this.packageName,
+                    PackageManager.GET_META_DATA
+                ).metaData.get("UMENG_CHANNEL")
+            )
+        )
+
 
 
         //准备进入登录流程

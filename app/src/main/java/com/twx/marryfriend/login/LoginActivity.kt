@@ -2,6 +2,8 @@ package com.twx.marryfriend.login
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.CountDownTimer
@@ -12,6 +14,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import com.blankj.utilcode.util.*
+import com.twx.marryfriend.BuildConfig
 import com.twx.marryfriend.R
 import com.twx.marryfriend.base.MainBaseViewActivity
 import com.twx.marryfriend.bean.FaceVerifyBean
@@ -267,9 +270,8 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                         map[Contents.Mobile] = phone
                         map[Contents.VERIFY_CODE] = s.toString()
                         map[Contents.DEVICE_CODE] = unique
-                        map[Contents.VERSION] = SPStaticUtils.getString(Constant.VERSION, "_360")
-                        map[Contents.USER_PLATFORM] =
-                            SPStaticUtils.getString(Constant.CHANNEL, "_360")
+                        map[Contents.VERSION] = getVersion()
+                        map[Contents.USER_PLATFORM] = SPStaticUtils.getString(Constant.CHANNEL, "_360")
                         map[Contents.PACKAGE_ENGLISH] = "com.twx.marryfriend"
                         map[Contents.SYSTEM] = "1"
                         map[Contents.PACKAGE_CHINESE] = "婚恋"
@@ -308,6 +310,15 @@ class LoginActivity : MainBaseViewActivity(), IGetVerifyCodeCallback, IDoPhoneLo
                 isCurrentDown = false
             }
         }.start()
+    }
+
+    // 获取版本号
+    private fun getVersion(): String {
+        var channelName: String = "1.0"
+        val packageManager: PackageManager = this.packageManager
+        val info: PackageInfo = packageManager.getPackageInfo(this.packageName, 0)
+        channelName = info.versionName
+        return channelName
     }
 
     // 判断是否为验证码
